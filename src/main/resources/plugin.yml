@@ -1,14 +1,18 @@
 name: IgnisCore
 version: '${version}'
+author: Rono
+description: A custom block and item system for Minecraft
 
 main: dev.rono.igniscore.Main
 api-version: '1.21'
 depend: [NBTAPI]
 softdepend: [ProtocolLib]
+prefix: IgnisCore
+
 commands:
   ignis:
     description: Main command for IgnisCore
-    usage: /ignis <give|pack>
+    usage: /ignis <give|pack|debug>
     aliases: [igniscore, ic]
     permission: igniscore.admin
 

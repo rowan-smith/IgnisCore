@@ -3,13 +3,12 @@ package dev.rono.igniscore.renderer;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
-import org.bukkit.Material;
 import org.bukkit.entity.ItemDisplay;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Transformation;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import java.util.Map;
 
 public class BlockDisplayRenderer {
     private final Main plugin;
@@ -19,55 +18,50 @@ public class BlockDisplayRenderer {
     }
 
     public void spawnDisplay(RuntimeBlockInstance instance) {
-        plugin.getLogger().info("[DEBUG] Spawning animated display for " + instance.getDefinition().getId());
+        plugin.debug("Spawning animated display for " + instance.getDefinition().getId());
         instance.getLocation().getWorld().spawn(instance.getLocation().clone().add(0.5, 0, 0.5), ItemDisplay.class, display -> {
-            Material material = Material.matchMaterial(instance.getDefinition().getBaseMaterial());
-            if (material == null) material = Material.TNT;
+            configureDisplay(display, instance.getDefinition());
             
-            ItemStack item = new ItemStack(material);
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                meta.setCustomModelData(instance.getDefinition().getCustomModelData());
-                item.setItemMeta(meta);
-            }
-            display.setItemStack(item);
-            display.setBrightness(new org.bukkit.entity.Display.Brightness(15, 15));
-            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
-            
-            // Initial transformation
-            display.setTransformation(new Transformation(
-                new Vector3f(0, 0.5f, 0),
-                new Quaternionf(),
-                new Vector3f(1.01f, 1.01f, 1.01f),
-                new Quaternionf()
-            ));
+            display.setTransformation(createTransformation(instance.getDefinition(), 0, 1.0f));
             
             instance.setDisplayEntity(display);
         });
     }
 
     public ItemDisplay spawnStaticDisplay(org.bukkit.Location location, BlockDefinition type) {
-        plugin.getLogger().info("[DEBUG] Spawning static display for " + type.getId() + " at " + location.toVector());
+        plugin.debug("Spawning static display for " + type.getId() + " at " + location.toVector());
         return location.getWorld().spawn(location.clone().add(0.5, 0, 0.5), ItemDisplay.class, display -> {
-            Material material = Material.matchMaterial(type.getBaseMaterial());
-            if (material == null) material = Material.TNT;
-            
-            ItemStack item = new ItemStack(material);
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                meta.setCustomModelData(type.getCustomModelData());
-                item.setItemMeta(meta);
-            }
-            display.setItemStack(item);
-            display.setBrightness(new org.bukkit.entity.Display.Brightness(15, 15));
-            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
-            display.setTransformation(new org.bukkit.util.Transformation(
-                new org.joml.Vector3f(0, 0.5f, 0),
-                new org.joml.Quaternionf(),
-                new org.joml.Vector3f(1.01f, 1.01f, 1.01f),
-                new org.joml.Quaternionf()
-            ));
+            configureDisplay(display, type);
+            display.setTransformation(createTransformation(type, 0, 1.0f));
         });
+    }
+
+    private void configureDisplay(ItemDisplay display, BlockDefinition type) {
+        Map<String, Object> settings = type.getDisplaySettings();
+        display.setItemStack(plugin.createBlockItem(type.getId()));
+        display.setBrightness(new org.bukkit.entity.Display.Brightness(
+                getInt(settings, "block_light", 15),
+                getInt(settings, "sky_light", 15)
+        ));
+        display.setViewRange((float) getDouble(settings, "view_range", 1.0));
+        display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
+    }
+
+    private Transformation createTransformation(BlockDefinition type, float bob, float animationScale) {
+        Map<String, Object> settings = type.getDisplaySettings();
+        double offsetX = getDouble(settings, "offset_x", 0);
+        double offsetY = getDouble(settings, "offset_y", 0.5);
+        double offsetZ = getDouble(settings, "offset_z", 0);
+        float scaleX = (float) (getDouble(settings, "scale_x", getDouble(settings, "scale", 1.01)) * animationScale);
+        float scaleY = (float) (getDouble(settings, "scale_y", getDouble(settings, "scale", 1.01)) * animationScale);
+        float scaleZ = (float) (getDouble(settings, "scale_z", getDouble(settings, "scale", 1.01)) * animationScale);
+
+        return new Transformation(
+            new Vector3f((float) offsetX, (float) offsetY + bob, (float) offsetZ),
+            new Quaternionf(),
+            new Vector3f(scaleX, scaleY, scaleZ),
+            new Quaternionf()
+        );
     }
 
     public void updateAnimation(RuntimeBlockInstance instance) {
@@ -85,10 +79,11 @@ public class BlockDisplayRenderer {
             scale = 1.0f + (float) Math.sin(time / 50.0) * 0.2f;
         }
 
+        Transformation base = createTransformation(def, bob, scale);
         display.setTransformation(new Transformation(
-            new Vector3f(0, 0.5f + bob, 0),
+            base.getTranslation(),
             new Quaternionf().rotateY(rotation),
-            new Vector3f(1.01f * scale, 1.01f * scale, 1.01f * scale),
+            base.getScale(),
             new Quaternionf()
         ));
         
@@ -101,5 +96,37 @@ public class BlockDisplayRenderer {
         if (instance.getDisplayEntity() != null) {
             instance.getDisplayEntity().remove();
         }
+    }
+
+    private int getInt(Map<String, Object> source, String key, int defaultValue) {
+        if (source == null) return defaultValue;
+        Object value = source.get(key);
+        if (value instanceof Number number) {
+            return number.intValue();
+        }
+        if (value != null) {
+            try {
+                return Integer.parseInt(value.toString());
+            } catch (NumberFormatException ignored) {
+                return defaultValue;
+            }
+        }
+        return defaultValue;
+    }
+
+    private double getDouble(Map<String, Object> source, String key, double defaultValue) {
+        if (source == null) return defaultValue;
+        Object value = source.get(key);
+        if (value instanceof Number number) {
+            return number.doubleValue();
+        }
+        if (value != null) {
+            try {
+                return Double.parseDouble(value.toString());
+            } catch (NumberFormatException ignored) {
+                return defaultValue;
+            }
+        }
+        return defaultValue;
     }
 }

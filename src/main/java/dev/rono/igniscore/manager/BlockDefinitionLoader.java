@@ -36,7 +36,7 @@ public class BlockDefinitionLoader {
         File[] folders = blocksFolder.listFiles(File::isDirectory);
         if (folders != null) {
             java.util.Arrays.sort(folders, java.util.Comparator.comparing(File::getName));
-            int modelData = 1;
+            int modelData = 10001;
             for (File folder : folders) {
                 BlockDefinition def = loadFromFolder(folder, modelData++);
                 if (def != null) {
@@ -112,7 +112,13 @@ public class BlockDefinitionLoader {
         
         boolean placeable = config.getBoolean("block.placeable", true);
         boolean breakable = config.getBoolean("block.breakable", true);
-        String baseMaterial = config.getString("block.base_material", "tnt").toLowerCase();
+        String baseMaterial = config.getString("block.base_material", "paper").toLowerCase();
+        String renderMaterial = config.getString("block.render_material", "carrot_on_a_stick").toLowerCase();
+        Map<String, Object> breakSettings = new HashMap<>();
+        org.bukkit.configuration.ConfigurationSection breakSection = config.getConfigurationSection("block.breaking");
+        if (breakSection != null) {
+            breakSettings.putAll(sectionToMap(breakSection));
+        }
 
         String top = config.getString("textures.top", id + "-top.png");
         String side = config.getString("textures.side", id + "-side.png");
@@ -126,6 +132,11 @@ public class BlockDefinitionLoader {
         org.bukkit.configuration.ConfigurationSection customSection = config.getConfigurationSection("behavior.custom_data");
         if (customSection != null) {
             customData.putAll(sectionToMap(customSection));
+        }
+        Map<String, Object> interactionSettings = new HashMap<>();
+        org.bukkit.configuration.ConfigurationSection interactionSection = config.getConfigurationSection("interactions");
+        if (interactionSection != null) {
+            interactionSettings.putAll(sectionToMap(interactionSection));
         }
         
         // Backward compatibility for old configs if any
@@ -154,9 +165,14 @@ public class BlockDefinitionLoader {
         boolean pulse = config.getBoolean("block_display.animations.pulse", true);
         boolean rotate = config.getBoolean("block_display.animations.rotate", true);
         boolean floatBob = config.getBoolean("block_display.animations.float", true);
+        Map<String, Object> displaySettings = new HashMap<>();
+        org.bukkit.configuration.ConfigurationSection displaySection = config.getConfigurationSection("block_display");
+        if (displaySection != null) {
+            displaySettings.putAll(sectionToMap(displaySection));
+        }
 
-        return new BlockDefinition(id, baseMaterial, title, description, placeable, breakable,
+        return new BlockDefinition(id, baseMaterial, renderMaterial, title, description, placeable, breakable,
                                  top, side, bottom, strategy, fuse, radius, 
-                                 customData, modelData, rotate, floatBob, pulse);
+                                 customData, breakSettings, interactionSettings, displaySettings, modelData, rotate, floatBob, pulse);
     }
 }

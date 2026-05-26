@@ -83,6 +83,10 @@ public class BlockManager {
         BlockBehaviorRegistry.get(instance.getDefinition().getStrategy()).onTrigger(instance, context);
     }
 
+    public Main getPlugin() {
+        return plugin;
+    }
+
     public Map<String, BlockDefinition> getBlockTypes() {
         return Collections.unmodifiableMap(blockTypes);
     }

@@ -7,6 +7,7 @@ import java.util.Map;
 public class BlockDefinition {
     private final String id;
     private final String baseMaterial;
+    private final String renderMaterial;
     private final Component title;
     private final List<Component> description;
     
@@ -21,6 +22,9 @@ public class BlockDefinition {
     private final int fuse;
     private final double radius;
     private final Map<String, Object> customData;
+    private final Map<String, Object> breakSettings;
+    private final Map<String, Object> interactionSettings;
+    private final Map<String, Object> displaySettings;
     
     private final int customModelData;
     
@@ -29,13 +33,15 @@ public class BlockDefinition {
     private final boolean floatBob;
     private final boolean pulse;
 
-    public BlockDefinition(String id, String baseMaterial, Component title, List<Component> description, 
+    public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description, 
                            boolean placeable, boolean breakable,
                            String topTexture, String sideTexture, String bottomTexture, 
                            String strategy, int fuse, double radius, Map<String, Object> customData, 
-                           int customModelData, boolean rotate, boolean floatBob, boolean pulse) {
+                           Map<String, Object> breakSettings, Map<String, Object> interactionSettings,
+                           Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse) {
         this.id = id;
         this.baseMaterial = baseMaterial;
+        this.renderMaterial = renderMaterial;
         this.title = title;
         this.description = description;
         this.placeable = placeable;
@@ -47,6 +53,9 @@ public class BlockDefinition {
         this.fuse = fuse;
         this.radius = radius;
         this.customData = customData;
+        this.breakSettings = breakSettings;
+        this.interactionSettings = interactionSettings;
+        this.displaySettings = displaySettings;
         this.customModelData = customModelData;
         this.rotate = rotate;
         this.floatBob = floatBob;
@@ -55,6 +64,7 @@ public class BlockDefinition {
 
     public String getId() { return id; }
     public String getBaseMaterial() { return baseMaterial; }
+    public String getRenderMaterial() { return renderMaterial != null ? renderMaterial : baseMaterial; }
     public Component getTitle() { return title; }
     public List<Component> getDescription() { return description; }
     public boolean isPlaceable() { return placeable; }
@@ -66,6 +76,9 @@ public class BlockDefinition {
     public int getFuse() { return fuse; }
     public double getRadius() { return radius; }
     public Map<String, Object> getCustomData() { return customData; }
+    public Map<String, Object> getBreakSettings() { return breakSettings; }
+    public Map<String, Object> getInteractionSettings() { return interactionSettings; }
+    public Map<String, Object> getDisplaySettings() { return displaySettings; }
     public int getCustomModelData() { return customModelData; }
     public boolean isRotate() { return rotate; }
     public boolean isFloatBob() { return floatBob; }

@@ -6,14 +6,16 @@ import java.util.Map;
 public class CompiledBlockAsset {
     private final String id;
     private final String baseMaterial;
+    private final String renderMaterial;
     private final int customModelData;
     private final Map<String, String> textures;
     private final JsonObject blockModel;
     private final JsonObject itemModel;
 
-    public CompiledBlockAsset(String id, String baseMaterial, int customModelData, Map<String, String> textures, JsonObject blockModel, JsonObject itemModel) {
+    public CompiledBlockAsset(String id, String baseMaterial, String renderMaterial, int customModelData, Map<String, String> textures, JsonObject blockModel, JsonObject itemModel) {
         this.id = id;
         this.baseMaterial = baseMaterial;
+        this.renderMaterial = renderMaterial;
         this.customModelData = customModelData;
         this.textures = textures;
         this.blockModel = blockModel;
@@ -22,6 +24,7 @@ public class CompiledBlockAsset {
 
     public String getId() { return id; }
     public String getBaseMaterial() { return baseMaterial; }
+    public String getRenderMaterial() { return renderMaterial; }
     public int getCustomModelData() { return customModelData; }
     public Map<String, String> getTextures() { return textures; }
     public JsonObject getBlockModel() { return blockModel; }
