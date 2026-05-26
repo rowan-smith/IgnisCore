@@ -1,7 +1,6 @@
 package dev.rono.igniscore.core;
 
 import dev.rono.igniscore.api.IgnisCoreAPI;
-import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Sound;
@@ -76,15 +75,15 @@ public class BlockBehaviorRegistry {
                 loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
                 loc.getWorld().createExplosion(loc, finalPower, getCustomBoolean(def, "fire", false), getCustomBoolean(def, "blockDamage", true));
                 
-                @SuppressWarnings("unchecked")
-                Map<String, Object> payload = (Map<String, Object>) def.getCustomData().get("entityPayload");
-                if (payload != null) {
+                Object payloadObj = def.getCustomData().get("entityPayload");
+                if (payloadObj instanceof Map<?, ?> payload) {
                     try {
-                        String typeStr = (String) payload.get("type");
+                        Object typeObj = payload.get("type");
+                        String typeStr = typeObj != null ? typeObj.toString() : null;
                         if (typeStr != null) {
                             EntityType type = EntityType.valueOf(typeStr.toUpperCase());
-                            int count = (int) payload.getOrDefault("count", 0);
-                            boolean targetPlayers = (boolean) payload.getOrDefault("targetPlayers", false);
+                            int count = payload.get("count") instanceof Number n ? n.intValue() : 0;
+                            boolean targetPlayers = payload.get("targetPlayers") instanceof Boolean b ? b : false;
                             
                             for (int i = 0; i < count; i++) {
                                 final int index = i;

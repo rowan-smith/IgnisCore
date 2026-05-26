@@ -56,15 +56,13 @@ public class ResourcePackServer {
                 exchange.getResponseHeaders().set("Expires", "0");
 
                 exchange.sendResponseHeaders(200, file.length());
-                
-                try (OutputStream os = exchange.getResponseBody();
+
+                try (exchange; OutputStream os = exchange.getResponseBody();
                      FileInputStream fis = new FileInputStream(file)) {
                     fis.transferTo(os);
                     os.flush();
                 } catch (IOException e) {
                     plugin.getLogger().warning("Error streaming resource pack: " + e.getMessage());
-                } finally {
-                    exchange.close();
                 }
             };
 

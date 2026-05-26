@@ -81,6 +81,19 @@ public class BlockDefinitionLoader {
         }
     }
 
+    private Map<String, Object> sectionToMap(org.bukkit.configuration.ConfigurationSection section) {
+        Map<String, Object> map = new HashMap<>();
+        for (String key : section.getKeys(false)) {
+            Object val = section.get(key);
+            if (val instanceof org.bukkit.configuration.ConfigurationSection subSection) {
+                map.put(key, sectionToMap(subSection));
+            } else {
+                map.put(key, val);
+            }
+        }
+        return map;
+    }
+
     private BlockDefinition loadFromFolder(File folder, int modelData) {
         File configFile = new File(folder, "config.yml");
         if (!configFile.exists()) return null;
@@ -112,9 +125,7 @@ public class BlockDefinitionLoader {
         Map<String, Object> customData = new HashMap<>();
         org.bukkit.configuration.ConfigurationSection customSection = config.getConfigurationSection("behavior.custom_data");
         if (customSection != null) {
-            for (String key : customSection.getKeys(false)) {
-                customData.put(key, customSection.get(key));
-            }
+            customData.putAll(sectionToMap(customSection));
         }
         
         // Backward compatibility for old configs if any
