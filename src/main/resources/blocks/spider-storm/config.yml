@@ -1,0 +1,32 @@
+﻿id: spider-storm
+
+display:
+  title: "&5Spider Storm"
+  description:
+    - "&dA powerful entity-based explosion that unleashes a swarm of"
+    - "spiders on detonation. When triggered, the blast spawns multiple"
+    - "spiders around the impact point, spreading them out within the area."
+    - "These spiders will immediately seek out nearby players and attack on sight."
+    - "Depending on configuration, the swarm may also be enhanced with effects such"
+    - "as increased speed or strength, making the encounter more dangerous and unpredictable."
+
+textures:
+  top: spider-storm-top.png
+  side: spider-storm-side.png
+  bottom: spider-storm-bottom.png
+
+block_display:
+  model: "auto"
+
+explosion:
+  strategy: entity
+
+  fuse: 80
+  radius: 10.0
+  multiplier: 2.0
+
+  entity_payload:
+    type: SPIDER
+    count: 40
+    behavior: aggressive
+    target_players: true

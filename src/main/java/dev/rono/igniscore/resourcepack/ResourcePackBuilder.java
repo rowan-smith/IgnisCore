@@ -1,0 +1,153 @@
+package dev.rono.igniscore.resourcepack;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import dev.rono.igniscore.Main;
+import dev.rono.igniscore.model.TNTDefinition;
+
+import java.io.*;
+import java.nio.file.*;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+public class ResourcePackBuilder {
+    private final Main plugin;
+    private final Gson gson = new Gson();
+
+    public ResourcePackBuilder(Main plugin) {
+        this.plugin = plugin;
+    }
+
+    public File buildPack(Map<String, TNTDefinition> types) throws IOException {
+        Path tempDir = Files.createTempDirectory("igniscore_rp");
+        Path assets = tempDir.resolve("assets/igniscore");
+        Files.createDirectories(assets.resolve("textures/block"));
+        Files.createDirectories(assets.resolve("models/item"));
+        Files.createDirectories(tempDir.resolve("assets/minecraft/models/item"));
+
+        // pack.mcmeta
+        JsonObject pack = new JsonObject();
+        JsonObject meta = new JsonObject();
+        meta.addProperty("pack_format", 15); // 1.20
+        meta.addProperty("description", "IgnisCore Custom TNT Pack");
+        pack.add("pack", meta);
+        Files.writeString(tempDir.resolve("pack.mcmeta"), gson.toJson(pack));
+
+        // Overriding TNT item to use CustomModelData
+        JsonObject tntOverride = new JsonObject();
+        tntOverride.addProperty("parent", "minecraft:item/generated");
+        JsonObject textures = new JsonObject();
+        textures.addProperty("layer0", "minecraft:item/tnt");
+        tntOverride.add("textures", textures);
+        
+        JsonArray overrides = new JsonArray();
+        
+        for (TNTDefinition type : types.values()) {
+            String id = type.getId();
+            // Create custom model for this TNT
+            JsonObject model = createTNTModel(type);
+            Files.writeString(assets.resolve("models/item/" + id + ".json"), gson.toJson(model));
+            
+            // Add override to minecraft:item/tnt
+            JsonObject override = new JsonObject();
+            JsonObject predicate = new JsonObject();
+            predicate.addProperty("custom_model_data", type.getCustomModelData());
+            override.add("predicate", predicate);
+            override.addProperty("model", "igniscore:item/" + id);
+            overrides.add(override);
+            
+            // Copy textures from tnt folder
+            copyTextures(type, assets.resolve("textures/block"));
+        }
+        
+        tntOverride.add("overrides", overrides);
+        Files.writeString(tempDir.resolve("assets/minecraft/models/item/tnt.json"), gson.toJson(tntOverride));
+
+        // Zip it
+        File zipFile = new File(plugin.getDataFolder(), "resourcepack.zip");
+        if (zipFile.exists()) zipFile.delete();
+        zip(tempDir, zipFile.toPath());
+        
+        // Cleanup temp dir
+        deleteDirectory(tempDir.toFile());
+        
+        return zipFile;
+    }
+
+    private JsonObject createTNTModel(TNTDefinition def) {
+        JsonObject model = new JsonObject();
+        model.addProperty("parent", "minecraft:block/cube_bottom_top");
+        JsonObject textures = new JsonObject();
+        textures.addProperty("top", "igniscore:block/" + def.getId() + "/" + stripExtension(def.getTopTexture()));
+        textures.addProperty("bottom", "igniscore:block/" + def.getId() + "/" + stripExtension(def.getBottomTexture()));
+        textures.addProperty("side", "igniscore:block/" + def.getId() + "/" + stripExtension(def.getSideTexture()));
+        model.add("textures", textures);
+        return model;
+    }
+
+    private String stripExtension(String fileName) {
+        if (fileName.endsWith(".png")) {
+            return fileName.substring(0, fileName.length() - 4);
+        }
+        return fileName;
+    }
+
+    private void copyTextures(TNTDefinition def, Path destBase) throws IOException {
+        String id = def.getId();
+        Path blocksDir = plugin.getDataFolder().toPath().resolve("blocks").resolve(id).resolve("textures");
+        Path destDir = destBase.resolve(id);
+        Files.createDirectories(destDir);
+
+        if (Files.exists(blocksDir)) {
+            try (var stream = Files.walk(blocksDir)) {
+                stream.filter(Files::isRegularFile).forEach(path -> {
+                    try {
+                        Files.copy(path, destDir.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        } else {
+            // Fallback: try to copy from internal resources if it was a default one
+            String[] parts = {def.getTopTexture(), def.getBottomTexture(), def.getSideTexture()};
+            for (String part : parts) {
+                String fullPart = part.endsWith(".png") ? part : part + ".png";
+                String resourcePath = "blocks/" + id + "/textures/" + fullPart;
+                InputStream is = plugin.getResource(resourcePath);
+                if (is != null) {
+                    Files.copy(is, destDir.resolve(fullPart), StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        }
+    }
+
+    private void zip(Path sourceDirPath, Path zipFilePath) throws IOException {
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipFilePath))) {
+            Files.walk(sourceDirPath)
+                .filter(path -> !Files.isDirectory(path))
+                .forEach(path -> {
+                    ZipEntry zipEntry = new ZipEntry(sourceDirPath.relativize(path).toString().replace("\\", "/"));
+                    try {
+                        zs.putNextEntry(zipEntry);
+                        Files.copy(path, zs);
+                        zs.closeEntry();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+        }
+    }
+
+    private void deleteDirectory(File directory) {
+        File[] allContents = directory.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directory.delete();
+    }
+}

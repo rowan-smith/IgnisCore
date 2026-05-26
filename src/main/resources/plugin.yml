@@ -2,4 +2,15 @@ name: IgnisCore
 version: '${version}'
 
 main: dev.rono.igniscore.Main
-api-version: '26.1'
+api-version: '1.20'
+commands:
+  ignis:
+    description: Main command for IgnisCore
+    usage: /ignis <give|pack>
+    aliases: [igniscore, ic]
+    permission: igniscore.admin
+
+permissions:
+  igniscore.admin:
+    description: Allows access to all IgnisCore commands
+    default: op

@@ -1,0 +1,28 @@
+﻿id: nuke
+
+display:
+  title: "&aNuclear Detonation"
+  description:
+    - "&4Complete"
+    - "&4Destruction"
+
+textures:
+  top: nuke_top.png
+  side: nuke_side.png
+  bottom: nuke_bottom.png
+
+block_display:
+  model: "auto"
+
+explosion:
+  strategy: nuclear
+
+  fuse: 80
+  radius: 15.0
+  power: 10.0
+  multiplier: 2.0
+
+  effects:
+    fire: true
+    destroy_blocks: true
+    screen_shake: true

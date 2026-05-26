@@ -1,0 +1,19 @@
+﻿display:
+  title: "&c&lNuclear TNT"
+  description:
+    - "&7A massive explosion"
+    - "&7that destroys everything."
+
+tnt:
+  fuse: 100
+  power: 15.0
+  fire: true
+  block_damage: true
+
+textures:
+  top: "nuke_top"
+  side: "nuke_side"
+  bottom: "nuke_bottom"
+
+explosion:
+  type: "nuclear"
