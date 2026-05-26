@@ -18,7 +18,11 @@ public class BlockInteractionResolver {
     private static final String ACTION_IGNITE = "ignite";
 
     public CustomBlockAction resolve(BlockDefinition definition, Action clickAction, ItemStack item) {
-        String action = getConfiguredAction(definition, clickAction, item);
+        return resolve(definition, clickAction, item != null ? item.getType() : null);
+    }
+
+    public CustomBlockAction resolve(BlockDefinition definition, Action clickAction, Material itemType) {
+        String action = getConfiguredAction(definition, clickAction, itemType);
         return switch (action) {
             case ACTION_BREAK -> CustomBlockAction.BREAK;
             case ACTION_IGNITE -> CustomBlockAction.IGNITE;
@@ -26,7 +30,7 @@ public class BlockInteractionResolver {
         };
     }
 
-    private String getConfiguredAction(BlockDefinition definition, Action clickAction, ItemStack item) {
+    private String getConfiguredAction(BlockDefinition definition, Action clickAction, Material itemType) {
         String clickKey = clickAction == Action.LEFT_CLICK_BLOCK ? "left_click" : "right_click";
         Map<String, Object> clickSettings = getMap(definition.getInteractionSettings(), clickKey);
         for (Object materialAction : getList(clickSettings, "material_actions")) {
@@ -37,49 +41,48 @@ public class BlockInteractionResolver {
             @SuppressWarnings("unchecked")
             Map<String, Object> map = (Map<String, Object>) rawMap;
             String action = getString(map, "action", "");
-            if (!action.isEmpty() && matchesConfiguredMaterials(map, item)) {
+            if (!action.isEmpty() && matchesConfiguredMaterials(map, itemType)) {
                 return action.toLowerCase(Locale.ROOT);
             }
         }
 
         String configuredAction = getString(clickSettings, "action", getString(clickSettings, "default_action", ""));
         if (!configuredAction.isEmpty()) {
-            if (ACTION_IGNITE.equalsIgnoreCase(configuredAction) && !matchesConfiguredMaterials(clickSettings, item)) {
+            if (ACTION_IGNITE.equalsIgnoreCase(configuredAction) && !matchesConfiguredMaterials(clickSettings, itemType)) {
                 return "";
             }
             return configuredAction.toLowerCase(Locale.ROOT);
         }
 
-        if (matchesDefaultIgnitionMaterial(item)) {
+        if (matchesDefaultIgnitionMaterial(itemType)) {
             return ACTION_IGNITE;
         }
 
         return clickAction == Action.LEFT_CLICK_BLOCK ? ACTION_BREAK : "";
     }
 
-    private boolean matchesConfiguredMaterials(Map<String, Object> settings, ItemStack item) {
+    private boolean matchesConfiguredMaterials(Map<String, Object> settings, Material itemType) {
         List<?> materials = getList(settings, "materials");
         if (materials.isEmpty()) {
             return true;
         }
-        if (item == null || item.getType() == Material.AIR) {
+        if (itemType == null || itemType == Material.AIR) {
             return false;
         }
 
-        String itemType = item.getType().name();
+        String name = itemType.name();
         for (Object material : materials) {
-            if (material != null && itemType.equalsIgnoreCase(material.toString())) {
+            if (material != null && name.equalsIgnoreCase(material.toString())) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean matchesDefaultIgnitionMaterial(ItemStack item) {
-        if (item == null || item.getType() == Material.AIR) {
+    private boolean matchesDefaultIgnitionMaterial(Material itemType) {
+        if (itemType == null || itemType == Material.AIR) {
             return false;
         }
-        Material type = item.getType();
-        return type == Material.FLINT_AND_STEEL || type == Material.FIRE_CHARGE || type == Material.FLINT;
+        return itemType == Material.FLINT_AND_STEEL || itemType == Material.FIRE_CHARGE || itemType == Material.FLINT;
     }
 }

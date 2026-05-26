@@ -2,6 +2,7 @@ package dev.rono.igniscore.service;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.google.inject.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -15,6 +16,7 @@ public class ProtocolService {
     private final boolean enabled;
     private ProtocolManager protocolManager;
 
+    @Inject
     public ProtocolService(Plugin plugin) {
         Logger logger = plugin.getLogger();
         boolean isPresent = Bukkit.getPluginManager().isPluginEnabled("ProtocolLib");

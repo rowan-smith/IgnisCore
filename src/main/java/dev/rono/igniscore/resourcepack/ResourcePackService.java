@@ -1,5 +1,6 @@
 package dev.rono.igniscore.resourcepack;
 
+import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
 import net.kyori.adventure.text.Component;
@@ -15,6 +16,7 @@ public class ResourcePackService {
 
     private String latestHash;
 
+    @Inject
     public ResourcePackService(Main plugin, BlockManager blockManager) {
         this.plugin = plugin;
         this.blockManager = blockManager;

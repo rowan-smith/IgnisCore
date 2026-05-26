@@ -1,5 +1,6 @@
 package dev.rono.igniscore.manager;
 
+import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.core.BlockBehaviorRegistry;
 import dev.rono.igniscore.model.BlockDefinition;
@@ -21,6 +22,7 @@ public class BlockManager {
     private final BlockDisplayRenderer renderer;
     private final BlockDefinitionLoader loader;
 
+    @Inject
     public BlockManager(Main plugin) {
         this.plugin = plugin;
         this.renderer = new BlockDisplayRenderer(plugin);

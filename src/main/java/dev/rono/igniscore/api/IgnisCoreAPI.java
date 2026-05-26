@@ -1,6 +1,6 @@
 package dev.rono.igniscore.api;
 
-import dev.rono.igniscore.Main;
+import dev.rono.igniscore.IgnisCoreApplication;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import dev.rono.igniscore.model.BlockDefinition;
@@ -14,27 +14,27 @@ import java.util.Collection;
 import java.util.Map;
 
 public class IgnisCoreAPI {
-    private static Main plugin;
+    private static IgnisCoreApplication application;
 
-    public static void init(Main instance) {
-        plugin = instance;
+    public static void init(IgnisCoreApplication instance) {
+        application = instance;
     }
 
-    public static BlockManager getBlockManager() { return plugin.getBlockManager(); }
-    public static NBTService getNbtService() { return plugin.getNbtService(); }
-    public static ProtocolService getProtocolService() { return plugin.getProtocolService(); }
-    public static RuntimeBlockService getRuntimeBlockService() { return plugin.getRuntimeBlockService(); }
-    public static VisualEffectService getVisualEffectService() { return plugin.getVisualEffectService(); }
+    public static BlockManager getBlockManager() { return application.getBlockManager(); }
+    public static NBTService getNbtService() { return application.getNbtService(); }
+    public static ProtocolService getProtocolService() { return application.getProtocolService(); }
+    public static RuntimeBlockService getRuntimeBlockService() { return application.getRuntimeBlockService(); }
+    public static VisualEffectService getVisualEffectService() { return application.getVisualEffectService(); }
 
     public static RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context) {
-        return plugin.getBlockManager().triggerBlock(location, typeId, context);
+        return application.getBlockManager().triggerBlock(location, typeId, context);
     }
 
     public static Collection<RuntimeBlockInstance> getActiveBlocks() {
-        return plugin.getBlockManager().getActiveBlocks();
+        return application.getBlockManager().getActiveBlocks();
     }
 
     public static Map<String, BlockDefinition> getBlockTypes() {
-        return plugin.getBlockManager().getBlockTypes();
+        return application.getBlockManager().getBlockTypes();
     }
 }

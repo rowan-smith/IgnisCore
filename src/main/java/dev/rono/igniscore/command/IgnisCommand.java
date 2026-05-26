@@ -1,5 +1,6 @@
 package dev.rono.igniscore.command;
 
+import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.BlockDefinition;
@@ -22,6 +23,7 @@ public class IgnisCommand implements PluginCommandHandler {
     private final BlockManager blockManager;
     private final ResourcePackService resourcePackService;
 
+    @Inject
     public IgnisCommand(Main plugin, BlockManager blockManager, ResourcePackService resourcePackService) {
         this.plugin = plugin;
         this.blockManager = blockManager;

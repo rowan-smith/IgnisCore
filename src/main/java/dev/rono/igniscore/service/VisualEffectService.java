@@ -3,6 +3,7 @@ package dev.rono.igniscore.service;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
+import com.google.inject.Inject;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -18,6 +19,7 @@ import java.util.List;
 public class VisualEffectService {
     private final ProtocolService protocolService;
 
+    @Inject
     public VisualEffectService(ProtocolService protocolService) {
         this.protocolService = protocolService;
     }

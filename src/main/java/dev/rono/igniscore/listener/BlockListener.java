@@ -1,11 +1,9 @@
 package dev.rono.igniscore.listener;
 
-import dev.rono.igniscore.Main;
+import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.service.BlockInteractionResolver;
-import dev.rono.igniscore.service.BlockItemIdentifier;
-import dev.rono.igniscore.service.ConfiguredEffectService;
 import dev.rono.igniscore.service.CustomBlockAction;
 import dev.rono.igniscore.service.CustomBlockBreakService;
 import dev.rono.igniscore.service.CustomBlockIgnitionService;
@@ -29,15 +27,17 @@ public class BlockListener implements Listener {
     private final CustomBlockBreakService breakService;
     private final CustomBlockIgnitionService ignitionService;
 
-    public BlockListener(Main plugin, BlockManager blockManager) {
+    @Inject
+    public BlockListener(BlockManager blockManager,
+                         BlockInteractionResolver interactionResolver,
+                         CustomBlockPlacementService placementService,
+                         CustomBlockBreakService breakService,
+                         CustomBlockIgnitionService ignitionService) {
         this.blockManager = blockManager;
-        this.interactionResolver = new BlockInteractionResolver();
-
-        ConfiguredEffectService effectService = new ConfiguredEffectService(plugin);
-        BlockItemIdentifier itemIdentifier = new BlockItemIdentifier(plugin, plugin.getNbtService());
-        this.placementService = new CustomBlockPlacementService(plugin, blockManager, itemIdentifier);
-        this.breakService = new CustomBlockBreakService(plugin, blockManager, effectService);
-        this.ignitionService = new CustomBlockIgnitionService(blockManager, breakService, effectService);
+        this.interactionResolver = interactionResolver;
+        this.placementService = placementService;
+        this.breakService = breakService;
+        this.ignitionService = ignitionService;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

@@ -1,5 +1,6 @@
 package dev.rono.igniscore.listener;
 
+import com.google.inject.Inject;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
@@ -8,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 public class ResourcePackStatusListener implements Listener {
     private final Plugin plugin;
 
+    @Inject
     public ResourcePackStatusListener(Plugin plugin) {
         this.plugin = plugin;
     }

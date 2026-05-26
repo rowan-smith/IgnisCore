@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.BlockDefinition;
@@ -31,6 +32,7 @@ public class CustomBlockBreakService {
     private final ConfiguredEffectService effectService;
     private final Map<UUID, MiningSession> miningSessions = new ConcurrentHashMap<>();
 
+    @Inject
     public CustomBlockBreakService(Main plugin, BlockManager blockManager, ConfiguredEffectService effectService) {
         this.plugin = plugin;
         this.blockManager = blockManager;

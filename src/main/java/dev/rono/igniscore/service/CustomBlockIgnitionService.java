@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.BlockDefinition;
 import org.bukkit.GameMode;
@@ -23,6 +24,7 @@ public class CustomBlockIgnitionService {
     private final CustomBlockBreakService breakService;
     private final ConfiguredEffectService effectService;
 
+    @Inject
     public CustomBlockIgnitionService(BlockManager blockManager, CustomBlockBreakService breakService,
                                       ConfiguredEffectService effectService) {
         this.blockManager = blockManager;

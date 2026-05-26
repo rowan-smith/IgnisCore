@@ -1,13 +1,10 @@
 package dev.rono.igniscore;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import dev.rono.igniscore.api.IgnisCoreAPI;
-import dev.rono.igniscore.command.CommandRegistrar;
-import dev.rono.igniscore.command.IgnisCommand;
-import dev.rono.igniscore.listener.BlockListener;
-import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
-import dev.rono.igniscore.service.BlockItemFactory;
 import dev.rono.igniscore.service.NBTService;
 import dev.rono.igniscore.service.ProtocolService;
 import dev.rono.igniscore.service.RuntimeBlockService;
@@ -17,45 +14,32 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
-
 public final class Main extends JavaPlugin {
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
-    private BlockManager blockManager;
-    private ResourcePackService resourcePackService;
-    private BlockItemFactory blockItemFactory;
+    private Injector injector;
+    private IgnisCoreApplication application;
     private boolean debugEnabled = false;
-
-    private NBTService nbtService;
-    private ProtocolService protocolService;
-    private RuntimeBlockService runtimeBlockService;
-    private VisualEffectService visualEffectService;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
 
-        initializeServices();
-        IgnisCoreAPI.init(this);
-
-        registerListeners();
-        registerCommands();
-        initializeResourcePack();
+        injector = Guice.createInjector(new IgnisCoreModule(this));
+        application = injector.getInstance(IgnisCoreApplication.class);
+        IgnisCoreAPI.init(application);
+        application.enable();
     }
 
     @Override
     public void onDisable() {
-        if (blockManager != null) {
-            blockManager.cleanup();
-        }
-        if (resourcePackService != null) {
-            resourcePackService.stopServer();
+        if (application != null) {
+            application.disable();
         }
     }
 
     public ItemStack createBlockItem(String typeId) {
-        return blockItemFactory.createBlockItem(typeId);
+        return application.getBlockItemFactory().createBlockItem(typeId);
     }
 
     public Component message(String message) {
@@ -77,56 +61,26 @@ public final class Main extends JavaPlugin {
     }
 
     public BlockManager getBlockManager() {
-        return blockManager;
+        return application.getBlockManager();
     }
 
     public NBTService getNbtService() {
-        return nbtService;
+        return application.getNbtService();
     }
 
     public ProtocolService getProtocolService() {
-        return protocolService;
+        return application.getProtocolService();
     }
 
     public RuntimeBlockService getRuntimeBlockService() {
-        return runtimeBlockService;
+        return application.getRuntimeBlockService();
     }
 
     public VisualEffectService getVisualEffectService() {
-        return visualEffectService;
+        return application.getVisualEffectService();
     }
 
     public ResourcePackService getResourcePackService() {
-        return resourcePackService;
-    }
-
-    private void initializeServices() {
-        nbtService = new NBTService();
-        protocolService = new ProtocolService(this);
-        runtimeBlockService = new RuntimeBlockService();
-        visualEffectService = new VisualEffectService(protocolService);
-
-        blockManager = new BlockManager(this);
-        resourcePackService = new ResourcePackService(this, blockManager);
-        blockItemFactory = new BlockItemFactory(blockManager, nbtService);
-    }
-
-    private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new BlockListener(this, blockManager), this);
-        getServer().getPluginManager().registerEvents(new ResourcePackStatusListener(this), this);
-    }
-
-    private void registerCommands() {
-        new CommandRegistrar(this).register("ignis",
-                new IgnisCommand(this, blockManager, resourcePackService));
-    }
-
-    private void initializeResourcePack() {
-        try {
-            resourcePackService.buildAndRegister();
-            resourcePackService.startServer();
-        } catch (IOException e) {
-            getLogger().severe("Failed to generate resource pack: " + e.getMessage());
-        }
+        return application.getResourcePackService();
     }
 }

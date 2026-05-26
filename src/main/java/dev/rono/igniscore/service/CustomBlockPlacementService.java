@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
 import org.bukkit.GameMode;
@@ -17,6 +18,7 @@ public class CustomBlockPlacementService {
     private final BlockManager blockManager;
     private final BlockItemIdentifier itemIdentifier;
 
+    @Inject
     public CustomBlockPlacementService(Main plugin, BlockManager blockManager, BlockItemIdentifier itemIdentifier) {
         this.plugin = plugin;
         this.blockManager = blockManager;

@@ -14,6 +14,8 @@
   <properties>
     <java.version>25</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <guice.version>7.0.0</guice.version>
+    <junit.jupiter.version>6.1.0</junit.jupiter.version>
   </properties>
 
   <build>
@@ -39,6 +41,20 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <relocations>
+                <relocation>
+                  <pattern>com.google.inject</pattern>
+                  <shadedPattern>dev.rono.igniscore.libs.com.google.inject</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.google.common</pattern>
+                  <shadedPattern>dev.rono.igniscore.libs.com.google.common</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>jakarta.inject</pattern>
+                  <shadedPattern>dev.rono.igniscore.libs.jakarta.inject</shadedPattern>
+                </relocation>
+              </relocations>
             </configuration>
           </execution>
         </executions>
@@ -49,6 +65,11 @@
             <version>2.14</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.3</version>
       </plugin>
     </plugins>
     <resources>
@@ -77,6 +98,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>${guice.version}</version>
+    </dependency>
+    <dependency>
       <groupId>io.papermc.paper</groupId>
       <artifactId>paper-api</artifactId>
       <version>1.21.11-R0.1-SNAPSHOT</version>
@@ -99,6 +125,12 @@
       <artifactId>ProtocolLib</artifactId>
       <version>5.1.0</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,6 +17,7 @@ import static dev.rono.igniscore.util.ConfigValueReader.getString;
 public class ConfiguredEffectService {
     private final Main plugin;
 
+    @Inject
     public ConfiguredEffectService(Main plugin) {
         this.plugin = plugin;
     }

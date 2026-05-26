@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import com.google.inject.Inject;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -12,6 +13,7 @@ public class BlockItemIdentifier {
     private final NamespacedKey blockTypeKey;
     private final NamespacedKey legacyTntTypeKey;
 
+    @Inject
     public BlockItemIdentifier(Plugin plugin, NBTService nbtService) {
         this.nbtService = nbtService;
         this.blockTypeKey = new NamespacedKey(plugin, "block_type");

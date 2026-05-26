@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.BlockDefinition;
 import org.bukkit.Material;
@@ -14,6 +15,7 @@ public class BlockItemFactory {
     private final BlockManager blockManager;
     private final NBTService nbtService;
 
+    @Inject
     public BlockItemFactory(BlockManager blockManager, NBTService nbtService) {
         this.blockManager = blockManager;
         this.nbtService = nbtService;
