@@ -1,5 +1,6 @@
 package dev.rono.igniscore.listener;
 
+import dev.rono.igniscore.api.IgnisCoreAPI;
 import dev.rono.igniscore.manager.BlockManager;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -25,13 +26,19 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
         ItemStack item = event.getItemInHand();
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
-
-        String typeId = meta.getPersistentDataContainer().get(blockTypeKey, PersistentDataType.STRING);
-        if (typeId == null) {
-            // Fallback for old items
-            typeId = meta.getPersistentDataContainer().get(new NamespacedKey("igniscore", "tnt_type"), PersistentDataType.STRING);
+        
+        // Try to get block id from NBT
+        String typeId = IgnisCoreAPI.getNbtService().readItem(item, nbt -> nbt.getString("ignis:block_id"));
+        
+        if (typeId == null || typeId.isEmpty()) {
+            // Fallback to PersistentDataContainer for backward compatibility
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                typeId = meta.getPersistentDataContainer().get(blockTypeKey, PersistentDataType.STRING);
+                if (typeId == null) {
+                    typeId = meta.getPersistentDataContainer().get(new NamespacedKey("igniscore", "tnt_type"), PersistentDataType.STRING);
+                }
+            }
         }
         
         if (typeId != null && manager.getBlockTypes().containsKey(typeId)) {

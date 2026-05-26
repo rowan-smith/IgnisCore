@@ -2,7 +2,7 @@ package dev.rono.igniscore.renderer;
 
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.BlockInstance;
+import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Material;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.inventory.ItemStack;
@@ -18,13 +18,16 @@ public class BlockDisplayRenderer {
         this.plugin = plugin;
     }
 
-    public void spawnDisplay(BlockInstance instance) {
-        plugin.getLogger().info("[DEBUG] Spawning animated display for " + instance.getType().getId());
+    public void spawnDisplay(RuntimeBlockInstance instance) {
+        plugin.getLogger().info("[DEBUG] Spawning animated display for " + instance.getDefinition().getId());
         instance.getLocation().getWorld().spawn(instance.getLocation().clone().add(0.5, 0, 0.5), ItemDisplay.class, display -> {
-            ItemStack item = new ItemStack(Material.TNT);
+            Material material = Material.matchMaterial(instance.getDefinition().getBaseMaterial());
+            if (material == null) material = Material.TNT;
+            
+            ItemStack item = new ItemStack(material);
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
-                meta.setCustomModelData(instance.getType().getCustomModelData());
+                meta.setCustomModelData(instance.getDefinition().getCustomModelData());
                 item.setItemMeta(meta);
             }
             display.setItemStack(item);
@@ -46,7 +49,10 @@ public class BlockDisplayRenderer {
     public ItemDisplay spawnStaticDisplay(org.bukkit.Location location, BlockDefinition type) {
         plugin.getLogger().info("[DEBUG] Spawning static display for " + type.getId() + " at " + location.toVector());
         return location.getWorld().spawn(location.clone().add(0.5, 0, 0.5), ItemDisplay.class, display -> {
-            ItemStack item = new ItemStack(Material.TNT);
+            Material material = Material.matchMaterial(type.getBaseMaterial());
+            if (material == null) material = Material.TNT;
+            
+            ItemStack item = new ItemStack(material);
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
                 meta.setCustomModelData(type.getCustomModelData());
@@ -64,10 +70,10 @@ public class BlockDisplayRenderer {
         });
     }
 
-    public void updateAnimation(BlockInstance instance) {
+    public void updateAnimation(RuntimeBlockInstance instance) {
         if (instance.getDisplayEntity() == null) return;
         ItemDisplay display = (ItemDisplay) instance.getDisplayEntity();
-        BlockDefinition def = instance.getType();
+        BlockDefinition def = instance.getDefinition();
         
         long time = System.currentTimeMillis();
         float bob = def.isFloatBob() ? (float) Math.sin(time / 200.0) * 0.1f : 0;
@@ -91,7 +97,7 @@ public class BlockDisplayRenderer {
         display.setInterpolationDelay(0);
     }
 
-    public void removeDisplay(BlockInstance instance) {
+    public void removeDisplay(RuntimeBlockInstance instance) {
         if (instance.getDisplayEntity() != null) {
             instance.getDisplayEntity().remove();
         }

@@ -1,0 +1,29 @@
+package dev.rono.igniscore.resourcepack;
+
+import com.google.gson.JsonObject;
+import java.util.Map;
+
+public class CompiledBlockAsset {
+    private final String id;
+    private final String baseMaterial;
+    private final int customModelData;
+    private final Map<String, String> textures;
+    private final JsonObject blockModel;
+    private final JsonObject itemModel;
+
+    public CompiledBlockAsset(String id, String baseMaterial, int customModelData, Map<String, String> textures, JsonObject blockModel, JsonObject itemModel) {
+        this.id = id;
+        this.baseMaterial = baseMaterial;
+        this.customModelData = customModelData;
+        this.textures = textures;
+        this.blockModel = blockModel;
+        this.itemModel = itemModel;
+    }
+
+    public String getId() { return id; }
+    public String getBaseMaterial() { return baseMaterial; }
+    public int getCustomModelData() { return customModelData; }
+    public Map<String, String> getTextures() { return textures; }
+    public JsonObject getBlockModel() { return blockModel; }
+    public JsonObject getItemModel() { return itemModel; }
+}

@@ -1,7 +1,9 @@
 package dev.rono.igniscore.core;
 
+import dev.rono.igniscore.api.IgnisCoreAPI;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -21,14 +23,18 @@ public class BlockBehaviorRegistry {
         return strategies.getOrDefault(type.toLowerCase(), strategies.get("default"));
     }
 
-    public static void init(BlockManager manager) {
+    public static void init() {
         // Explosion Strategy Implementation
         BlockBehaviorStrategy explosionBase = new BlockBehaviorStrategy() {
             @Override
-            public void onTrigger(dev.rono.igniscore.model.BlockInstance instance, Object context) {
-                BlockDefinition def = instance.getType();
+            public void onTrigger(RuntimeBlockInstance instance, Object context) {
+                BlockDefinition def = instance.getDefinition();
                 org.bukkit.Location loc = instance.getLocation();
                 float power = (float) (getCustomDouble(def, "power", 4.0) * getCustomDouble(def, "multiplier", 1.0));
+                
+                // Store runtime state in NBT for potential use by other systems
+                instance.getData().setFloat("ignis:blast_power", power);
+                
                 loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
                 loc.getWorld().createExplosion(loc, power, getCustomBoolean(def, "fire", false), getCustomBoolean(def, "blockDamage", true));
             }
@@ -38,11 +44,15 @@ public class BlockBehaviorRegistry {
 
         register("nuclear", new BlockBehaviorStrategy() {
             @Override
-            public void onTrigger(dev.rono.igniscore.model.BlockInstance instance, Object context) {
-                BlockDefinition def = instance.getType();
+            public void onTrigger(RuntimeBlockInstance instance, Object context) {
+                BlockDefinition def = instance.getDefinition();
                 org.bukkit.Location loc = instance.getLocation();
                 double basePower = def.getRadius() > 0 ? def.getRadius() : getCustomDouble(def, "power", 10.0);
                 float finalPower = (float) (basePower * getCustomDouble(def, "multiplier", 1.0));
+                
+                // structured NBT metadata for the nuke event
+                instance.getData().setFloat("ignis:nuke_power", finalPower);
+                instance.getData().setDouble("ignis:radiation_radius", finalPower * 2.0);
                 
                 loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
                 loc.getWorld().createExplosion(loc, finalPower, getCustomBoolean(def, "fire", true), getCustomBoolean(def, "blockDamage", true));
@@ -57,8 +67,8 @@ public class BlockBehaviorRegistry {
 
         register("entity", new BlockBehaviorStrategy() {
             @Override
-            public void onTrigger(dev.rono.igniscore.model.BlockInstance instance, Object context) {
-                BlockDefinition def = instance.getType();
+            public void onTrigger(RuntimeBlockInstance instance, Object context) {
+                BlockDefinition def = instance.getDefinition();
                 org.bukkit.Location loc = instance.getLocation();
                 double basePower = def.getRadius() > 0 ? def.getRadius() : getCustomDouble(def, "power", 4.0);
                 float finalPower = (float) (basePower * getCustomDouble(def, "multiplier", 1.0));
@@ -66,6 +76,7 @@ public class BlockBehaviorRegistry {
                 loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
                 loc.getWorld().createExplosion(loc, finalPower, getCustomBoolean(def, "fire", false), getCustomBoolean(def, "blockDamage", true));
                 
+                @SuppressWarnings("unchecked")
                 Map<String, Object> payload = (Map<String, Object>) def.getCustomData().get("entityPayload");
                 if (payload != null) {
                     try {
@@ -76,8 +87,22 @@ public class BlockBehaviorRegistry {
                             boolean targetPlayers = (boolean) payload.getOrDefault("targetPlayers", false);
                             
                             for (int i = 0; i < count; i++) {
+                                final int index = i;
                                 org.bukkit.entity.Entity entity = loc.getWorld().spawnEntity(loc.clone().add(Math.random() * 2 - 1, 0, Math.random() * 2 - 1), type);
                                 
+                                // STRUCTURED ENTITY METADATA using NBT-API
+                                IgnisCoreAPI.getNbtService().editEntity(entity, nbt -> {
+                                    nbt.setString("ignis:origin_block", def.getId());
+                                    nbt.setInteger("ignis:spawn_index", index);
+                                    nbt.setBoolean("ignis:is_custom_mob", true);
+                                    
+                                    // Spider Storm specific metadata example
+                                    if (type == EntityType.SPIDER) {
+                                        nbt.setInteger("ignis:spider_count", count);
+                                        nbt.setDouble("ignis:aggression_radius", (double) finalPower);
+                                    }
+                                });
+
                                 if (targetPlayers && entity instanceof Mob mob) {
                                     loc.getWorld().getPlayers().stream()
                                             .min(Comparator.comparingDouble(p -> p.getLocation().distanceSquared(loc)))
@@ -94,14 +119,14 @@ public class BlockBehaviorRegistry {
 
         register("structure", new BlockBehaviorStrategy() {
             @Override
-            public void onTrigger(dev.rono.igniscore.model.BlockInstance instance, Object context) {
+            public void onTrigger(RuntimeBlockInstance instance, Object context) {
                 // Placeholder for future structure placement logic
             }
         });
 
         register("effect", new BlockBehaviorStrategy() {
             @Override
-            public void onTrigger(dev.rono.igniscore.model.BlockInstance instance, Object context) {
+            public void onTrigger(RuntimeBlockInstance instance, Object context) {
                 // Placeholder for future potion effect/particle logic
             }
         });

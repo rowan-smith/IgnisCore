@@ -31,15 +31,24 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.5.3</version>
+        <version>3.6.1</version>
         <executions>
           <execution>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
+            <configuration>
+            </configuration>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.vafer</groupId>
+            <artifactId>jdependency</artifactId>
+            <version>2.14</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
     <resources>
@@ -55,19 +64,40 @@
         <id>papermc</id>
         <url>https://repo.papermc.io/repository/maven-public/</url>
       </repository>
+      <repository>
+        <id>codemc-repo</id>
+        <url>https://repo.codemc.io/repository/maven-public/</url>
+        <layout>default</layout>
+      </repository>
+      <repository>
+        <id>dmulloy2-repo</id>
+        <url>https://repo.dmulloy2.net/repository/public/</url>
+      </repository>
   </repositories>
 
   <dependencies>
     <dependency>
       <groupId>io.papermc.paper</groupId>
       <artifactId>paper-api</artifactId>
-      <version>1.20.1-R0.1-SNAPSHOT</version>
+      <version>1.21.11-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.10.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>de.tr7zw</groupId>
+      <artifactId>item-nbt-api-plugin</artifactId>
+      <version>2.15.7</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.dmulloy2</groupId>
+      <artifactId>ProtocolLib</artifactId>
+      <version>5.1.0</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

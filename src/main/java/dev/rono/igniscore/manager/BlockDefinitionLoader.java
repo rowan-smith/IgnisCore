@@ -26,10 +26,11 @@ public class BlockDefinitionLoader {
         File blocksFolder = new File(plugin.getDataFolder(), "blocks");
         
         if (!blocksFolder.exists()) {
-            blocksFolder.mkdirs();
-            // Copy default blocks from resources if they don't exist
-            saveDefaultBlock("nuke", true);
-            saveDefaultBlock("spider-storm", false);
+            if (blocksFolder.mkdirs()) {
+                // Copy default blocks from resources if they don't exist
+                saveDefaultBlock("nuke", true);
+                saveDefaultBlock("spider-storm", false);
+            }
         }
 
         File[] folders = blocksFolder.listFiles(File::isDirectory);
@@ -59,7 +60,12 @@ public class BlockDefinitionLoader {
         File outFile = new File(plugin.getDataFolder(), resourcePath);
         if (outFile.exists()) return;
         
-        outFile.getParentFile().mkdirs();
+        File parent = outFile.getParentFile();
+        if (parent != null && !parent.exists()) {
+            if (!parent.mkdirs()) {
+                plugin.getLogger().warning("Failed to create directory: " + parent.getAbsolutePath());
+            }
+        }
         
         try (InputStream in = plugin.getResource(resourcePath)) {
             if (in == null) return;
@@ -93,6 +99,7 @@ public class BlockDefinitionLoader {
         
         boolean placeable = config.getBoolean("block.placeable", true);
         boolean breakable = config.getBoolean("block.breakable", true);
+        String baseMaterial = config.getString("block.base_material", "tnt").toLowerCase();
 
         String top = config.getString("textures.top", id + "-top.png");
         String side = config.getString("textures.side", id + "-side.png");
@@ -103,9 +110,10 @@ public class BlockDefinitionLoader {
         double radius = config.getDouble("behavior.radius", 4.0);
         
         Map<String, Object> customData = new HashMap<>();
-        if (config.isConfigurationSection("behavior.custom_data")) {
-            for (String key : config.getConfigurationSection("behavior.custom_data").getKeys(false)) {
-                customData.put(key, config.get("behavior.custom_data." + key));
+        org.bukkit.configuration.ConfigurationSection customSection = config.getConfigurationSection("behavior.custom_data");
+        if (customSection != null) {
+            for (String key : customSection.getKeys(false)) {
+                customData.put(key, customSection.get(key));
             }
         }
         
@@ -136,7 +144,7 @@ public class BlockDefinitionLoader {
         boolean rotate = config.getBoolean("block_display.animations.rotate", true);
         boolean floatBob = config.getBoolean("block_display.animations.float", true);
 
-        return new BlockDefinition(id, title, description, placeable, breakable,
+        return new BlockDefinition(id, baseMaterial, title, description, placeable, breakable,
                                  top, side, bottom, strategy, fuse, radius, 
                                  customData, modelData, rotate, floatBob, pulse);
     }

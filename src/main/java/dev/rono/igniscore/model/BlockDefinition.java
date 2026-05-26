@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class BlockDefinition {
     private final String id;
+    private final String baseMaterial;
     private final Component title;
     private final List<Component> description;
     
@@ -28,12 +29,13 @@ public class BlockDefinition {
     private final boolean floatBob;
     private final boolean pulse;
 
-    public BlockDefinition(String id, Component title, List<Component> description, 
+    public BlockDefinition(String id, String baseMaterial, Component title, List<Component> description, 
                            boolean placeable, boolean breakable,
                            String topTexture, String sideTexture, String bottomTexture, 
                            String strategy, int fuse, double radius, Map<String, Object> customData, 
                            int customModelData, boolean rotate, boolean floatBob, boolean pulse) {
         this.id = id;
+        this.baseMaterial = baseMaterial;
         this.title = title;
         this.description = description;
         this.placeable = placeable;
@@ -52,6 +54,7 @@ public class BlockDefinition {
     }
 
     public String getId() { return id; }
+    public String getBaseMaterial() { return baseMaterial; }
     public Component getTitle() { return title; }
     public List<Component> getDescription() { return description; }
     public boolean isPlaceable() { return placeable; }

@@ -3,7 +3,7 @@ package dev.rono.igniscore.manager;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.core.BlockBehaviorRegistry;
 import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.BlockInstance;
+import dev.rono.igniscore.model.RuntimeBlockInstance;
 import dev.rono.igniscore.renderer.BlockDisplayRenderer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BlockManager {
     private final Main plugin;
     private final Map<String, BlockDefinition> blockTypes = new HashMap<>();
-    private final Map<UUID, BlockInstance> activeBlocks = new ConcurrentHashMap<>();
     private final Map<Location, String> placedBlocks = new ConcurrentHashMap<>();
     private final Map<Location, org.bukkit.entity.Display> blockVisuals = new ConcurrentHashMap<>();
     private final BlockDisplayRenderer renderer;
@@ -24,7 +23,7 @@ public class BlockManager {
         this.plugin = plugin;
         this.renderer = new BlockDisplayRenderer(plugin);
         this.loader = new BlockDefinitionLoader(plugin);
-        BlockBehaviorRegistry.init(this);
+        BlockBehaviorRegistry.init();
         loadConfig();
     }
 
@@ -54,13 +53,12 @@ public class BlockManager {
         return placedBlocks.get(location);
     }
 
-    public BlockInstance triggerBlock(Location location, String typeId, Object context) {
+    public RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context) {
         BlockDefinition type = blockTypes.get(typeId);
         if (type == null) return null;
         
-        BlockInstance instance = new BlockInstance(location, type);
+        RuntimeBlockInstance instance = plugin.getRuntimeBlockService().createInstance(type, location);
         renderer.spawnDisplay(instance);
-        activeBlocks.put(instance.getUuid(), instance);
         
         BlockBehaviorRegistry.get(type.getStrategy()).onPlace(instance);
 
@@ -78,27 +76,28 @@ public class BlockManager {
         return instance;
     }
 
-    public void executeBehavior(BlockInstance instance, Object context) {
+    public void executeBehavior(RuntimeBlockInstance instance, Object context) {
         if (instance.getTask() != null) instance.getTask().cancel();
-        activeBlocks.remove(instance.getUuid());
+        plugin.getRuntimeBlockService().removeInstance(instance.getUuid());
         renderer.removeDisplay(instance);
-        BlockBehaviorRegistry.get(instance.getType().getStrategy()).onTrigger(instance, context);
+        BlockBehaviorRegistry.get(instance.getDefinition().getStrategy()).onTrigger(instance, context);
     }
 
     public Map<String, BlockDefinition> getBlockTypes() {
         return Collections.unmodifiableMap(blockTypes);
     }
 
-    public Collection<BlockInstance> getActiveBlocks() {
-        return activeBlocks.values();
+    public Collection<RuntimeBlockInstance> getActiveBlocks() {
+        return plugin.getRuntimeBlockService().getActiveInstances();
     }
     
     public void cleanup() {
-        for (BlockInstance instance : activeBlocks.values()) {
+        for (RuntimeBlockInstance instance : plugin.getRuntimeBlockService().getActiveInstances()) {
             if (instance.getTask() != null) instance.getTask().cancel();
             renderer.removeDisplay(instance);
         }
-        activeBlocks.clear();
+        // Note: we don't clear the service here as it might be used by others, 
+        // but since this is plugin cleanup it's fine.
         
         for (org.bukkit.entity.Display display : blockVisuals.values()) {
             display.remove();
