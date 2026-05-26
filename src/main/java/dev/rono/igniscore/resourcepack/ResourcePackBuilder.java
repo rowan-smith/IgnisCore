@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.rono.igniscore.Main;
-import dev.rono.igniscore.model.TNTDefinition;
+import dev.rono.igniscore.model.BlockDefinition;
 
 import java.io.*;
 import java.nio.file.*;
@@ -20,7 +20,7 @@ public class ResourcePackBuilder {
         this.plugin = plugin;
     }
 
-    public File buildPack(Map<String, TNTDefinition> types) throws IOException {
+    public File buildPack(Map<String, BlockDefinition> types) throws IOException {
         Path tempDir = Files.createTempDirectory("igniscore_rp");
         Path assets = tempDir.resolve("assets/igniscore");
         Files.createDirectories(assets.resolve("textures/block"));
@@ -37,18 +37,19 @@ public class ResourcePackBuilder {
 
         // Overriding TNT item to use CustomModelData
         JsonObject tntOverride = new JsonObject();
-        tntOverride.addProperty("parent", "minecraft:item/generated");
-        JsonObject textures = new JsonObject();
-        textures.addProperty("layer0", "minecraft:item/tnt");
-        tntOverride.add("textures", textures);
+        tntOverride.addProperty("parent", "minecraft:block/tnt");
+        tntOverride.addProperty("gui_light", "front");
+        
+        java.util.List<BlockDefinition> sortedTypes = new java.util.ArrayList<>(types.values());
+        sortedTypes.sort(java.util.Comparator.comparingInt(BlockDefinition::getCustomModelData));
         
         JsonArray overrides = new JsonArray();
-        
-        for (TNTDefinition type : types.values()) {
+        for (BlockDefinition type : sortedTypes) {
             String id = type.getId();
-            // Create custom model for this TNT
-            JsonObject model = createTNTModel(type);
+            // Create custom model for this block
+            JsonObject model = createBlockModel(type);
             Files.writeString(assets.resolve("models/item/" + id + ".json"), gson.toJson(model));
+            plugin.getLogger().info("[DEBUG] Created custom model: igniscore:item/" + id);
             
             // Add override to minecraft:item/tnt
             JsonObject override = new JsonObject();
@@ -58,12 +59,13 @@ public class ResourcePackBuilder {
             override.addProperty("model", "igniscore:item/" + id);
             overrides.add(override);
             
-            // Copy textures from tnt folder
+            // Copy textures from block folder
             copyTextures(type, assets.resolve("textures/block"));
         }
         
         tntOverride.add("overrides", overrides);
         Files.writeString(tempDir.resolve("assets/minecraft/models/item/tnt.json"), gson.toJson(tntOverride));
+        plugin.getLogger().info("[DEBUG] Created tnt.json override with " + overrides.size() + " overrides.");
 
         // Zip it
         File zipFile = new File(plugin.getDataFolder(), "resourcepack.zip");
@@ -76,13 +78,15 @@ public class ResourcePackBuilder {
         return zipFile;
     }
 
-    private JsonObject createTNTModel(TNTDefinition def) {
+    private JsonObject createBlockModel(BlockDefinition def) {
         JsonObject model = new JsonObject();
         model.addProperty("parent", "minecraft:block/cube_bottom_top");
         JsonObject textures = new JsonObject();
-        textures.addProperty("top", "igniscore:block/" + def.getId() + "/" + stripExtension(def.getTopTexture()));
-        textures.addProperty("bottom", "igniscore:block/" + def.getId() + "/" + stripExtension(def.getBottomTexture()));
-        textures.addProperty("side", "igniscore:block/" + def.getId() + "/" + stripExtension(def.getSideTexture()));
+        String textureBase = "igniscore:block/" + def.getId() + "/";
+        textures.addProperty("particle", textureBase + stripExtension(def.getSideTexture()));
+        textures.addProperty("top", textureBase + stripExtension(def.getTopTexture()));
+        textures.addProperty("bottom", textureBase + stripExtension(def.getBottomTexture()));
+        textures.addProperty("side", textureBase + stripExtension(def.getSideTexture()));
         model.add("textures", textures);
         return model;
     }
@@ -94,7 +98,7 @@ public class ResourcePackBuilder {
         return fileName;
     }
 
-    private void copyTextures(TNTDefinition def, Path destBase) throws IOException {
+    private void copyTextures(BlockDefinition def, Path destBase) throws IOException {
         String id = def.getId();
         Path blocksDir = plugin.getDataFolder().toPath().resolve("blocks").resolve(id).resolve("textures");
         Path destDir = destBase.resolve(id);

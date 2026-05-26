@@ -1,9 +1,9 @@
 package dev.rono.igniscore;
 
 import dev.rono.igniscore.api.IgnisCoreAPI;
-import dev.rono.igniscore.listener.TNTListener;
-import dev.rono.igniscore.manager.TNTManager;
-import dev.rono.igniscore.model.TNTDefinition;
+import dev.rono.igniscore.listener.BlockListener;
+import dev.rono.igniscore.manager.BlockManager;
+import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.resourcepack.ResourcePackBuilder;
 import dev.rono.igniscore.resourcepack.ResourcePackServer;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 public final class Main extends org.bukkit.plugin.java.JavaPlugin {
 
-    private TNTManager tntManager;
+    private BlockManager blockManager;
     private ResourcePackBuilder packBuilder;
     private ResourcePackServer packServer;
 
@@ -34,20 +34,20 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         
-        tntManager = new TNTManager(this);
+        blockManager = new BlockManager(this);
         packBuilder = new ResourcePackBuilder(this);
         packServer = new ResourcePackServer(this);
         
-        IgnisCoreAPI.init(tntManager);
+        IgnisCoreAPI.init(blockManager);
         
-        getServer().getPluginManager().registerEvents(new TNTListener(this, tntManager), this);
+        getServer().getPluginManager().registerEvents(new BlockListener(this, blockManager), this);
         
         Objects.requireNonNull(getCommand("ignis")).setExecutor(new IgnisCommand());
         Objects.requireNonNull(getCommand("ignis")).setTabCompleter(new IgnisCommand());
 
         // Build resource pack
         try {
-            packBuilder.buildPack(tntManager.getTntTypes());
+            packBuilder.buildPack(blockManager.getBlockTypes());
             getLogger().info("Resource pack generated successfully!");
             
             // Start server
@@ -61,8 +61,8 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (tntManager != null) {
-            tntManager.cleanup();
+        if (blockManager != null) {
+            blockManager.cleanup();
         }
         if (packServer != null) {
             packServer.stop();
@@ -91,13 +91,13 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
                     return true;
                 }
                 String typeId = args[2];
-                if (!tntManager.getTntTypes().containsKey(typeId)) {
-                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Unknown TNT type."));
+                if (!blockManager.getBlockTypes().containsKey(typeId)) {
+                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Unknown block type."));
                     return true;
                 }
                 
-                target.getInventory().addItem(createTNTItem(typeId));
-                sender.sendMessage(MiniMessage.miniMessage().deserialize("<green>Gave " + typeId + " TNT to " + target.getName()));
+                target.getInventory().addItem(createBlockItem(typeId));
+                sender.sendMessage(MiniMessage.miniMessage().deserialize("<green>Gave " + typeId + " block to " + target.getName()));
                 return true;
             }
 
@@ -135,7 +135,7 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
                     completions.add(player.getName());
                 }
             } else if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
-                completions.addAll(tntManager.getTntTypes().keySet());
+                completions.addAll(blockManager.getBlockTypes().keySet());
             }
 
             String lastArg = args[args.length - 1].toLowerCase();
@@ -145,14 +145,14 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
-    public ItemStack createTNTItem(String typeId) {
-        TNTDefinition type = tntManager.getTntTypes().get(typeId);
+    public ItemStack createBlockItem(String typeId) {
+        BlockDefinition type = blockManager.getBlockTypes().get(typeId);
         ItemStack item = new ItemStack(Material.TNT);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.displayName(type.getTitle());
             meta.lore(type.getDescription());
-            meta.getPersistentDataContainer().set(new NamespacedKey(this, "tnt_type"), PersistentDataType.STRING, typeId);
+            meta.getPersistentDataContainer().set(new NamespacedKey(this, "block_type"), PersistentDataType.STRING, typeId);
             meta.setCustomModelData(type.getCustomModelData());
             item.setItemMeta(meta);
         }

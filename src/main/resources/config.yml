@@ -1,4 +1,4 @@
 ﻿resource-pack:
-  host: "0.0.0.0"
+  host: "localhost"
   port: 8080
   public-url: "http://localhost:8080/resourcepack.zip"

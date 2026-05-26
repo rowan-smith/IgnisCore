@@ -1,7 +1,7 @@
 package dev.rono.igniscore.manager;
 
 import dev.rono.igniscore.Main;
-import dev.rono.igniscore.model.TNTDefinition;
+import dev.rono.igniscore.model.BlockDefinition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,15 +14,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TNTDefinitionLoader {
+public class BlockDefinitionLoader {
     private final Main plugin;
 
-    public TNTDefinitionLoader(Main plugin) {
+    public BlockDefinitionLoader(Main plugin) {
         this.plugin = plugin;
     }
 
-    public Map<String, TNTDefinition> loadDefinitions() {
-        Map<String, TNTDefinition> definitions = new HashMap<>();
+    public Map<String, BlockDefinition> loadDefinitions() {
+        Map<String, BlockDefinition> definitions = new HashMap<>();
         File blocksFolder = new File(plugin.getDataFolder(), "blocks");
         
         if (!blocksFolder.exists()) {
@@ -34,9 +34,10 @@ public class TNTDefinitionLoader {
 
         File[] folders = blocksFolder.listFiles(File::isDirectory);
         if (folders != null) {
+            java.util.Arrays.sort(folders, java.util.Comparator.comparing(File::getName));
             int modelData = 1;
             for (File folder : folders) {
-                TNTDefinition def = loadFromFolder(folder, modelData++);
+                BlockDefinition def = loadFromFolder(folder, modelData++);
                 if (def != null) {
                     definitions.put(def.getId(), def);
                 }
@@ -74,7 +75,7 @@ public class TNTDefinitionLoader {
         }
     }
 
-    private TNTDefinition loadFromFolder(File folder, int modelData) {
+    private BlockDefinition loadFromFolder(File folder, int modelData) {
         File configFile = new File(folder, "config.yml");
         if (!configFile.exists()) return null;
 
@@ -90,28 +91,53 @@ public class TNTDefinitionLoader {
             description.add(LegacyComponentSerializer.legacyAmpersand().deserialize(s));
         }
         
+        boolean placeable = config.getBoolean("block.placeable", true);
+        boolean breakable = config.getBoolean("block.breakable", true);
+
         String top = config.getString("textures.top", id + "-top.png");
         String side = config.getString("textures.side", id + "-side.png");
         String bottom = config.getString("textures.bottom", id + "-bottom.png");
         
-        String explosionStrategy = config.getString("explosion.strategy", "default");
-        int fuse = config.getInt("explosion.fuse", 80);
-        double radius = config.getDouble("explosion.radius", 4.0);
-        double power = config.getDouble("explosion.power", 4.0);
-        double multiplier = config.getDouble("explosion.multiplier", 1.0);
+        String strategy = config.getString("behavior.strategy", "default");
+        int fuse = config.getInt("behavior.fuse", 80);
+        double radius = config.getDouble("behavior.radius", 4.0);
         
-        boolean fire = config.getBoolean("explosion.effects.fire", false);
-        boolean blockDamage = config.getBoolean("explosion.effects.destroy_blocks", true);
-        boolean screenShake = config.getBoolean("explosion.effects.screen_shake", false);
+        Map<String, Object> customData = new HashMap<>();
+        if (config.isConfigurationSection("behavior.custom_data")) {
+            for (String key : config.getConfigurationSection("behavior.custom_data").getKeys(false)) {
+                customData.put(key, config.get("behavior.custom_data." + key));
+            }
+        }
         
-        String entityPayloadType = config.getString("explosion.entity_payload.type");
-        int entityPayloadCount = config.getInt("explosion.entity_payload.count", 0);
-        String entityPayloadBehavior = config.getString("explosion.entity_payload.behavior", "normal");
-        boolean entityPayloadTargetPlayers = config.getBoolean("explosion.entity_payload.target_players", false);
+        // Backward compatibility for old configs if any
+        if (config.isConfigurationSection("explosion")) {
+            if (strategy.equals("default")) strategy = config.getString("explosion.strategy", "default");
+            if (fuse == 80) fuse = config.getInt("explosion.fuse", 80);
+            if (radius == 4.0) radius = config.getDouble("explosion.radius", 4.0);
+            
+            // Collect other explosion data into customData
+            customData.put("power", config.getDouble("explosion.power", 4.0));
+            customData.put("multiplier", config.getDouble("explosion.multiplier", 1.0));
+            customData.put("fire", config.getBoolean("explosion.effects.fire", false));
+            customData.put("blockDamage", config.getBoolean("explosion.effects.destroy_blocks", true));
+            customData.put("screenShake", config.getBoolean("explosion.effects.screen_shake", false));
+            
+            if (config.isConfigurationSection("explosion.entity_payload")) {
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("type", config.getString("explosion.entity_payload.type"));
+                payload.put("count", config.getInt("explosion.entity_payload.count", 0));
+                payload.put("behavior", config.getString("explosion.entity_payload.behavior", "normal"));
+                payload.put("targetPlayers", config.getBoolean("explosion.entity_payload.target_players", false));
+                customData.put("entityPayload", payload);
+            }
+        }
 
-        return new TNTDefinition(id, title, description, fuse, power, radius, multiplier, 
-                                 fire, blockDamage, screenShake, top, side, bottom, 
-                                 explosionStrategy, modelData, entityPayloadType, entityPayloadCount,
-                                 entityPayloadBehavior, entityPayloadTargetPlayers);
+        boolean pulse = config.getBoolean("block_display.animations.pulse", true);
+        boolean rotate = config.getBoolean("block_display.animations.rotate", true);
+        boolean floatBob = config.getBoolean("block_display.animations.float", true);
+
+        return new BlockDefinition(id, title, description, placeable, breakable,
+                                 top, side, bottom, strategy, fuse, radius, 
+                                 customData, modelData, rotate, floatBob, pulse);
     }
 }

@@ -1,7 +1,8 @@
 package dev.rono.igniscore.renderer;
 
 import dev.rono.igniscore.Main;
-import dev.rono.igniscore.model.TNTInstance;
+import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.model.BlockInstance;
 import org.bukkit.Material;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +18,8 @@ public class BlockDisplayRenderer {
         this.plugin = plugin;
     }
 
-    public void spawnDisplay(TNTInstance instance) {
+    public void spawnDisplay(BlockInstance instance) {
+        plugin.getLogger().info("[DEBUG] Spawning animated display for " + instance.getType().getId());
         instance.getLocation().getWorld().spawn(instance.getLocation().clone().add(0.5, 0, 0.5), ItemDisplay.class, display -> {
             ItemStack item = new ItemStack(Material.TNT);
             ItemMeta meta = item.getItemMeta();
@@ -26,12 +28,14 @@ public class BlockDisplayRenderer {
                 item.setItemMeta(meta);
             }
             display.setItemStack(item);
+            display.setBrightness(new org.bukkit.entity.Display.Brightness(15, 15));
+            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
             
             // Initial transformation
             display.setTransformation(new Transformation(
                 new Vector3f(0, 0.5f, 0),
                 new Quaternionf(),
-                new Vector3f(1, 1, 1),
+                new Vector3f(1.01f, 1.01f, 1.01f),
                 new Quaternionf()
             ));
             
@@ -39,25 +43,46 @@ public class BlockDisplayRenderer {
         });
     }
 
-    public void updateAnimation(TNTInstance instance) {
+    public ItemDisplay spawnStaticDisplay(org.bukkit.Location location, BlockDefinition type) {
+        plugin.getLogger().info("[DEBUG] Spawning static display for " + type.getId() + " at " + location.toVector());
+        return location.getWorld().spawn(location.clone().add(0.5, 0, 0.5), ItemDisplay.class, display -> {
+            ItemStack item = new ItemStack(Material.TNT);
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                meta.setCustomModelData(type.getCustomModelData());
+                item.setItemMeta(meta);
+            }
+            display.setItemStack(item);
+            display.setBrightness(new org.bukkit.entity.Display.Brightness(15, 15));
+            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
+            display.setTransformation(new org.bukkit.util.Transformation(
+                new org.joml.Vector3f(0, 0.5f, 0),
+                new org.joml.Quaternionf(),
+                new org.joml.Vector3f(1.01f, 1.01f, 1.01f),
+                new org.joml.Quaternionf()
+            ));
+        });
+    }
+
+    public void updateAnimation(BlockInstance instance) {
         if (instance.getDisplayEntity() == null) return;
         ItemDisplay display = (ItemDisplay) instance.getDisplayEntity();
+        BlockDefinition def = instance.getType();
         
         long time = System.currentTimeMillis();
-        float bob = (float) Math.sin(time / 200.0) * 0.1f;
-        float rotation = (time % 3600L) / 3600.0f * (float) Math.PI * 2;
+        float bob = def.isFloatBob() ? (float) Math.sin(time / 200.0) * 0.1f : 0;
+        float rotation = def.isRotate() ? (time % 3600L) / 3600.0f * (float) Math.PI * 2 : 0;
         
-        // Pulse scaling before explosion
+        // Pulse scaling
         float scale = 1.0f;
-        if (instance.getTicksLeft() < 20) {
+        if (def.isPulse() && instance.getTicksLeft() < 20) {
             scale = 1.0f + (float) Math.sin(time / 50.0) * 0.2f;
         }
 
-        Transformation current = display.getTransformation();
         display.setTransformation(new Transformation(
             new Vector3f(0, 0.5f + bob, 0),
             new Quaternionf().rotateY(rotation),
-            new Vector3f(scale, scale, scale),
+            new Vector3f(1.01f * scale, 1.01f * scale, 1.01f * scale),
             new Quaternionf()
         ));
         
@@ -66,7 +91,7 @@ public class BlockDisplayRenderer {
         display.setInterpolationDelay(0);
     }
 
-    public void removeDisplay(TNTInstance instance) {
+    public void removeDisplay(BlockInstance instance) {
         if (instance.getDisplayEntity() != null) {
             instance.getDisplayEntity().remove();
         }

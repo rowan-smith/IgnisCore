@@ -6,23 +6,32 @@ display:
     - "&4Complete"
     - "&4Destruction"
 
+block:
+  placeable: true
+  breakable: true
+
 textures:
   top: nuke_top.png
   side: nuke_side.png
   bottom: nuke_bottom.png
 
+model:
+  type: "block_display"
+  mode: "auto"
+
 block_display:
-  model: "auto"
+  animations:
+    rotate: true
+    float: true
+    pulse: true
 
-explosion:
+behavior:
   strategy: nuclear
-
   fuse: 80
   radius: 15.0
-  power: 10.0
-  multiplier: 2.0
-
-  effects:
+  custom_data:
+    power: 10.0
+    multiplier: 2.0
     fire: true
-    destroy_blocks: true
-    screen_shake: true
+    blockDamage: true
+    screenShake: true
