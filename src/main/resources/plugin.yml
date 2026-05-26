@@ -1,0 +1,5 @@
+name: IgnisCore
+version: '${version}'
+
+main: dev.rono.igniscore.Main
+api-version: '26.1'
