@@ -7,6 +7,8 @@ import dev.rono.igniscore.model.RuntimeBlockInstance;
 import dev.rono.igniscore.renderer.BlockDisplayRenderer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,6 +40,24 @@ public class BlockManager {
         if (type != null) {
             org.bukkit.entity.Display display = renderer.spawnStaticDisplay(location, type);
             blockVisuals.put(location, display);
+            playPlacementEffects(location, type);
+        }
+    }
+
+    private void playPlacementEffects(Location location, BlockDefinition type) {
+        Location center = location.toCenterLocation();
+        String strategy = type.getStrategy().toLowerCase(Locale.ROOT);
+        if ("nuclear".equals(strategy)) {
+            center.getWorld().playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 1.6f, 0.7f);
+            center.getWorld().spawnParticle(Particle.FLAME, center, 16, 0.35, 0.35, 0.35, 0.02);
+            center.getWorld().spawnParticle(Particle.SMOKE, center, 10, 0.3, 0.3, 0.3, 0.01);
+            return;
+        }
+
+        if ("entity".equals(strategy) && "spider-storm".equalsIgnoreCase(type.getId())) {
+            center.getWorld().playSound(center, Sound.ENTITY_SPIDER_AMBIENT, 1.2f, 0.8f);
+            center.getWorld().spawnParticle(Particle.SPORE_BLOSSOM_AIR, center, 18, 0.45, 0.45, 0.45, 0.01);
+            center.getWorld().spawnParticle(Particle.SMOKE, center, 8, 0.3, 0.3, 0.3, 0.01);
         }
     }
 

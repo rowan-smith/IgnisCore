@@ -32,7 +32,13 @@ public class BlockDisplayRenderer {
         plugin.debug("Spawning static display for " + type.getId() + " at " + location.toVector());
         return location.getWorld().spawn(location.clone().add(0.5, 0, 0.5), ItemDisplay.class, display -> {
             configureDisplay(display, type);
-            display.setTransformation(createTransformation(type, 0, 1.0f));
+            display.setTransformation(createTransformation(type, -0.35f, 0.2f));
+            display.setInterpolationDuration(6);
+            display.setInterpolationDelay(0);
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                if (!display.isValid()) return;
+                display.setTransformation(createTransformation(type, 0, 1.0f));
+            }, 1L);
         });
     }
 

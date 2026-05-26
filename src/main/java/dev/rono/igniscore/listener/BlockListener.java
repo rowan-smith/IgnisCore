@@ -111,6 +111,7 @@ public class BlockListener implements Listener {
             
             targetBlock.setType(CUSTOM_BLOCK_BACKING_MATERIAL);
             manager.registerPlacedBlock(targetBlock.getLocation(), typeId);
+            event.getPlayer().swingMainHand();
             manager.getPlugin().debug("Successfully placed " + typeId + " at " + targetBlock.getLocation().toVector());
             
             if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {

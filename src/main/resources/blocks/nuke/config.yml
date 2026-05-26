@@ -98,11 +98,11 @@ interactions:
 
 behavior:
   strategy: nuclear
-  fuse: 80
-  radius: 15.0
+  fuse: 160
+  radius: 30.0
   custom_data:
-    power: 10.0
-    multiplier: 2.0
+    power: 30.0
+    multiplier: 5.0
     fire: true
     blockDamage: true
     screenShake: true
