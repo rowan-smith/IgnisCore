@@ -68,7 +68,7 @@ public class ResourcePackBuilder {
         JsonObject texturesJson = new JsonObject();
         String textureBase = "igniscore:block/" + def.getId();
         
-        // Use deterministic texture names (top.png, side.png, bottom.png) inside the pack
+        // Use deterministic texture names (phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-top.png, phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png, phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png) inside the pack
         texturesJson.addProperty("particle", textureBase + "/side");
         texturesJson.addProperty("top", textureBase + "/top");
         texturesJson.addProperty("bottom", textureBase + "/bottom");

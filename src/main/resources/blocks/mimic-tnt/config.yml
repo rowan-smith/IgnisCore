@@ -1,0 +1,25 @@
+﻿# Mimic TNT
+#
+# A deceptive explosive that hides its true detonation point.
+#
+# After priming, it spawns multiple fake TNT entities in the
+# surrounding area. Only one is real — the rest detonate harmlessly.
+# The real TNT may explode unpredictably, creating tension and
+# misdirection for nearby players.
+
+id: mimic-tnt
+
+display:
+  title: "Mimic TNT"
+  description:
+    - "&4Complete"
+    - "&4Destruction"
+
+textures:
+  top: mimic-tnt-top.png
+  side: mimic-tnt-side.png
+  bottom: mimic-tnt-bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"

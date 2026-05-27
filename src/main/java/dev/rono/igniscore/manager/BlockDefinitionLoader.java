@@ -51,9 +51,9 @@ public class BlockDefinitionLoader {
     private void saveDefaultBlock(String id, boolean useUnderscore) {
         String separator = useUnderscore ? "_" : "-";
         saveFile("blocks/" + id + "/config.yml");
-        saveFile("blocks/" + id + "/textures/" + id + separator + "top.png");
-        saveFile("blocks/" + id + "/textures/" + id + separator + "side.png");
-        saveFile("blocks/" + id + "/textures/" + id + separator + "bottom.png");
+        saveFile("blocks/" + id + "/textures/" + id + separator + "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-top.png");
+        saveFile("blocks/" + id + "/textures/" + id + separator + "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png");
+        saveFile("blocks/" + id + "/textures/" + id + separator + "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png");
     }
 
     private void saveFile(String resourcePath) {
@@ -120,9 +120,9 @@ public class BlockDefinitionLoader {
             breakSettings.putAll(sectionToMap(breakSection));
         }
 
-        String top = config.getString("textures.top", id + "-top.png");
-        String side = config.getString("textures.side", id + "-side.png");
-        String bottom = config.getString("textures.bottom", id + "-bottom.png");
+        String top = config.getString("textures.top", id + "-phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-top.png");
+        String side = config.getString("textures.side", id + "-phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png");
+        String bottom = config.getString("textures.bottom", id + "-phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png");
         
         String strategy = config.getString("behavior.strategy", "default");
         int fuse = config.getInt("behavior.fuse", 80);

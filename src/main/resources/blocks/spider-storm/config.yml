@@ -48,9 +48,9 @@ block:
           speed: 0.01
 
 textures:
-  top: spider-storm-top.png
-  side: spider-storm-side.png
-  bottom: spider-storm-bottom.png
+  top: spider-storm-phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-top.png
+  side: spider-storm-phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png
+  bottom: spider-storm-phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png
 
 model:
   type: "block_display"

@@ -20,11 +20,25 @@ public class IgnisCoreAPI {
         application = instance;
     }
 
-    public static BlockManager getBlockManager() { return application.getBlockManager(); }
-    public static NBTService getNbtService() { return application.getNbtService(); }
-    public static ProtocolService getProtocolService() { return application.getProtocolService(); }
-    public static RuntimeBlockService getRuntimeBlockService() { return application.getRuntimeBlockService(); }
-    public static VisualEffectService getVisualEffectService() { return application.getVisualEffectService(); }
+    public static BlockManager getBlockManager() {
+        return application.getBlockManager();
+    }
+
+    public static NBTService getNbtService() {
+        return application.getNbtService();
+    }
+
+    public static ProtocolService getProtocolService() {
+        return application.getProtocolService();
+    }
+
+    public static RuntimeBlockService getRuntimeBlockService() {
+        return application.getRuntimeBlockService();
+    }
+
+    public static VisualEffectService getVisualEffectService() {
+        return application.getVisualEffectService();
+    }
 
     public static RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context) {
         return application.getBlockManager().triggerBlock(location, typeId, context);
