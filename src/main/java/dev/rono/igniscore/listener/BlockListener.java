@@ -10,6 +10,8 @@ import dev.rono.igniscore.service.CustomBlockIgnitionService;
 import dev.rono.igniscore.service.CustomBlockPlacementService;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -101,6 +103,11 @@ public class BlockListener implements Listener {
         event.getBlock().setType(Material.AIR);
         blockManager.unregisterPlacedBlock(event.getBlock().getLocation());
         blockManager.triggerBlock(event.getBlock().getLocation(), typeId, event);
+
+        Entity primingEntity = event.getPrimingEntity();
+        if (primingEntity instanceof Projectile) {
+            primingEntity.remove();
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -112,6 +119,7 @@ public class BlockListener implements Listener {
         if (definition == null) return;
 
         ignitionService.ignite(event.getHitBlock(), definition, null, null);
+        event.getEntity().remove();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -131,6 +139,11 @@ public class BlockListener implements Listener {
         if (definition == null) return;
 
         ignitionService.ignite(event.getBlock(), definition, null, null);
+
+        Entity igniter = event.getIgnitingEntity();
+        if (igniter instanceof Projectile) {
+            igniter.remove();
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
