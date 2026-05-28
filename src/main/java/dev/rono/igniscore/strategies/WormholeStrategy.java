@@ -70,7 +70,13 @@ public class WormholeStrategy extends BaseBlockBehaviorStrategy {
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         Location loc = instance.getLocation().toCenterLocation();
-        loc.getWorld().createExplosion(loc, 10.0f, true, true);
+        BlockDefinition def = instance.getDefinition();
+
+        float power = (float) getCustomDouble(def, "power", 10.0);
+        boolean fire = getCustomBoolean(def, "fire", false);
+        boolean blockDamage = getCustomBoolean(def, "blockDamage", true);
+
+        loc.getWorld().createExplosion(loc, power, fire, blockDamage);
         loc.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, loc, 5, 2, 2, 2, 0);
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 0.5f);
     }
