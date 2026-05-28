@@ -32,3 +32,6 @@ behavior:
     power: 4.0
     fire: false
     blockDamage: true
+    mimicCount: 8
+    mimicHorizontalPower: 1.0
+    mimicVerticalPower: 0.5

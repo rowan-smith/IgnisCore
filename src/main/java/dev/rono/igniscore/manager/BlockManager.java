@@ -33,7 +33,9 @@ public class BlockManager {
 
     public void loadConfig() {
         blockTypes.clear();
-        blockTypes.putAll(loader.loadDefinitions());
+        plugin.reloadConfig();
+        List<String> registeredIds = plugin.getConfig().getStringList("blocks");
+        blockTypes.putAll(loader.loadDefinitions(registeredIds));
     }
 
     public void registerPlacedBlock(Location location, String typeId) {

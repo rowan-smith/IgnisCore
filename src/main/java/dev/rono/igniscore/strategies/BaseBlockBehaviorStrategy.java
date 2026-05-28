@@ -32,6 +32,12 @@ public abstract class BaseBlockBehaviorStrategy implements BlockBehaviorStrategy
         return defaultValue;
     }
 
+    protected int getCustomInt(BlockDefinition def, String key, int defaultValue) {
+        Object val = def.getCustomData().get(key);
+        if (val instanceof Number n) return n.intValue();
+        return defaultValue;
+    }
+
     protected boolean getCustomBoolean(BlockDefinition def, String key, boolean defaultValue) {
         Object val = def.getCustomData().get(key);
         if (val instanceof Boolean b) return b;

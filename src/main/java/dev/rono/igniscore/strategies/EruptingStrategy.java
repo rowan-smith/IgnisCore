@@ -11,11 +11,23 @@ import org.bukkit.util.Vector;
 public class EruptingStrategy extends BaseBlockBehaviorStrategy {
     @Override
     public void onTick(RuntimeBlockInstance instance) {
-        if (instance.getTicksLeft() % 15 == 0 && instance.getTicksLeft() < instance.getDefinition().getFuse() - 10) {
+        BlockDefinition def = instance.getDefinition();
+        int interval = getCustomInt(def, "eruptionInterval", 5);
+        
+        if (instance.getTicksLeft() % interval == 0 && instance.getTicksLeft() < def.getFuse() - 10) {
             Location loc = instance.getLocation().toCenterLocation();
             TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
             tnt.setFuseTicks(40);
-            tnt.setVelocity(new Vector(Math.random() - 0.5, 0.8, Math.random() - 0.5).multiply(0.6));
+            
+            double horizontalPower = getCustomDouble(def, "eruptionHorizontalPower", 0.4);
+            double verticalPower = getCustomDouble(def, "eruptionVerticalPower", 1.2);
+            
+            tnt.setVelocity(new Vector(
+                    (Math.random() - 0.5) * horizontalPower,
+                    verticalPower,
+                    (Math.random() - 0.5) * horizontalPower
+            ));
+            
             loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 0.5f, 1.5f);
             loc.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, loc, 1);
         }

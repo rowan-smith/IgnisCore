@@ -32,3 +32,5 @@ behavior:
     power: 4.0
     fire: false
     blockDamage: true
+    tunnelLength: 16
+    tunnelGap: 2.0

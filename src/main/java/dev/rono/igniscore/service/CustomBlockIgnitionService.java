@@ -33,7 +33,9 @@ public class CustomBlockIgnitionService {
     }
 
     public void ignite(Block block, BlockDefinition definition, Player player, ItemStack ignitionItem) {
-        breakService.cancel(player.getUniqueId());
+        if (player != null) {
+            breakService.cancel(player.getUniqueId());
+        }
 
         Location location = block.getLocation();
         Location center = location.toCenterLocation();
@@ -44,7 +46,9 @@ public class CustomBlockIgnitionService {
 
         blockManager.unregisterPlacedBlock(location);
         block.setType(Material.AIR);
-        damageIgnitionItem(player, ignitionItem);
+        if (player != null && ignitionItem != null) {
+            damageIgnitionItem(player, ignitionItem);
+        }
         blockManager.triggerBlock(location, definition.getId(), player);
     }
 

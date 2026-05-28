@@ -1,9 +1,13 @@
 package dev.rono.igniscore.strategies;
 
+import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.util.Vector;
 
 public class WormholeStrategy extends BaseBlockBehaviorStrategy {
@@ -11,7 +15,18 @@ public class WormholeStrategy extends BaseBlockBehaviorStrategy {
     public void onTick(RuntimeBlockInstance instance) {
         Location loc = instance.getLocation().toCenterLocation();
         int ticksLeft = instance.getTicksLeft();
-        double radius = 8.0 + (instance.getDefinition().getFuse() - ticksLeft) * 0.1;
+        BlockDefinition def = instance.getDefinition();
+
+        // Block ripping logic
+        int ripRadius = getCustomInt(def, "wormholeRipRadius", 3);
+        int ripStartTicks = getCustomInt(def, "wormholeRipStartTicks", 60);
+        double ripChance = getCustomDouble(def, "wormholeRipChance", 0.02);
+
+        if (ticksLeft < ripStartTicks) {
+            ripBlocks(loc, ripRadius, ripChance);
+        }
+
+        double radius = 8.0 + (def.getFuse() - ticksLeft) * 0.1;
 
         loc.getWorld().getNearbyEntities(loc, radius, radius, radius).forEach(entity -> {
             if (entity.getUniqueId().equals(instance.getDisplayEntity() != null ? instance.getDisplayEntity().getUniqueId() : null)) return;
@@ -26,7 +41,29 @@ public class WormholeStrategy extends BaseBlockBehaviorStrategy {
 
         loc.getWorld().spawnParticle(Particle.PORTAL, loc, 15, 0.3, 0.3, 0.3, 0.2);
         if (ticksLeft % 5 == 0) {
-            loc.getWorld().playSound(loc, Sound.BLOCK_BEACON_AMBIENT, 1.0f, 0.5f + (float) (instance.getDefinition().getFuse() - ticksLeft) / 80.0f);
+            loc.getWorld().playSound(loc, Sound.BLOCK_BEACON_AMBIENT, 1.0f, 0.5f + (float) (def.getFuse() - ticksLeft) / 80.0f);
+        }
+    }
+
+    private void ripBlocks(Location center, int radius, double chance) {
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    if (x * x + y * y + z * z > radius * radius) continue;
+
+                    Location l = center.clone().add(x, y, z);
+                    Block b = l.getBlock();
+
+                    if (b.getType().isAir() || b.getType() == Material.BARRIER) continue;
+                    if (b.getType().getHardness() < 0) continue; // Bedrock and other indestructible blocks
+
+                    if (Math.random() < chance) {
+                        FallingBlock fb = b.getWorld().spawnFallingBlock(l.clone().add(0.5, 0, 0.5), b.getBlockData());
+                        fb.setDropItem(false);
+                        b.setType(Material.AIR);
+                    }
+                }
+            }
         }
     }
 

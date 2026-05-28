@@ -18,17 +18,20 @@ public class TunnelingStrategy extends BaseBlockBehaviorStrategy {
             direction = new Vector(0, 0, 1);
         }
         direction.setY(0).normalize();
+        
+        int tunnelLength = getCustomInt(instance.getDefinition(), "tunnelLength", 16);
+        double tunnelGap = getCustomDouble(instance.getDefinition(), "tunnelGap", 2.0);
 
         new BukkitRunnable() {
             int count = 0;
             final Location current = loc.clone();
             @Override
             public void run() {
-                if (count++ >= 8) {
+                if (count++ >= tunnelLength) {
                     cancel();
                     return;
                 }
-                current.add(direction.clone().multiply(2.0));
+                current.add(direction.clone().multiply(tunnelGap));
                 current.getWorld().createExplosion(current, 4.0f, false, true);
                 current.getWorld().spawnParticle(Particle.SMOKE, current, 20, 0.5, 0.5, 0.5, 0.05);
             }

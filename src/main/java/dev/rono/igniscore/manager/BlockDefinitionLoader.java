@@ -7,12 +7,12 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class BlockDefinitionLoader {
     private final Main plugin;
@@ -21,85 +21,60 @@ public class BlockDefinitionLoader {
         this.plugin = plugin;
     }
 
-    public Map<String, BlockDefinition> loadDefinitions() {
-        Map<String, BlockDefinition> definitions = new HashMap<>();
+    public Map<String, BlockDefinition> loadDefinitions(List<String> registeredIds) {
+        Map<String, BlockDefinition> definitions = new LinkedHashMap<>();
+        int modelData = 10001;
+
         File blocksFolder = new File(plugin.getDataFolder(), "blocks");
-        
         if (!blocksFolder.exists()) {
-            if (blocksFolder.mkdirs()) {
-                // Copy default blocks from resources if they don't exist
-                saveDefaultBlock("nuke", true);
-                saveDefaultBlock("spider-storm", false);
+            blocksFolder.mkdirs();
+        }
+
+        for (String id : registeredIds) {
+            BlockDefinition def = null;
+
+            // 1. Search internal
+            def = loadFromResource(id, modelData);
+
+            // 2. Search external if not found internal
+            if (def == null) {
+                File folder = new File(blocksFolder, id);
+                if (folder.exists() && folder.isDirectory()) {
+                    def = loadFromFolder(folder, modelData);
+                }
+            }
+
+            if (def != null) {
+                definitions.put(def.getId(), def);
+                modelData++;
+            } else {
+                plugin.getLogger().severe("CRITICAL: Block ID '" + id + "' is registered in config.yml but could not be found internally or in the blocks folder!");
             }
         }
 
-        File[] folders = blocksFolder.listFiles(File::isDirectory);
-        if (folders != null) {
-            java.util.Arrays.sort(folders, java.util.Comparator.comparing(File::getName));
-            int modelData = 10001;
-            for (File folder : folders) {
-                BlockDefinition def = loadFromFolder(folder, modelData++);
-                if (def != null) {
-                    definitions.put(def.getId(), def);
-                }
-            }
-        }
-        
         return definitions;
     }
 
-    private void saveDefaultBlock(String id, boolean useUnderscore) {
-        String separator = useUnderscore ? "_" : "-";
-        saveFile("blocks/" + id + "/config.yml");
-        saveFile("blocks/" + id + "/textures/" + id + separator + "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-top.png");
-        saveFile("blocks/" + id + "/textures/" + id + separator + "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png");
-        saveFile("blocks/" + id + "/textures/" + id + separator + "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png");
-    }
-
-    private void saveFile(String resourcePath) {
-        File outFile = new File(plugin.getDataFolder(), resourcePath);
-        if (outFile.exists()) return;
-        
-        File parent = outFile.getParentFile();
-        if (parent != null && !parent.exists()) {
-            if (!parent.mkdirs()) {
-                plugin.getLogger().warning("Failed to create directory: " + parent.getAbsolutePath());
-            }
-        }
-        
-        try (InputStream in = plugin.getResource(resourcePath)) {
-            if (in == null) return;
-            try (FileOutputStream out = new FileOutputStream(outFile)) {
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = in.read(buffer)) > 0) {
-                    out.write(buffer, 0, len);
-                }
-            }
+    private BlockDefinition loadFromResource(String id, int modelData) {
+        try (InputStream in = plugin.getResource("blocks/" + id + "/config.yml")) {
+            if (in == null) return null;
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(in, StandardCharsets.UTF_8));
+            return loadFromConfig(config, id, modelData);
         } catch (Exception e) {
-            plugin.getLogger().warning("Could not save " + resourcePath + " to " + outFile.getName());
+            plugin.getLogger().warning("Failed to load internal block " + id + ": " + e.getMessage());
+            return null;
         }
-    }
-
-    private Map<String, Object> sectionToMap(org.bukkit.configuration.ConfigurationSection section) {
-        Map<String, Object> map = new HashMap<>();
-        for (String key : section.getKeys(false)) {
-            Object val = section.get(key);
-            if (val instanceof org.bukkit.configuration.ConfigurationSection subSection) {
-                map.put(key, sectionToMap(subSection));
-            } else {
-                map.put(key, val);
-            }
-        }
-        return map;
     }
 
     private BlockDefinition loadFromFolder(File folder, int modelData) {
         File configFile = new File(folder, "config.yml");
         if (!configFile.exists()) return null;
-
         YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-        String id = config.getString("id", folder.getName());
+        return loadFromConfig(config, folder.getName(), modelData);
+    }
+
+    private BlockDefinition loadFromConfig(YamlConfiguration config, String folderName, int modelData) {
+        String id = config.getString("id", folderName);
         
         String titleStr = config.getString("display.title", id);
         Component title = LegacyComponentSerializer.legacyAmpersand().deserialize(titleStr);
@@ -120,9 +95,9 @@ public class BlockDefinitionLoader {
             breakSettings.putAll(sectionToMap(breakSection));
         }
 
-        String top = config.getString("textures.top", id + "-phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-top.png");
-        String side = config.getString("textures.side", id + "-phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png");
-        String bottom = config.getString("textures.bottom", id + "-phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png");
+        String top = config.getString("textures.top", id + "-top.png");
+        String side = config.getString("textures.side", id + "-side.png");
+        String bottom = config.getString("textures.bottom", id + "-bottom.png");
         
         String strategy = config.getString("behavior.strategy", "default");
         int fuse = config.getInt("behavior.fuse", 80);
@@ -145,7 +120,6 @@ public class BlockDefinitionLoader {
             if (fuse == 80) fuse = config.getInt("explosion.fuse", 80);
             if (radius == 4.0) radius = config.getDouble("explosion.radius", 4.0);
             
-            // Collect other explosion data into customData
             customData.put("power", config.getDouble("explosion.power", 4.0));
             customData.put("multiplier", config.getDouble("explosion.multiplier", 1.0));
             customData.put("fire", config.getBoolean("explosion.effects.fire", false));
@@ -174,5 +148,18 @@ public class BlockDefinitionLoader {
         return new BlockDefinition(id, baseMaterial, renderMaterial, title, description, placeable, breakable,
                                  top, side, bottom, strategy, fuse, radius, 
                                  customData, breakSettings, interactionSettings, displaySettings, modelData, rotate, floatBob, pulse);
+    }
+
+    private Map<String, Object> sectionToMap(org.bukkit.configuration.ConfigurationSection section) {
+        Map<String, Object> map = new HashMap<>();
+        for (String key : section.getKeys(false)) {
+            Object val = section.get(key);
+            if (val instanceof org.bukkit.configuration.ConfigurationSection subSection) {
+                map.put(key, sectionToMap(subSection));
+            } else {
+                map.put(key, val);
+            }
+        }
+        return map;
     }
 }

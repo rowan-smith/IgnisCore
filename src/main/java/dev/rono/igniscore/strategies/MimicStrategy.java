@@ -10,15 +10,25 @@ import org.bukkit.util.Vector;
 public class MimicStrategy extends BaseBlockBehaviorStrategy {
     @Override
     public void onPlace(RuntimeBlockInstance instance) {
+        BlockDefinition def = instance.getDefinition();
         Location loc = instance.getLocation().toCenterLocation();
-        for (int i = 0; i < 4; i++) {
+        
+        int mimicCount = getCustomInt(def, "mimicCount", 4);
+        double horizontalPower = getCustomDouble(def, "mimicHorizontalPower", 0.5);
+        double verticalPower = getCustomDouble(def, "mimicVerticalPower", 0.2);
+
+        for (int i = 0; i < mimicCount; i++) {
             TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
             tnt.setFuseTicks(instance.getTicksLeft());
-            tnt.setVelocity(new Vector(Math.random() - 0.5, 0.4, Math.random() - 0.5).multiply(0.5));
+            tnt.setVelocity(new Vector(
+                    (Math.random() - 0.5) * horizontalPower,
+                    verticalPower,
+                    (Math.random() - 0.5) * horizontalPower
+            ));
             tnt.setYield(0);
         }
         // Randomize fuse for unpredictability
-        int fuse = instance.getDefinition().getFuse();
+        int fuse = def.getFuse();
         instance.setTicksLeft(fuse + (int) (Math.random() * 60 - 30));
     }
 

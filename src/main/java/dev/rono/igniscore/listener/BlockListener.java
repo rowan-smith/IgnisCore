@@ -13,12 +13,13 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageAbortEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public class BlockListener implements Listener {
     private final BlockManager blockManager;
@@ -100,6 +101,55 @@ public class BlockListener implements Listener {
         event.getBlock().setType(Material.AIR);
         blockManager.unregisterPlacedBlock(event.getBlock().getLocation());
         blockManager.triggerBlock(event.getBlock().getLocation(), typeId, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (event.getHitBlock() == null) return;
+        if (event.getEntity().getFireTicks() <= 0) return;
+
+        BlockDefinition definition = getPlacedDefinition(event.getHitBlock());
+        if (definition == null) return;
+
+        ignitionService.ignite(event.getHitBlock(), definition, null, null);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockPhysics(BlockPhysicsEvent event) {
+        Block block = event.getBlock();
+        if (block.getBlockPower() <= 0) return;
+
+        BlockDefinition definition = getPlacedDefinition(block);
+        if (definition == null) return;
+
+        ignitionService.ignite(block, definition, null, null);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockIgnite(BlockIgniteEvent event) {
+        BlockDefinition definition = getPlacedDefinition(event.getBlock());
+        if (definition == null) return;
+
+        ignitionService.ignite(event.getBlock(), definition, null, null);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        handleExplosion(event.blockList());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockExplode(BlockExplodeEvent event) {
+        handleExplosion(event.blockList());
+    }
+
+    private void handleExplosion(List<Block> blockList) {
+        for (Block block : blockList) {
+            BlockDefinition definition = getPlacedDefinition(block);
+            if (definition != null) {
+                ignitionService.ignite(block, definition, null, null);
+            }
+        }
     }
 
     private boolean handleCustomBlockInteraction(PlayerInteractEvent event) {

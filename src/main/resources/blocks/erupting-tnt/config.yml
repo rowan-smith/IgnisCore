@@ -32,3 +32,6 @@ behavior:
     power: 5.0
     fire: true
     blockDamage: true
+    eruptionInterval: 5
+    eruptionHorizontalPower: 0.4
+    eruptionVerticalPower: 1.2
