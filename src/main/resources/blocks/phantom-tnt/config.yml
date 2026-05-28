@@ -22,3 +22,12 @@ textures:
 model:
   type: "block_display"
   mode: "auto"
+
+behavior:
+  strategy: phantom
+  fuse: 80
+  radius: 4.0
+  custom_data:
+    power: 4.0
+    fire: false
+    blockDamage: true

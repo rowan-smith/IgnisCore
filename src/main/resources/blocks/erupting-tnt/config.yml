@@ -23,3 +23,12 @@ textures:
 model:
   type: "block_display"
   mode: "auto"
+
+behavior:
+  strategy: erupting
+  fuse: 100
+  radius: 5.0
+  custom_data:
+    power: 5.0
+    fire: true
+    blockDamage: true

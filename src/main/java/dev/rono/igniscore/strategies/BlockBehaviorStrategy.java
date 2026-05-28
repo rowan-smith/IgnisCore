@@ -1,4 +1,4 @@
-package dev.rono.igniscore.core;
+package dev.rono.igniscore.strategies;
 
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.entity.Player;
