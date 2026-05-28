@@ -26,11 +26,13 @@ model:
 
 behavior:
   strategy: wormhole
+
   fuse: 100
   radius: 12.0
+
   custom_data:
     power: 10.0
-    fire: true
+    fire: false
     blockDamage: true
     wormholeRipRadius: 4
     wormholeRipStartTicks: 60

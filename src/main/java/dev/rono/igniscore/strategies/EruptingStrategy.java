@@ -17,7 +17,8 @@ public class EruptingStrategy extends BaseBlockBehaviorStrategy {
         if (instance.getTicksLeft() % interval == 0 && instance.getTicksLeft() < def.getFuse() - 10) {
             Location loc = instance.getLocation().toCenterLocation();
             TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
-            tnt.setFuseTicks(40);
+            int eruptionFuse = getCustomInt(def, "eruptionFuse", 80);
+            tnt.setFuseTicks(eruptionFuse);
             
             double horizontalPower = getCustomDouble(def, "eruptionHorizontalPower", 0.4);
             double verticalPower = getCustomDouble(def, "eruptionVerticalPower", 1.2);
