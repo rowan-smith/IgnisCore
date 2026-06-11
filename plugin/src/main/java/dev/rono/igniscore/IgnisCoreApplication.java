@@ -101,7 +101,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
         this.extensionSupportService = extensionSupportService;
-        this.listeners = List.of(blockListener, itemListener, extensionSupportListener, resourcePackStatusListener);
+        this.listeners = List.of(itemListener, blockListener, extensionSupportListener, resourcePackStatusListener);
     }
 
     public void enable() {
