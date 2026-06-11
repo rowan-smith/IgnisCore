@@ -21,7 +21,4 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <finalName>nuclear-block</finalName>
-  </build>
 </project>

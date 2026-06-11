@@ -21,7 +21,4 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <finalName>erupting-block</finalName>
-  </build>
 </project>

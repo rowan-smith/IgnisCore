@@ -1,5 +1,5 @@
 name: IgnisCore
-version: '${version}'
+version: '${project.version}'
 author: Rono
 description: A custom block and item system for Minecraft
 

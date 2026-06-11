@@ -1,6 +1,7 @@
 package dev.rono.blocks.wormhole;
 
 import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
+import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -99,11 +100,8 @@ public class Strategy extends AbstractIgnisStrategy {
         Location loc = instance.getLocation().toCenterLocation();
         BlockDefinition def = instance.getDefinition();
 
-        float power = (float) getCustomDouble(def, "power", 10.0);
-        boolean fire = getCustomBoolean(def, "fire", false);
-        boolean blockDamage = getCustomBoolean(def, "blockDamage", true);
-
-        loc.getWorld().createExplosion(loc, power, fire, blockDamage);
+        float power = ExplosiveStrategySupport.resolvePower(def, 10.0);
+        ExplosiveStrategySupport.createExplosion(loc, def, 10.0, false);
         loc.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, loc, 5, 2, 2, 2, 0);
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 0.5f);
     }

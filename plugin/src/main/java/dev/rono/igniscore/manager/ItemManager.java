@@ -1,7 +1,7 @@
 package dev.rono.igniscore.manager;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.loader.LoadedItemExtension;
+import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.model.ItemDefinition;
 
 import java.util.Collections;
@@ -16,10 +16,10 @@ public class ItemManager {
     public ItemManager() {
     }
 
-    public void loadFromExtensions(List<LoadedItemExtension> extensions) {
+    public void loadFromExtensions(List<LoadedExtension<ItemDefinition>> extensions) {
         itemTypes.clear();
-        for (LoadedItemExtension extension : extensions) {
-            ItemDefinition definition = extension.getItemDefinition();
+        for (LoadedExtension<ItemDefinition> extension : extensions) {
+            ItemDefinition definition = extension.getDefinition();
             itemTypes.put(definition.getId(), definition);
         }
     }

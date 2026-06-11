@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BlockExtensionManifestTest {
+class ExtensionManifestTest {
     @Test
     void parsesStrategyManifestFromYaml() {
         String yaml = """
@@ -19,8 +19,9 @@ class BlockExtensionManifestTest {
                 strategy: dev.rono.blocks.nuclear.Strategy
                 """;
 
-        BlockExtensionManifest manifest = BlockExtensionManifest.fromStream(
-                new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)));
+        ExtensionManifest manifest = ExtensionManifest.fromStream(
+                new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
+                "block-extension.yml");
 
         assertEquals("nuclear-block", manifest.getId());
         assertEquals("Nuclear Block", manifest.getName());
@@ -36,8 +37,22 @@ class BlockExtensionManifestTest {
                 main: dev.rono.blocks.nuclear.BlockPlugin
                 """;
 
-        BlockExtensionManifest manifest = BlockExtensionManifest.fromStream(
-                new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)));
+        ExtensionManifest manifest = ExtensionManifest.fromStream(
+                new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
+                "block-extension.yml");
+
+        assertEquals("dev.rono.blocks.nuclear.Strategy", manifest.getStrategyClass());
+    }
+
+    @Test
+    void infersStrategyClassFromBlockExtensionId() {
+        String yaml = """
+                id: nuclear-block
+                """;
+
+        ExtensionManifest manifest = ExtensionManifest.fromStream(
+                new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
+                "block-extension.yml");
 
         assertEquals("dev.rono.blocks.nuclear.Strategy", manifest.getStrategyClass());
     }

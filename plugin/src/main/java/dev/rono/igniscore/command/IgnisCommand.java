@@ -6,11 +6,11 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.core.ExtensionBootstrap;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
-import dev.rono.igniscore.loader.LoadedBlockExtension;
-import dev.rono.igniscore.loader.LoadedItemExtension;
+import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.model.ItemDefinition;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.service.ItemFactory;
@@ -157,8 +157,8 @@ public class IgnisCommand implements PluginCommandHandler {
             return true;
         }
 
-        for (LoadedBlockExtension extension : blockExtensionLoader.getLoadedExtensions()) {
-            BlockDefinition definition = extension.getBlockDefinition();
+        for (LoadedExtension<BlockDefinition> extension : blockExtensionLoader.getLoadedExtensions()) {
+            BlockDefinition definition = extension.getDefinition();
             sender.sendMessage(plugin.message("<gray>- <white>" + extension.getManifest().getName()
                     + " <dark_gray>v" + extension.getManifest().getVersion()
                     + " -> block <white>" + definition.getId()
@@ -180,11 +180,11 @@ public class IgnisCommand implements PluginCommandHandler {
             return true;
         }
 
-        for (LoadedItemExtension extension : itemExtensionLoader.getLoadedExtensions()) {
+        for (LoadedExtension<ItemDefinition> extension : itemExtensionLoader.getLoadedExtensions()) {
             sender.sendMessage(plugin.message("<gray>- <white>" + extension.getManifest().getName()
                     + " <dark_gray>v" + extension.getManifest().getVersion()
-                    + " -> item <white>" + extension.getItemDefinition().getId()
-                    + " <dark_gray>(strategy: " + extension.getItemDefinition().getStrategy() + ")</dark_gray>"));
+                    + " -> item <white>" + extension.getDefinition().getId()
+                    + " <dark_gray>(strategy: " + extension.getDefinition().getStrategy() + ")</dark_gray>"));
         }
         return true;
     }

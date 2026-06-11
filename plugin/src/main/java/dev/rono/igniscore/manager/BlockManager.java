@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.loader.LoadedBlockExtension;
+import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import dev.rono.igniscore.renderer.BlockDisplayRenderer;
@@ -38,10 +38,10 @@ public class BlockManager {
         this.renderer = new BlockDisplayRenderer(plugin);
     }
 
-    public void loadFromExtensions(List<LoadedBlockExtension> extensions) {
+    public void loadFromExtensions(List<LoadedExtension<BlockDefinition>> extensions) {
         blockTypes.clear();
-        for (LoadedBlockExtension extension : extensions) {
-            BlockDefinition definition = extension.getBlockDefinition();
+        for (LoadedExtension<BlockDefinition> extension : extensions) {
+            BlockDefinition definition = extension.getDefinition();
             blockTypes.put(definition.getId(), definition);
         }
     }

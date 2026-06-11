@@ -21,7 +21,4 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <finalName>mimic-block</finalName>
-  </build>
 </project>

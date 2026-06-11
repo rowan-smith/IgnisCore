@@ -21,7 +21,4 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <finalName>tunneling-block</finalName>
-  </build>
 </project>

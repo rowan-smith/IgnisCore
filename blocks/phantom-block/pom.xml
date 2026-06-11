@@ -21,7 +21,4 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <finalName>phantom-block</finalName>
-  </build>
 </project>

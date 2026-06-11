@@ -21,7 +21,4 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <finalName>wormhole-block</finalName>
-  </build>
 </project>

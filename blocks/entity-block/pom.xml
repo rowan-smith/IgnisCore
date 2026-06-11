@@ -21,7 +21,4 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <finalName>entity-block</finalName>
-  </build>
 </project>

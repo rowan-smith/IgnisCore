@@ -1,5 +1,6 @@
 package dev.rono.igniscore.api.strategy;
 
+import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -9,6 +10,36 @@ import org.bukkit.World;
 
 public final class ExplosiveStrategySupport {
     private ExplosiveStrategySupport() {
+    }
+
+    public static float resolvePower(BlockDefinition definition, double defaultPower) {
+        double base = definition.getRadius() > 0 ? definition.getRadius() : customDouble(definition, "power", defaultPower);
+        return (float) (base * customDouble(definition, "multiplier", 1.0));
+    }
+
+    public static void createExplosion(org.bukkit.Location location, BlockDefinition definition, double defaultPower, boolean defaultFire) {
+        location.getWorld().createExplosion(
+                location,
+                resolvePower(definition, defaultPower),
+                customBoolean(definition, "fire", defaultFire),
+                customBoolean(definition, "blockDamage", true)
+        );
+    }
+
+    public static double customDouble(BlockDefinition definition, String key, double defaultValue) {
+        Object value = definition.getCustomData().get(key);
+        if (value instanceof Number number) {
+            return number.doubleValue();
+        }
+        return defaultValue;
+    }
+
+    public static boolean customBoolean(BlockDefinition definition, String key, boolean defaultValue) {
+        Object value = definition.getCustomData().get(key);
+        if (value instanceof Boolean bool) {
+            return bool;
+        }
+        return defaultValue;
     }
 
     public static void playNukeCountdown(RuntimeBlockInstance instance) {

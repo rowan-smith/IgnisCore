@@ -12,25 +12,25 @@ import java.util.Map;
 
 @Singleton
 public class ExtensionResourceProvider {
-    private final Map<String, LoadedBlockExtension> blockExtensionsById = new HashMap<>();
-    private final Map<String, LoadedItemExtension> itemExtensionsById = new HashMap<>();
+    private final Map<String, LoadedExtension<BlockDefinition>> blockExtensionsById = new HashMap<>();
+    private final Map<String, LoadedExtension<ItemDefinition>> itemExtensionsById = new HashMap<>();
 
-    public void setBlockExtensions(List<LoadedBlockExtension> extensions) {
+    public void setBlockExtensions(List<LoadedExtension<BlockDefinition>> extensions) {
         blockExtensionsById.clear();
-        for (LoadedBlockExtension extension : extensions) {
-            blockExtensionsById.put(extension.getBlockDefinition().getId(), extension);
+        for (LoadedExtension<BlockDefinition> extension : extensions) {
+            blockExtensionsById.put(extension.getDefinition().getId(), extension);
         }
     }
 
-    public void setItemExtensions(List<LoadedItemExtension> extensions) {
+    public void setItemExtensions(List<LoadedExtension<ItemDefinition>> extensions) {
         itemExtensionsById.clear();
-        for (LoadedItemExtension extension : extensions) {
-            itemExtensionsById.put(extension.getItemDefinition().getId(), extension);
+        for (LoadedExtension<ItemDefinition> extension : extensions) {
+            itemExtensionsById.put(extension.getDefinition().getId(), extension);
         }
     }
 
     public InputStream getBlockTextureStream(BlockDefinition definition, String fileName) {
-        LoadedBlockExtension extension = blockExtensionsById.get(definition.getId());
+        LoadedExtension<BlockDefinition> extension = blockExtensionsById.get(definition.getId());
         if (extension == null) {
             return null;
         }
@@ -44,7 +44,7 @@ public class ExtensionResourceProvider {
     }
 
     public InputStream getItemTextureStream(ItemDefinition definition, String fileName) {
-        LoadedItemExtension extension = itemExtensionsById.get(definition.getId());
+        LoadedExtension<ItemDefinition> extension = itemExtensionsById.get(definition.getId());
         if (extension == null) {
             return null;
         }

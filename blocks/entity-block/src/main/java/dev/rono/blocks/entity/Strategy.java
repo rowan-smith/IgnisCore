@@ -45,14 +45,12 @@ public class Strategy extends AbstractIgnisStrategy {
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
         org.bukkit.Location loc = instance.getLocation().toCenterLocation();
-        double basePower = def.getRadius() > 0 ? def.getRadius() : getCustomDouble(def, "power", 4.0);
-        float finalPower = (float) (basePower * getCustomDouble(def, "multiplier", 1.0));
-        boolean realExplosion = getCustomBoolean(def, "realExplosion", true);
+        float finalPower = ExplosiveStrategySupport.resolvePower(def, 4.0);
+        boolean realExplosion = ExplosiveStrategySupport.customBoolean(def, "realExplosion", true);
 
         if (realExplosion) {
             loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
-            loc.getWorld().createExplosion(loc, finalPower, getCustomBoolean(def, "fire", false),
-                    getCustomBoolean(def, "blockDamage", true));
+            ExplosiveStrategySupport.createExplosion(loc, def, 4.0, false);
         } else {
             ExplosiveStrategySupport.spawnSpiderStormBurst(loc, finalPower);
         }
