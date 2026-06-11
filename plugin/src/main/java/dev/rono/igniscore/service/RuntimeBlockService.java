@@ -1,7 +1,7 @@
 package dev.rono.igniscore.service;
 
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.Location;
 
 import java.util.Collection;

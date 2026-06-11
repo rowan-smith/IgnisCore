@@ -1,4 +1,4 @@
-package dev.rono.igniscore.model;
+package dev.rono.igniscore.api.model;
 
 import net.kyori.adventure.text.Component;
 import java.util.List;

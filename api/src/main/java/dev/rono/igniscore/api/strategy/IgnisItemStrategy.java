@@ -1,0 +1,15 @@
+package dev.rono.igniscore.api.strategy;
+
+import dev.rono.igniscore.api.model.ItemDefinition;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.inventory.ItemStack;
+
+/**
+ * Runtime behavior for custom item types.
+ * Assign a strategy id in item config via {@code behavior.strategy}.
+ */
+public interface IgnisItemStrategy extends IgnisStrategy {
+
+    default void onItemUse(Player player, ItemDefinition definition, ItemStack item, Action action) {}
+}

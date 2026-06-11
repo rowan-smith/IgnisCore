@@ -2,7 +2,9 @@ package dev.rono.igniscore;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.IgnisCoreFacade;
+import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.command.CommandRegistrar;
 import dev.rono.igniscore.command.IgnisCommand;
@@ -14,9 +16,9 @@ import dev.rono.igniscore.listener.ItemListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.ItemDefinition;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
 import dev.rono.igniscore.service.BlockItemFactory;
 import dev.rono.igniscore.service.ItemFactory;
@@ -44,6 +46,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     private final ItemFactory itemFactory;
     private final NBTService nbtService;
     private final ProtocolService protocolService;
+    private final IgnisEffectService effectService;
     private final RuntimeBlockService runtimeBlockService;
     private final VisualEffectService visualEffectService;
     private final ExtensionBootstrap extensionBootstrap;
@@ -66,6 +69,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
                                 ItemFactory itemFactory,
                                 NBTService nbtService,
                                 ProtocolService protocolService,
+                                IgnisEffectService effectService,
                                 RuntimeBlockService runtimeBlockService,
                                 VisualEffectService visualEffectService,
                                 ExtensionBootstrap extensionBootstrap,
@@ -82,6 +86,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
         this.itemFactory = itemFactory;
         this.nbtService = nbtService;
         this.protocolService = protocolService;
+        this.effectService = effectService;
         this.runtimeBlockService = runtimeBlockService;
         this.visualEffectService = visualEffectService;
         this.extensionBootstrap = extensionBootstrap;
@@ -151,6 +156,16 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     }
 
     @Override
+    public IgnisProtocolService getProtocolService() {
+        return protocolService;
+    }
+
+    @Override
+    public IgnisEffectService getEffectService() {
+        return effectService;
+    }
+
+    @Override
     public void reloadExtensions() {
         extensionBootstrap.reloadAll();
         try {
@@ -176,7 +191,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
         return nbtService;
     }
 
-    public ProtocolService getProtocolService() {
+    public ProtocolService getProtocolServiceImpl() {
         return protocolService;
     }
 

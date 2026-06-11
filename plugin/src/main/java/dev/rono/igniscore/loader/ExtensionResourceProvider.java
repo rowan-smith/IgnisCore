@@ -2,8 +2,8 @@ package dev.rono.igniscore.loader;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 
 import java.io.InputStream;
 import java.util.HashMap;

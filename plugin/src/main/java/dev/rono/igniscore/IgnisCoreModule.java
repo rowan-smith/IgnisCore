@@ -2,6 +2,8 @@ package dev.rono.igniscore;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import dev.rono.igniscore.api.service.IgnisEffectService;
+import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.command.CommandRegistrar;
@@ -30,6 +32,7 @@ import dev.rono.igniscore.service.CustomBlockPlacementService;
 import dev.rono.igniscore.service.ItemFactory;
 import dev.rono.igniscore.service.ItemIdentifier;
 import dev.rono.igniscore.service.NBTService;
+import dev.rono.igniscore.service.IgnisEffectServiceImpl;
 import dev.rono.igniscore.service.ProtocolService;
 import dev.rono.igniscore.service.RuntimeBlockService;
 import dev.rono.igniscore.service.StrategyProfileResolver;
@@ -61,6 +64,8 @@ public class IgnisCoreModule extends AbstractModule {
 
         bind(NBTService.class).in(Scopes.SINGLETON);
         bind(ProtocolService.class).in(Scopes.SINGLETON);
+        bind(IgnisProtocolService.class).to(ProtocolService.class).in(Scopes.SINGLETON);
+        bind(IgnisEffectService.class).to(IgnisEffectServiceImpl.class).in(Scopes.SINGLETON);
         bind(RuntimeBlockService.class).in(Scopes.SINGLETON);
         bind(VisualEffectService.class).in(Scopes.SINGLETON);
         bind(BlockManager.class).in(Scopes.SINGLETON);

@@ -1,17 +1,17 @@
 package dev.rono.items.detonator;
 
 import dev.rono.igniscore.api.IgnisCoreAPI;
-import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
+import dev.rono.igniscore.api.strategy.AbstractIgnisItemStrategy;
 import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 
-public class Strategy extends AbstractIgnisStrategy {
+public class Strategy extends AbstractIgnisItemStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);

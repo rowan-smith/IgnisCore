@@ -1,8 +1,8 @@
 package dev.rono.igniscore.loader;
 
-import dev.rono.igniscore.manager.DefinitionParser;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.api.config.DefinitionParser;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 enum ExtensionKind {

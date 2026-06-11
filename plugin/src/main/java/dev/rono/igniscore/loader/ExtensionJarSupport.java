@@ -1,6 +1,8 @@
 package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
+import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
+import dev.rono.igniscore.api.strategy.IgnisItemStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
@@ -55,11 +57,19 @@ final class ExtensionJarSupport {
                                       String strategyClassName,
                                       IgnisStrategyContext strategyContext,
                                       IgnisStrategyRegistry strategyRegistry,
-                                      IgnisStrategyDescriptor descriptor) throws Exception {
+                                      IgnisStrategyDescriptor descriptor,
+                                      ExtensionKind kind) throws Exception {
         Class<?> strategyClass = Class.forName(strategyClassName, true, classLoader);
         Object instance = strategyClass.getConstructor(IgnisStrategyContext.class).newInstance(strategyContext);
         if (!(instance instanceof IgnisStrategy strategy)) {
             throw new IllegalStateException(strategyClassName + " does not implement IgnisStrategy");
+        }
+
+        Class<? extends IgnisStrategy> expectedType = kind == ExtensionKind.BLOCK
+                ? IgnisBlockStrategy.class
+                : IgnisItemStrategy.class;
+        if (!expectedType.isInstance(strategy)) {
+            throw new IllegalStateException(strategyClassName + " must implement " + expectedType.getSimpleName());
         }
 
         if (strategy instanceof AbstractIgnisStrategy abstractStrategy) {

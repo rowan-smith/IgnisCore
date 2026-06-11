@@ -4,7 +4,7 @@ import dev.rono.igniscore.api.CustomBlockAction;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.api.model.BlockDefinition;
 import org.bukkit.Material;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;

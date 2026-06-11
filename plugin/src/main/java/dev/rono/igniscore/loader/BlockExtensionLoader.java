@@ -2,7 +2,7 @@ package dev.rono.igniscore.loader;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.api.model.BlockDefinition;
 
 import java.util.ArrayList;
 import java.util.List;

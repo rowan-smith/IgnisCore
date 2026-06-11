@@ -1,8 +1,8 @@
 package dev.rono.igniscore.api.strategy;
 
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.ItemDefinition;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;

@@ -2,7 +2,7 @@ package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.manager.ItemManager;
-import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;

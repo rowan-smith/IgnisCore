@@ -1,11 +1,11 @@
 package dev.rono.blocks.entity;
 
-import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
+import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -16,7 +16,7 @@ import org.bukkit.util.Vector;
 import java.util.Comparator;
 import java.util.Map;
 
-public class Strategy extends AbstractIgnisStrategy {
+public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);

@@ -1,9 +1,10 @@
 package dev.rono.igniscore.core;
 
+import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.CustomBlockAction;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ class IgnisStrategyRegistryImplTest {
     }
 
     private IgnisStrategy testStrategy(String id) {
-        return new IgnisStrategy() {
+        return new IgnisBlockStrategy() {
             @Override
             public IgnisStrategyDescriptor descriptor() {
                 return IgnisStrategyDescriptor.of(id, id, "1.0.0", "test");
