@@ -152,7 +152,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
         }
 
         try {
-            List<String> values = nbt.getStringList(LINKED_BOMBS_KEY);
+            List<String> values = nbt.getStringList(LINKED_BOMBS_KEY).toListCopy();
             return values == null ? new ArrayList<>() : new ArrayList<>(values);
         } catch (Exception ignored) {
             String legacy = nbt.getString(LINKED_BOMBS_KEY);
