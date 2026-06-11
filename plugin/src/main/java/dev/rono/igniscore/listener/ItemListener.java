@@ -30,9 +30,12 @@ public class ItemListener implements Listener {
         this.strategyRegistry = strategyRegistry;
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+        Action action = event.getAction();
+        if (action != Action.RIGHT_CLICK_AIR
+                && action != Action.RIGHT_CLICK_BLOCK
+                && action != Action.LEFT_CLICK_BLOCK) {
             return;
         }
 
@@ -52,7 +55,7 @@ public class ItemListener implements Listener {
 
         event.setCancelled(true);
         Player player = event.getPlayer();
-        requireItemStrategy(definition).onItemUse(player, definition, item, event.getAction());
+        requireItemStrategy(definition).onItemUse(player, definition, item, action, event.getClickedBlock());
 
         if (item.getAmount() <= 0) {
             if (event.getHand() == EquipmentSlot.OFF_HAND) {

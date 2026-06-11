@@ -152,6 +152,11 @@ class IgnisCoreAPITest {
         }
 
         @Override
+        public RuntimeBlockInstance ignitePlacedBlock(Location location, Object context) {
+            return null;
+        }
+
+        @Override
         public String getPlacedBlockType(Location location) {
             return null;
         }

@@ -3,7 +3,8 @@ id: detonator
 display:
   title: "&6Detonator"
   description:
-    - "&7Ignites nearby Ignis blocks"
+    - "&7Left-click a remote bomb to link"
+    - "&7Right-click to detonate linked bombs"
 
 item:
   base_material: blaze_rod
@@ -15,8 +16,11 @@ behavior:
   strategy: detonator
   strategy_name: Remote Detonator
   custom_data:
-    range: 8.0
+    target_block: remote-bomb
+    max_links: 16
 
 interactions:
+  left_click:
+    action: assign_bomb
   right_click:
-    action: ignite_nearby
+    action: detonate_linked

@@ -38,7 +38,8 @@ class BundledExtensionIntegrationTest {
             "erupting-block",
             "mimic-block",
             "tunneling-block",
-            "entity-block"
+            "entity-block",
+            "remote-bomb-block"
     })
     void loadsBundledBlockExtensionJar(String moduleName) throws Exception {
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);

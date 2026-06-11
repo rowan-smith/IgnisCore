@@ -27,6 +27,8 @@ import dev.rono.igniscore.service.ProtocolService;
 import dev.rono.igniscore.service.RuntimeBlockService;
 import dev.rono.igniscore.service.VisualEffectService;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
@@ -122,6 +124,21 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
 
     @Override
     public RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context) {
+        return blockManager.triggerBlock(location, typeId, context);
+    }
+
+    @Override
+    public RuntimeBlockInstance ignitePlacedBlock(Location location, Object context) {
+        String typeId = blockManager.getPlacedBlockType(location);
+        if (typeId == null) {
+            return null;
+        }
+
+        blockManager.unregisterPlacedBlock(location);
+        Block block = location.getBlock();
+        if (block.getType() != Material.AIR) {
+            block.setType(Material.AIR);
+        }
         return blockManager.triggerBlock(location, typeId, context);
     }
 
