@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -29,14 +30,14 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public void onStaticPlace(BlockDefinition definition, Location location) {
-        Location center = location.toCenterLocation();
+        Location center = Locations.toCenter(location);
         StrategySupport.spawnParticles(center, Particle.FLAME, 16, 0.35, 0.35, 0.35, 0.02);
         StrategySupport.spawnParticles(center, Particle.SMOKE, 10, 0.3, 0.3, 0.3, 0.01);
     }
 
     @Override
     public void onPlace(RuntimeBlockInstance instance) {
-        Location center = instance.getLocation().toCenterLocation();
+        Location center = Locations.toCenter(instance.getLocation());
         center.getWorld().playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 2.0f, 0.6f);
     }
 
@@ -49,7 +50,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
-        Location loc = instance.getLocation().toCenterLocation();
+        Location loc = Locations.toCenter(instance.getLocation());
         float finalPower = StrategySupport.resolvePower(def, 10.0);
 
         instance.getData().setFloat("ignis:nuke_power", finalPower);
@@ -76,7 +77,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
             return;
         }
 
-        Location center = instance.getLocation().toCenterLocation();
+        Location center = Locations.toCenter(instance.getLocation());
         float pitch = ticksLeft <= 15 ? 1.9f : ticksLeft <= 40 ? 1.45f : ticksLeft <= 80 ? 1.1f : 0.75f;
         center.getWorld().playSound(center, Sound.BLOCK_NOTE_BLOCK_PLING, 2.0f, pitch);
         center.getWorld().playSound(center, Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.5f);
@@ -89,7 +90,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
             return;
         }
 
-        Location center = instance.getLocation().toCenterLocation();
+        Location center = Locations.toCenter(instance.getLocation());
         double intensity = ticksLeft <= 20 ? 1.0 : ticksLeft <= 60 ? 0.6 : 0.3;
         StrategySupport.spawnParticles(center, Particle.SMOKE, (int) (18 * intensity), 0.45, 0.45, 0.45, 0.02);
         StrategySupport.spawnParticles(center, Particle.FLAME, (int) (10 * intensity), 0.35, 0.35, 0.35, 0.04);

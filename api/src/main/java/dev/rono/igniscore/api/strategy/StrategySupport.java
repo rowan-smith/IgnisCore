@@ -4,6 +4,7 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -63,7 +64,8 @@ public final class StrategySupport {
     }
 
     public static Inventory createInventory(InventoryHolder holder, int size, Component title) {
-        return Bukkit.createInventory(holder, size, title);
+        String legacyTitle = LegacyComponentSerializer.legacySection().serialize(title);
+        return Bukkit.createInventory(holder, size, legacyTitle);
     }
 
     public static void spawnParticles(Location center, Particle particle, int count,

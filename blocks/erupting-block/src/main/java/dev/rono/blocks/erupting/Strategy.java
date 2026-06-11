@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -29,7 +30,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         int interval = getCustomInt(def, "eruptionInterval", 5);
 
         if (instance.getTicksLeft() % interval == 0 && instance.getTicksLeft() < StrategySupport.fuse(def, 100) - 10) {
-            Location loc = instance.getLocation().toCenterLocation();
+            Location loc = Locations.toCenter(instance.getLocation());
             TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
             int eruptionFuse = getCustomInt(def, "eruptionFuse", 80);
             tnt.setFuseTicks(eruptionFuse);
@@ -51,7 +52,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
-        Location loc = instance.getLocation().toCenterLocation();
+        Location loc = Locations.toCenter(instance.getLocation());
         StrategySupport.createExplosion(loc, def, 4.0, false);
     }
 }

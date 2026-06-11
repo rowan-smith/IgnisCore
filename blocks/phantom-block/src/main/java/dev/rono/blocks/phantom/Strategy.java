@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -28,7 +29,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
                 instance.getDisplayEntity().remove();
                 instance.setDisplayEntity(null);
             }
-            Location loc = instance.getLocation().toCenterLocation();
+            Location loc = Locations.toCenter(instance.getLocation());
             loc.getWorld().spawnParticle(Particle.SPORE_BLOSSOM_AIR, loc, 20, 0.5, 0.5, 0.5, 0.05);
             loc.getWorld().playSound(loc, Sound.ENTITY_PHANTOM_AMBIENT, 1.0f, 0.5f);
         }
@@ -37,7 +38,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
-        Location loc = instance.getLocation().toCenterLocation();
+        Location loc = Locations.toCenter(instance.getLocation());
         StrategySupport.createExplosion(loc, def, 4.0, false);
     }
 }

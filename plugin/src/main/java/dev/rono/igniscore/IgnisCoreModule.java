@@ -40,15 +40,18 @@ import dev.rono.igniscore.service.IgnisEffectServiceImpl;
 import dev.rono.igniscore.service.ProtocolService;
 import dev.rono.igniscore.service.RuntimeBlockService;
 import dev.rono.igniscore.service.StrategyProfileResolver;
+import dev.rono.igniscore.platform.PlatformHooks;
 import dev.rono.igniscore.service.VisualEffectService;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class IgnisCoreModule extends AbstractModule {
     private final Main plugin;
+    private final PlatformHooks platformHooks;
 
-    public IgnisCoreModule(Main plugin) {
+    public IgnisCoreModule(Main plugin, PlatformHooks platformHooks) {
         this.plugin = plugin;
+        this.platformHooks = platformHooks;
     }
 
     @Override
@@ -56,6 +59,7 @@ public class IgnisCoreModule extends AbstractModule {
         bind(Main.class).toInstance(plugin);
         bind(JavaPlugin.class).toInstance(plugin);
         bind(Plugin.class).toInstance(plugin);
+        bind(PlatformHooks.class).toInstance(platformHooks);
 
         bind(CommandRegistrar.class).in(Scopes.SINGLETON);
         bind(IgnisCommand.class).in(Scopes.SINGLETON);

@@ -13,6 +13,7 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.platform.PlatformHooks;
 import dev.rono.igniscore.service.ItemFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -38,6 +39,7 @@ public class IgnisCommand implements PluginCommandHandler {
     private final BlockExtensionLoader blockExtensionLoader;
     private final ItemExtensionLoader itemExtensionLoader;
     private final ItemFactory itemFactory;
+    private final PlatformHooks platformHooks;
 
     @Inject
     public IgnisCommand(Main plugin,
@@ -48,7 +50,8 @@ public class IgnisCommand implements PluginCommandHandler {
                         IgnisStrategyRegistry strategyRegistry,
                         BlockExtensionLoader blockExtensionLoader,
                         ItemExtensionLoader itemExtensionLoader,
-                        ItemFactory itemFactory) {
+                        ItemFactory itemFactory,
+                        PlatformHooks platformHooks) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.itemManager = itemManager;
@@ -58,13 +61,18 @@ public class IgnisCommand implements PluginCommandHandler {
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
         this.itemFactory = itemFactory;
+        this.platformHooks = platformHooks;
+    }
+
+    private void send(CommandSender sender, String message) {
+        platformHooks.sendMessage(sender, plugin.message(message));
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("igniscore.admin")) {
-            sender.sendMessage(plugin.message("<red>You do not have permission to use this command."));
+            send(sender, "<red>You do not have permission to use this command.");
             return true;
         }
 
@@ -86,45 +94,45 @@ public class IgnisCommand implements PluginCommandHandler {
 
     private boolean handleGive(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            sender.sendMessage(plugin.message("<red>Usage: /ignis give <player> <type>"));
+            send(sender, "<red>Usage: /ignis give <player> <type>");
             return true;
         }
 
         Player target = Bukkit.getPlayer(args[1]);
         if (target == null) {
-            sender.sendMessage(plugin.message("<red>Player not found."));
+            send(sender, "<red>Player not found.");
             return true;
         }
 
         String typeId = args[2];
         if (blockManager.getBlockTypes().containsKey(typeId)) {
             target.getInventory().addItem(plugin.createBlockItem(typeId));
-            sender.sendMessage(plugin.message("<green>Gave block " + typeId + " to " + target.getName()));
+            send(sender, "<green>Gave block " + typeId + " to " + target.getName());
             return true;
         }
 
         if (itemManager.getItemTypes().containsKey(typeId)) {
             target.getInventory().addItem(itemFactory.createItem(typeId));
-            sender.sendMessage(plugin.message("<green>Gave item " + typeId + " to " + target.getName()));
+            send(sender, "<green>Gave item " + typeId + " to " + target.getName());
             return true;
         }
 
-        sender.sendMessage(plugin.message("<red>Unknown block or item type."));
+        send(sender, "<red>Unknown block or item type.");
         return true;
     }
 
     private boolean handlePack(CommandSender sender) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(plugin.message("<red>Only players can use this."));
+            send(sender, "<red>Only players can use this.");
             return true;
         }
 
         try {
             resourcePackService.reloadBuildAndRegister();
             plugin.getLogger().info("Resource pack rebuilt successfully! Hash: " + resourcePackService.getLatestHash());
-            player.sendMessage(plugin.message("<green>Resource pack rebuilt. Reconnect if models do not update."));
+            send(player, "<green>Resource pack rebuilt. Reconnect if models do not update.");
         } catch (IOException e) {
-            player.sendMessage(plugin.message("<red>Failed to rebuild resource pack: " + e.getMessage()));
+            send(player, "<red>Failed to rebuild resource pack: " + e.getMessage());
             return true;
         }
 
@@ -140,72 +148,72 @@ public class IgnisCommand implements PluginCommandHandler {
                 case "blocks" -> extensionBootstrap.reloadBlocks();
                 case "items" -> extensionBootstrap.reloadItems();
                 default -> {
-                    sender.sendMessage(plugin.message("<red>Usage: /ignis reload <all|blocks|items>"));
+                    send(sender, "<red>Usage: /ignis reload <all|blocks|items>");
                     return true;
                 }
             }
             resourcePackService.buildAndRegister();
-            sender.sendMessage(plugin.message("<green>IgnisCore " + target + " extensions reloaded."));
+            send(sender, "<green>IgnisCore " + target + " extensions reloaded.");
         } catch (IOException e) {
-            sender.sendMessage(plugin.message("<red>Extensions reloaded but resource pack rebuild failed."));
+            send(sender, "<red>Extensions reloaded but resource pack rebuild failed.");
         }
         return true;
     }
 
     private boolean handleBlocks(CommandSender sender) {
-        sender.sendMessage(plugin.message("<gold>Loaded Block Extensions:"));
+        send(sender, "<gold>Loaded Block Extensions:");
         if (blockExtensionLoader.getLoadedExtensions().isEmpty()) {
-            sender.sendMessage(plugin.message("<gray>None"));
+            send(sender, "<gray>None");
             return true;
         }
 
         for (LoadedExtension<BlockDefinition> extension : blockExtensionLoader.getLoadedExtensions()) {
             BlockDefinition definition = extension.getDefinition();
-            sender.sendMessage(plugin.message("<gray>- <white>" + extension.getManifest().getName()
+            send(sender, "<gray>- <white>" + extension.getManifest().getName()
                     + " <dark_gray>v" + extension.getManifest().getVersion()
                     + " -> block <white>" + definition.getId()
-                    + " <dark_gray>(strategy: " + definition.getStrategy() + ")</dark_gray>"));
+                    + " <dark_gray>(strategy: " + definition.getStrategy() + ")</dark_gray>");
         }
 
-        sender.sendMessage(plugin.message("<gold>Registered Strategies:"));
+        send(sender, "<gold>Registered Strategies:");
         for (IgnisStrategyDescriptor descriptor : strategyRegistry.getDescriptors()) {
-            sender.sendMessage(plugin.message("<gray>- <white>" + descriptor.getId()
-                    + " <dark_gray>from " + descriptor.getSourcePlugin() + "</dark_gray>"));
+            send(sender, "<gray>- <white>" + descriptor.getId()
+                    + " <dark_gray>from " + descriptor.getSourcePlugin() + "</dark_gray>");
         }
         return true;
     }
 
     private boolean handleItems(CommandSender sender) {
-        sender.sendMessage(plugin.message("<gold>Loaded Item Extensions:"));
+        send(sender, "<gold>Loaded Item Extensions:");
         if (itemExtensionLoader.getLoadedExtensions().isEmpty()) {
-            sender.sendMessage(plugin.message("<gray>None"));
+            send(sender, "<gray>None");
             return true;
         }
 
         for (LoadedExtension<ItemDefinition> extension : itemExtensionLoader.getLoadedExtensions()) {
-            sender.sendMessage(plugin.message("<gray>- <white>" + extension.getManifest().getName()
+            send(sender, "<gray>- <white>" + extension.getManifest().getName()
                     + " <dark_gray>v" + extension.getManifest().getVersion()
                     + " -> item <white>" + extension.getDefinition().getId()
-                    + " <dark_gray>(strategy: " + extension.getDefinition().getStrategy() + ")</dark_gray>"));
+                    + " <dark_gray>(strategy: " + extension.getDefinition().getStrategy() + ")</dark_gray>");
         }
         return true;
     }
 
     private boolean handleDebug(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            sender.sendMessage(plugin.message("<red>Usage: /ignis debug <on|off|pack>"));
+            send(sender, "<red>Usage: /ignis debug <on|off|pack>");
             return true;
         }
 
         return switch (args[1].toLowerCase()) {
             case "on" -> {
                 plugin.setDebugEnabled(true);
-                sender.sendMessage(plugin.message("<green>Debug mode enabled."));
+                send(sender, "<green>Debug mode enabled.");
                 yield true;
             }
             case "off" -> {
                 plugin.setDebugEnabled(false);
-                sender.sendMessage(plugin.message("<red>Debug mode disabled."));
+                send(sender, "<red>Debug mode disabled.");
                 yield true;
             }
             case "pack" -> {
@@ -217,29 +225,29 @@ public class IgnisCommand implements PluginCommandHandler {
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(plugin.message("<gold>IgnisCore Commands:"));
-        sender.sendMessage(plugin.message("<yellow>/ignis give <player> <type>"));
-        sender.sendMessage(plugin.message("<yellow>/ignis pack - Apply resource pack"));
-        sender.sendMessage(plugin.message("<yellow>/ignis reload <all|blocks|items>"));
-        sender.sendMessage(plugin.message("<yellow>/ignis blocks - List loaded block JARs"));
-        sender.sendMessage(plugin.message("<yellow>/ignis items - List loaded item JARs"));
+        send(sender, "<gold>IgnisCore Commands:");
+        send(sender, "<yellow>/ignis give <player> <type>");
+        send(sender, "<yellow>/ignis pack - Apply resource pack");
+        send(sender, "<yellow>/ignis reload <all|blocks|items>");
+        send(sender, "<yellow>/ignis blocks - List loaded block JARs");
+        send(sender, "<yellow>/ignis items - List loaded item JARs");
     }
 
     private void sendPackDebug(CommandSender sender) {
-        sender.sendMessage(plugin.message("<gold>IgnisCore Debug Pack:"));
-        sender.sendMessage(plugin.message("<yellow>Latest Hash: <white>" + resourcePackService.getLatestHash()));
-        sender.sendMessage(plugin.message("<yellow>Registered Blocks:"));
+        send(sender, "<gold>IgnisCore Debug Pack:");
+        send(sender, "<yellow>Latest Hash: <white>" + resourcePackService.getLatestHash());
+        send(sender, "<yellow>Registered Blocks:");
 
         for (BlockDefinition def : blockManager.getBlockTypes().values()) {
-            sender.sendMessage(plugin.message("<gray>- <white>" + def.getId()));
-            sender.sendMessage(plugin.message("<gray>  Inventory: <white>" + def.getBaseMaterial()
-                    + " (CMD " + def.getCustomModelData() + ") -> igniscore:item/" + def.getId()));
-            sender.sendMessage(plugin.message("<gray>  Extension: <white>" + def.getExtensionId()
-                    + " strategy: " + def.getStrategy()));
+            send(sender, "<gray>- <white>" + def.getId());
+            send(sender, "<gray>  Inventory: <white>" + def.getBaseMaterial()
+                    + " (CMD " + def.getCustomModelData() + ") -> igniscore:item/" + def.getId());
+            send(sender, "<gray>  Extension: <white>" + def.getExtensionId()
+                    + " strategy: " + def.getStrategy());
         }
 
         String url = plugin.getConfig().getString("resource-pack.public-url");
-        sender.sendMessage(plugin.message("<yellow>Public URL: <white>" + url));
+        send(sender, "<yellow>Public URL: <white>" + url);
     }
 
     @Override

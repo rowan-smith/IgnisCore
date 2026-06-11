@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DefinitionParserTest {
@@ -198,6 +199,85 @@ class DefinitionParserTest {
         assertEquals(20005, definition.getCustomModelData());
         assertEquals("grenade-item", definition.getExtensionId());
         assertEquals("grenade-icon.png", definition.getIconTexture());
+    }
+
+    @Test
+    void parsesPerSideTexturesWithFallbackToSharedSide() {
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+                id: custom
+                textures:
+                  top: top.png
+                  side: shared.png
+                  side-1: north.png
+                  side-3: south.png
+                """));
+
+        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10001, "custom-block");
+
+        assertTrue(definition.hasPerSideTextures());
+        assertEquals("north.png", definition.getSide1Texture());
+        assertNull(definition.getSide2Texture());
+        assertEquals("south.png", definition.getSide3Texture());
+        assertNull(definition.getSide4Texture());
+        assertEquals("shared.png", definition.getResolvedSideTexture(2));
+        assertEquals("shared.png", definition.getResolvedSideTexture(4));
+    }
+
+    @Test
+    void parsesAllPerSideTextures() {
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+                id: custom
+                textures:
+                  top: top.png
+                  side: fallback.png
+                  side-1: north.png
+                  side-2: east.png
+                  side-3: south.png
+                  side-4: west.png
+                  bottom: bottom.png
+                """));
+
+        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10001, "custom-block");
+
+        assertEquals("north.png", definition.getSide1Texture());
+        assertEquals("east.png", definition.getSide2Texture());
+        assertEquals("south.png", definition.getSide3Texture());
+        assertEquals("west.png", definition.getSide4Texture());
+    }
+
+    @Test
+    void parsesJpegTextureFilenames() {
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+                id: custom
+                textures:
+                  top: top.jpg
+                  side: side.jpeg
+                  bottom: bottom.jpg
+                  side-1: north.jpg
+                """));
+
+        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10001, "custom-block");
+
+        assertEquals("top.jpg", definition.getTopTexture());
+        assertEquals("side.jpeg", definition.getSideTexture());
+        assertEquals("bottom.jpg", definition.getBottomTexture());
+        assertEquals("north.jpg", definition.getSide1Texture());
+    }
+
+    @Test
+    void singleSideTextureKeepsLegacyMode() {
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+                id: custom
+                textures:
+                  top: top.png
+                  side: side.png
+                  bottom: bottom.png
+                """));
+
+        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10001, "custom-block");
+
+        assertFalse(definition.hasPerSideTextures());
+        assertNull(definition.getSide1Texture());
     }
 
     @Test

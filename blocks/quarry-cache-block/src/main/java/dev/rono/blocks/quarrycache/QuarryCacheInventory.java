@@ -44,7 +44,7 @@ final class QuarryCacheInventory implements IgnisCustomInventory {
         ItemStack separator = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta meta = separator.getItemMeta();
         if (meta != null) {
-            meta.displayName(Component.empty());
+            meta.setDisplayName(" ");
             separator.setItemMeta(meta);
         }
         for (int slot = SEPARATOR_START; slot < STORAGE_START; slot++) {

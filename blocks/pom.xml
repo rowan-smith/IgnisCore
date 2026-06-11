@@ -40,8 +40,13 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.papermc.paper</groupId>
-      <artifactId>paper-api</artifactId>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

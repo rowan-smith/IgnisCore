@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.IgnisCoreAPI;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisItemStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -71,7 +72,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
         linkedBombs.add(encoded);
         writeLinkedBombs(item, linkedBombs);
 
-        Location center = location.toCenterLocation();
+        Location center = Locations.toCenter(location);
         center.getWorld().playSound(center, Sound.BLOCK_BEACON_POWER_SELECT, 1.0f, 1.6f);
         center.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, center, 8, 0.25, 0.25, 0.25, 0.0);
         player.sendMessage("§aSignal charge linked. §7(" + linkedBombs.size() + "/" + maxLinks + ")");
