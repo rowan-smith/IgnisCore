@@ -23,6 +23,11 @@ public interface IgnisCoreFacade {
 
     RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context);
 
+    /**
+     * Removes a placed custom block and starts its fuse at the given location.
+     */
+    RuntimeBlockInstance ignitePlacedBlock(Location location, Object context);
+
     String getPlacedBlockType(Location location);
 
     Collection<RuntimeBlockInstance> getActiveBlocks();

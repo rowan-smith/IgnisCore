@@ -1,0 +1,6 @@
+id: remote-bomb-block
+name: Remote Bomb Block
+version: 1.0.0
+api-version: 1.0.0
+author: IgnisCore
+strategy: dev.rono.blocks.remotebomb.Strategy

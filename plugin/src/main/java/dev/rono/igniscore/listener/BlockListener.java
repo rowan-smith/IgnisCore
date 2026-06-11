@@ -8,6 +8,7 @@ import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.service.CustomBlockBreakService;
 import dev.rono.igniscore.service.CustomBlockIgnitionService;
 import dev.rono.igniscore.service.CustomBlockPlacementService;
+import dev.rono.igniscore.service.ItemIdentifier;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -29,18 +30,21 @@ public class BlockListener implements Listener {
     private final CustomBlockPlacementService placementService;
     private final CustomBlockBreakService breakService;
     private final CustomBlockIgnitionService ignitionService;
+    private final ItemIdentifier itemIdentifier;
 
     @Inject
     public BlockListener(BlockManager blockManager,
                          BlockInteractionResolver interactionResolver,
                          CustomBlockPlacementService placementService,
                          CustomBlockBreakService breakService,
-                         CustomBlockIgnitionService ignitionService) {
+                         CustomBlockIgnitionService ignitionService,
+                         ItemIdentifier itemIdentifier) {
         this.blockManager = blockManager;
         this.interactionResolver = interactionResolver;
         this.placementService = placementService;
         this.breakService = breakService;
         this.ignitionService = ignitionService;
+        this.itemIdentifier = itemIdentifier;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -72,6 +76,12 @@ public class BlockListener implements Listener {
     public void onBlockDamage(BlockDamageEvent event) {
         BlockDefinition definition = getPlacedDefinition(event.getBlock());
         if (definition == null) {
+            return;
+        }
+
+        ItemStack heldItem = event.getPlayer().getInventory().getItemInMainHand();
+        if (itemIdentifier.resolveTypeId(heldItem) != null) {
+            event.setCancelled(true);
             return;
         }
 

@@ -35,6 +35,10 @@ public final class IgnisCoreAPI {
         return requireFacade().triggerBlock(location, typeId, context);
     }
 
+    public static RuntimeBlockInstance ignitePlacedBlock(Location location, Object context) {
+        return requireFacade().ignitePlacedBlock(location, context);
+    }
+
     public static String getPlacedBlockType(Location location) {
         return requireFacade().getPlacedBlockType(location);
     }
