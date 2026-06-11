@@ -4,13 +4,12 @@ import com.google.inject.Inject;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.CustomModelData;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.components.CustomModelDataComponent;
-
-import java.util.List;
 
 public class BlockItemFactory {
     private final BlockManager blockManager;
@@ -38,15 +37,14 @@ public class BlockItemFactory {
         if (meta != null) {
             meta.displayName(type.getTitle());
             meta.lore(type.getDescription());
-            meta.setCustomModelData(type.getCustomModelData());
-
-            CustomModelDataComponent customModelData = meta.getCustomModelDataComponent();
-            customModelData.setFloats(List.of((float) type.getCustomModelData()));
-            meta.setCustomModelDataComponent(customModelData);
-
             meta.setItemModel(new NamespacedKey("igniscore", type.getId()));
             item.setItemMeta(meta);
         }
+
+        item.setData(
+                DataComponentTypes.CUSTOM_MODEL_DATA,
+                CustomModelData.customModelData().addFloat((float) type.getCustomModelData()).build()
+        );
 
         nbtService.editItem(item, nbt -> {
             nbt.setString("ignis:block_id", typeId);

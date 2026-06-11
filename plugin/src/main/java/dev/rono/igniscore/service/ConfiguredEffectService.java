@@ -3,12 +3,15 @@ package dev.rono.igniscore.service;
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import org.bukkit.Location;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static dev.rono.igniscore.util.ConfigValueReader.getDouble;
@@ -28,11 +31,12 @@ public class ConfiguredEffectService {
     }
 
     public void playSound(Location location, String soundName, float volume, float pitch) {
-        try {
-            location.getWorld().playSound(location, Sound.valueOf(soundName.toUpperCase()), volume, pitch);
-        } catch (IllegalArgumentException ignored) {
+        Sound sound = resolveSound(soundName);
+        if (sound == null) {
             debug("Invalid sound in block config: " + soundName);
+            return;
         }
+        location.getWorld().playSound(location, sound, volume, pitch);
     }
 
     public void spawnConfiguredParticles(Location location, List<?> particles, Particle fallbackParticle, int fallbackCount,
@@ -68,6 +72,35 @@ public class ConfiguredEffectService {
             spawnParticle(location, particle, count, offsetX, offsetY, offsetZ, speed,
                     blockMaterial != null ? blockMaterial : Material.STONE);
         }
+    }
+
+    private static Sound resolveSound(String soundName) {
+        if (soundName == null || soundName.isBlank()) {
+            return null;
+        }
+
+        String normalized = soundName.strip();
+        NamespacedKey explicitKey = NamespacedKey.fromString(normalized.toLowerCase(Locale.ROOT));
+        if (explicitKey != null) {
+            Sound sound = Registry.SOUNDS.get(explicitKey);
+            if (sound != null) {
+                return sound;
+            }
+        }
+
+        String enumStyle = normalized.toUpperCase(Locale.ROOT);
+        for (Sound sound : Registry.SOUNDS) {
+            NamespacedKey key = Registry.SOUNDS.getKey(sound);
+            if (key != null && toEnumStyle(key).equals(enumStyle)) {
+                return sound;
+            }
+        }
+
+        return Registry.SOUNDS.get(NamespacedKey.minecraft(normalized.toLowerCase(Locale.ROOT).replace('_', '.')));
+    }
+
+    private static String toEnumStyle(NamespacedKey key) {
+        return key.getKey().toUpperCase(Locale.ROOT).replace('.', '_');
     }
 
     private void debug(String message) {
