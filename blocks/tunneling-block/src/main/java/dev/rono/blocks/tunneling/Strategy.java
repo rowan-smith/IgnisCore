@@ -2,7 +2,6 @@ package dev.rono.blocks.tunneling;
 
 import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
@@ -14,8 +13,7 @@ import org.bukkit.util.Vector;
 public class Strategy extends AbstractIgnisStrategy {
 
     public Strategy(IgnisStrategyContext context) {
-        super(IgnisStrategyDescriptor.of("tunneling", "Tunneling Blast", "1.0.0", "IgnisCore", "tunneling-block"),
-                context);
+        super(context);
     }
 
     @Override

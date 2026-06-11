@@ -26,6 +26,7 @@ model:
 
 behavior:
   strategy: tunneling
+  strategy_name: Tunneling Blast
   fuse: 60
   radius: 4.0
   custom_data:

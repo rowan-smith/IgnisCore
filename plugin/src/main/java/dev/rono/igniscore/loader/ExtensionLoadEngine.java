@@ -8,6 +8,8 @@ import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.extension.ExtensionResources;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
+import dev.rono.igniscore.manager.DefinitionParser;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.ItemDefinition;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -103,16 +105,20 @@ final class ExtensionLoadEngine {
 
     private LoadedExtension<BlockDefinition> loadBlockJar(File jarFile, int modelData) throws Exception {
         ExtensionManifest manifest = readManifest(jarFile, ExtensionKind.BLOCK);
-        BlockDefinition definition = parseBlock(jarFile, manifest, modelData);
-        return loadExtension(jarFile, manifest, definition, definition.getStrategy(), definition.getId(),
-                ExtensionKind.BLOCK);
+        YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        BlockDefinition definition = ExtensionKind.BLOCK.parseBlock(config,
+                config.getString("id", manifest.getId()), modelData, manifest.getId());
+        return loadExtension(jarFile, manifest, descriptor, definition, ExtensionKind.BLOCK);
     }
 
     private LoadedExtension<ItemDefinition> loadItemJar(File jarFile, int modelData) throws Exception {
         ExtensionManifest manifest = readManifest(jarFile, ExtensionKind.ITEM);
-        ItemDefinition definition = parseItem(jarFile, manifest, modelData);
-        return loadExtension(jarFile, manifest, definition, definition.getStrategy(), definition.getId(),
-                ExtensionKind.ITEM);
+        YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        ItemDefinition definition = ExtensionKind.ITEM.parseItem(config,
+                config.getString("id", manifest.getId()), modelData, manifest.getId());
+        return loadExtension(jarFile, manifest, descriptor, definition, ExtensionKind.ITEM);
     }
 
     private ExtensionManifest readManifest(File jarFile, ExtensionKind kind) throws Exception {
@@ -120,30 +126,22 @@ final class ExtensionLoadEngine {
                 input -> ExtensionManifest.fromStream(input, kind.manifestFileName()));
     }
 
-    private BlockDefinition parseBlock(File jarFile, ExtensionManifest manifest, int modelData) throws Exception {
-        YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        return ExtensionKind.BLOCK.parseBlock(config, config.getString("id", manifest.getId()), modelData, manifest.getId());
-    }
-
-    private ItemDefinition parseItem(File jarFile, ExtensionManifest manifest, int modelData) throws Exception {
-        YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        return ExtensionKind.ITEM.parseItem(config, config.getString("id", manifest.getId()), modelData, manifest.getId());
-    }
-
     private <D> LoadedExtension<D> loadExtension(File jarFile,
-                                               ExtensionManifest manifest,
-                                               D definition,
-                                               String strategyId,
-                                               String definitionId,
-                                               ExtensionKind kind) throws Exception {
+                                                 ExtensionManifest manifest,
+                                                 IgnisStrategyDescriptor descriptor,
+                                                 D definition,
+                                                 ExtensionKind kind) throws Exception {
         IgnisApiVersion.requireCompatible(manifest.getApiVersion(), manifest.getId());
+
+        String strategyId = descriptor.getId();
+        String definitionId = definitionIdFor(definition);
 
         URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, plugin.getClass().getClassLoader());
         ExtensionResources resources = new ExtensionResources(classLoader);
 
         try {
             ExtensionJarSupport.loadStrategy(classLoader, manifest.getStrategyClass(), strategyContext,
-                    strategyRegistry, manifest.getId());
+                    strategyRegistry, descriptor);
 
             if (!strategyRegistry.isRegistered(strategyId)) {
                 throw new IllegalStateException(kind.folderName() + " extension " + manifest.getId()
@@ -151,11 +149,22 @@ final class ExtensionLoadEngine {
             }
 
             plugin.getLogger().info("Loaded " + kind.folderName() + " extension '" + manifest.getName() + "' v"
-                    + manifest.getVersion() + " (" + definitionId + ") from " + jarFile.getName());
+                    + manifest.getVersion() + " (" + definitionId + ", strategy " + strategyId + ") from "
+                    + jarFile.getName());
             return new LoadedExtension<>(manifest, jarFile, classLoader, definition, resources);
         } catch (Exception e) {
             classLoader.close();
             throw e;
         }
+    }
+
+    private static String definitionIdFor(Object definition) {
+        if (definition instanceof BlockDefinition blockDefinition) {
+            return blockDefinition.getId();
+        }
+        if (definition instanceof ItemDefinition itemDefinition) {
+            return itemDefinition.getId();
+        }
+        throw new IllegalStateException("Unsupported definition type: " + definition.getClass().getName());
     }
 }

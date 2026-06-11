@@ -26,6 +26,7 @@ model:
 
 behavior:
   strategy: mimic
+  strategy_name: Mimic TNT
   fuse: 80
   radius: 4.0
   custom_data:

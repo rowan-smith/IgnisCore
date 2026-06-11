@@ -1,6 +1,7 @@
 package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.model.ItemDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -13,29 +14,51 @@ public final class ExplosiveStrategySupport {
     }
 
     public static float resolvePower(BlockDefinition definition, double defaultPower) {
-        double base = definition.getRadius() > 0 ? definition.getRadius() : customDouble(definition, "power", defaultPower);
-        return (float) (base * customDouble(definition, "multiplier", 1.0));
+        double base = definition.getRadius() > 0 ? definition.getRadius() : customDouble(definition.getCustomData(), "power", defaultPower);
+        return (float) (base * customDouble(definition.getCustomData(), "multiplier", 1.0));
+    }
+
+    public static float resolvePower(ItemDefinition definition, double defaultPower) {
+        return (float) (customDouble(definition.getCustomData(), "power", defaultPower)
+                * customDouble(definition.getCustomData(), "multiplier", 1.0));
     }
 
     public static void createExplosion(org.bukkit.Location location, BlockDefinition definition, double defaultPower, boolean defaultFire) {
         location.getWorld().createExplosion(
                 location,
                 resolvePower(definition, defaultPower),
-                customBoolean(definition, "fire", defaultFire),
-                customBoolean(definition, "blockDamage", true)
+                customBoolean(definition.getCustomData(), "fire", defaultFire),
+                customBoolean(definition.getCustomData(), "blockDamage", true)
+        );
+    }
+
+    public static void createExplosion(org.bukkit.Location location, ItemDefinition definition, double defaultPower, boolean defaultFire) {
+        location.getWorld().createExplosion(
+                location,
+                resolvePower(definition, defaultPower),
+                customBoolean(definition.getCustomData(), "fire", defaultFire),
+                customBoolean(definition.getCustomData(), "blockDamage", true)
         );
     }
 
     public static double customDouble(BlockDefinition definition, String key, double defaultValue) {
-        Object value = definition.getCustomData().get(key);
+        return customDouble(definition.getCustomData(), key, defaultValue);
+    }
+
+    public static boolean customBoolean(BlockDefinition definition, String key, boolean defaultValue) {
+        return customBoolean(definition.getCustomData(), key, defaultValue);
+    }
+
+    public static double customDouble(java.util.Map<String, Object> customData, String key, double defaultValue) {
+        Object value = customData.get(key);
         if (value instanceof Number number) {
             return number.doubleValue();
         }
         return defaultValue;
     }
 
-    public static boolean customBoolean(BlockDefinition definition, String key, boolean defaultValue) {
-        Object value = definition.getCustomData().get(key);
+    public static boolean customBoolean(java.util.Map<String, Object> customData, String key, boolean defaultValue) {
+        Object value = customData.get(key);
         if (value instanceof Boolean bool) {
             return bool;
         }

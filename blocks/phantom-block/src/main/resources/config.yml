@@ -25,6 +25,7 @@ model:
 
 behavior:
   strategy: phantom
+  strategy_name: Phantom Vanish
   fuse: 160
   radius: 6.0
   custom_data:

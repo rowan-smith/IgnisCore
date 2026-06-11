@@ -1,6 +1,8 @@
 package dev.rono.igniscore;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.IgnisCoreFacade;
+import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.command.CommandRegistrar;
 import dev.rono.igniscore.command.IgnisCommand;
@@ -8,21 +10,30 @@ import dev.rono.igniscore.core.ExtensionBootstrap;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.listener.BlockListener;
+import dev.rono.igniscore.listener.ItemListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
+import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.model.RuntimeBlockInstance;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
 import dev.rono.igniscore.service.BlockItemFactory;
+import dev.rono.igniscore.service.ItemFactory;
 import dev.rono.igniscore.service.NBTService;
 import dev.rono.igniscore.service.ProtocolService;
 import dev.rono.igniscore.service.RuntimeBlockService;
 import dev.rono.igniscore.service.VisualEffectService;
+import org.bukkit.Location;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
-public class IgnisCoreApplication {
+public class IgnisCoreApplication implements IgnisCoreFacade {
     private final Main plugin;
     private final CommandRegistrar commandRegistrar;
     private final IgnisCommand ignisCommand;
@@ -30,6 +41,7 @@ public class IgnisCoreApplication {
     private final ItemManager itemManager;
     private final ResourcePackService resourcePackService;
     private final BlockItemFactory blockItemFactory;
+    private final ItemFactory itemFactory;
     private final NBTService nbtService;
     private final ProtocolService protocolService;
     private final RuntimeBlockService runtimeBlockService;
@@ -45,11 +57,13 @@ public class IgnisCoreApplication {
                                 CommandRegistrar commandRegistrar,
                                 IgnisCommand ignisCommand,
                                 BlockListener blockListener,
+                                ItemListener itemListener,
                                 ResourcePackStatusListener resourcePackStatusListener,
                                 BlockManager blockManager,
                                 ItemManager itemManager,
                                 ResourcePackService resourcePackService,
                                 BlockItemFactory blockItemFactory,
+                                ItemFactory itemFactory,
                                 NBTService nbtService,
                                 ProtocolService protocolService,
                                 RuntimeBlockService runtimeBlockService,
@@ -65,6 +79,7 @@ public class IgnisCoreApplication {
         this.itemManager = itemManager;
         this.resourcePackService = resourcePackService;
         this.blockItemFactory = blockItemFactory;
+        this.itemFactory = itemFactory;
         this.nbtService = nbtService;
         this.protocolService = protocolService;
         this.runtimeBlockService = runtimeBlockService;
@@ -73,7 +88,7 @@ public class IgnisCoreApplication {
         this.strategyRegistry = strategyRegistry;
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
-        this.listeners = List.of(blockListener, resourcePackStatusListener);
+        this.listeners = List.of(blockListener, itemListener, resourcePackStatusListener);
     }
 
     public void enable() {
@@ -90,6 +105,61 @@ public class IgnisCoreApplication {
         resourcePackService.stopServer();
     }
 
+    @Override
+    public Map<String, BlockDefinition> getBlockTypes() {
+        return blockManager.getBlockTypes();
+    }
+
+    @Override
+    public Map<String, ItemDefinition> getItemTypes() {
+        return itemManager.getItemTypes();
+    }
+
+    @Override
+    public RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context) {
+        return blockManager.triggerBlock(location, typeId, context);
+    }
+
+    @Override
+    public String getPlacedBlockType(Location location) {
+        return blockManager.getPlacedBlockType(location);
+    }
+
+    @Override
+    public Collection<RuntimeBlockInstance> getActiveBlocks() {
+        return blockManager.getActiveBlocks();
+    }
+
+    @Override
+    public ItemStack createBlockItem(String typeId) {
+        return blockItemFactory.createBlockItem(typeId);
+    }
+
+    @Override
+    public ItemStack createItem(String typeId) {
+        return itemFactory.createItem(typeId);
+    }
+
+    @Override
+    public IgnisStrategyRegistry getStrategyRegistry() {
+        return strategyRegistry;
+    }
+
+    @Override
+    public IgnisNbtService getNbtService() {
+        return nbtService;
+    }
+
+    @Override
+    public void reloadExtensions() {
+        extensionBootstrap.reloadAll();
+        try {
+            resourcePackService.buildAndRegister();
+        } catch (IOException e) {
+            plugin.getLogger().severe("Failed to rebuild resource pack after reload: " + e.getMessage());
+        }
+    }
+
     public BlockItemFactory getBlockItemFactory() {
         return blockItemFactory;
     }
@@ -102,7 +172,7 @@ public class IgnisCoreApplication {
         return itemManager;
     }
 
-    public NBTService getNbtService() {
+    public NBTService getNbtServiceImpl() {
         return nbtService;
     }
 
@@ -122,25 +192,12 @@ public class IgnisCoreApplication {
         return resourcePackService;
     }
 
-    public IgnisStrategyRegistry getStrategyRegistry() {
-        return strategyRegistry;
-    }
-
     public BlockExtensionLoader getBlockExtensionLoader() {
         return blockExtensionLoader;
     }
 
     public ItemExtensionLoader getItemExtensionLoader() {
         return itemExtensionLoader;
-    }
-
-    public void reloadExtensions() {
-        extensionBootstrap.reloadAll();
-        try {
-            resourcePackService.buildAndRegister();
-        } catch (IOException e) {
-            plugin.getLogger().severe("Failed to rebuild resource pack after reload: " + e.getMessage());
-        }
     }
 
     private void registerListeners() {

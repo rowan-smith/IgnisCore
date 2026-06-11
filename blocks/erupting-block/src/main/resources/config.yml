@@ -26,6 +26,7 @@ model:
 
 behavior:
   strategy: erupting
+  strategy_name: Erupting TNT
 
   fuse: 100
   radius: 5.0

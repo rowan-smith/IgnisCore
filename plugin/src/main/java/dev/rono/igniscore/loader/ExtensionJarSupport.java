@@ -1,5 +1,6 @@
 package dev.rono.igniscore.loader;
 
+import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
@@ -54,20 +55,17 @@ final class ExtensionJarSupport {
                                       String strategyClassName,
                                       IgnisStrategyContext strategyContext,
                                       IgnisStrategyRegistry strategyRegistry,
-                                      String extensionId) throws Exception {
+                                      IgnisStrategyDescriptor descriptor) throws Exception {
         Class<?> strategyClass = Class.forName(strategyClassName, true, classLoader);
         Object instance = strategyClass.getConstructor(IgnisStrategyContext.class).newInstance(strategyContext);
         if (!(instance instanceof IgnisStrategy strategy)) {
             throw new IllegalStateException(strategyClassName + " does not implement IgnisStrategy");
         }
 
-        IgnisStrategyDescriptor descriptor = IgnisStrategyDescriptor.of(
-                strategy.descriptor().getId(),
-                strategy.descriptor().getName(),
-                strategy.descriptor().getVersion(),
-                strategy.descriptor().getAuthor(),
-                extensionId
-        );
+        if (strategy instanceof AbstractIgnisStrategy abstractStrategy) {
+            abstractStrategy.bindDescriptor(descriptor);
+        }
+
         strategyRegistry.register(descriptor, strategy);
         return strategy;
     }

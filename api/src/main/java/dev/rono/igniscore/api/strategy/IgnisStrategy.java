@@ -1,9 +1,12 @@
 package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.model.ItemDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Defines runtime behavior for a custom block or item type.
@@ -32,4 +35,6 @@ public interface IgnisStrategy {
     default void onBreak(RuntimeBlockInstance instance) {}
 
     default void onTrigger(RuntimeBlockInstance instance, Object context) {}
+
+    default void onItemUse(Player player, ItemDefinition definition, ItemStack item, Action action) {}
 }

@@ -65,7 +65,7 @@ public final class Main extends JavaPlugin {
     }
 
     public NBTService getNbtService() {
-        return application.getNbtService();
+        return application.getNbtServiceImpl();
     }
 
     public ProtocolService getProtocolService() {

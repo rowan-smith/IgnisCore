@@ -3,7 +3,6 @@ package dev.rono.blocks.nuclear;
 import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
 import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
@@ -14,8 +13,7 @@ import org.bukkit.Sound;
 public class Strategy extends AbstractIgnisStrategy {
 
     public Strategy(IgnisStrategyContext context) {
-        super(IgnisStrategyDescriptor.of("nuclear", "Nuclear Detonation", "1.0.0", "IgnisCore", "nuclear-block"),
-                context);
+        super(context);
     }
 
     @Override

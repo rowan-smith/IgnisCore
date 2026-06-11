@@ -102,6 +102,7 @@ interactions:
 
 behavior:
   strategy: entity
+  strategy_name: Entity Spawn
   fuse: 80
   radius: 10.0
   custom_data:
