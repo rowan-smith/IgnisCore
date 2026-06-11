@@ -170,7 +170,8 @@ public class IgnisCommand implements PluginCommandHandler {
                 case "all" -> {
                     extensionBootstrap.reloadAll();
                     resourcePackService.buildAndRegister();
-                    send(sender, "<green>IgnisCore extensions and resource pack reloaded.");
+                    resourcePackService.reloadConfiguration();
+                    send(sender, "<green>IgnisCore fully reloaded.");
                 }
                 case "blocks" -> {
                     extensionBootstrap.reloadBlocks();

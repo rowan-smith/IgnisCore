@@ -194,6 +194,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
         extensionBootstrap.reloadAll();
         try {
             resourcePackService.buildAndRegister();
+            resourcePackService.reloadConfiguration();
         } catch (IOException e) {
             plugin.getLogger().severe("Failed to rebuild resource pack after reload: " + e.getMessage());
         }
