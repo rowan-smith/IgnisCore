@@ -1,12 +1,10 @@
 package dev.rono.igniscore.strategies;
 
-import dev.rono.igniscore.model.RuntimeBlockInstance;
-import org.bukkit.entity.Player;
+import dev.rono.igniscore.api.strategy.IgnisStrategy;
 
-public interface BlockBehaviorStrategy {
-    default void onPlace(RuntimeBlockInstance instance) {}
-    default void onTick(RuntimeBlockInstance instance) {}
-    default void onInteract(RuntimeBlockInstance instance, Player player) {}
-    default void onBreak(RuntimeBlockInstance instance) {}
-    default void onTrigger(RuntimeBlockInstance instance, Object context) {}
+/**
+ * @deprecated Use {@link IgnisStrategy} directly.
+ */
+@Deprecated
+public interface BlockBehaviorStrategy extends IgnisStrategy {
 }

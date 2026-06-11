@@ -12,7 +12,7 @@ prefix: IgnisCore
 commands:
   ignis:
     description: Main command for IgnisCore
-    usage: /ignis <give|pack|debug>
+    usage: /ignis <give|pack|reload|debug|strategies|packs>
     aliases: [igniscore, ic]
     permission: igniscore.admin
 

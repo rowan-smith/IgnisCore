@@ -1,0 +1,57 @@
+package dev.rono.igniscore.core;
+
+import dev.rono.igniscore.api.strategy.IgnisStrategy;
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
+import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.service.CustomBlockAction;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class IgnisStrategyRegistryImplTest {
+    @Test
+    void registersAndUnregistersBySource() {
+        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        registry.register(IgnisStrategyDescriptor.of("sonic_boom", "Sonic Boom", "1.0.0", "test", "plugin-a"),
+                testStrategy("sonic_boom"));
+        registry.register(IgnisStrategyDescriptor.of("quake", "Quake", "1.0.0", "test", "plugin-b"),
+                testStrategy("quake"));
+
+        assertTrue(registry.isRegistered("sonic_boom"));
+        assertTrue(registry.isRegistered("quake"));
+
+        registry.unregisterBySource("plugin-a");
+
+        assertFalse(registry.isRegistered("sonic_boom"));
+        assertTrue(registry.isRegistered("quake"));
+    }
+
+    @Test
+    void fallsBackToDefaultStrategy() {
+        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        new BuiltinStrategyBootstrap(registry).registerAll();
+
+        assertEquals("default", registry.get("missing-strategy").descriptor().getId());
+        assertEquals("nuclear", registry.get("nuclear").descriptor().getId());
+    }
+
+    private IgnisStrategy testStrategy(String id) {
+        return new IgnisStrategy() {
+            @Override
+            public IgnisStrategyDescriptor descriptor() {
+                return IgnisStrategyDescriptor.of(id, id, "1.0.0", "test");
+            }
+
+            @Override
+            public StrategyProfile profile(BlockDefinition definition) {
+                return StrategyProfile.builder()
+                        .combustible(true)
+                        .rightClickAction(CustomBlockAction.IGNITE)
+                        .build();
+            }
+        };
+    }
+}

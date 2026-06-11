@@ -1,6 +1,7 @@
 package dev.rono.igniscore.manager;
 
 import dev.rono.igniscore.Main;
+import dev.rono.igniscore.loader.LoadedContentPack;
 import dev.rono.igniscore.model.BlockDefinition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -21,7 +22,7 @@ public class BlockDefinitionLoader {
         this.plugin = plugin;
     }
 
-    public Map<String, BlockDefinition> loadDefinitions(List<String> registeredIds) {
+    public Map<String, BlockDefinition> loadDefinitions(List<String> registeredIds, List<LoadedContentPack> packs) {
         Map<String, BlockDefinition> definitions = new LinkedHashMap<>();
         int modelData = 10001;
 
@@ -31,28 +32,39 @@ public class BlockDefinitionLoader {
         }
 
         for (String id : registeredIds) {
-            BlockDefinition def = null;
-
-            // 1. Search internal
-            def = loadFromResource(id, modelData);
-
-            // 2. Search external if not found internal
-            if (def == null) {
-                File folder = new File(blocksFolder, id);
-                if (folder.exists() && folder.isDirectory()) {
-                    def = loadFromFolder(folder, modelData);
-                }
-            }
+            BlockDefinition def = loadDefinition(id, modelData, blocksFolder, packs);
 
             if (def != null) {
                 definitions.put(def.getId(), def);
                 modelData++;
             } else {
-                plugin.getLogger().severe("CRITICAL: Block ID '" + id + "' is registered in config.yml but could not be found internally or in the blocks folder!");
+                plugin.getLogger().severe("CRITICAL: Block ID '" + id + "' is registered but could not be found in packs, data folder, or plugin resources!");
             }
         }
 
         return definitions;
+    }
+
+    private BlockDefinition loadDefinition(String id, int modelData, File blocksFolder, List<LoadedContentPack> packs) {
+        for (LoadedContentPack pack : packs) {
+            File packBlockFolder = new File(pack.getBlocksFolder(), id);
+            if (packBlockFolder.exists() && packBlockFolder.isDirectory()) {
+                BlockDefinition fromPack = loadFromFolder(packBlockFolder, modelData);
+                if (fromPack != null) {
+                    return fromPack;
+                }
+            }
+        }
+
+        File folder = new File(blocksFolder, id);
+        if (folder.exists() && folder.isDirectory()) {
+            BlockDefinition fromDataFolder = loadFromFolder(folder, modelData);
+            if (fromDataFolder != null) {
+                return fromDataFolder;
+            }
+        }
+
+        return loadFromResource(id, modelData);
     }
 
     private BlockDefinition loadFromResource(String id, int modelData) {

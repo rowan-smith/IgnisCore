@@ -1,6 +1,10 @@
 package dev.rono.igniscore.api;
 
 import dev.rono.igniscore.IgnisCoreApplication;
+import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.core.ExtensionBootstrap;
+import dev.rono.igniscore.loader.ContentPackLoader;
+import dev.rono.igniscore.loader.StrategyPluginLoader;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import dev.rono.igniscore.model.BlockDefinition;
@@ -50,5 +54,13 @@ public class IgnisCoreAPI {
 
     public static Map<String, BlockDefinition> getBlockTypes() {
         return application.getBlockManager().getBlockTypes();
+    }
+
+    public static IgnisStrategyRegistry getStrategyRegistry() {
+        return application.getStrategyRegistry();
+    }
+
+    public static void reloadExtensions() {
+        application.reloadExtensions();
     }
 }

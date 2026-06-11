@@ -1,8 +1,12 @@
 package dev.rono.igniscore;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.command.CommandRegistrar;
 import dev.rono.igniscore.command.IgnisCommand;
+import dev.rono.igniscore.core.ExtensionBootstrap;
+import dev.rono.igniscore.loader.ContentPackLoader;
+import dev.rono.igniscore.loader.StrategyPluginLoader;
 import dev.rono.igniscore.listener.BlockListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.manager.BlockManager;
@@ -28,6 +32,10 @@ public class IgnisCoreApplication {
     private final ProtocolService protocolService;
     private final RuntimeBlockService runtimeBlockService;
     private final VisualEffectService visualEffectService;
+    private final ExtensionBootstrap extensionBootstrap;
+    private final IgnisStrategyRegistry strategyRegistry;
+    private final StrategyPluginLoader strategyPluginLoader;
+    private final ContentPackLoader contentPackLoader;
     private final List<Listener> listeners;
 
     @Inject
@@ -42,7 +50,11 @@ public class IgnisCoreApplication {
                                 NBTService nbtService,
                                 ProtocolService protocolService,
                                 RuntimeBlockService runtimeBlockService,
-                                VisualEffectService visualEffectService) {
+                                VisualEffectService visualEffectService,
+                                ExtensionBootstrap extensionBootstrap,
+                                IgnisStrategyRegistry strategyRegistry,
+                                StrategyPluginLoader strategyPluginLoader,
+                                ContentPackLoader contentPackLoader) {
         this.plugin = plugin;
         this.commandRegistrar = commandRegistrar;
         this.ignisCommand = ignisCommand;
@@ -53,10 +65,15 @@ public class IgnisCoreApplication {
         this.protocolService = protocolService;
         this.runtimeBlockService = runtimeBlockService;
         this.visualEffectService = visualEffectService;
+        this.extensionBootstrap = extensionBootstrap;
+        this.strategyRegistry = strategyRegistry;
+        this.strategyPluginLoader = strategyPluginLoader;
+        this.contentPackLoader = contentPackLoader;
         this.listeners = List.of(blockListener, resourcePackStatusListener);
     }
 
     public void enable() {
+        extensionBootstrap.loadAll();
         registerListeners();
         commandRegistrar.register("ignis", ignisCommand);
         initializeResourcePack();
@@ -93,6 +110,22 @@ public class IgnisCoreApplication {
 
     public ResourcePackService getResourcePackService() {
         return resourcePackService;
+    }
+
+    public IgnisStrategyRegistry getStrategyRegistry() {
+        return strategyRegistry;
+    }
+
+    public StrategyPluginLoader getStrategyPluginLoader() {
+        return strategyPluginLoader;
+    }
+
+    public ContentPackLoader getContentPackLoader() {
+        return contentPackLoader;
+    }
+
+    public void reloadExtensions() {
+        extensionBootstrap.reloadAll();
     }
 
     private void registerListeners() {

@@ -1,6 +1,9 @@
 package dev.rono.igniscore.strategies;
 
 import dev.rono.igniscore.api.IgnisCoreAPI;
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
+import dev.rono.igniscore.core.BuiltinStrategyBootstrap;
+import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -8,6 +11,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class TunnelingStrategy extends BaseBlockBehaviorStrategy {
+    public TunnelingStrategy() {
+        super(IgnisStrategyDescriptor.of("tunneling", "Tunneling Blast", "1.0.0", "IgnisCore"));
+    }
+
+    @Override
+    public dev.rono.igniscore.api.strategy.StrategyProfile profile(BlockDefinition definition) {
+        return BuiltinStrategyBootstrap.explosiveProfile();
+    }
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         Location loc = instance.getLocation().toCenterLocation();

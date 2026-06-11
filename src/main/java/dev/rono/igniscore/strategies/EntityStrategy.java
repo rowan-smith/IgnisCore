@@ -1,6 +1,8 @@
 package dev.rono.igniscore.strategies;
 
 import dev.rono.igniscore.api.IgnisCoreAPI;
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
+import dev.rono.igniscore.core.BuiltinStrategyBootstrap;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Sound;
@@ -12,6 +14,16 @@ import java.util.Comparator;
 import java.util.Map;
 
 public class EntityStrategy extends BaseBlockBehaviorStrategy {
+    public EntityStrategy() {
+        super(IgnisStrategyDescriptor.of("entity", "Entity Spawn", "1.0.0", "IgnisCore"));
+    }
+
+    @Override
+    public dev.rono.igniscore.api.strategy.StrategyProfile profile(BlockDefinition definition) {
+        return BuiltinStrategyBootstrap.explosiveProfile().toBuilder()
+                .placementSound("ENTITY_SPIDER_AMBIENT")
+                .build();
+    }
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();

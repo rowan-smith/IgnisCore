@@ -1,5 +1,7 @@
 package dev.rono.igniscore.strategies;
 
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
+import dev.rono.igniscore.core.BuiltinStrategyBootstrap;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Location;
@@ -7,6 +9,14 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 
 public class PhantomStrategy extends BaseBlockBehaviorStrategy {
+    public PhantomStrategy() {
+        super(IgnisStrategyDescriptor.of("phantom", "Phantom Vanish", "1.0.0", "IgnisCore"));
+    }
+
+    @Override
+    public dev.rono.igniscore.api.strategy.StrategyProfile profile(BlockDefinition definition) {
+        return BuiltinStrategyBootstrap.explosiveProfile();
+    }
     @Override
     public void onTick(RuntimeBlockInstance instance) {
         if (instance.getTicksLeft() == instance.getDefinition().getFuse() - 20) {

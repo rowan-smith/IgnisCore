@@ -1,9 +1,12 @@
 package dev.rono.igniscore.service;
 
+import dev.rono.igniscore.core.BuiltinStrategyBootstrap;
+import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.model.BlockDefinition;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.event.block.Action;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,7 +15,14 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BlockInteractionResolverTest {
-    private final BlockInteractionResolver resolver = new BlockInteractionResolver();
+    private BlockInteractionResolver resolver;
+
+    @BeforeEach
+    void setUp() {
+        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        new BuiltinStrategyBootstrap(registry).registerAll();
+        resolver = new BlockInteractionResolver(new StrategyProfileResolver(registry));
+    }
 
     @Test
     void leftClickDefaultsToBreak() {

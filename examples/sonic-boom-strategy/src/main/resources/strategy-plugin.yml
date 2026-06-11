@@ -1,0 +1,6 @@
+id: sonic-boom-strategies
+name: Sonic Boom Strategies
+version: 1.0.0
+api-version: 1.0.0
+author: IgnisCore Examples
+main: dev.rono.examples.sonicboom.SonicBoomStrategyPlugin

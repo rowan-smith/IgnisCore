@@ -1,47 +1,23 @@
 package dev.rono.igniscore.strategies;
 
-import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
-public abstract class BaseBlockBehaviorStrategy implements BlockBehaviorStrategy {
+public abstract class BaseBlockBehaviorStrategy extends AbstractIgnisStrategy implements BlockBehaviorStrategy {
 
-    @Override
-    public void onPlace(RuntimeBlockInstance instance) {}
-
-    @Override
-    public void onTick(RuntimeBlockInstance instance) {}
-
-    @Override
-    public void onInteract(RuntimeBlockInstance instance, Player player) {}
-
-    @Override
-    public void onBreak(RuntimeBlockInstance instance) {}
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object context) {}
-
-    protected double getCustomDouble(BlockDefinition def, String key, double defaultValue) {
-        Object val = def.getCustomData().get(key);
-        if (val instanceof Number n) return n.doubleValue();
-        return defaultValue;
+    protected BaseBlockBehaviorStrategy(IgnisStrategyDescriptor descriptor) {
+        super(descriptor);
     }
 
-    protected int getCustomInt(BlockDefinition def, String key, int defaultValue) {
-        Object val = def.getCustomData().get(key);
-        if (val instanceof Number n) return n.intValue();
-        return defaultValue;
-    }
-
-    protected boolean getCustomBoolean(BlockDefinition def, String key, boolean defaultValue) {
-        Object val = def.getCustomData().get(key);
-        if (val instanceof Boolean b) return b;
-        return defaultValue;
+    protected BaseBlockBehaviorStrategy(IgnisStrategyDescriptor descriptor, IgnisStrategyContext context) {
+        super(descriptor, context);
     }
 
     protected void playNukeCountdown(RuntimeBlockInstance instance) {

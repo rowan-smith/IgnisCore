@@ -1,0 +1,12 @@
+id: classic-tnt-pack
+name: Classic TNT Pack
+version: 1.0.0
+author: IgnisCore
+blocks:
+  - nuke
+  - wormhole-tnt
+  - spider-storm
+strategies:
+  - nuclear
+  - wormhole
+  - entity

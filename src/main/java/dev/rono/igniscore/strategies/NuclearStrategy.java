@@ -1,11 +1,26 @@
 package dev.rono.igniscore.strategies;
 
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
+import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.igniscore.core.BuiltinStrategyBootstrap;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
 public class NuclearStrategy extends BaseBlockBehaviorStrategy {
+    public NuclearStrategy() {
+        super(IgnisStrategyDescriptor.of("nuclear", "Nuclear Detonation", "1.0.0", "IgnisCore"));
+    }
+
+    @Override
+    public StrategyProfile profile(BlockDefinition definition) {
+        return BuiltinStrategyBootstrap.explosiveProfile().toBuilder()
+                .defaultFuse(160)
+                .defaultRadius(30.0)
+                .placementSound("BLOCK_BEACON_ACTIVATE")
+                .build();
+    }
     @Override
     public void onPlace(RuntimeBlockInstance instance) {
         Location center = instance.getLocation().toCenterLocation();

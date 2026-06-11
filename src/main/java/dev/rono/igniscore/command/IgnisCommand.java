@@ -2,9 +2,16 @@ package dev.rono.igniscore.command;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
+import dev.rono.igniscore.core.ExtensionBootstrap;
+import dev.rono.igniscore.loader.ContentPackLoader;
+import dev.rono.igniscore.loader.LoadedContentPack;
+import dev.rono.igniscore.loader.LoadedStrategyPlugin;
+import dev.rono.igniscore.loader.StrategyPluginLoader;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
+import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,18 +23,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IgnisCommand implements PluginCommandHandler {
-    private static final List<String> ROOT_SUBCOMMANDS = List.of("give", "pack", "reload", "debug");
+    private static final List<String> ROOT_SUBCOMMANDS = List.of("give", "pack", "reload", "debug", "strategies", "packs");
     private static final List<String> DEBUG_SUBCOMMANDS = List.of("on", "off", "pack");
+    private static final List<String> RELOAD_SUBCOMMANDS = List.of("all", "blocks", "strategies", "packs");
 
     private final Main plugin;
     private final BlockManager blockManager;
     private final ResourcePackService resourcePackService;
+    private final ExtensionBootstrap extensionBootstrap;
+    private final IgnisStrategyRegistry strategyRegistry;
+    private final StrategyPluginLoader strategyPluginLoader;
+    private final ContentPackLoader contentPackLoader;
 
     @Inject
-    public IgnisCommand(Main plugin, BlockManager blockManager, ResourcePackService resourcePackService) {
+    public IgnisCommand(Main plugin,
+                        BlockManager blockManager,
+                        ResourcePackService resourcePackService,
+                        ExtensionBootstrap extensionBootstrap,
+                        IgnisStrategyRegistry strategyRegistry,
+                        StrategyPluginLoader strategyPluginLoader,
+                        ContentPackLoader contentPackLoader) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.resourcePackService = resourcePackService;
+        this.extensionBootstrap = extensionBootstrap;
+        this.strategyRegistry = strategyRegistry;
+        this.strategyPluginLoader = strategyPluginLoader;
+        this.contentPackLoader = contentPackLoader;
     }
 
     @Override
@@ -46,8 +68,10 @@ public class IgnisCommand implements PluginCommandHandler {
         return switch (args[0].toLowerCase()) {
             case "give" -> handleGive(sender, args);
             case "pack" -> handlePack(sender);
-            case "reload" -> handleReload(sender);
+            case "reload" -> handleReload(sender, args);
             case "debug" -> handleDebug(sender, args);
+            case "strategies" -> handleStrategies(sender);
+            case "packs" -> handlePacks(sender);
             default -> false;
         };
     }
@@ -94,9 +118,54 @@ public class IgnisCommand implements PluginCommandHandler {
         return true;
     }
 
-    private boolean handleReload(CommandSender sender) {
-        blockManager.loadConfig();
-        sender.sendMessage(plugin.message("<green>IgnisCore block configs reloaded."));
+    private boolean handleReload(CommandSender sender, String[] args) {
+        String target = args.length > 1 ? args[1].toLowerCase() : "all";
+        switch (target) {
+            case "blocks" -> {
+                blockManager.loadConfig();
+                sender.sendMessage(plugin.message("<green>IgnisCore block configs reloaded."));
+            }
+            case "strategies", "packs", "all" -> {
+                extensionBootstrap.reloadAll();
+                sender.sendMessage(plugin.message("<green>IgnisCore extensions reloaded (strategies, packs, and blocks)."));
+            }
+            default -> sender.sendMessage(plugin.message("<red>Usage: /ignis reload <all|blocks|strategies|packs>"));
+        }
+        return true;
+    }
+
+    private boolean handleStrategies(CommandSender sender) {
+        sender.sendMessage(plugin.message("<gold>Registered Strategies:"));
+        for (IgnisStrategyDescriptor descriptor : strategyRegistry.getDescriptors()) {
+            sender.sendMessage(plugin.message("<gray>- <white>" + descriptor.getId()
+                    + " <dark_gray>(" + descriptor.getName() + " v" + descriptor.getVersion()
+                    + " by " + descriptor.getAuthor() + " from " + descriptor.getSourcePlugin() + ")"));
+        }
+
+        sender.sendMessage(plugin.message("<gold>Loaded Strategy Plugins:"));
+        if (strategyPluginLoader.getLoadedPlugins().isEmpty()) {
+            sender.sendMessage(plugin.message("<gray>None"));
+        } else {
+            for (LoadedStrategyPlugin loadedPlugin : strategyPluginLoader.getLoadedPlugins()) {
+                sender.sendMessage(plugin.message("<gray>- <white>" + loadedPlugin.getManifest().getName()
+                        + " <dark_gray>v" + loadedPlugin.getManifest().getVersion() + "</dark_gray>"));
+            }
+        }
+        return true;
+    }
+
+    private boolean handlePacks(CommandSender sender) {
+        sender.sendMessage(plugin.message("<gold>Loaded Content Packs:"));
+        if (contentPackLoader.getLoadedPacks().isEmpty()) {
+            sender.sendMessage(plugin.message("<gray>None"));
+            return true;
+        }
+
+        for (LoadedContentPack pack : contentPackLoader.getLoadedPacks()) {
+            sender.sendMessage(plugin.message("<gray>- <white>" + pack.getManifest().getName()
+                    + " <dark_gray>v" + pack.getManifest().getVersion()
+                    + " (" + pack.getManifest().getBlocks().size() + " blocks)</dark_gray>"));
+        }
         return true;
     }
 
@@ -129,7 +198,9 @@ public class IgnisCommand implements PluginCommandHandler {
         sender.sendMessage(plugin.message("<gold>IgnisCore Commands:"));
         sender.sendMessage(plugin.message("<yellow>/ignis give <player> <type>"));
         sender.sendMessage(plugin.message("<yellow>/ignis pack - Apply resource pack"));
-        sender.sendMessage(plugin.message("<yellow>/ignis reload - Reload block configs"));
+        sender.sendMessage(plugin.message("<yellow>/ignis reload <all|blocks|strategies|packs>"));
+        sender.sendMessage(plugin.message("<yellow>/ignis strategies - List loaded strategies"));
+        sender.sendMessage(plugin.message("<yellow>/ignis packs - List loaded content packs"));
     }
 
     private void sendPackDebug(CommandSender sender) {
@@ -162,6 +233,8 @@ public class IgnisCommand implements PluginCommandHandler {
             completions.addAll(ROOT_SUBCOMMANDS);
         } else if (args.length == 2 && args[0].equalsIgnoreCase("debug")) {
             completions.addAll(DEBUG_SUBCOMMANDS);
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("reload")) {
+            completions.addAll(RELOAD_SUBCOMMANDS);
         } else if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
             Bukkit.getOnlinePlayers().forEach(player -> completions.add(player.getName()));
         } else if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
