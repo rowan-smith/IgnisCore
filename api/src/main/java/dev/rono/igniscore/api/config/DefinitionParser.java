@@ -1,9 +1,9 @@
-package dev.rono.igniscore.manager;
+package dev.rono.igniscore.api.config;
 
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.file.YamlConfiguration;

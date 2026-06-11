@@ -9,9 +9,9 @@ import dev.rono.igniscore.api.extension.ExtensionResources;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
-import dev.rono.igniscore.manager.DefinitionParser;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.api.config.DefinitionParser;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -141,7 +141,7 @@ final class ExtensionLoadEngine {
 
         try {
             ExtensionJarSupport.loadStrategy(classLoader, manifest.getStrategyClass(), strategyContext,
-                    strategyRegistry, descriptor);
+                    strategyRegistry, descriptor, kind);
 
             if (!strategyRegistry.isRegistered(strategyId)) {
                 throw new IllegalStateException(kind.folderName() + " extension " + manifest.getId()

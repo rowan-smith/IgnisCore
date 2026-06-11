@@ -1,4 +1,4 @@
-package dev.rono.igniscore.model;
+package dev.rono.igniscore.api.model;
 
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;

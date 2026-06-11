@@ -2,7 +2,7 @@ package dev.rono.igniscore.manager;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.loader.LoadedExtension;
-import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 
 import java.util.Collections;
 import java.util.HashMap;

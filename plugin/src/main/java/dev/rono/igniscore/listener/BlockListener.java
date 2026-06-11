@@ -2,7 +2,7 @@ package dev.rono.igniscore.listener;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
-import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.service.BlockInteractionResolver;
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.service.CustomBlockBreakService;

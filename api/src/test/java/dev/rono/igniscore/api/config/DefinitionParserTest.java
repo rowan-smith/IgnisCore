@@ -1,4 +1,4 @@
-package dev.rono.igniscore.manager;
+package dev.rono.igniscore.api.config;
 
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;

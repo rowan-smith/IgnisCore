@@ -69,7 +69,7 @@ public final class Main extends JavaPlugin {
     }
 
     public ProtocolService getProtocolService() {
-        return application.getProtocolService();
+        return application.getProtocolServiceImpl();
     }
 
     public RuntimeBlockService getRuntimeBlockService() {

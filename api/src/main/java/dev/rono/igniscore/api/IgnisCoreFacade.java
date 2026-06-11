@@ -1,10 +1,12 @@
 package dev.rono.igniscore.api;
 
+import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.ItemDefinition;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,6 +34,10 @@ public interface IgnisCoreFacade {
     IgnisStrategyRegistry getStrategyRegistry();
 
     IgnisNbtService getNbtService();
+
+    IgnisProtocolService getProtocolService();
+
+    IgnisEffectService getEffectService();
 
     void reloadExtensions();
 }

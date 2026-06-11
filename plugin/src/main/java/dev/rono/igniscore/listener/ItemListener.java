@@ -1,9 +1,11 @@
 package dev.rono.igniscore.listener;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.strategy.IgnisItemStrategy;
+import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.manager.ItemManager;
-import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.service.ItemIdentifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,7 +52,7 @@ public class ItemListener implements Listener {
 
         event.setCancelled(true);
         Player player = event.getPlayer();
-        strategyRegistry.get(definition.getStrategy()).onItemUse(player, definition, item, event.getAction());
+        requireItemStrategy(definition).onItemUse(player, definition, item, event.getAction());
 
         if (item.getAmount() <= 0) {
             if (event.getHand() == EquipmentSlot.OFF_HAND) {
@@ -59,5 +61,14 @@ public class ItemListener implements Listener {
                 player.getInventory().setItemInMainHand(null);
             }
         }
+    }
+
+    private IgnisItemStrategy requireItemStrategy(ItemDefinition definition) {
+        IgnisStrategy strategy = strategyRegistry.get(definition.getStrategy());
+        if (!(strategy instanceof IgnisItemStrategy itemStrategy)) {
+            throw new IllegalStateException("Item type " + definition.getId() + " uses a non-item strategy: "
+                    + definition.getStrategy());
+        }
+        return itemStrategy;
     }
 }

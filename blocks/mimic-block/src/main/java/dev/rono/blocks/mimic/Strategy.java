@@ -1,15 +1,15 @@
 package dev.rono.blocks.mimic;
 
-import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
+import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.Location;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
 
-public class Strategy extends AbstractIgnisStrategy {
+public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);

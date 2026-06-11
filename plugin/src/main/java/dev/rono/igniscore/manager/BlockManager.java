@@ -2,11 +2,13 @@ package dev.rono.igniscore.manager;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
+import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
+import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.loader.LoadedExtension;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.renderer.BlockDisplayRenderer;
 import dev.rono.igniscore.service.ConfiguredEffectService;
 import dev.rono.igniscore.service.StrategyProfileResolver;
@@ -64,7 +66,7 @@ public class BlockManager {
             effectService.playSound(center, profile.getPlacementSound(), 1.6f, 0.7f);
         }
 
-        strategyRegistry.get(type.getStrategy()).onStaticPlace(type, location);
+        requireBlockStrategy(type).onStaticPlace(type, location);
     }
 
     public void unregisterPlacedBlock(Location location) {
@@ -87,12 +89,13 @@ public class BlockManager {
 
         RuntimeBlockInstance instance = plugin.getRuntimeBlockService().createInstance(type, location);
         renderer.spawnDisplay(instance);
-        strategyRegistry.get(type.getStrategy()).onPlace(instance);
+        IgnisBlockStrategy strategy = requireBlockStrategy(type);
+        strategy.onPlace(instance);
 
         instance.setTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             instance.tick();
             renderer.updateAnimation(instance);
-            strategyRegistry.get(type.getStrategy()).onTick(instance);
+            strategy.onTick(instance);
 
             if (instance.getTicksLeft() <= 0) {
                 executeBehavior(instance, context);
@@ -108,7 +111,16 @@ public class BlockManager {
         }
         plugin.getRuntimeBlockService().removeInstance(instance.getUuid());
         renderer.removeDisplay(instance);
-        strategyRegistry.get(instance.getDefinition().getStrategy()).onTrigger(instance, context);
+        requireBlockStrategy(instance.getDefinition()).onTrigger(instance, context);
+    }
+
+    private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
+        IgnisStrategy strategy = strategyRegistry.get(definition.getStrategy());
+        if (!(strategy instanceof IgnisBlockStrategy blockStrategy)) {
+            throw new IllegalStateException("Block type " + definition.getId() + " uses a non-block strategy: "
+                    + definition.getStrategy());
+        }
+        return blockStrategy;
     }
 
     public Main getPlugin() {

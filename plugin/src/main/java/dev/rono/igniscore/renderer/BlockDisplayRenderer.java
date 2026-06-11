@@ -1,8 +1,8 @@
 package dev.rono.igniscore.renderer;
 
 import dev.rono.igniscore.Main;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.util.Transformation;
 import org.joml.Quaternionf;

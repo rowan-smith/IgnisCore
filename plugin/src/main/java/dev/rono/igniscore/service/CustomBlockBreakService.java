@@ -3,7 +3,7 @@ package dev.rono.igniscore.service;
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
-import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.api.model.BlockDefinition;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

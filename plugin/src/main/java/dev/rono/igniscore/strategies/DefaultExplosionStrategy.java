@@ -1,14 +1,14 @@
 package dev.rono.igniscore.strategies;
 
-import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
+import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfiles;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.Sound;
 
-public class DefaultExplosionStrategy extends AbstractIgnisStrategy {
+public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
     public DefaultExplosionStrategy() {
         super(IgnisStrategyDescriptor.of("default", "Default Explosion", "1.0.0", "IgnisCore"));
     }

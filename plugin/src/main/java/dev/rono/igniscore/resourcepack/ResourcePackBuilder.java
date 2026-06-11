@@ -7,8 +7,8 @@ import com.google.gson.JsonObject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.loader.ExtensionResourceProvider;
 import dev.rono.igniscore.manager.ItemManager;
-import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.model.ItemDefinition;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 
 import java.io.*;
 import java.nio.file.*;
