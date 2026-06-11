@@ -236,7 +236,7 @@ Block icons use custom model data starting at `10001`; items start at `20001`. T
 | `/ignis reload blocks` | Reload block extensions and rebuild the resource pack |
 | `/ignis reload items` | Reload item extensions and rebuild the resource pack |
 | `/ignis reload server` | Reload config and restart the resource pack web server |
-| `/ignis reload all` | Reload everything and rebuild the resource pack |
+| `/ignis reload all` | Reload all extensions and rebuild the resource pack |
 
 ## Platform support
 

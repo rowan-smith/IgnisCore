@@ -147,7 +147,7 @@ public class IgnisCommand implements PluginCommandHandler {
         }
 
         try {
-            resourcePackService.reloadBuildAndRegister();
+            resourcePackService.buildAndRegister();
             plugin.getLogger().info("Resource pack rebuilt successfully! Hash: " + resourcePackService.getLatestHash());
             send(player, "<green>Resource pack rebuilt. Reconnect if models do not update.");
         } catch (IOException e) {
@@ -169,17 +169,17 @@ public class IgnisCommand implements PluginCommandHandler {
                 }
                 case "all" -> {
                     extensionBootstrap.reloadAll();
-                    resourcePackService.reloadBuildAndRegister();
+                    resourcePackService.buildAndRegister();
                     send(sender, "<green>IgnisCore extensions and resource pack reloaded.");
                 }
                 case "blocks" -> {
                     extensionBootstrap.reloadBlocks();
-                    resourcePackService.reloadBuildAndRegister();
+                    resourcePackService.buildAndRegister();
                     send(sender, "<green>IgnisCore block extensions reloaded.");
                 }
                 case "items" -> {
                     extensionBootstrap.reloadItems();
-                    resourcePackService.reloadBuildAndRegister();
+                    resourcePackService.buildAndRegister();
                     send(sender, "<green>IgnisCore item extensions reloaded.");
                 }
                 default -> {

@@ -46,12 +46,6 @@ public class ResourcePackService {
         restartServer();
     }
 
-    public void reloadBuildAndRegister() throws IOException {
-        plugin.reloadConfig();
-        buildAndRegister();
-        restartServer();
-    }
-
     public void restartServer() {
         stopServer();
         startServer();
