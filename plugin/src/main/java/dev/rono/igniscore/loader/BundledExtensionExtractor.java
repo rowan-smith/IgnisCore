@@ -8,13 +8,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 @Singleton
 public class BundledExtensionExtractor {
@@ -58,14 +59,17 @@ public class BundledExtensionExtractor {
                 return resources;
             }
 
-            try (JarFile jar = new JarFile(pluginJar)) {
-                Enumeration<JarEntry> entries = jar.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    String name = entry.getName();
-                    if (name.startsWith(normalizedPrefix) && name.endsWith(".jar") && !entry.isDirectory()) {
-                        resources.add(name);
-                    }
+            // Use an isolated file-system view so we never close the plugin JAR that Paper's
+            // PluginClassLoader still has open (JarFile.close() would break class loading).
+            try (FileSystem fileSystem = FileSystems.newFileSystem(pluginJar.toPath(), (ClassLoader) null)) {
+                Path bundledRoot = fileSystem.getPath("/" + normalizedPrefix);
+                if (!Files.isDirectory(bundledRoot)) {
+                    return resources;
+                }
+
+                try (Stream<Path> entries = Files.list(bundledRoot)) {
+                    entries.filter(path -> path.getFileName().toString().endsWith(".jar"))
+                            .forEach(path -> resources.add(normalizedPrefix + path.getFileName()));
                 }
             }
         } catch (Exception e) {

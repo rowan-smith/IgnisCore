@@ -16,7 +16,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -64,7 +63,8 @@ public class ExtensionSupportListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory top = event.getView().getTopInventory();
-        if (!(top.getHolder() instanceof IgnisCustomInventory customInventory)) {
+        IgnisCustomInventory customInventory = extensionSupport.getCustomInventory(top);
+        if (customInventory == null) {
             return;
         }
 
@@ -86,7 +86,8 @@ public class ExtensionSupportListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryDrag(InventoryDragEvent event) {
         Inventory top = event.getView().getTopInventory();
-        if (!(top.getHolder() instanceof IgnisCustomInventory customInventory)) {
+        IgnisCustomInventory customInventory = extensionSupport.getCustomInventory(top);
+        if (customInventory == null) {
             return;
         }
 
@@ -100,8 +101,8 @@ public class ExtensionSupportListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        InventoryHolder holder = event.getInventory().getHolder();
-        if (holder instanceof IgnisCustomInventory customInventory) {
+        IgnisCustomInventory customInventory = extensionSupport.getCustomInventory(event.getInventory());
+        if (customInventory != null) {
             customInventory.restoreDecorations();
         }
     }

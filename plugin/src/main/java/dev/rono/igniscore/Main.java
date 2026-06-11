@@ -29,10 +29,26 @@ public final class Main extends JavaPlugin {
         saveDefaultConfig();
 
         platformHooks = PlatformHookLoader.load(this);
-        injector = Guice.createInjector(new IgnisCoreModule(this, platformHooks));
-        application = injector.getInstance(IgnisCoreApplication.class);
+        try {
+            injector = Guice.createInjector(new IgnisCoreModule(this, platformHooks));
+            application = injector.getInstance(IgnisCoreApplication.class);
+        } catch (RuntimeException error) {
+            getLogger().severe("Failed to initialize IgnisCore services: " + error.getClass().getSimpleName()
+                    + " - " + error.getMessage());
+            error.printStackTrace();
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         IgnisCoreAPI.init(application);
-        application.enable();
+        try {
+            application.enable();
+        } catch (RuntimeException error) {
+            getLogger().severe("Failed to enable IgnisCore: " + error.getClass().getSimpleName()
+                    + " - " + error.getMessage());
+            error.printStackTrace();
+            getServer().getPluginManager().disablePlugin(this);
+        }
     }
 
     @Override

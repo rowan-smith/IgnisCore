@@ -23,7 +23,7 @@ final class QuarryCacheInventory implements IgnisCustomInventory {
 
     QuarryCacheInventory(Location location, Component title) {
         this.location = location.clone();
-        this.inventory = StrategySupport.createInventory(this, TOTAL_SLOTS, title);
+        this.inventory = StrategySupport.createInventory(null, TOTAL_SLOTS, title);
         fillSeparators();
     }
 

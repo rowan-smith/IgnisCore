@@ -26,6 +26,7 @@ final class QuarryCacheRegistry {
         double radius = resolveCollectRadius(definition);
         Component title = definition.getTitle() == null ? Component.text("Quarry Cache") : definition.getTitle();
         QuarryCacheInventory inventory = new QuarryCacheInventory(blockLocation, title);
+        extensionSupport.registerCustomInventory(inventory.getInventory(), inventory);
         QuarryCacheData cache = new QuarryCacheData(blockLocation, radius, inventory);
         caches.put(blockLocation, cache);
         extensionSupport.registerDropCollector(blockLocation, (breakLocation, drops) -> tryCollect(cache, breakLocation, drops));
@@ -33,8 +34,11 @@ final class QuarryCacheRegistry {
 
     void unregister(Location location) {
         Location blockLocation = location.getBlock().getLocation();
-        caches.remove(blockLocation);
+        QuarryCacheData cache = caches.remove(blockLocation);
         extensionSupport.unregisterDropCollector(blockLocation);
+        if (cache != null) {
+            extensionSupport.unregisterCustomInventory(cache.inventory.getInventory());
+        }
     }
 
     void openGui(Player player, Location location) {
@@ -52,6 +56,7 @@ final class QuarryCacheRegistry {
         if (cache == null) {
             return;
         }
+        extensionSupport.unregisterCustomInventory(cache.inventory.getInventory());
 
         Location dropLocation = cache.location.clone().add(0.5, 0.5, 0.5);
         Inventory inventory = cache.inventory.getInventory();

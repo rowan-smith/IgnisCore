@@ -45,6 +45,15 @@ class AbstractIgnisItemStrategyTest {
                 @Override
                 public void unregisterDropCollector(org.bukkit.Location location) {
                 }
+
+                @Override
+                public void registerCustomInventory(org.bukkit.inventory.Inventory inventory,
+                                                      dev.rono.igniscore.api.inventory.IgnisCustomInventory handler) {
+                }
+
+                @Override
+                public void unregisterCustomInventory(org.bukkit.inventory.Inventory inventory) {
+                }
             }));
         }
 
