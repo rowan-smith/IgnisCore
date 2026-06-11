@@ -98,6 +98,7 @@ interactions:
 
 behavior:
   strategy: nuclear
+  strategy_name: Nuclear Detonation
   fuse: 160
   radius: 30.0
   custom_data:

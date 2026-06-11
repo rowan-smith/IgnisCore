@@ -30,17 +30,25 @@ public class ExtensionBootstrap {
     }
 
     public void loadAll() {
-        blockExtensionLoader.loadAll();
-        itemExtensionLoader.loadAll();
-        blockManager.loadFromExtensions(blockExtensionLoader.getLoadedExtensions());
-        itemManager.loadFromExtensions(itemExtensionLoader.getLoadedExtensions());
-        plugin.getLogger().info("Loaded " + blockExtensionLoader.getLoadedExtensions().size()
-                + " block extension(s) and " + itemExtensionLoader.getLoadedExtensions().size() + " item extension(s).");
+        reloadBlocks();
+        reloadItems();
     }
 
     public void reloadAll() {
         blockExtensionLoader.unloadAll();
         itemExtensionLoader.unloadAll();
         loadAll();
+    }
+
+    public void reloadBlocks() {
+        blockExtensionLoader.loadAll();
+        blockManager.loadFromExtensions(blockExtensionLoader.getLoadedExtensions());
+        plugin.getLogger().info("Loaded " + blockExtensionLoader.getLoadedExtensions().size() + " block extension(s).");
+    }
+
+    public void reloadItems() {
+        itemExtensionLoader.loadAll();
+        itemManager.loadFromExtensions(itemExtensionLoader.getLoadedExtensions());
+        plugin.getLogger().info("Loaded " + itemExtensionLoader.getLoadedExtensions().size() + " item extension(s).");
     }
 }

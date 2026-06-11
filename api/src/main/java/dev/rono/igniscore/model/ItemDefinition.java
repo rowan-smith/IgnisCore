@@ -15,10 +15,12 @@ public class ItemDefinition {
     private final Map<String, Object> interactionSettings;
     private final int customModelData;
     private final String extensionId;
+    private final String iconTexture;
 
     public ItemDefinition(String id, String baseMaterial, Component title, List<Component> description,
                           String strategy, Map<String, Object> customData,
-                          Map<String, Object> interactionSettings, int customModelData, String extensionId) {
+                          Map<String, Object> interactionSettings, int customModelData, String extensionId,
+                          String iconTexture) {
         this.id = id;
         this.baseMaterial = baseMaterial;
         this.title = title;
@@ -28,6 +30,7 @@ public class ItemDefinition {
         this.interactionSettings = interactionSettings;
         this.customModelData = customModelData;
         this.extensionId = extensionId;
+        this.iconTexture = iconTexture;
     }
 
     public String getId() {
@@ -64,5 +67,9 @@ public class ItemDefinition {
 
     public String getExtensionId() {
         return extensionId;
+    }
+
+    public String getIconTexture() {
+        return iconTexture;
     }
 }

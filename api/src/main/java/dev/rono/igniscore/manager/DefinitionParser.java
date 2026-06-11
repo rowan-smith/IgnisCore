@@ -1,5 +1,7 @@
 package dev.rono.igniscore.manager;
 
+import dev.rono.igniscore.api.extension.ExtensionManifest;
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.ItemDefinition;
 import net.kyori.adventure.text.Component;
@@ -81,6 +83,14 @@ public final class DefinitionParser {
                 displaySettings, modelData, rotate, floatBob, pulse, extensionId);
     }
 
+    public static IgnisStrategyDescriptor parseStrategyDescriptor(YamlConfiguration config, ExtensionManifest manifest) {
+        String id = config.getString("behavior.strategy", "default");
+        String name = config.getString("behavior.strategy_name", manifest.getName());
+        String version = config.getString("behavior.strategy_version", manifest.getVersion());
+        String author = config.getString("behavior.strategy_author", manifest.getAuthor());
+        return IgnisStrategyDescriptor.of(id, name, version, author, manifest.getId());
+    }
+
     public static ItemDefinition parseItem(YamlConfiguration config, String fallbackId, int modelData, String extensionId) {
         String id = config.getString("id", fallbackId);
 
@@ -95,11 +105,12 @@ public final class DefinitionParser {
 
         String baseMaterial = config.getString("item.base_material", "paper").toLowerCase();
         String strategy = config.getString("behavior.strategy", "default");
+        String iconTexture = config.getString("textures.icon", "icon.png");
         Map<String, Object> customData = sectionToMap(config.getConfigurationSection("behavior.custom_data"));
         Map<String, Object> interactionSettings = sectionToMap(config.getConfigurationSection("interactions"));
 
         return new ItemDefinition(id, baseMaterial, title, description, strategy, customData,
-                interactionSettings, modelData, extensionId);
+                interactionSettings, modelData, extensionId, iconTexture);
     }
 
     private static Map<String, Object> sectionToMap(org.bukkit.configuration.ConfigurationSection section) {

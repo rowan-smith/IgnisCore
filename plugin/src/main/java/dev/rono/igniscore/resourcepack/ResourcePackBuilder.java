@@ -6,7 +6,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.loader.ExtensionResourceProvider;
+import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.model.ItemDefinition;
 
 import java.io.*;
 import java.nio.file.*;
@@ -18,6 +20,7 @@ import java.util.zip.ZipOutputStream;
 
 public class ResourcePackBuilder {
     private final Main plugin;
+    private final ItemManager itemManager;
     private final ExtensionResourceProvider resourceProvider;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -34,20 +37,20 @@ public class ResourcePackBuilder {
         public String getHash() { return hash; }
     }
 
-    public ResourcePackBuilder(Main plugin, ExtensionResourceProvider resourceProvider) {
+    public ResourcePackBuilder(Main plugin, ItemManager itemManager, ExtensionResourceProvider resourceProvider) {
         this.plugin = plugin;
+        this.itemManager = itemManager;
         this.resourceProvider = resourceProvider;
     }
 
-    public PackResult buildPack(Map<String, BlockDefinition> definitions) throws IOException {
-        // Phase 1: Compilation
-        List<CompiledBlockAsset> compiledAssets = compile(definitions);
-
-        // Phase 2: Packaging
-        return packageAssets(compiledAssets);
+    public PackResult buildPack(Map<String, BlockDefinition> blockDefinitions,
+                                Map<String, ItemDefinition> itemDefinitions) throws IOException {
+        List<CompiledBlockAsset> compiledBlockAssets = compileBlocks(blockDefinitions);
+        List<CompiledItemAsset> compiledItemAssets = compileItems(itemDefinitions);
+        return packageAssets(compiledBlockAssets, compiledItemAssets);
     }
 
-    private List<CompiledBlockAsset> compile(Map<String, BlockDefinition> definitions) {
+    private List<CompiledBlockAsset> compileBlocks(Map<String, BlockDefinition> definitions) {
         List<CompiledBlockAsset> assets = new ArrayList<>();
         for (BlockDefinition def : definitions.values()) {
             try {
@@ -57,6 +60,34 @@ public class ResourcePackBuilder {
             }
         }
         return assets;
+    }
+
+    private List<CompiledItemAsset> compileItems(Map<String, ItemDefinition> definitions) {
+        List<CompiledItemAsset> assets = new ArrayList<>();
+        for (ItemDefinition def : definitions.values()) {
+            try {
+                assets.add(compileItemAsset(def));
+            } catch (Exception e) {
+                plugin.getLogger().warning("Failed to compile asset for item " + def.getId() + ": " + e.getMessage());
+            }
+        }
+        return assets;
+    }
+
+    private CompiledItemAsset compileItemAsset(ItemDefinition def) {
+        JsonObject itemModel = new JsonObject();
+        itemModel.addProperty("parent", "minecraft:item/generated");
+        JsonObject texturesJson = new JsonObject();
+        texturesJson.addProperty("layer0", "igniscore:item/" + def.getId());
+        itemModel.add("textures", texturesJson);
+
+        return new CompiledItemAsset(
+                def.getId(),
+                def.getBaseMaterial(),
+                def.getCustomModelData(),
+                def.getIconTexture(),
+                itemModel
+        );
     }
 
     private CompiledBlockAsset compileAsset(BlockDefinition def) {
@@ -126,7 +157,43 @@ public class ResourcePackBuilder {
         String blockId;
     }
 
-    private PackResult packageAssets(List<CompiledBlockAsset> assets) throws IOException {
+    private static class CompiledItemAsset {
+        private final String id;
+        private final String baseMaterial;
+        private final int customModelData;
+        private final String iconTexture;
+        private final JsonObject itemModel;
+
+        private CompiledItemAsset(String id, String baseMaterial, int customModelData, String iconTexture, JsonObject itemModel) {
+            this.id = id;
+            this.baseMaterial = baseMaterial;
+            this.customModelData = customModelData;
+            this.iconTexture = iconTexture;
+            this.itemModel = itemModel;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getBaseMaterial() {
+            return baseMaterial;
+        }
+
+        public int getCustomModelData() {
+            return customModelData;
+        }
+
+        public String getIconTexture() {
+            return iconTexture;
+        }
+
+        public JsonObject getItemModel() {
+            return itemModel;
+        }
+    }
+
+    private PackResult packageAssets(List<CompiledBlockAsset> assets, List<CompiledItemAsset> itemAssets) throws IOException {
         Path tempDir = Files.createTempDirectory("igniscore_rp");
         try {
             // pack.mcmeta
@@ -179,6 +246,26 @@ public class ResourcePackBuilder {
             }
 
             // Write item overrides: assets/minecraft/models/item/<base_item>.json
+            for (CompiledItemAsset itemAsset : itemAssets) {
+                Path itemModelPath = tempDir.resolve("assets/igniscore/models/item/" + itemAsset.getId() + ".json");
+                Files.createDirectories(itemModelPath.getParent());
+                Files.writeString(itemModelPath, gson.toJson(itemAsset.getItemModel()));
+
+                Path itemDefinitionPath = tempDir.resolve("assets/igniscore/items/" + itemAsset.getId() + ".json");
+                Files.createDirectories(itemDefinitionPath.getParent());
+                Files.writeString(itemDefinitionPath, gson.toJson(createModelItemDefinition("igniscore:item/" + itemAsset.getId())));
+
+                Path texturePath = tempDir.resolve("assets/igniscore/textures/item/" + itemAsset.getId() + ".png");
+                Files.createDirectories(texturePath.getParent());
+                copyItemTexture(itemAsset, texturePath);
+
+                OverrideEntry entry = new OverrideEntry();
+                entry.cmd = itemAsset.getCustomModelData();
+                entry.model = "igniscore:item/" + itemAsset.getId();
+                entry.blockId = itemAsset.getId();
+                materialOverrides.computeIfAbsent(itemAsset.getBaseMaterial(), k -> new ArrayList<>()).add(entry);
+            }
+
             for (Map.Entry<String, List<OverrideEntry>> entry : materialOverrides.entrySet()) {
                 String material = entry.getKey();
                 List<OverrideEntry> overridesList = entry.getValue();
@@ -346,6 +433,20 @@ public class ResourcePackBuilder {
             }
         }
         return null;
+    }
+
+    private void copyItemTexture(CompiledItemAsset asset, Path texturePath) throws IOException {
+        ItemDefinition definition = itemManager.getItemTypes().get(asset.getId());
+        if (definition == null) {
+            throw new IOException("Unknown item definition for texture copy: " + asset.getId());
+        }
+
+        try (InputStream inputStream = resourceProvider.getItemTextureStream(definition, asset.getIconTexture())) {
+            if (inputStream == null) {
+                throw new IOException("Missing texture " + asset.getIconTexture() + " for item " + asset.getId());
+            }
+            Files.copy(inputStream, texturePath, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     private void zip(Path sourceDirPath, Path zipFilePath) throws IOException {

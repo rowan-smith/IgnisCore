@@ -134,18 +134,20 @@ public class IgnisCommand implements PluginCommandHandler {
 
     private boolean handleReload(CommandSender sender, String[] args) {
         String target = args.length > 1 ? args[1].toLowerCase() : "all";
-        switch (target) {
-            case "blocks", "items", "all" -> {
-                extensionBootstrap.reloadAll();
-                try {
-                    resourcePackService.buildAndRegister();
-                } catch (IOException e) {
-                    sender.sendMessage(plugin.message("<red>Extensions reloaded but resource pack rebuild failed."));
+        try {
+            switch (target) {
+                case "all" -> extensionBootstrap.reloadAll();
+                case "blocks" -> extensionBootstrap.reloadBlocks();
+                case "items" -> extensionBootstrap.reloadItems();
+                default -> {
+                    sender.sendMessage(plugin.message("<red>Usage: /ignis reload <all|blocks|items>"));
                     return true;
                 }
-                sender.sendMessage(plugin.message("<green>IgnisCore extensions reloaded."));
             }
-            default -> sender.sendMessage(plugin.message("<red>Usage: /ignis reload <all|blocks|items>"));
+            resourcePackService.buildAndRegister();
+            sender.sendMessage(plugin.message("<green>IgnisCore " + target + " extensions reloaded."));
+        } catch (IOException e) {
+            sender.sendMessage(plugin.message("<red>Extensions reloaded but resource pack rebuild failed."));
         }
         return true;
     }

@@ -3,6 +3,7 @@ package dev.rono.igniscore.resourcepack;
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
+import dev.rono.igniscore.manager.ItemManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -11,21 +12,27 @@ import java.io.IOException;
 public class ResourcePackService {
     private final Main plugin;
     private final BlockManager blockManager;
+    private final ItemManager itemManager;
     private final ResourcePackBuilder packBuilder;
     private final ResourcePackServer packServer;
 
     private String latestHash;
 
     @Inject
-    public ResourcePackService(Main plugin, BlockManager blockManager, ResourcePackBuilder packBuilder) {
+    public ResourcePackService(Main plugin,
+                               BlockManager blockManager,
+                               ItemManager itemManager,
+                               ResourcePackBuilder packBuilder) {
         this.plugin = plugin;
         this.blockManager = blockManager;
+        this.itemManager = itemManager;
         this.packBuilder = packBuilder;
         this.packServer = new ResourcePackServer(plugin);
     }
 
     public void buildAndRegister() throws IOException {
-        ResourcePackBuilder.PackResult result = packBuilder.buildPack(blockManager.getBlockTypes());
+        ResourcePackBuilder.PackResult result = packBuilder.buildPack(
+                blockManager.getBlockTypes(), itemManager.getItemTypes());
         latestHash = result.getHash();
         packServer.registerPack(latestHash, result.getFile());
         plugin.getLogger().info("Resource pack generated successfully! Hash: " + latestHash);

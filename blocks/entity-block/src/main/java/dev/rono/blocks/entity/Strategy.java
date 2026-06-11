@@ -3,7 +3,6 @@ package dev.rono.blocks.entity;
 import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
 import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
@@ -20,8 +19,7 @@ import java.util.Map;
 public class Strategy extends AbstractIgnisStrategy {
 
     public Strategy(IgnisStrategyContext context) {
-        super(IgnisStrategyDescriptor.of("entity", "Entity Spawn", "1.0.0", "IgnisCore", "entity-block"),
-                context);
+        super(context);
     }
 
     @Override

@@ -68,6 +68,13 @@
                     <exclude name="*/target/original-*.jar"/>
                   </fileset>
                 </copy>
+                <mkdir dir="${project.build.outputDirectory}/bundled/items"/>
+                <copy todir="${project.build.outputDirectory}/bundled/items" flatten="true">
+                  <fileset dir="${project.basedir}/../items">
+                    <include name="*/target/*.jar"/>
+                    <exclude name="*/target/original-*.jar"/>
+                  </fileset>
+                </copy>
               </target>
             </configuration>
           </execution>

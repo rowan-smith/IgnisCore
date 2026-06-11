@@ -2,12 +2,19 @@ package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.model.BlockDefinition;
 
+import java.util.Objects;
+
 public abstract class AbstractIgnisStrategy implements IgnisStrategy {
-    private final IgnisStrategyDescriptor descriptor;
+    private IgnisStrategyDescriptor descriptor;
     protected final IgnisStrategyContext context;
 
+    protected AbstractIgnisStrategy(IgnisStrategyContext context) {
+        this.context = context;
+    }
+
     protected AbstractIgnisStrategy(IgnisStrategyDescriptor descriptor) {
-        this(descriptor, null);
+        this.descriptor = descriptor;
+        this.context = null;
     }
 
     protected AbstractIgnisStrategy(IgnisStrategyDescriptor descriptor, IgnisStrategyContext context) {
@@ -15,9 +22,13 @@ public abstract class AbstractIgnisStrategy implements IgnisStrategy {
         this.context = context;
     }
 
+    public void bindDescriptor(IgnisStrategyDescriptor descriptor) {
+        this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
+    }
+
     @Override
     public IgnisStrategyDescriptor descriptor() {
-        return descriptor;
+        return Objects.requireNonNull(descriptor, "Strategy descriptor has not been bound");
     }
 
     protected double getCustomDouble(BlockDefinition def, String key, double defaultValue) {

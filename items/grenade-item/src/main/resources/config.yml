@@ -1,0 +1,25 @@
+id: grenade
+
+display:
+  title: "&cGrenade"
+  description:
+    - "&7Right-click to throw"
+
+item:
+  base_material: snowball
+
+textures:
+  icon: icon.png
+
+behavior:
+  strategy: grenade
+  strategy_name: Throwable Grenade
+  custom_data:
+    power: 4.0
+    fuse_ticks: 40
+    throw_velocity: 1.2
+    fire: false
+
+interactions:
+  right_click:
+    action: throw
