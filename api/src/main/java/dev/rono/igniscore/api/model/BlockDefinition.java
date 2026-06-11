@@ -17,6 +17,10 @@ public class BlockDefinition {
     private final String topTexture;
     private final String sideTexture;
     private final String bottomTexture;
+    private final String side1Texture;
+    private final String side2Texture;
+    private final String side3Texture;
+    private final String side4Texture;
     
     private final String strategy;
     private final int fuse;
@@ -42,7 +46,7 @@ public class BlockDefinition {
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse) {
         this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
                 bottomTexture, strategy, fuse, radius, customData, breakSettings, interactionSettings, displaySettings,
-                customModelData, rotate, floatBob, pulse, "builtin");
+                customModelData, rotate, floatBob, pulse, "builtin", null, null, null, null);
     }
 
     public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description,
@@ -52,6 +56,18 @@ public class BlockDefinition {
                            Map<String, Object> breakSettings, Map<String, Object> interactionSettings,
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
                            String extensionId) {
+        this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
+                bottomTexture, strategy, fuse, radius, customData, breakSettings, interactionSettings, displaySettings,
+                customModelData, rotate, floatBob, pulse, extensionId, null, null, null, null);
+    }
+
+    public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description,
+                           boolean placeable, boolean breakable,
+                           String topTexture, String sideTexture, String bottomTexture,
+                           String strategy, int fuse, double radius, Map<String, Object> customData,
+                           Map<String, Object> breakSettings, Map<String, Object> interactionSettings,
+                           Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
+                           String extensionId, String side1Texture, String side2Texture, String side3Texture, String side4Texture) {
         this.id = id;
         this.baseMaterial = baseMaterial;
         this.renderMaterial = renderMaterial;
@@ -62,6 +78,10 @@ public class BlockDefinition {
         this.topTexture = topTexture;
         this.sideTexture = sideTexture;
         this.bottomTexture = bottomTexture;
+        this.side1Texture = side1Texture;
+        this.side2Texture = side2Texture;
+        this.side3Texture = side3Texture;
+        this.side4Texture = side4Texture;
         this.strategy = strategy;
         this.fuse = fuse;
         this.radius = radius;
@@ -86,6 +106,25 @@ public class BlockDefinition {
     public String getTopTexture() { return topTexture; }
     public String getSideTexture() { return sideTexture; }
     public String getBottomTexture() { return bottomTexture; }
+    public String getSide1Texture() { return side1Texture; }
+    public String getSide2Texture() { return side2Texture; }
+    public String getSide3Texture() { return side3Texture; }
+    public String getSide4Texture() { return side4Texture; }
+
+    public boolean hasPerSideTextures() {
+        return side1Texture != null || side2Texture != null || side3Texture != null || side4Texture != null;
+    }
+
+    public String getResolvedSideTexture(int face) {
+        String texture = switch (face) {
+            case 1 -> side1Texture;
+            case 2 -> side2Texture;
+            case 3 -> side3Texture;
+            case 4 -> side4Texture;
+            default -> throw new IllegalArgumentException("Side face must be 1-4, got: " + face);
+        };
+        return texture != null ? texture : sideTexture;
+    }
     public String getStrategy() { return strategy; }
     public int getFuse() { return fuse; }
     public double getRadius() { return radius; }
