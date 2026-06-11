@@ -173,7 +173,9 @@ public class Strategy extends AbstractIgnisItemStrategy {
             return;
         }
 
-        nbt.setStringList(LINKED_BOMBS_KEY, linkedBombs);
+        var list = nbt.getStringList(LINKED_BOMBS_KEY);
+        list.clear();
+        list.addAll(linkedBombs);
     }
 
     private String encodeLocation(Location location) {
@@ -200,7 +202,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
                     Integer.parseInt(parts[2]),
                     Integer.parseInt(parts[3])
             );
-        } catch (IllegalArgumentException | NumberFormatException ex) {
+        } catch (IllegalArgumentException ex) {
             return null;
         }
     }
