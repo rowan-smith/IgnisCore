@@ -246,7 +246,7 @@ The hook layer lives in the `platform` module:
 | Module | Role |
 |--------|------|
 | `platform-api` | `PlatformHooks` interface and runtime loader |
-| `platform-spigot` | Default Spigot implementations (legacy item meta, string messages) |
+| `platform-spigot` | Default Spigot implementations (bundled Adventure via `adventure-platform-bukkit`, legacy item meta) |
 | `platform-paper` | Paper enhancements (data components, Adventure APIs) |
 
 At startup, `PlatformHookLoader` detects Paper via `io.papermc.paper.datacomponent.DataComponentTypes` and selects the appropriate implementation. Both hook JARs are bundled into the final plugin.

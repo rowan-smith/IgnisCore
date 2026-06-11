@@ -21,13 +21,14 @@ public final class Main extends JavaPlugin {
 
     private Injector injector;
     private IgnisCoreApplication application;
+    private PlatformHooks platformHooks;
     private boolean debugEnabled = false;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
 
-        PlatformHooks platformHooks = PlatformHookLoader.load(this);
+        platformHooks = PlatformHookLoader.load(this);
         injector = Guice.createInjector(new IgnisCoreModule(this, platformHooks));
         application = injector.getInstance(IgnisCoreApplication.class);
         IgnisCoreAPI.init(application);
@@ -38,6 +39,9 @@ public final class Main extends JavaPlugin {
     public void onDisable() {
         if (application != null) {
             application.disable();
+        }
+        if (platformHooks != null) {
+            platformHooks.shutdown();
         }
     }
 

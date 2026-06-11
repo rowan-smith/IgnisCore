@@ -29,4 +29,7 @@ public interface PlatformHooks {
     boolean isBlockReplaceable(Block block);
 
     NamespacedKey getSoundKey(Sound sound);
+
+    default void shutdown() {
+    }
 }

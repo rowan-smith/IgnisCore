@@ -14,7 +14,7 @@ public final class PlatformHookLoader {
 
     public static PlatformHooks load(JavaPlugin plugin) {
         if (isPaperRuntime()) {
-            PlatformHooks paperHooks = instantiate(PAPER_HOOKS_CLASS);
+            PlatformHooks paperHooks = instantiate(PAPER_HOOKS_CLASS, plugin);
             if (paperHooks != null) {
                 plugin.getLogger().info("Using Paper platform hooks.");
                 return paperHooks;
@@ -22,9 +22,9 @@ public final class PlatformHookLoader {
             plugin.getLogger().warning("Paper runtime detected but Paper hooks could not be loaded; falling back to Spigot hooks.");
         }
 
-        PlatformHooks spigotHooks = instantiate(SPIGOT_HOOKS_CLASS);
+        PlatformHooks spigotHooks = instantiate(SPIGOT_HOOKS_CLASS, plugin);
         if (spigotHooks != null) {
-            plugin.getLogger().info("Using Spigot platform hooks.");
+            plugin.getLogger().info("Using Spigot platform hooks (Adventure via BukkitAudiences).");
             return spigotHooks;
         }
 
@@ -40,9 +40,13 @@ public final class PlatformHookLoader {
         }
     }
 
-    private static PlatformHooks instantiate(String className) {
+    private static PlatformHooks instantiate(String className, JavaPlugin plugin) {
         try {
             Class<?> hookClass = Class.forName(className);
+            if (SPIGOT_HOOKS_CLASS.equals(className)) {
+                Object instance = hookClass.getConstructor(JavaPlugin.class).newInstance(plugin);
+                return (PlatformHooks) instance;
+            }
             Object instance = hookClass.getConstructor().newInstance();
             return (PlatformHooks) instance;
         } catch (ReflectiveOperationException | ClassCastException ignored) {
