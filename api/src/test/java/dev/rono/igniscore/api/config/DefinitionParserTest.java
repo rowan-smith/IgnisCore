@@ -246,6 +246,25 @@ class DefinitionParserTest {
     }
 
     @Test
+    void parsesJpegTextureFilenames() {
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+                id: custom
+                textures:
+                  top: top.jpg
+                  side: side.jpeg
+                  bottom: bottom.jpg
+                  side-1: north.jpg
+                """));
+
+        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10001, "custom-block");
+
+        assertEquals("top.jpg", definition.getTopTexture());
+        assertEquals("side.jpeg", definition.getSideTexture());
+        assertEquals("bottom.jpg", definition.getBottomTexture());
+        assertEquals("north.jpg", definition.getSide1Texture());
+    }
+
+    @Test
     void singleSideTextureKeepsLegacyMode() {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
                 id: custom

@@ -426,7 +426,7 @@ public class ResourcePackBuilder {
             try (InputStream is = getTextureStream(asset.getId(), fileName)) {
                 if (is != null) {
                     Path texturePath = destDir.resolve(key + ".png");
-                    Files.copy(is, texturePath, StandardCopyOption.REPLACE_EXISTING);
+                    TextureFileWriter.writePackTexture(is, fileName, texturePath);
                     plugin.getLogger().info("Generated texture: " + texturePath.toString().replace("\\", "/"));
                 } else {
                     String error = "CRITICAL: Texture missing for block " + asset.getId() + ": " + fileName;
@@ -458,7 +458,7 @@ public class ResourcePackBuilder {
             if (inputStream == null) {
                 throw new IOException("Missing texture " + asset.getIconTexture() + " for item " + asset.getId());
             }
-            Files.copy(inputStream, texturePath, StandardCopyOption.REPLACE_EXISTING);
+            TextureFileWriter.writePackTexture(inputStream, asset.getIconTexture(), texturePath);
         }
     }
 

@@ -41,6 +41,15 @@ class ResourcePackBuilderTest {
     }
 
     @Test
+    void preservesJpegSourceFilenamesInCompiledTextureMap() throws Exception {
+        CompiledBlockAsset asset = compileAsset(blockDefinition("north.jpg", "east.jpeg", null, null));
+
+        assertEquals("north.jpg", asset.getTextures().get("side-1"));
+        assertEquals("east.jpeg", asset.getTextures().get("side-2"));
+        assertEquals("side.png", asset.getTextures().get("side-3"));
+    }
+
+    @Test
     void perSideTexturesFallBackToSharedSideSourceFile() throws Exception {
         CompiledBlockAsset asset = compileAsset(blockDefinition("north.png", null, null, null));
 
