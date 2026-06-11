@@ -4,7 +4,6 @@ import dev.rono.igniscore.support.MockBukkitTestBase;
 import dev.rono.igniscore.support.PdcBackedNbtService;
 import dev.rono.igniscore.support.TestDefinitions;
 import dev.rono.igniscore.support.StubBlockManager;
-import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +21,7 @@ class BlockItemFactoryTest extends MockBukkitTestBase {
     void setUpFactory() {
         nbtService = new PdcBackedNbtService();
         StubBlockManager blockManager = StubBlockManager.with(TestDefinitions.block("nuke", "nuclear"));
-        factory = new BlockItemFactory(blockManager, nbtService);
+        factory = new BlockItemFactory(blockManager, nbtService, platformHooks);
         identifier = new BlockItemIdentifier(plugin, nbtService);
     }
 
@@ -32,7 +31,7 @@ class BlockItemFactoryTest extends MockBukkitTestBase {
 
         assertEquals(Material.PAPER, item.getType());
         assertEquals("nuke", identifier.resolveTypeId(item));
-        assertEquals(10001, item.getData(DataComponentTypes.CUSTOM_MODEL_DATA).floats().getFirst().intValue());
+        assertEquals(10001, platformHooks.readCustomModelData(item).orElseThrow());
         assertEquals(80, nbtService.readItem(item, nbt -> nbt.getInteger("ignis:fuse")).intValue());
         assertEquals("nuclear", nbtService.readItem(item, nbt -> nbt.getString("ignis:strategy")));
         if (item.getItemMeta().hasItemModel()) {

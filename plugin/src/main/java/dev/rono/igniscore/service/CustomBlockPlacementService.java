@@ -3,6 +3,7 @@ package dev.rono.igniscore.service;
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
+import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -18,18 +19,27 @@ public class CustomBlockPlacementService {
     private final Plugin plugin;
     private final BlockManager blockManager;
     private final BlockItemIdentifier itemIdentifier;
+    private final PlatformHooks platformHooks;
 
     @Inject
-    public CustomBlockPlacementService(Main plugin, BlockManager blockManager, BlockItemIdentifier itemIdentifier) {
+    public CustomBlockPlacementService(Main plugin,
+                                       BlockManager blockManager,
+                                       BlockItemIdentifier itemIdentifier,
+                                       PlatformHooks platformHooks) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.itemIdentifier = itemIdentifier;
+        this.platformHooks = platformHooks;
     }
 
-    CustomBlockPlacementService(Plugin plugin, BlockManager blockManager, BlockItemIdentifier itemIdentifier) {
+    CustomBlockPlacementService(Plugin plugin,
+                                BlockManager blockManager,
+                                BlockItemIdentifier itemIdentifier,
+                                PlatformHooks platformHooks) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.itemIdentifier = itemIdentifier;
+        this.platformHooks = platformHooks;
     }
 
     public void handleInteractPlacement(PlayerInteractEvent event) {
@@ -53,7 +63,7 @@ public class CustomBlockPlacementService {
         }
 
         Block targetBlock = clickedBlock.getRelative(event.getBlockFace());
-        if (!targetBlock.getType().isAir() && !targetBlock.isReplaceable()) {
+        if (!targetBlock.getType().isAir() && !platformHooks.isBlockReplaceable(targetBlock)) {
             debug("Target block is not air or replaceable: " + targetBlock.getType());
             return;
         }

@@ -8,6 +8,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.util.Locations;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.renderer.BlockDisplayRenderer;
 import dev.rono.igniscore.service.ConfiguredEffectService;
@@ -60,7 +61,7 @@ public class BlockManager {
 
     private void playPlacementEffects(Location location, BlockDefinition type) {
         StrategyProfile profile = profileResolver.resolve(type);
-        Location center = location.toCenterLocation();
+        Location center = Locations.toCenter(location);
 
         if (profile.getPlacementSound() != null) {
             effectService.playSound(center, profile.getPlacementSound(), 1.6f, 0.7f);

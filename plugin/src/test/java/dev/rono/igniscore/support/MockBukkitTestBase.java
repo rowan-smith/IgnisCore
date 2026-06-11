@@ -1,5 +1,7 @@
 package dev.rono.igniscore.support;
 
+import dev.rono.igniscore.platform.PlatformHookLoader;
+import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,6 +21,7 @@ public abstract class MockBukkitTestBase {
     protected ServerMock server;
     protected World world;
     protected JavaPlugin plugin;
+    protected PlatformHooks platformHooks;
 
     @BeforeEach
     void startMockBukkit() throws IOException {
@@ -36,6 +39,7 @@ public abstract class MockBukkitTestBase {
         plugin = new TestIgnisPlugin(loader, description, dataFolder, pluginFile);
         ((PluginManagerMock) server.getPluginManager()).registerLoadedPlugin(plugin);
         server.getPluginManager().enablePlugin(plugin);
+        platformHooks = PlatformHookLoader.load(plugin);
     }
 
     @AfterEach

@@ -3,6 +3,7 @@ package dev.rono.blocks.signalcharge;
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.util.Locations;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -34,7 +35,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
-        Location loc = instance.getLocation().toCenterLocation();
+        Location loc = Locations.toCenter(instance.getLocation());
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 0.9f);
         ExplosiveStrategySupport.createExplosion(loc, def, 4.0, false);
     }

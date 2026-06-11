@@ -3,6 +3,7 @@ package dev.rono.igniscore.api.strategy;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -74,7 +75,7 @@ public final class ExplosiveStrategySupport {
             return;
         }
 
-        Location center = instance.getLocation().toCenterLocation();
+        Location center = Locations.toCenter(instance.getLocation());
         float pitch = ticksLeft <= 15 ? 1.9f : ticksLeft <= 40 ? 1.45f : ticksLeft <= 80 ? 1.1f : 0.75f;
         center.getWorld().playSound(center, Sound.BLOCK_NOTE_BLOCK_PLING, 2.0f, pitch);
         center.getWorld().playSound(center, Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.5f);
@@ -87,7 +88,7 @@ public final class ExplosiveStrategySupport {
             return;
         }
 
-        Location center = instance.getLocation().toCenterLocation();
+        Location center = Locations.toCenter(instance.getLocation());
         World world = center.getWorld();
         double intensity = ticksLeft <= 20 ? 1.0 : ticksLeft <= 60 ? 0.6 : 0.3;
         world.spawnParticle(Particle.SMOKE, center, (int) (18 * intensity), 0.45, 0.45, 0.45, 0.02);

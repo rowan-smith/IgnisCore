@@ -1,6 +1,6 @@
 # IgnisCore
 
-IgnisCore is a Paper plugin for custom explosive blocks and throwable items. Behavior is driven by YAML configuration and Java strategy classes shipped as extension JARs.
+IgnisCore is a Spigot-compatible plugin for custom explosive blocks and throwable items. It targets Spigot 1.21+ and automatically enables Paper-specific hooks when running on Paper. Behavior is driven by YAML configuration and Java strategy classes shipped as extension JARs.
 
 ## Module layout
 
@@ -9,7 +9,8 @@ igniscore-parent/
 ├── api/              Public contracts, models, config parsing, strategy API
 ├── blocks/           Block extension modules (one JAR per block type)
 ├── items/            Item extension modules (one JAR per item type)
-├── plugin/           Core Paper runtime (loaders, listeners, services)
+├── platform/         Server platform hooks (Spigot default, Paper enhancements)
+├── plugin/           Core runtime (loaders, listeners, services)
 └── dist/             Assembles the deployable plugin JAR
 ```
 
@@ -18,6 +19,7 @@ igniscore-parent/
 | `api` | Stable API for extension authors: `IgnisCoreAPI`, models, `DefinitionParser`, `IgnisBlockStrategy` / `IgnisItemStrategy`, protocol/effect services |
 | `blocks/*` | Individual block extensions depending only on `api` |
 | `items/*` | Individual item extensions depending only on `api` |
+| `platform` | Hookable platform layer: Spigot implementations with optional Paper enhancements |
 | `plugin` | Runtime that loads extensions, renders blocks, handles events |
 | `dist` | Unpacks the plugin, bundles extension JARs, produces `igniscore.jar` |
 
@@ -229,8 +231,28 @@ Block icons use custom model data starting at `10001`; items start at `20001`. T
 | `/ignis reload items` | Reload item extensions |
 | `/ignis reload all` | Reload everything and rebuild the resource pack |
 
+## Platform support
+
+IgnisCore compiles against **Spigot API** and runs on Spigot 1.21+ servers. When started on Paper, it automatically loads Paper-specific hooks for:
+
+- Custom model data via the Paper Data Component API
+- Adventure-based item metadata and messaging
+- Resource pack prompts
+- Block replaceability checks
+- Registry sound key lookups
+
+The hook layer lives in the `platform` module:
+
+| Module | Role |
+|--------|------|
+| `platform-api` | `PlatformHooks` interface and runtime loader |
+| `platform-spigot` | Default Spigot implementations (bundled Adventure via `adventure-platform-bukkit`, legacy item meta) |
+| `platform-paper` | Paper enhancements (data components, Adventure APIs) |
+
+At startup, `PlatformHookLoader` detects Paper via `io.papermc.paper.datacomponent.DataComponentTypes` and selects the appropriate implementation. Both hook JARs are bundled into the final plugin.
+
 ## Requirements
 
-- Paper 1.21+
+- Spigot or Paper 1.21+
 - Java 25
 - ProtocolLib (optional, enables fake explosion packets and advanced visuals)

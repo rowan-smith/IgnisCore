@@ -15,7 +15,7 @@ class ConfiguredEffectServiceTest extends MockBukkitTestBase {
 
     @BeforeEach
     void setUpService() {
-        effectService = new ConfiguredEffectService(plugin);
+        effectService = new ConfiguredEffectService(plugin, platformHooks);
     }
 
     @Test

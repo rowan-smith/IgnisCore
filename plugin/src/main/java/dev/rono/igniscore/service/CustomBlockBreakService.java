@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -89,7 +90,7 @@ public class CustomBlockBreakService {
             return;
         }
 
-        Location center = block.getLocation().toCenterLocation();
+        Location center = Locations.toCenter(block.getLocation());
         effectService.playSound(center, getString(definition.getBreakSettings(), "break_sound", "BLOCK_STONE_BREAK"),
                 0.8f, 1.0f);
         effectService.spawnConfiguredParticles(center, getList(getMap(definition.getBreakSettings(), "particles"), "break"),
@@ -114,9 +115,9 @@ public class CustomBlockBreakService {
 
         int hitInterval = getInt(definition.getBreakSettings(), "hit_interval_ticks", 6);
         if (hitInterval > 0 && session.elapsedTicks % hitInterval == 0) {
-            effectService.playSound(session.location.toCenterLocation(),
+            effectService.playSound(Locations.toCenter(session.location),
                     getString(definition.getBreakSettings(), "hit_sound", "BLOCK_STONE_HIT"), 0.25f, 1.2f);
-            effectService.spawnConfiguredParticles(session.location.toCenterLocation(),
+            effectService.spawnConfiguredParticles(Locations.toCenter(session.location),
                     getList(getMap(definition.getBreakSettings(), "particles"), "hit"),
                     Particle.CRIT, 3, 0.3, 0.3, 0.3, 0.02);
         }

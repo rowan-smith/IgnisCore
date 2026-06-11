@@ -2,6 +2,7 @@ package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
+import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -20,18 +21,21 @@ import static dev.rono.igniscore.util.ConfigValueReader.getString;
 
 public class ConfiguredEffectService {
     private final Plugin plugin;
+    private final PlatformHooks platformHooks;
 
     @Inject
-    public ConfiguredEffectService(Main plugin) {
+    public ConfiguredEffectService(Main plugin, PlatformHooks platformHooks) {
         this.plugin = plugin;
+        this.platformHooks = platformHooks;
     }
 
-    ConfiguredEffectService(Plugin plugin) {
+    ConfiguredEffectService(Plugin plugin, PlatformHooks platformHooks) {
         this.plugin = plugin;
+        this.platformHooks = platformHooks;
     }
 
     public void playSound(Location location, String soundName, float volume, float pitch) {
-        Sound sound = resolveSound(soundName);
+        Sound sound = resolveSound(soundName, platformHooks);
         if (sound == null) {
             debug("Invalid sound in block config: " + soundName);
             return;
@@ -74,7 +78,7 @@ public class ConfiguredEffectService {
         }
     }
 
-    private static Sound resolveSound(String soundName) {
+    private static Sound resolveSound(String soundName, PlatformHooks platformHooks) {
         if (soundName == null || soundName.isBlank()) {
             return null;
         }
@@ -90,7 +94,7 @@ public class ConfiguredEffectService {
 
         String enumStyle = normalized.toUpperCase(Locale.ROOT);
         for (Sound sound : Registry.SOUNDS) {
-            NamespacedKey key = Registry.SOUNDS.getKey(sound);
+            NamespacedKey key = platformHooks.getSoundKey(sound);
             if (key != null && toEnumStyle(key).equals(enumStyle)) {
                 return sound;
             }
