@@ -1,6 +1,9 @@
-package dev.rono.blocks.quarrycache;
+package dev.rono.igniscore.listener;
 
-import dev.rono.igniscore.api.IgnisCoreAPI;
+import com.google.inject.Inject;
+import dev.rono.igniscore.api.inventory.IgnisCustomInventory;
+import dev.rono.igniscore.manager.BlockManager;
+import dev.rono.igniscore.service.ExtensionSupportService;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -20,17 +23,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-final class QuarryCacheListener implements Listener {
-    private final QuarryCacheRegistry registry;
+public class ExtensionSupportListener implements Listener {
+    private final BlockManager blockManager;
+    private final ExtensionSupportService extensionSupport;
 
-    QuarryCacheListener(QuarryCacheRegistry registry) {
-        this.registry = registry;
+    @Inject
+    public ExtensionSupportListener(BlockManager blockManager, ExtensionSupportService extensionSupport) {
+        this.blockManager = blockManager;
+        this.extensionSupport = extensionSupport;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (IgnisCoreAPI.getPlacedBlockType(block.getLocation()) != null) {
+        if (blockManager.getPlacedBlockType(block.getLocation()) != null) {
             return;
         }
 
@@ -41,7 +47,7 @@ final class QuarryCacheListener implements Listener {
             return;
         }
 
-        if (registry.tryCollect(block.getLocation(), drops)) {
+        if (extensionSupport.tryCollect(block.getLocation(), drops)) {
             event.setDropItems(false);
             event.setExpToDrop(0);
         }
@@ -50,7 +56,7 @@ final class QuarryCacheListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemSpawn(ItemSpawnEvent event) {
         ItemStack stack = event.getEntity().getItemStack();
-        if (registry.tryCollect(event.getLocation(), List.of(stack))) {
+        if (extensionSupport.tryCollect(event.getLocation(), List.of(stack))) {
             event.setCancelled(true);
         }
     }
@@ -58,12 +64,12 @@ final class QuarryCacheListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory top = event.getView().getTopInventory();
-        if (!(top.getHolder() instanceof QuarryCacheInventory cacheInventory)) {
+        if (!(top.getHolder() instanceof IgnisCustomInventory customInventory)) {
             return;
         }
 
         int rawSlot = event.getRawSlot();
-        if (rawSlot < top.getSize() && QuarryCacheInventory.isSeparatorSlot(rawSlot)) {
+        if (rawSlot < top.getSize() && customInventory.isSeparatorSlot(rawSlot)) {
             event.setCancelled(true);
             return;
         }
@@ -71,7 +77,7 @@ final class QuarryCacheListener implements Listener {
         if (event.isShiftClick() && event.getClickedInventory() != null
                 && event.getClickedInventory().equals(event.getView().getBottomInventory())) {
             ItemStack moving = event.getCurrentItem();
-            if (moving != null && !moving.getType().isAir() && !cacheInventory.accepts(moving)) {
+            if (moving != null && !moving.getType().isAir() && !customInventory.accepts(moving)) {
                 event.setCancelled(true);
             }
         }
@@ -80,12 +86,12 @@ final class QuarryCacheListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryDrag(InventoryDragEvent event) {
         Inventory top = event.getView().getTopInventory();
-        if (!(top.getHolder() instanceof QuarryCacheInventory)) {
+        if (!(top.getHolder() instanceof IgnisCustomInventory customInventory)) {
             return;
         }
 
         for (int slot : event.getRawSlots()) {
-            if (slot < top.getSize() && QuarryCacheInventory.isSeparatorSlot(slot)) {
+            if (slot < top.getSize() && customInventory.isSeparatorSlot(slot)) {
                 event.setCancelled(true);
                 return;
             }
@@ -95,8 +101,8 @@ final class QuarryCacheListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
-        if (holder instanceof QuarryCacheInventory cacheInventory) {
-            cacheInventory.restoreSeparators();
+        if (holder instanceof IgnisCustomInventory customInventory) {
+            customInventory.restoreDecorations();
         }
     }
 }

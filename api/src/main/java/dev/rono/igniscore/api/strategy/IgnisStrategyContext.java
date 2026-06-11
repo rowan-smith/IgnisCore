@@ -13,14 +13,18 @@ public final class IgnisStrategyContext {
     private final IgnisNbtService nbtService;
     private final IgnisProtocolService protocolService;
     private final IgnisEffectService effectService;
+    private final ExtensionSupport extensionSupport;
+
     public IgnisStrategyContext(Plugin plugin,
                                 IgnisNbtService nbtService,
                                 IgnisProtocolService protocolService,
-                                IgnisEffectService effectService) {
+                                IgnisEffectService effectService,
+                                ExtensionSupport extensionSupport) {
         this.plugin = plugin;
         this.nbtService = nbtService;
         this.protocolService = protocolService;
         this.effectService = effectService;
+        this.extensionSupport = extensionSupport;
     }
 
     public Plugin getPlugin() {
@@ -37,5 +41,9 @@ public final class IgnisStrategyContext {
 
     public IgnisEffectService getEffectService() {
         return effectService;
+    }
+
+    public ExtensionSupport getExtensionSupport() {
+        return extensionSupport;
     }
 }

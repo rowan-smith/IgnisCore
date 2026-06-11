@@ -34,9 +34,6 @@ public class BundledExtensionExtractor {
         for (String resourcePath : listBundledResources(resourcePrefix)) {
             String jarName = resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
             File target = new File(destination, jarName);
-            if (target.exists()) {
-                continue;
-            }
 
             try (InputStream inputStream = plugin.getResource(resourcePath)) {
                 if (inputStream == null) {

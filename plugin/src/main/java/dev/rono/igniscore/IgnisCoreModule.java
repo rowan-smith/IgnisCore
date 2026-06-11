@@ -12,7 +12,9 @@ import dev.rono.igniscore.command.IgnisCommand;
 import dev.rono.igniscore.core.ExtensionBootstrap;
 import dev.rono.igniscore.core.IgnisStrategyContextProvider;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
+import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.listener.BlockListener;
+import dev.rono.igniscore.listener.ExtensionSupportListener;
 import dev.rono.igniscore.listener.ItemListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
@@ -27,6 +29,7 @@ import dev.rono.igniscore.service.BlockInteractionResolver;
 import dev.rono.igniscore.service.BlockItemFactory;
 import dev.rono.igniscore.service.BlockItemIdentifier;
 import dev.rono.igniscore.service.ConfiguredEffectService;
+import dev.rono.igniscore.service.ExtensionSupportService;
 import dev.rono.igniscore.service.CustomBlockBreakService;
 import dev.rono.igniscore.service.CustomBlockIgnitionService;
 import dev.rono.igniscore.service.CustomBlockPlacementService;
@@ -58,6 +61,7 @@ public class IgnisCoreModule extends AbstractModule {
         bind(IgnisCommand.class).in(Scopes.SINGLETON);
         bind(BlockListener.class).in(Scopes.SINGLETON);
         bind(ItemListener.class).in(Scopes.SINGLETON);
+        bind(ExtensionSupportListener.class).in(Scopes.SINGLETON);
         bind(ResourcePackStatusListener.class).in(Scopes.SINGLETON);
 
         bind(IgnisStrategyRegistry.class).to(IgnisStrategyRegistryImpl.class).in(Scopes.SINGLETON);
@@ -84,6 +88,8 @@ public class IgnisCoreModule extends AbstractModule {
         bind(CustomBlockPlacementService.class).in(Scopes.SINGLETON);
         bind(CustomBlockBreakService.class).in(Scopes.SINGLETON);
         bind(CustomBlockIgnitionService.class).in(Scopes.SINGLETON);
+        bind(ExtensionSupportService.class).in(Scopes.SINGLETON);
+        bind(ExtensionSupport.class).to(ExtensionSupportService.class).in(Scopes.SINGLETON);
         bind(ExtensionResourceProvider.class).in(Scopes.SINGLETON);
         bind(BundledExtensionExtractor.class).in(Scopes.SINGLETON);
         bind(BlockExtensionLoader.class).in(Scopes.SINGLETON);

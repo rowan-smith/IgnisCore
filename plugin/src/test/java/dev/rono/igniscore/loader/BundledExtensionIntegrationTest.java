@@ -39,7 +39,8 @@ class BundledExtensionIntegrationTest {
             "mimic-block",
             "tunneling-block",
             "entity-block",
-            "signal-charge-block"
+            "signal-charge-block",
+            "quarry-cache-block"
     })
     void loadsBundledBlockExtensionJar(String moduleName) throws Exception {
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
@@ -55,7 +56,8 @@ class BundledExtensionIntegrationTest {
             IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(
                     classLoader,
                     manifest.getStrategyClass(),
-                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null),
+                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null,
+                            dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE),
                     registry,
                     descriptor,
                     ExtensionKind.BLOCK
@@ -84,7 +86,8 @@ class BundledExtensionIntegrationTest {
             IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(
                     classLoader,
                     manifest.getStrategyClass(),
-                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null),
+                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null,
+                            dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE),
                     registry,
                     descriptor,
                     ExtensionKind.ITEM

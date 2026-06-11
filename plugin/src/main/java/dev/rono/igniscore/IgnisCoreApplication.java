@@ -12,6 +12,7 @@ import dev.rono.igniscore.core.ExtensionBootstrap;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.listener.BlockListener;
+import dev.rono.igniscore.listener.ExtensionSupportListener;
 import dev.rono.igniscore.listener.ItemListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.manager.BlockManager;
@@ -24,6 +25,7 @@ import dev.rono.igniscore.service.BlockItemFactory;
 import dev.rono.igniscore.service.ItemFactory;
 import dev.rono.igniscore.service.NBTService;
 import dev.rono.igniscore.service.ProtocolService;
+import dev.rono.igniscore.service.ExtensionSupportService;
 import dev.rono.igniscore.service.RuntimeBlockService;
 import dev.rono.igniscore.service.VisualEffectService;
 import org.bukkit.Location;
@@ -55,6 +57,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     private final IgnisStrategyRegistry strategyRegistry;
     private final BlockExtensionLoader blockExtensionLoader;
     private final ItemExtensionLoader itemExtensionLoader;
+    private final ExtensionSupportService extensionSupportService;
     private final List<Listener> listeners;
 
     @Inject
@@ -63,6 +66,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
                                 IgnisCommand ignisCommand,
                                 BlockListener blockListener,
                                 ItemListener itemListener,
+                                ExtensionSupportListener extensionSupportListener,
                                 ResourcePackStatusListener resourcePackStatusListener,
                                 BlockManager blockManager,
                                 ItemManager itemManager,
@@ -77,7 +81,8 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
                                 ExtensionBootstrap extensionBootstrap,
                                 IgnisStrategyRegistry strategyRegistry,
                                 BlockExtensionLoader blockExtensionLoader,
-                                ItemExtensionLoader itemExtensionLoader) {
+                                ItemExtensionLoader itemExtensionLoader,
+                                ExtensionSupportService extensionSupportService) {
         this.plugin = plugin;
         this.commandRegistrar = commandRegistrar;
         this.ignisCommand = ignisCommand;
@@ -95,7 +100,8 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
         this.strategyRegistry = strategyRegistry;
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
-        this.listeners = List.of(blockListener, itemListener, resourcePackStatusListener);
+        this.extensionSupportService = extensionSupportService;
+        this.listeners = List.of(blockListener, itemListener, extensionSupportListener, resourcePackStatusListener);
     }
 
     public void enable() {
@@ -108,6 +114,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     public void disable() {
         blockExtensionLoader.unloadAll();
         itemExtensionLoader.unloadAll();
+        extensionSupportService.clear();
         blockManager.cleanup();
         resourcePackService.stopServer();
     }

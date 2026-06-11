@@ -1,17 +1,17 @@
 package dev.rono.blocks.quarrycache;
 
+import dev.rono.igniscore.api.inventory.IgnisCustomInventory;
 import dev.rono.igniscore.api.strategy.StrategySupport;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 
-final class QuarryCacheInventory implements InventoryHolder {
+final class QuarryCacheInventory implements IgnisCustomInventory {
     static final int FILTER_SLOTS = 5;
     static final int SEPARATOR_START = 5;
     static final int STORAGE_START = 9;
@@ -31,7 +31,8 @@ final class QuarryCacheInventory implements InventoryHolder {
         return slot >= 0 && slot < FILTER_SLOTS;
     }
 
-    static boolean isSeparatorSlot(int slot) {
+    @Override
+    public boolean isSeparatorSlot(int slot) {
         return slot >= SEPARATOR_START && slot < STORAGE_START;
     }
 
@@ -64,7 +65,8 @@ final class QuarryCacheInventory implements InventoryHolder {
         return filters;
     }
 
-    void restoreSeparators() {
+    @Override
+    public void restoreDecorations() {
         fillSeparators();
     }
 
@@ -73,7 +75,8 @@ final class QuarryCacheInventory implements InventoryHolder {
         return inventory;
     }
 
-    boolean accepts(ItemStack stack) {
+    @Override
+    public boolean accepts(ItemStack stack) {
         if (stack == null || stack.getType().isAir()) {
             return false;
         }
