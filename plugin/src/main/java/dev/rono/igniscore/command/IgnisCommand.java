@@ -152,7 +152,7 @@ public class IgnisCommand implements PluginCommandHandler {
                     return true;
                 }
             }
-            resourcePackService.buildAndRegister();
+            resourcePackService.reloadBuildAndRegister();
             send(sender, "<green>IgnisCore " + target + " extensions reloaded.");
         } catch (IOException e) {
             send(sender, "<red>Extensions reloaded but resource pack rebuild failed.");

@@ -12,11 +12,13 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ResourcePackServer {
     private final Main plugin;
     private HttpServer server;
+    private ExecutorService executor;
     private final Map<String, File> packs = new ConcurrentHashMap<>();
     private String latestPackId;
 
@@ -25,6 +27,8 @@ public class ResourcePackServer {
     }
 
     public void start(String host, int port) {
+        stop();
+
         try {
             server = HttpServer.create(new InetSocketAddress(host, port), 0);
             
@@ -67,12 +71,14 @@ public class ResourcePackServer {
             };
 
             server.createContext("/", handler);
-            
-            // Use a cached thread pool to handle concurrent downloads efficiently
-            server.setExecutor(Executors.newCachedThreadPool());
+
+            executor = Executors.newCachedThreadPool();
+            server.setExecutor(executor);
             server.start();
             plugin.getLogger().info("Resource pack server started on " + host + ":" + port);
         } catch (IOException e) {
+            server = null;
+            executor = null;
             plugin.getLogger().severe("Failed to start resource pack server: " + e.getMessage());
         }
     }
@@ -89,6 +95,11 @@ public class ResourcePackServer {
     public void stop() {
         if (server != null) {
             server.stop(0);
+            server = null;
+        }
+        if (executor != null) {
+            executor.shutdownNow();
+            executor = null;
         }
     }
 }

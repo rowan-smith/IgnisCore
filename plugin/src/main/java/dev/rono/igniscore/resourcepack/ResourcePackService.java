@@ -42,7 +42,14 @@ public class ResourcePackService {
     }
 
     public void reloadBuildAndRegister() throws IOException {
+        plugin.reloadConfig();
         buildAndRegister();
+        restartServer();
+    }
+
+    public void restartServer() {
+        stopServer();
+        startServer();
     }
 
     public void startServer() {
