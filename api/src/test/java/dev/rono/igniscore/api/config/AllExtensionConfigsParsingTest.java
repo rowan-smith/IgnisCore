@@ -1,5 +1,6 @@
 package dev.rono.igniscore.api.config;
 
+import dev.rono.igniscore.api.IgnisApiVersion;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -85,6 +86,10 @@ class AllExtensionConfigsParsingTest {
     private static ExtensionManifest manifestFor(String extensionId, String fileName) throws IOException {
         String category = fileName.startsWith("block") ? "blocks" : "items";
         Path manifestPath = Path.of("..", category, extensionId, "src/main/resources", fileName);
-        return ExtensionManifest.fromStream(Files.newInputStream(manifestPath), fileName);
+        String manifest = Files.readString(manifestPath, StandardCharsets.UTF_8)
+                .replace("@project.version@", IgnisApiVersion.CURRENT);
+        return ExtensionManifest.fromStream(
+                new java.io.ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8)),
+                fileName);
     }
 }

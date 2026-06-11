@@ -19,7 +19,7 @@ igniscore-parent/
 | `blocks/*` | Individual block extensions depending only on `api` |
 | `items/*` | Individual item extensions depending only on `api` |
 | `plugin` | Runtime that loads extensions, renders blocks, handles events |
-| `dist` | Unpacks the plugin, bundles extension JARs, produces `igniscore.jar` |
+| `dist` | Unpacks the plugin, bundles extension JARs, produces `igniscore-<version>.jar` |
 
 ## Build output
 
@@ -32,8 +32,10 @@ mvn clean package
 Deploy this file to your server:
 
 ```
-dist/target/igniscore.jar
+dist/target/igniscore-1.0.0.jar
 ```
+
+The version comes from the `revision` property in the root `pom.xml` (currently `1.0.0`). Change it there to bump the plugin, bundled extensions, and API version together.
 
 On first run, bundled extensions are extracted to:
 
@@ -90,8 +92,8 @@ dev/rono/blocks/.../Strategy.class
 ```yaml
 id: my-block
 name: My Block
-version: 1.0.0
-api-version: 1.0.0
+version: @project.version@
+api-version: @project.version@
 author: YourName
 strategy: dev.rono.blocks.myblock.Strategy
 ```
@@ -151,8 +153,8 @@ dev/rono/items/.../Strategy.class
 ```yaml
 id: my-item
 name: My Item
-version: 1.0.0
-api-version: 1.0.0
+version: @project.version@
+api-version: @project.version@
 author: YourName
 strategy: dev.rono.items.myitem.Strategy
 ```
@@ -212,10 +214,12 @@ Extension modules should depend only on the `api` artifact:
 <dependency>
   <groupId>dev.rono</groupId>
   <artifactId>api</artifactId>
-  <version>1.0.0</version>
+  <version>${revision}</version>
   <scope>provided</scope>
 </dependency>
 ```
+
+When depending on IgnisCore from another project, use the same version as the published `api` artifact.
 
 ### Custom model data
 
