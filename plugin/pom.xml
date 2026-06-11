@@ -10,12 +10,13 @@
     <version>1.0.0</version>
   </parent>
 
-  <artifactId>igniscore</artifactId>
+  <artifactId>plugin</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore</name>
+  <name>plugin</name>
 
   <build>
+    <finalName>igniscore</finalName>
     <defaultGoal>clean package</defaultGoal>
     <plugins>
       <plugin>
