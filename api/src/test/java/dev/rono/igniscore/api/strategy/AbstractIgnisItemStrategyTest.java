@@ -36,7 +36,7 @@ class AbstractIgnisItemStrategyTest {
 
     private static final class TestStrategy extends AbstractIgnisItemStrategy {
         private TestStrategy() {
-            super(new IgnisStrategyContext(null, null, null, null));
+            super(new IgnisStrategyContext(null, null, null, null, null));
         }
 
         double readDouble(ItemDefinition definition, String key, double defaultValue) {

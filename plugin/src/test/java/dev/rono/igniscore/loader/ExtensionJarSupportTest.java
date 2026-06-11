@@ -157,6 +157,6 @@ class ExtensionJarSupportTest {
     }
 
     private IgnisStrategyContext nullContext() {
-        return new IgnisStrategyContext(null, null, null, null);
+        return new IgnisStrategyContext(null, null, null, null, null);
     }
 }

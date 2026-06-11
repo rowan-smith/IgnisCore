@@ -25,6 +25,7 @@
     <module>tunneling-block</module>
     <module>entity-block</module>
     <module>signal-charge-block</module>
+    <module>quarry-cache-block</module>
   </modules>
 
   <dependencyManagement>

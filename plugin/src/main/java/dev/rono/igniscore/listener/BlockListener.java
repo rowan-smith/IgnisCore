@@ -9,6 +9,7 @@ import dev.rono.igniscore.service.CustomBlockBreakService;
 import dev.rono.igniscore.service.CustomBlockIgnitionService;
 import dev.rono.igniscore.service.CustomBlockPlacementService;
 import dev.rono.igniscore.service.ItemIdentifier;
+import dev.rono.igniscore.service.quarrycache.QuarryCacheService;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -31,6 +32,7 @@ public class BlockListener implements Listener {
     private final CustomBlockBreakService breakService;
     private final CustomBlockIgnitionService ignitionService;
     private final ItemIdentifier itemIdentifier;
+    private final QuarryCacheService quarryCacheService;
 
     @Inject
     public BlockListener(BlockManager blockManager,
@@ -38,13 +40,15 @@ public class BlockListener implements Listener {
                          CustomBlockPlacementService placementService,
                          CustomBlockBreakService breakService,
                          CustomBlockIgnitionService ignitionService,
-                         ItemIdentifier itemIdentifier) {
+                         ItemIdentifier itemIdentifier,
+                         QuarryCacheService quarryCacheService) {
         this.blockManager = blockManager;
         this.interactionResolver = interactionResolver;
         this.placementService = placementService;
         this.breakService = breakService;
         this.ignitionService = ignitionService;
         this.itemIdentifier = itemIdentifier;
+        this.quarryCacheService = quarryCacheService;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -197,6 +201,8 @@ public class BlockListener implements Listener {
             ignitionService.ignite(clickedBlock, definition, event.getPlayer(), heldItem);
         } else if (action == CustomBlockAction.BREAK) {
             breakService.start(event.getPlayer(), clickedBlock, definition);
+        } else if (action == CustomBlockAction.OPEN) {
+            quarryCacheService.openGui(event.getPlayer(), clickedBlock.getLocation());
         }
         return true;
     }

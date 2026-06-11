@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.service.quarrycache.QuarryCacheService;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -30,13 +31,18 @@ public class CustomBlockBreakService {
     private final Main plugin;
     private final BlockManager blockManager;
     private final ConfiguredEffectService effectService;
+    private final QuarryCacheService quarryCacheService;
     private final Map<UUID, MiningSession> miningSessions = new ConcurrentHashMap<>();
 
     @Inject
-    public CustomBlockBreakService(Main plugin, BlockManager blockManager, ConfiguredEffectService effectService) {
+    public CustomBlockBreakService(Main plugin,
+                                   BlockManager blockManager,
+                                   ConfiguredEffectService effectService,
+                                   QuarryCacheService quarryCacheService) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.effectService = effectService;
+        this.quarryCacheService = quarryCacheService;
     }
 
     public void start(Player player, Block block, BlockDefinition definition) {
@@ -94,6 +100,10 @@ public class CustomBlockBreakService {
                 0.8f, 1.0f);
         effectService.spawnConfiguredParticles(center, getList(getMap(definition.getBreakSettings(), "particles"), "break"),
                 Particle.BLOCK, 24, 0.35, 0.35, 0.35, 0.01);
+
+        if (quarryCacheService.isCache(block.getLocation())) {
+            quarryCacheService.dropContents(block.getLocation());
+        }
 
         if (dropItem) {
             block.getWorld().dropItemNaturally(block.getLocation(), plugin.createBlockItem(definition.getId()));

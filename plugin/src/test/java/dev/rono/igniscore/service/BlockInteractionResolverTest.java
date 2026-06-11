@@ -138,6 +138,18 @@ class BlockInteractionResolverTest {
     }
 
     @Test
+    void rightClickOpenActionResolves() {
+        BlockDefinition definition = definitionWithInteractions(Map.of(
+                "right_click", Map.of(
+                        "action", "open"
+                )
+        ));
+
+        assertEquals(CustomBlockAction.OPEN,
+                resolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.STICK));
+    }
+
+    @Test
     void materialActionsOverrideDefaultAction() {
         BlockDefinition definition = definitionWithInteractions(Map.of(
                 "right_click", Map.of(

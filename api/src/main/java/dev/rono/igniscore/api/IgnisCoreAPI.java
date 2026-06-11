@@ -3,6 +3,7 @@ package dev.rono.igniscore.api;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
+import dev.rono.igniscore.api.service.IgnisQuarryCacheService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -69,6 +70,10 @@ public final class IgnisCoreAPI {
 
     public static IgnisEffectService getEffectService() {
         return requireFacade().getEffectService();
+    }
+
+    public static IgnisQuarryCacheService getQuarryCacheService() {
+        return requireFacade().getQuarryCacheService();
     }
 
     public static void reloadExtensions() {
