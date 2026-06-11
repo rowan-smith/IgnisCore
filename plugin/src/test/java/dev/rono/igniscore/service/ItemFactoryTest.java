@@ -1,7 +1,11 @@
 package dev.rono.igniscore.service;
 
 import dev.rono.igniscore.manager.ItemManager;
+import dev.rono.igniscore.support.MockBukkitTestBase;
+import dev.rono.igniscore.support.PdcBackedNbtService;
 import dev.rono.igniscore.support.TestDefinitions;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,17 +15,34 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ItemFactoryTest {
+class ItemFactoryTest extends MockBukkitTestBase {
     private ItemFactory factory;
+    private ItemIdentifier identifier;
+    private PdcBackedNbtService nbtService;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUpFactory() throws Exception {
+        nbtService = new PdcBackedNbtService();
         ItemManager itemManager = new ItemManager();
         try (URLClassLoader classLoader = new URLClassLoader(new java.net.URL[0], getClass().getClassLoader())) {
             itemManager.loadFromExtensions(List.of(
                     TestDefinitions.loadedItem(TestDefinitions.item("grenade", "grenade"), classLoader)));
         }
-        factory = new ItemFactory(itemManager, new NBTService());
+        factory = new ItemFactory(itemManager, nbtService);
+        identifier = new ItemIdentifier(nbtService);
+    }
+
+    @Test
+    void createsConfiguredItemStack() {
+        ItemStack item = factory.createItem("grenade");
+
+        assertEquals(Material.SNOWBALL, item.getType());
+        assertEquals("grenade", identifier.resolveTypeId(item));
+        assertEquals(20001, item.getItemMeta().getCustomModelData());
+        assertEquals("grenade", nbtService.readItem(item, nbt -> nbt.getString("ignis:strategy")));
+        if (item.getItemMeta().hasItemModel()) {
+            assertEquals("grenade", item.getItemMeta().getItemModel().getKey());
+        }
     }
 
     @Test

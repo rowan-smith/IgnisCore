@@ -1,14 +1,15 @@
 package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.service.IgnisNbtService;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemIdentifier {
-    private final NBTService nbtService;
+    private final IgnisNbtService nbtService;
 
     @Inject
-    public ItemIdentifier(NBTService nbtService) {
+    public ItemIdentifier(IgnisNbtService nbtService) {
         this.nbtService = nbtService;
     }
 

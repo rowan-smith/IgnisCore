@@ -1,29 +1,47 @@
 package dev.rono.igniscore.service;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.manager.BlockManager;
+import dev.rono.igniscore.support.MockBukkitTestBase;
+import dev.rono.igniscore.support.PdcBackedNbtService;
+import dev.rono.igniscore.support.TestDefinitions;
+import dev.rono.igniscore.support.StubBlockManager;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class BlockItemFactoryTest {
-    @Test
-    void rejectsUnknownBlockTypes() {
-        BlockItemFactory factory = new BlockItemFactory(emptyBlockManager(), new NBTService());
+class BlockItemFactoryTest extends MockBukkitTestBase {
+    private BlockItemFactory factory;
+    private PdcBackedNbtService nbtService;
+    private BlockItemIdentifier identifier;
 
-        IllegalArgumentException error = assertThrows(IllegalArgumentException.class, () -> factory.createBlockItem("missing"));
-        assertEquals("Unknown block type: missing", error.getMessage());
+    @BeforeEach
+    void setUpFactory() {
+        nbtService = new PdcBackedNbtService();
+        StubBlockManager blockManager = StubBlockManager.with(TestDefinitions.block("nuke", "nuclear"));
+        factory = new BlockItemFactory(blockManager, nbtService);
+        identifier = new BlockItemIdentifier(plugin, nbtService);
     }
 
-    private static BlockManager emptyBlockManager() {
-        return new BlockManager(null, null, null, null) {
-            @Override
-            public Map<String, BlockDefinition> getBlockTypes() {
-                return Map.of();
-            }
-        };
+    @Test
+    void createsConfiguredBlockItemStack() {
+        ItemStack item = factory.createBlockItem("nuke");
+
+        assertEquals(Material.PAPER, item.getType());
+        assertEquals("nuke", identifier.resolveTypeId(item));
+        assertEquals(10001, item.getItemMeta().getCustomModelData());
+        assertEquals(80, nbtService.readItem(item, nbt -> nbt.getInteger("ignis:fuse")).intValue());
+        assertEquals("nuclear", nbtService.readItem(item, nbt -> nbt.getString("ignis:strategy")));
+        if (item.getItemMeta().hasItemModel()) {
+            assertEquals("nuke", item.getItemMeta().getItemModel().getKey());
+        }
+    }
+
+    @Test
+    void rejectsUnknownBlockTypes() {
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class, () -> factory.createBlockItem("missing"));
+        assertEquals("Unknown block type: missing", error.getMessage());
     }
 }

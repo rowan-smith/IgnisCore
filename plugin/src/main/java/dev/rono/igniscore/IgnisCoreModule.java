@@ -3,6 +3,7 @@ package dev.rono.igniscore;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import dev.rono.igniscore.api.service.IgnisEffectService;
+import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
@@ -63,6 +64,7 @@ public class IgnisCoreModule extends AbstractModule {
         bind(IgnisStrategyContext.class).toProvider(IgnisStrategyContextProvider.class).in(Scopes.SINGLETON);
 
         bind(NBTService.class).in(Scopes.SINGLETON);
+        bind(IgnisNbtService.class).to(NBTService.class).in(Scopes.SINGLETON);
         bind(ProtocolService.class).in(Scopes.SINGLETON);
         bind(IgnisProtocolService.class).to(ProtocolService.class).in(Scopes.SINGLETON);
         bind(IgnisEffectService.class).to(IgnisEffectServiceImpl.class).in(Scopes.SINGLETON);
