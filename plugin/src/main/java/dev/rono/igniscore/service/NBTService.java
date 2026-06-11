@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import dev.rono.igniscore.api.service.IgnisNbtService;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
@@ -11,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class NBTService {
+public class NBTService implements IgnisNbtService {
 
     /**
      * Executes an operation on an item's NBT.

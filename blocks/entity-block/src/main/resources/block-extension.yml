@@ -3,4 +3,4 @@ name: Entity Block
 version: 1.0.0
 api-version: 1.0.0
 author: IgnisCore
-main: dev.rono.blocks.entity.BlockPlugin
+strategy: dev.rono.blocks.entity.Strategy

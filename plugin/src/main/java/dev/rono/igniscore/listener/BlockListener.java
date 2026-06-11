@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.service.BlockInteractionResolver;
-import dev.rono.igniscore.service.CustomBlockAction;
+import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.service.CustomBlockBreakService;
 import dev.rono.igniscore.service.CustomBlockIgnitionService;
 import dev.rono.igniscore.service.CustomBlockPlacementService;

@@ -16,7 +16,7 @@
   <dependencies>
     <dependency>
       <groupId>dev.rono</groupId>
-      <artifactId>plugin</artifactId>
+      <artifactId>api</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

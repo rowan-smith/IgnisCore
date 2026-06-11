@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.api.extension.ExtensionResources;
-import dev.rono.igniscore.api.extension.IgnisItemPlugin;
-import dev.rono.igniscore.api.extension.ItemExtensionContext;
 import dev.rono.igniscore.api.extension.ItemExtensionManifest;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
@@ -14,15 +12,9 @@ import dev.rono.igniscore.model.ItemDefinition;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 @Singleton
 public class ItemExtensionLoader {
@@ -80,16 +72,7 @@ public class ItemExtensionLoader {
 
     public void unloadAll() {
         for (LoadedItemExtension extension : loadedExtensions) {
-            try {
-                ItemExtensionContext context = createContext(extension.getManifest(), extension.getItemDefinition(),
-                        extension.getResources());
-                extension.getPlugin().onUnload(context);
-                strategyRegistry.unregisterBySource(extension.getManifest().getId());
-            } catch (Exception e) {
-                plugin.getLogger().warning("Failed to unload item extension " + extension.getManifest().getId()
-                        + ": " + e.getMessage());
-            }
-
+            strategyRegistry.unregisterBySource(extension.getManifest().getId());
             try {
                 extension.getClassLoader().close();
             } catch (Exception ignored) {
@@ -104,68 +87,25 @@ public class ItemExtensionLoader {
     }
 
     private LoadedItemExtension loadJar(File jarFile, int modelData) throws Exception {
-        URLClassLoader classLoader = new URLClassLoader(
-                new URL[]{jarFile.toURI().toURL()},
-                plugin.getClass().getClassLoader()
-        );
-
-        ItemExtensionManifest manifest = readManifest(jarFile);
-        ItemDefinition itemDefinition = readItemDefinition(jarFile, manifest.getId(), modelData);
+        URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, plugin.getClass().getClassLoader());
+        ItemExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "item-extension.yml",
+                ItemExtensionManifest::fromStream);
+        YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
+        ItemDefinition itemDefinition = DefinitionParser.parseItem(config,
+                config.getString("id", manifest.getId()), modelData, manifest.getId());
         ExtensionResources resources = new ExtensionResources(classLoader);
 
-        Class<?> mainClass = Class.forName(manifest.getMainClass(), true, classLoader);
-        Object instance = mainClass.getDeclaredConstructor().newInstance();
-        if (!(instance instanceof IgnisItemPlugin itemPlugin)) {
-            classLoader.close();
-            throw new IllegalStateException(manifest.getMainClass() + " does not implement IgnisItemPlugin");
-        }
-
-        ItemExtensionContext context = createContext(manifest, itemDefinition, resources);
-        itemPlugin.onLoad(context);
+        ExtensionJarSupport.loadStrategy(classLoader, manifest.getStrategyClass(), strategyContext,
+                strategyRegistry, manifest.getId());
 
         if (!strategyRegistry.isRegistered(itemDefinition.getStrategy())) {
             classLoader.close();
             throw new IllegalStateException("Item extension " + manifest.getId()
-                    + " did not register strategy '" + itemDefinition.getStrategy() + "'");
+                    + " strategy '" + itemDefinition.getStrategy() + "' was not registered");
         }
 
         plugin.getLogger().info("Loaded item extension '" + manifest.getName() + "' v" + manifest.getVersion()
                 + " (" + itemDefinition.getId() + ") from " + jarFile.getName());
-        return new LoadedItemExtension(manifest, jarFile, classLoader, itemPlugin, itemDefinition, resources);
-    }
-
-    private ItemExtensionContext createContext(ItemExtensionManifest manifest,
-                                               ItemDefinition itemDefinition,
-                                               ExtensionResources resources) {
-        return new ItemExtensionContext(manifest, itemDefinition, strategyRegistry, strategyContext, resources);
-    }
-
-    private ItemExtensionManifest readManifest(File jarFile) throws Exception {
-        try (JarFile jar = new JarFile(jarFile)) {
-            JarEntry entry = jar.getJarEntry("item-extension.yml");
-            if (entry == null) {
-                throw new IllegalStateException("Missing item-extension.yml in " + jarFile.getName());
-            }
-
-            try (InputStream inputStream = jar.getInputStream(entry)) {
-                return ItemExtensionManifest.fromStream(inputStream);
-            }
-        }
-    }
-
-    private ItemDefinition readItemDefinition(File jarFile, String extensionId, int modelData) throws Exception {
-        try (JarFile jar = new JarFile(jarFile)) {
-            JarEntry entry = jar.getJarEntry("config.yml");
-            if (entry == null) {
-                throw new IllegalStateException("Missing config.yml in " + jarFile.getName());
-            }
-
-            try (InputStream inputStream = jar.getInputStream(entry)) {
-                YamlConfiguration config = YamlConfiguration.loadConfiguration(
-                        new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-                String fallbackId = config.getString("id", extensionId);
-                return DefinitionParser.parseItem(config, fallbackId, modelData, extensionId);
-            }
-        }
+        return new LoadedItemExtension(manifest, jarFile, classLoader, itemDefinition, resources);
     }
 }

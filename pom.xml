@@ -12,8 +12,10 @@
   <name>igniscore-parent</name>
 
   <modules>
+    <module>api</module>
     <module>blocks</module>
     <module>plugin</module>
+    <module>dist</module>
   </modules>
 
   <properties>
@@ -67,6 +69,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>dev.rono</groupId>
         <artifactId>plugin</artifactId>

@@ -3,4 +3,4 @@ name: Tunneling Block
 version: 1.0.0
 api-version: 1.0.0
 author: IgnisCore
-main: dev.rono.blocks.tunneling.BlockPlugin
+strategy: dev.rono.blocks.tunneling.Strategy

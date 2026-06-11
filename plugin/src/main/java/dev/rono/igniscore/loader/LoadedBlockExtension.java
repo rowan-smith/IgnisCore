@@ -2,7 +2,6 @@ package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.extension.BlockExtensionManifest;
 import dev.rono.igniscore.api.extension.ExtensionResources;
-import dev.rono.igniscore.api.extension.IgnisBlockPlugin;
 import dev.rono.igniscore.model.BlockDefinition;
 
 import java.io.File;
@@ -12,20 +11,17 @@ public final class LoadedBlockExtension {
     private final BlockExtensionManifest manifest;
     private final File jarFile;
     private final URLClassLoader classLoader;
-    private final IgnisBlockPlugin plugin;
     private final BlockDefinition blockDefinition;
     private final ExtensionResources resources;
 
     public LoadedBlockExtension(BlockExtensionManifest manifest,
                                 File jarFile,
                                 URLClassLoader classLoader,
-                                IgnisBlockPlugin plugin,
                                 BlockDefinition blockDefinition,
                                 ExtensionResources resources) {
         this.manifest = manifest;
         this.jarFile = jarFile;
         this.classLoader = classLoader;
-        this.plugin = plugin;
         this.blockDefinition = blockDefinition;
         this.resources = resources;
     }
@@ -40,10 +36,6 @@ public final class LoadedBlockExtension {
 
     public URLClassLoader getClassLoader() {
         return classLoader;
-    }
-
-    public IgnisBlockPlugin getPlugin() {
-        return plugin;
     }
 
     public BlockDefinition getBlockDefinition() {

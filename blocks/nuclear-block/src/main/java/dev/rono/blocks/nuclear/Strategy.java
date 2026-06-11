@@ -8,6 +8,7 @@ import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 
 public class Strategy extends AbstractIgnisStrategy {
@@ -24,6 +25,13 @@ public class Strategy extends AbstractIgnisStrategy {
                 .defaultRadius(30.0)
                 .placementSound("BLOCK_BEACON_ACTIVATE")
                 .build();
+    }
+
+    @Override
+    public void onStaticPlace(BlockDefinition definition, Location location) {
+        Location center = location.toCenterLocation();
+        center.getWorld().spawnParticle(Particle.FLAME, center, 16, 0.35, 0.35, 0.35, 0.02);
+        center.getWorld().spawnParticle(Particle.SMOKE, center, 10, 0.3, 0.3, 0.3, 0.01);
     }
 
     @Override

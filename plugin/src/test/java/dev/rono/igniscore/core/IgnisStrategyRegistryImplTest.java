@@ -4,7 +4,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.model.BlockDefinition;
-import dev.rono.igniscore.service.CustomBlockAction;
+import dev.rono.igniscore.api.CustomBlockAction;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

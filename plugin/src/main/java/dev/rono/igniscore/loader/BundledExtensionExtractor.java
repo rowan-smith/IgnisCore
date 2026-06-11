@@ -2,6 +2,7 @@ package dev.rono.igniscore.loader;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import dev.rono.igniscore.BundledExtensions;
 import dev.rono.igniscore.Main;
 
 import java.io.File;
@@ -20,26 +21,22 @@ public class BundledExtensionExtractor {
     }
 
     public void extractBundledBlocks(File destination) {
-        extractBundled("bundled/blocks", destination);
+        extractBundled("bundled/blocks", destination, BundledExtensions.BLOCK_JARS);
     }
 
     public void extractBundledItems(File destination) {
-        extractBundled("bundled/items", destination);
+        extractBundled("bundled/items", destination, java.util.List.of());
     }
 
-    private void extractBundled(String resourceFolder, File destination) {
+    private void extractBundled(String resourceFolder, File destination, java.util.List<String> jarNames) {
         if (!destination.exists() && !destination.mkdirs()) {
             plugin.getLogger().warning("Could not create extension folder at " + destination.getAbsolutePath());
             return;
         }
 
-        for (String resourcePath : listBundledResources(resourceFolder)) {
-            if (!resourcePath.endsWith(".jar")) {
-                continue;
-            }
-
-            String fileName = resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
-            File target = new File(destination, fileName);
+        for (String jarName : jarNames) {
+            String resourcePath = resourceFolder + "/" + jarName;
+            File target = new File(destination, jarName);
             if (target.exists()) {
                 continue;
             }
@@ -49,36 +46,10 @@ public class BundledExtensionExtractor {
                     continue;
                 }
                 Files.copy(inputStream, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                plugin.getLogger().info("Extracted bundled extension " + fileName + " to " + destination.getName() + "/");
+                plugin.getLogger().info("Extracted bundled extension " + jarName + " to " + destination.getName() + "/");
             } catch (IOException e) {
-                plugin.getLogger().warning("Failed to extract bundled extension " + fileName + ": " + e.getMessage());
+                plugin.getLogger().warning("Failed to extract bundled extension " + jarName + ": " + e.getMessage());
             }
         }
-    }
-
-    private java.util.List<String> listBundledResources(String folder) {
-        java.util.List<String> resources = new java.util.ArrayList<>();
-        for (String fileName : defaultBundledNames(folder)) {
-            String path = folder + "/" + fileName;
-            if (plugin.getResource(path) != null) {
-                resources.add(path);
-            }
-        }
-        return resources;
-    }
-
-    private java.util.List<String> defaultBundledNames(String folder) {
-        if ("bundled/blocks".equals(folder)) {
-            return java.util.List.of(
-                    "nuclear-block.jar",
-                    "wormhole-block.jar",
-                    "phantom-block.jar",
-                    "erupting-block.jar",
-                    "mimic-block.jar",
-                    "tunneling-block.jar",
-                    "entity-block.jar"
-            );
-        }
-        return java.util.List.of();
     }
 }

@@ -12,7 +12,6 @@ import dev.rono.igniscore.service.ConfiguredEffectService;
 import dev.rono.igniscore.service.StrategyProfileResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,14 +64,7 @@ public class BlockManager {
             effectService.playSound(center, profile.getPlacementSound(), 1.6f, 0.7f);
         }
 
-        String strategyName = type.getStrategy().toLowerCase(Locale.ROOT);
-        if ("nuclear".equals(strategyName)) {
-            center.getWorld().spawnParticle(Particle.FLAME, center, 16, 0.35, 0.35, 0.35, 0.02);
-            center.getWorld().spawnParticle(Particle.SMOKE, center, 10, 0.3, 0.3, 0.3, 0.01);
-        } else if ("entity".equals(strategyName) && "spider-storm".equalsIgnoreCase(type.getId())) {
-            center.getWorld().spawnParticle(Particle.SPORE_BLOSSOM_AIR, center, 18, 0.45, 0.45, 0.45, 0.01);
-            center.getWorld().spawnParticle(Particle.SMOKE, center, 8, 0.3, 0.3, 0.3, 0.01);
-        }
+        strategyRegistry.get(type.getStrategy()).onStaticPlace(type, location);
     }
 
     public void unregisterPlacedBlock(Location location) {

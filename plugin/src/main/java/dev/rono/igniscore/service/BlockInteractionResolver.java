@@ -1,5 +1,7 @@
 package dev.rono.igniscore.service;
 
+import dev.rono.igniscore.api.CustomBlockAction;
+
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.model.BlockDefinition;

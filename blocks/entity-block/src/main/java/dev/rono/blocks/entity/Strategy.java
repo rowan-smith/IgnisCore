@@ -7,6 +7,8 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.model.BlockDefinition;
 import dev.rono.igniscore.model.RuntimeBlockInstance;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -27,6 +29,16 @@ public class Strategy extends AbstractIgnisStrategy {
         return StrategyProfile.builder()
                 .placementSound("ENTITY_SPIDER_AMBIENT")
                 .build();
+    }
+
+    @Override
+    public void onStaticPlace(BlockDefinition definition, Location location) {
+        if (!"spider-storm".equalsIgnoreCase(definition.getId())) {
+            return;
+        }
+        Location center = location.toCenterLocation();
+        center.getWorld().spawnParticle(Particle.SPORE_BLOSSOM_AIR, center, 18, 0.45, 0.45, 0.45, 0.01);
+        center.getWorld().spawnParticle(Particle.SMOKE, center, 8, 0.3, 0.3, 0.3, 0.01);
     }
 
     @Override

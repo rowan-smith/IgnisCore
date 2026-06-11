@@ -2,10 +2,9 @@ package dev.rono.igniscore.api;
 
 import dev.rono.igniscore.IgnisCoreApplication;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
-import dev.rono.igniscore.core.ExtensionBootstrap;
 import dev.rono.igniscore.manager.BlockManager;
-import dev.rono.igniscore.model.RuntimeBlockInstance;
 import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.model.RuntimeBlockInstance;
 import dev.rono.igniscore.service.NBTService;
 import dev.rono.igniscore.service.ProtocolService;
 import dev.rono.igniscore.service.RuntimeBlockService;

@@ -25,53 +25,6 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.3.1</version>
-        <executions>
-          <execution>
-            <id>copy-block-extensions</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.outputDirectory}/bundled/blocks</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/../blocks/nuclear-block/target</directory>
-                  <includes><include>nuclear-block.jar</include></includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/../blocks/wormhole-block/target</directory>
-                  <includes><include>wormhole-block.jar</include></includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/../blocks/phantom-block/target</directory>
-                  <includes><include>phantom-block.jar</include></includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/../blocks/erupting-block/target</directory>
-                  <includes><include>erupting-block.jar</include></includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/../blocks/mimic-block/target</directory>
-                  <includes><include>mimic-block.jar</include></includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/../blocks/tunneling-block/target</directory>
-                  <includes><include>tunneling-block.jar</include></includes>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/../blocks/entity-block/target</directory>
-                  <includes><include>entity-block.jar</include></includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.6.1</version>
         <executions>
@@ -120,6 +73,10 @@
   </build>
 
   <dependencies>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>api</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>

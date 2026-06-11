@@ -1,7 +1,6 @@
 package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.extension.ExtensionResources;
-import dev.rono.igniscore.api.extension.IgnisItemPlugin;
 import dev.rono.igniscore.api.extension.ItemExtensionManifest;
 import dev.rono.igniscore.model.ItemDefinition;
 
@@ -12,20 +11,17 @@ public final class LoadedItemExtension {
     private final ItemExtensionManifest manifest;
     private final File jarFile;
     private final URLClassLoader classLoader;
-    private final IgnisItemPlugin plugin;
     private final ItemDefinition itemDefinition;
     private final ExtensionResources resources;
 
     public LoadedItemExtension(ItemExtensionManifest manifest,
                                File jarFile,
                                URLClassLoader classLoader,
-                               IgnisItemPlugin plugin,
                                ItemDefinition itemDefinition,
                                ExtensionResources resources) {
         this.manifest = manifest;
         this.jarFile = jarFile;
         this.classLoader = classLoader;
-        this.plugin = plugin;
         this.itemDefinition = itemDefinition;
         this.resources = resources;
     }
@@ -40,10 +36,6 @@ public final class LoadedItemExtension {
 
     public URLClassLoader getClassLoader() {
         return classLoader;
-    }
-
-    public IgnisItemPlugin getPlugin() {
-        return plugin;
     }
 
     public ItemDefinition getItemDefinition() {

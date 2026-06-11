@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.model.BlockDefinition;
 import net.kyori.adventure.text.Component;

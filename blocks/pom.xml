@@ -34,7 +34,7 @@
     <dependencies>
       <dependency>
         <groupId>dev.rono</groupId>
-        <artifactId>plugin</artifactId>
+        <artifactId>api</artifactId>
         <version>${igniscore.version}</version>
       </dependency>
       <dependency>

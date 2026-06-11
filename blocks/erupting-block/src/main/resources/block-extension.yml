@@ -3,4 +3,4 @@ name: Erupting Block
 version: 1.0.0
 api-version: 1.0.0
 author: IgnisCore
-main: dev.rono.blocks.erupting.BlockPlugin
+strategy: dev.rono.blocks.erupting.Strategy
