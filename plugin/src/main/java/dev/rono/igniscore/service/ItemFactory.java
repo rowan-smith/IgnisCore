@@ -1,6 +1,7 @@
 package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import org.bukkit.Material;
@@ -13,10 +14,10 @@ import java.util.List;
 
 public class ItemFactory {
     private final ItemManager itemManager;
-    private final NBTService nbtService;
+    private final IgnisNbtService nbtService;
 
     @Inject
-    public ItemFactory(ItemManager itemManager, NBTService nbtService) {
+    public ItemFactory(ItemManager itemManager, IgnisNbtService nbtService) {
         this.itemManager = itemManager;
         this.nbtService = nbtService;
     }

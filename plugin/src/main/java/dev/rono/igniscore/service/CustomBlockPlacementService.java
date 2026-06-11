@@ -3,6 +3,7 @@ package dev.rono.igniscore.service;
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,12 +15,18 @@ import org.bukkit.inventory.ItemStack;
 public class CustomBlockPlacementService {
     private static final Material CUSTOM_BLOCK_BACKING_MATERIAL = Material.BARRIER;
 
-    private final Main plugin;
+    private final Plugin plugin;
     private final BlockManager blockManager;
     private final BlockItemIdentifier itemIdentifier;
 
     @Inject
     public CustomBlockPlacementService(Main plugin, BlockManager blockManager, BlockItemIdentifier itemIdentifier) {
+        this.plugin = plugin;
+        this.blockManager = blockManager;
+        this.itemIdentifier = itemIdentifier;
+    }
+
+    CustomBlockPlacementService(Plugin plugin, BlockManager blockManager, BlockItemIdentifier itemIdentifier) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.itemIdentifier = itemIdentifier;
@@ -39,7 +46,7 @@ public class CustomBlockPlacementService {
             return;
         }
 
-        plugin.debug("Attempting to place custom block: " + typeId);
+        debug("Attempting to place custom block: " + typeId);
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) {
             return;
@@ -47,7 +54,7 @@ public class CustomBlockPlacementService {
 
         Block targetBlock = clickedBlock.getRelative(event.getBlockFace());
         if (!targetBlock.getType().isAir() && !targetBlock.isReplaceable()) {
-            plugin.debug("Target block is not air or replaceable: " + targetBlock.getType());
+            debug("Target block is not air or replaceable: " + targetBlock.getType());
             return;
         }
 
@@ -55,7 +62,7 @@ public class CustomBlockPlacementService {
         targetBlock.setType(CUSTOM_BLOCK_BACKING_MATERIAL);
         blockManager.registerPlacedBlock(targetBlock.getLocation(), typeId);
         event.getPlayer().swingMainHand();
-        plugin.debug("Successfully placed " + typeId + " at " + targetBlock.getLocation().toVector());
+        debug("Successfully placed " + typeId + " at " + targetBlock.getLocation().toVector());
 
         if (event.getPlayer().getGameMode() != GameMode.CREATIVE && item != null) {
             item.setAmount(item.getAmount() - 1);
@@ -71,5 +78,11 @@ public class CustomBlockPlacementService {
 
     private boolean isKnownType(String typeId) {
         return typeId != null && blockManager.getBlockTypes().containsKey(typeId);
+    }
+
+    private void debug(String message) {
+        if (plugin instanceof Main main) {
+            main.debug(message);
+        }
     }
 }

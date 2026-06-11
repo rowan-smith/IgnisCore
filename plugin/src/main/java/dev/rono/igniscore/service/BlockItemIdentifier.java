@@ -1,6 +1,7 @@
 package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.service.IgnisNbtService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -9,12 +10,12 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
 public class BlockItemIdentifier {
-    private final NBTService nbtService;
+    private final IgnisNbtService nbtService;
     private final NamespacedKey blockTypeKey;
     private final NamespacedKey legacyTntTypeKey;
 
     @Inject
-    public BlockItemIdentifier(Plugin plugin, NBTService nbtService) {
+    public BlockItemIdentifier(Plugin plugin, IgnisNbtService nbtService) {
         this.nbtService = nbtService;
         this.blockTypeKey = new NamespacedKey(plugin, "block_type");
         this.legacyTntTypeKey = new NamespacedKey("igniscore", "tnt_type");

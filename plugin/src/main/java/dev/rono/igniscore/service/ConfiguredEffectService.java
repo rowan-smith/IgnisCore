@@ -3,6 +3,7 @@ package dev.rono.igniscore.service;
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -15,10 +16,14 @@ import static dev.rono.igniscore.util.ConfigValueReader.getInt;
 import static dev.rono.igniscore.util.ConfigValueReader.getString;
 
 public class ConfiguredEffectService {
-    private final Main plugin;
+    private final Plugin plugin;
 
     @Inject
     public ConfiguredEffectService(Main plugin) {
+        this.plugin = plugin;
+    }
+
+    ConfiguredEffectService(Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -26,7 +31,7 @@ public class ConfiguredEffectService {
         try {
             location.getWorld().playSound(location, Sound.valueOf(soundName.toUpperCase()), volume, pitch);
         } catch (IllegalArgumentException ignored) {
-            plugin.debug("Invalid sound in block config: " + soundName);
+            debug("Invalid sound in block config: " + soundName);
         }
     }
 
@@ -50,7 +55,7 @@ public class ConfiguredEffectService {
             try {
                 particle = Particle.valueOf(getString(map, "type", fallbackParticle.name()).toUpperCase());
             } catch (IllegalArgumentException ignored) {
-                plugin.debug("Invalid particle in block config: " + map.get("type"));
+                debug("Invalid particle in block config: " + map.get("type"));
                 continue;
             }
 
@@ -62,6 +67,12 @@ public class ConfiguredEffectService {
             Material blockMaterial = Material.matchMaterial(getString(map, "block", "STONE"));
             spawnParticle(location, particle, count, offsetX, offsetY, offsetZ, speed,
                     blockMaterial != null ? blockMaterial : Material.STONE);
+        }
+    }
+
+    private void debug(String message) {
+        if (plugin instanceof Main main) {
+            main.debug(message);
         }
     }
 
