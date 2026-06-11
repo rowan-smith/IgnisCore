@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+@SuppressWarnings({"deprecation", "removal"})
 public abstract class MockBukkitTestBase {
     protected ServerMock server;
     protected World world;

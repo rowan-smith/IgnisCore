@@ -215,8 +215,7 @@ class DefinitionParserTest {
             assertEquals(30.0, definition.getCustomData().get("power"));
             assertTrue(definition.isPlaceable());
             assertTrue(definition.isBreakable());
-            assertEquals(45, definition.getBreakSettings().get("ticks"));
-            assertFalse(definition.getInteractionSettings().isEmpty());
+            assertTrue(definition.getInteractionSettings().isEmpty());
         }
     }
 }

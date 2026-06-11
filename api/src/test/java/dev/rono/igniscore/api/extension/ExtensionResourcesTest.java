@@ -28,14 +28,15 @@ class ExtensionResourcesTest {
             jar.closeEntry();
         }
 
-        URLClassLoader classLoader = new URLClassLoader(new URL[]{jarPath.toUri().toURL()}, ClassLoader.getPlatformClassLoader());
-        ExtensionResources resources = new ExtensionResources(classLoader);
+        try (URLClassLoader classLoader = new URLClassLoader(new URL[]{jarPath.toUri().toURL()}, ClassLoader.getPlatformClassLoader())) {
+            ExtensionResources resources = new ExtensionResources(classLoader);
 
-        try (InputStream stream = resources.open("assets/icon.png")) {
-            assertNotNull(stream);
+            try (InputStream stream = resources.open("assets/icon.png")) {
+                assertNotNull(stream);
+            }
+
+            assertSame(classLoader, resources.getClassLoader());
+            assertNull(resources.open("missing-resource.txt"));
         }
-
-        assertSame(classLoader, resources.getClassLoader());
-        assertNull(resources.open("missing-resource.txt"));
     }
 }

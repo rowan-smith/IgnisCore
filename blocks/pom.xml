@@ -24,7 +24,7 @@
     <module>mimic-block</module>
     <module>tunneling-block</module>
     <module>entity-block</module>
-    <module>remote-bomb-block</module>
+    <module>signal-charge-block</module>
   </modules>
 
   <dependencyManagement>

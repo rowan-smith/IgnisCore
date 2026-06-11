@@ -4,6 +4,7 @@ import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.support.MockBukkitTestBase;
 import dev.rono.igniscore.support.PdcBackedNbtService;
 import dev.rono.igniscore.support.TestDefinitions;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,7 @@ class ItemFactoryTest extends MockBukkitTestBase {
 
         assertEquals(Material.SNOWBALL, item.getType());
         assertEquals("grenade", identifier.resolveTypeId(item));
-        assertEquals(20001, item.getItemMeta().getCustomModelData());
+        assertEquals(20001, item.getData(DataComponentTypes.CUSTOM_MODEL_DATA).floats().getFirst().intValue());
         assertEquals("grenade", nbtService.readItem(item, nbt -> nbt.getString("ignis:strategy")));
         if (item.getItemMeta().hasItemModel()) {
             assertEquals("grenade", item.getItemMeta().getItemModel().getKey());

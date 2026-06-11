@@ -19,5 +19,9 @@
       <artifactId>api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>de.tr7zw</groupId>
+      <artifactId>item-nbt-api-plugin</artifactId>
+    </dependency>
   </dependencies>
 </project>

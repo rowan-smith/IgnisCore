@@ -57,7 +57,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
         List<String> linkedBombs = readLinkedBombs(item);
         if (linkedBombs.contains(encoded)) {
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.8f);
-            player.sendMessage("§eThis bomb is already linked.");
+            player.sendMessage("§eThis signal charge is already linked.");
             return;
         }
 
@@ -74,14 +74,14 @@ public class Strategy extends AbstractIgnisItemStrategy {
         Location center = location.toCenterLocation();
         center.getWorld().playSound(center, Sound.BLOCK_BEACON_POWER_SELECT, 1.0f, 1.6f);
         center.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, center, 8, 0.25, 0.25, 0.25, 0.0);
-        player.sendMessage("§aRemote bomb linked. §7(" + linkedBombs.size() + "/" + maxLinks + ")");
+        player.sendMessage("§aSignal charge linked. §7(" + linkedBombs.size() + "/" + maxLinks + ")");
     }
 
     private void detonateLinkedBombs(Player player, ItemDefinition definition, ItemStack item) {
         List<String> linkedBombs = readLinkedBombs(item);
         if (linkedBombs.isEmpty()) {
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.5f);
-            player.sendMessage("§cNo linked bombs. Left-click a remote bomb to assign one.");
+            player.sendMessage("§cNo linked charges. Left-click a signal charge to assign one.");
             return;
         }
 
@@ -110,12 +110,12 @@ public class Strategy extends AbstractIgnisItemStrategy {
 
         if (triggered > 0) {
             player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.2f);
-            player.sendMessage("§cDetonating §f" + triggered + "§c linked bomb" + (triggered == 1 ? "" : "s") + ".");
+            player.sendMessage("§cDetonating §f" + triggered + "§c linked charge" + (triggered == 1 ? "" : "s") + ".");
             return;
         }
 
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.5f);
-        player.sendMessage("§cNo linked bombs remain in range.");
+        player.sendMessage("§cNo linked charges remain in range.");
     }
 
     private boolean isTargetBlock(ItemDefinition definition, String blockType) {
@@ -138,7 +138,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
             return blockType.equalsIgnoreCase(singleTarget.toString());
         }
 
-        return "remote-bomb".equalsIgnoreCase(blockType);
+        return "signal-charge".equalsIgnoreCase(blockType);
     }
 
     private List<String> readLinkedBombs(ItemStack item) {
@@ -152,7 +152,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
         }
 
         try {
-            List<String> values = nbt.getStringList(LINKED_BOMBS_KEY);
+            List<String> values = nbt.getStringList(LINKED_BOMBS_KEY).toListCopy();
             return values == null ? new ArrayList<>() : new ArrayList<>(values);
         } catch (Exception ignored) {
             String legacy = nbt.getString(LINKED_BOMBS_KEY);
@@ -173,7 +173,9 @@ public class Strategy extends AbstractIgnisItemStrategy {
             return;
         }
 
-        nbt.setStringList(LINKED_BOMBS_KEY, linkedBombs);
+        var list = nbt.getStringList(LINKED_BOMBS_KEY);
+        list.clear();
+        list.addAll(linkedBombs);
     }
 
     private String encodeLocation(Location location) {
@@ -200,7 +202,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
                     Integer.parseInt(parts[2]),
                     Integer.parseInt(parts[3])
             );
-        } catch (IllegalArgumentException | NumberFormatException ex) {
+        } catch (IllegalArgumentException ex) {
             return null;
         }
     }

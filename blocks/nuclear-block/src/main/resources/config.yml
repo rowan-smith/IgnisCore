@@ -6,43 +6,6 @@ display:
     - "&4Complete"
     - "&4Destruction"
 
-block:
-  placeable: true
-  breakable: true
-  base_material: paper
-  render_material: carrot_on_a_stick
-  breaking:
-    ticks: 45
-    hit_interval_ticks: 6
-    hit_sound: BLOCK_STONE_HIT
-    break_sound: BLOCK_STONE_BREAK
-    tool_ticks:
-      _PICKAXE: 20
-      _AXE: 30
-      _SHOVEL: 30
-    particles:
-      hit:
-        - type: CRIT
-          count: 3
-          offset_x: 0.30
-          offset_y: 0.30
-          offset_z: 0.30
-          speed: 0.02
-      break:
-        - type: BLOCK
-          block: STONE
-          count: 28
-          offset_x: 0.35
-          offset_y: 0.35
-          offset_z: 0.35
-          speed: 0.01
-        - type: SMOKE
-          count: 10
-          offset_x: 0.25
-          offset_y: 0.25
-          offset_z: 0.25
-          speed: 0.01
-
 textures:
   top: top.png
   side: side.png
@@ -51,50 +14,6 @@ textures:
 model:
   type: "block_display"
   mode: "auto"
-
-block_display:
-  scale: 1.01
-  offset_x: 0.0
-  offset_y: 0.5
-  offset_z: 0.0
-  view_range: 1.0
-  block_light: 15
-  sky_light: 15
-  animations:
-    rotate: true
-    float: true
-    pulse: true
-
-interactions:
-  left_click:
-    default_action: break
-    material_actions:
-      - action: ignite
-        materials:
-          - FLINT_AND_STEEL
-          - FIRE_CHARGE
-          - FLINT
-  right_click:
-    action: ignite
-    materials:
-      - FLINT_AND_STEEL
-      - FIRE_CHARGE
-      - FLINT
-  ignite:
-    sound: ITEM_FLINTANDSTEEL_USE
-    particles:
-      - type: FLAME
-        count: 18
-        offset_x: 0.35
-        offset_y: 0.35
-        offset_z: 0.35
-        speed: 0.03
-      - type: SMOKE
-        count: 8
-        offset_x: 0.30
-        offset_y: 0.30
-        offset_z: 0.30
-        speed: 0.01
 
 behavior:
   strategy: nuclear

@@ -27,6 +27,7 @@ class ExtensionDescriptorIntegrationTest {
             "mimic-block",
             "tunneling-block",
             "entity-block",
+            "signal-charge-block",
             "grenade-item",
             "detonator-item"
     })

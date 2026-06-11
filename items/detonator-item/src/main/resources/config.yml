@@ -3,8 +3,8 @@ id: detonator
 display:
   title: "&6Detonator"
   description:
-    - "&7Left-click a remote bomb to link"
-    - "&7Right-click to detonate linked bombs"
+    - "&7Left-click a signal charge to link"
+    - "&7Right-click to detonate linked charges"
 
 item:
   base_material: blaze_rod
@@ -16,7 +16,7 @@ behavior:
   strategy: detonator
   strategy_name: Remote Detonator
   custom_data:
-    target_block: remote-bomb
+    target_block: signal-charge
     max_links: 16
 
 interactions:

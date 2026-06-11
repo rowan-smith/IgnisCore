@@ -33,7 +33,8 @@ class BlockStrategyProfileIntegrationTest {
             "erupting-block",
             "mimic-block",
             "tunneling-block",
-            "entity-block"
+            "entity-block",
+            "signal-charge-block"
     })
     void bundledStrategiesExposeProfilesForTheirDefinitions(String moduleName) throws Exception {
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
