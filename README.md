@@ -46,7 +46,7 @@ plugins/IgnisCore/blocks/*.jar
 plugins/IgnisCore/items/*.jar
 ```
 
-Drop additional extension JARs into those folders and run `/ignis reload blocks`, `/ignis reload items`, or `/ignis reload all`.
+Drop additional extension JARs into those folders and run `/ignis reload blocks`, `/ignis reload items`, `/ignis reload server`, or `/ignis reload all`.
 
 ## Public API
 
@@ -231,8 +231,11 @@ Block icons use custom model data starting at `10001`; items start at `20001`. T
 
 | Command | Description |
 |---------|-------------|
-| `/ignis reload blocks` | Reload block extensions |
-| `/ignis reload items` | Reload item extensions |
+| `/ignis give <player> block <id>` | Give a custom block item |
+| `/ignis give <player> item <id>` | Give a custom item |
+| `/ignis reload blocks` | Reload block extensions and rebuild the resource pack |
+| `/ignis reload items` | Reload item extensions and rebuild the resource pack |
+| `/ignis reload server` | Reload config and restart the resource pack web server |
 | `/ignis reload all` | Reload everything and rebuild the resource pack |
 
 ## Platform support

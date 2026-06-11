@@ -41,6 +41,11 @@ public class ResourcePackService {
         plugin.getLogger().info("Resource pack generated successfully! Hash: " + latestHash);
     }
 
+    public void reloadConfiguration() {
+        plugin.reloadConfig();
+        restartServer();
+    }
+
     public void reloadBuildAndRegister() throws IOException {
         plugin.reloadConfig();
         buildAndRegister();

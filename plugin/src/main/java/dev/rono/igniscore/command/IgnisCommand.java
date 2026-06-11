@@ -28,7 +28,8 @@ import java.util.List;
 public class IgnisCommand implements PluginCommandHandler {
     private static final List<String> ROOT_SUBCOMMANDS = List.of("give", "pack", "reload", "debug", "blocks", "items");
     private static final List<String> DEBUG_SUBCOMMANDS = List.of("on", "off", "pack");
-    private static final List<String> RELOAD_SUBCOMMANDS = List.of("all", "blocks", "items");
+    private static final List<String> RELOAD_SUBCOMMANDS = List.of("all", "blocks", "items", "server");
+    private static final List<String> GIVE_TYPE_SUBCOMMANDS = List.of("block", "item");
 
     private final Main plugin;
     private final BlockManager blockManager;
@@ -93,8 +94,8 @@ public class IgnisCommand implements PluginCommandHandler {
     }
 
     private boolean handleGive(CommandSender sender, String[] args) {
-        if (args.length < 3) {
-            send(sender, "<red>Usage: /ignis give <player> <type>");
+        if (args.length < 4) {
+            send(sender, "<red>Usage: /ignis give <player> <block|item> <id>");
             return true;
         }
 
@@ -104,20 +105,38 @@ public class IgnisCommand implements PluginCommandHandler {
             return true;
         }
 
-        String typeId = args[2];
-        if (blockManager.getBlockTypes().containsKey(typeId)) {
-            target.getInventory().addItem(plugin.createBlockItem(typeId));
-            send(sender, "<green>Gave block " + typeId + " to " + target.getName());
+        String kind = args[2].toLowerCase();
+        String typeId = args[3];
+
+        return switch (kind) {
+            case "block" -> giveBlock(sender, target, typeId);
+            case "item" -> giveItem(sender, target, typeId);
+            default -> {
+                send(sender, "<red>Usage: /ignis give <player> <block|item> <id>");
+                yield true;
+            }
+        };
+    }
+
+    private boolean giveBlock(CommandSender sender, Player target, String typeId) {
+        if (!blockManager.getBlockTypes().containsKey(typeId)) {
+            send(sender, "<red>Unknown block type: " + typeId);
             return true;
         }
 
-        if (itemManager.getItemTypes().containsKey(typeId)) {
-            target.getInventory().addItem(itemFactory.createItem(typeId));
-            send(sender, "<green>Gave item " + typeId + " to " + target.getName());
+        target.getInventory().addItem(plugin.createBlockItem(typeId));
+        send(sender, "<green>Gave block " + typeId + " to " + target.getName());
+        return true;
+    }
+
+    private boolean giveItem(CommandSender sender, Player target, String typeId) {
+        if (!itemManager.getItemTypes().containsKey(typeId)) {
+            send(sender, "<red>Unknown item type: " + typeId);
             return true;
         }
 
-        send(sender, "<red>Unknown block or item type.");
+        target.getInventory().addItem(itemFactory.createItem(typeId));
+        send(sender, "<green>Gave item " + typeId + " to " + target.getName());
         return true;
     }
 
@@ -144,18 +163,32 @@ public class IgnisCommand implements PluginCommandHandler {
         String target = args.length > 1 ? args[1].toLowerCase() : "all";
         try {
             switch (target) {
-                case "all" -> extensionBootstrap.reloadAll();
-                case "blocks" -> extensionBootstrap.reloadBlocks();
-                case "items" -> extensionBootstrap.reloadItems();
+                case "server" -> {
+                    resourcePackService.reloadConfiguration();
+                    send(sender, "<green>IgnisCore server configuration reloaded.");
+                }
+                case "all" -> {
+                    extensionBootstrap.reloadAll();
+                    resourcePackService.reloadBuildAndRegister();
+                    send(sender, "<green>IgnisCore extensions and resource pack reloaded.");
+                }
+                case "blocks" -> {
+                    extensionBootstrap.reloadBlocks();
+                    resourcePackService.reloadBuildAndRegister();
+                    send(sender, "<green>IgnisCore block extensions reloaded.");
+                }
+                case "items" -> {
+                    extensionBootstrap.reloadItems();
+                    resourcePackService.reloadBuildAndRegister();
+                    send(sender, "<green>IgnisCore item extensions reloaded.");
+                }
                 default -> {
-                    send(sender, "<red>Usage: /ignis reload <all|blocks|items>");
+                    send(sender, "<red>Usage: /ignis reload <all|blocks|items|server>");
                     return true;
                 }
             }
-            resourcePackService.reloadBuildAndRegister();
-            send(sender, "<green>IgnisCore " + target + " extensions reloaded.");
         } catch (IOException e) {
-            send(sender, "<red>Extensions reloaded but resource pack rebuild failed.");
+            send(sender, "<red>Reload failed: " + e.getMessage());
         }
         return true;
     }
@@ -226,9 +259,9 @@ public class IgnisCommand implements PluginCommandHandler {
 
     private void sendHelp(CommandSender sender) {
         send(sender, "<gold>IgnisCore Commands:");
-        send(sender, "<yellow>/ignis give <player> <type>");
+        send(sender, "<yellow>/ignis give <player> <block|item> <id>");
         send(sender, "<yellow>/ignis pack - Apply resource pack");
-        send(sender, "<yellow>/ignis reload <all|blocks|items>");
+        send(sender, "<yellow>/ignis reload <all|blocks|items|server>");
         send(sender, "<yellow>/ignis blocks - List loaded block JARs");
         send(sender, "<yellow>/ignis items - List loaded item JARs");
     }
@@ -267,8 +300,13 @@ public class IgnisCommand implements PluginCommandHandler {
         } else if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
             Bukkit.getOnlinePlayers().forEach(player -> completions.add(player.getName()));
         } else if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
-            completions.addAll(blockManager.getBlockTypes().keySet());
-            completions.addAll(itemManager.getItemTypes().keySet());
+            completions.addAll(GIVE_TYPE_SUBCOMMANDS);
+        } else if (args.length == 4 && args[0].equalsIgnoreCase("give")) {
+            if (args[2].equalsIgnoreCase("block")) {
+                completions.addAll(blockManager.getBlockTypes().keySet());
+            } else if (args[2].equalsIgnoreCase("item")) {
+                completions.addAll(itemManager.getItemTypes().keySet());
+            }
         }
 
         String lastArg = args[args.length - 1].toLowerCase();
