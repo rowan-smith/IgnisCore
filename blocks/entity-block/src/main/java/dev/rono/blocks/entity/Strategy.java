@@ -1,12 +1,13 @@
 package dev.rono.blocks.entity;
 
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
@@ -35,22 +36,22 @@ public class Strategy extends AbstractIgnisBlockStrategy {
             return;
         }
         Location center = location.toCenterLocation();
-        center.getWorld().spawnParticle(Particle.SPORE_BLOSSOM_AIR, center, 18, 0.45, 0.45, 0.45, 0.01);
-        center.getWorld().spawnParticle(Particle.SMOKE, center, 8, 0.3, 0.3, 0.3, 0.01);
+        StrategySupport.spawnParticles(center, Particle.SPORE_BLOSSOM_AIR, 18, 0.45, 0.45, 0.45, 0.01);
+        StrategySupport.spawnParticles(center, Particle.SMOKE, 8, 0.3, 0.3, 0.3, 0.01);
     }
 
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
-        org.bukkit.Location loc = instance.getLocation().toCenterLocation();
-        float finalPower = ExplosiveStrategySupport.resolvePower(def, 4.0);
-        boolean realExplosion = ExplosiveStrategySupport.customBoolean(def, "realExplosion", true);
+        Location loc = instance.getLocation().toCenterLocation();
+        float finalPower = StrategySupport.resolvePower(def, 4.0);
+        boolean realExplosion = StrategySupport.customBoolean(def, "realExplosion", true);
 
         if (realExplosion) {
             loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
-            ExplosiveStrategySupport.createExplosion(loc, def, 4.0, false);
+            StrategySupport.createExplosion(loc, def, 4.0, false);
         } else {
-            ExplosiveStrategySupport.spawnSpiderStormBurst(loc, finalPower);
+            spawnSpiderStormBurst(loc, finalPower);
         }
 
         Object payloadObj = def.getCustomData().get("entityPayload");
@@ -97,5 +98,16 @@ public class Strategy extends AbstractIgnisBlockStrategy {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    private void spawnSpiderStormBurst(Location center, float power) {
+        double spread = Math.max(3.0, power * 0.45);
+        center.getWorld().playSound(center, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 1.25f);
+        center.getWorld().playSound(center, Sound.ENTITY_SPIDER_AMBIENT, 3.0f, 0.65f);
+        StrategySupport.spawnParticles(center, Particle.EXPLOSION_EMITTER, 3, 1.0, 0.5, 1.0, 0.0);
+        StrategySupport.spawnParticles(center, Particle.SMOKE, 160, spread, 1.4, spread, 0.04);
+        StrategySupport.spawnParticles(center, Particle.CLOUD, 120, spread * 0.8, 1.1, spread * 0.8, 0.08);
+        StrategySupport.spawnParticles(center, Particle.BLOCK, 90, spread * 0.5, 0.8, spread * 0.5, 0.02,
+                Material.COBWEB.createBlockData());
     }
 }

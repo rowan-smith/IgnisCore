@@ -28,10 +28,10 @@ behavior:
   strategy: wormhole
   strategy_name: Wormhole Distortion
 
-  fuse: 100
-  radius: 12.0
 
   custom_data:
+    fuse: 100
+    radius: 12.0
     power: 10.0
     fire: false
     blockDamage: true

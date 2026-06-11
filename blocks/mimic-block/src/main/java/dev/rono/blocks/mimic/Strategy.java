@@ -3,6 +3,7 @@ package dev.rono.blocks.mimic;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.Location;
@@ -40,7 +41,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         for (int i = 0; i < totalCount; i++) {
             TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
 
-            int fuse = def.getFuse() + (int) (Math.random() * 40 - 20);
+            int fuse = StrategySupport.fuse(def, 80) + (int) (Math.random() * 40 - 20);
             tnt.setFuseTicks(Math.max(10, fuse));
 
             tnt.setVelocity(new Vector(

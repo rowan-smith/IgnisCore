@@ -1,4 +1,4 @@
-package dev.rono.igniscore.service.quarrycache;
+package dev.rono.blocks.quarrycache;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -19,9 +19,5 @@ final class QuarryCacheData {
             return false;
         }
         return location.distance(target.getBlock().getLocation()) <= collectRadius;
-    }
-
-    ItemStack[] collectFilterItems() {
-        return inventory.getFilterItems();
     }
 }

@@ -2,6 +2,7 @@ package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -50,7 +51,7 @@ public class BlockItemFactory {
             nbt.setString("ignis:block_id", typeId);
             nbt.setString("ignis:strategy", type.getStrategy());
             nbt.setInteger("ignis:version", 1);
-            nbt.setInteger("ignis:fuse", type.getFuse());
+            nbt.setInteger("ignis:fuse", StrategySupport.fuse(type, 80));
         });
 
         return item;

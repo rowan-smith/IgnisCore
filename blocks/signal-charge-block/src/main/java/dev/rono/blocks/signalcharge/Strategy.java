@@ -4,7 +4,7 @@ import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import org.bukkit.Location;
@@ -36,6 +36,6 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         BlockDefinition def = instance.getDefinition();
         Location loc = instance.getLocation().toCenterLocation();
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 0.9f);
-        ExplosiveStrategySupport.createExplosion(loc, def, 4.0, false);
+        StrategySupport.createExplosion(loc, def, 4.0, false);
     }
 }

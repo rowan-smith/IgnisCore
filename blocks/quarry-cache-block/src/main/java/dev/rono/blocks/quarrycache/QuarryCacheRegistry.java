@@ -1,8 +1,7 @@
-package dev.rono.igniscore.service.quarrycache;
+package dev.rono.blocks.quarrycache;
 
-import com.google.inject.Inject;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.service.IgnisQuarryCacheService;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -14,36 +13,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dev.rono.igniscore.util.ConfigValueReader.getDouble;
-
-public class QuarryCacheService implements IgnisQuarryCacheService {
+final class QuarryCacheRegistry {
     private final Map<Location, QuarryCacheData> caches = new ConcurrentHashMap<>();
 
-    @Inject
-    public QuarryCacheService() {
-    }
-
-    @Override
-    public void register(Location location, BlockDefinition definition) {
+    void register(Location location, BlockDefinition definition) {
         Location blockLocation = location.getBlock().getLocation();
         double radius = resolveCollectRadius(definition);
-        Component title = resolveTitle(definition);
+        Component title = definition.getTitle() == null ? Component.text("Quarry Cache") : definition.getTitle();
         QuarryCacheInventory inventory = new QuarryCacheInventory(blockLocation, title);
         caches.put(blockLocation, new QuarryCacheData(blockLocation, radius, inventory));
     }
 
-    @Override
-    public void unregister(Location location) {
+    void unregister(Location location) {
         caches.remove(location.getBlock().getLocation());
     }
 
-    @Override
-    public boolean isCache(Location location) {
+    boolean isCache(Location location) {
         return caches.containsKey(location.getBlock().getLocation());
     }
 
-    @Override
-    public void openGui(Player player, Location location) {
+    void openGui(Player player, Location location) {
         QuarryCacheData cache = caches.get(location.getBlock().getLocation());
         if (cache == null) {
             return;
@@ -52,8 +41,7 @@ public class QuarryCacheService implements IgnisQuarryCacheService {
         player.openInventory(cache.inventory.getInventory());
     }
 
-    @Override
-    public void dropContents(Location location) {
+    void dropContents(Location location) {
         QuarryCacheData cache = caches.remove(location.getBlock().getLocation());
         if (cache == null) {
             return;
@@ -73,7 +61,7 @@ public class QuarryCacheService implements IgnisQuarryCacheService {
         }
     }
 
-    public boolean tryCollect(Location breakLocation, Collection<ItemStack> drops) {
+    boolean tryCollect(Location breakLocation, Collection<ItemStack> drops) {
         QuarryCacheData cache = findCollectingCache(breakLocation);
         if (cache == null) {
             return false;
@@ -81,7 +69,7 @@ public class QuarryCacheService implements IgnisQuarryCacheService {
         return tryStore(cache, drops);
     }
 
-    public void cleanup() {
+    void cleanup() {
         for (Location location : new HashMap<>(caches).keySet()) {
             dropContents(location);
         }
@@ -158,13 +146,8 @@ public class QuarryCacheService implements IgnisQuarryCacheService {
     private double resolveCollectRadius(BlockDefinition definition) {
         Map<String, Object> customData = definition.getCustomData();
         if (customData.containsKey("collectRadius")) {
-            return getDouble(customData, "collectRadius", definition.getRadius());
+            return StrategySupport.customDouble(customData, "collectRadius", 5.0);
         }
-        return getDouble(customData, "collect_radius", definition.getRadius());
-    }
-
-    private Component resolveTitle(BlockDefinition definition) {
-        Component title = definition.getTitle();
-        return title == null ? Component.text("Quarry Cache") : title;
+        return StrategySupport.customDouble(customData, "collect_radius", 5.0);
     }
 }

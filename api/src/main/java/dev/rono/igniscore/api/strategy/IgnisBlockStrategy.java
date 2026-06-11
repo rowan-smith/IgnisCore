@@ -1,5 +1,6 @@
 package dev.rono.igniscore.api.strategy;
 
+import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import org.bukkit.Location;
@@ -16,6 +17,10 @@ public interface IgnisBlockStrategy extends IgnisStrategy {
     }
 
     default void onStaticPlace(BlockDefinition definition, Location location) {}
+
+    default void onStaticInteract(BlockDefinition definition, Location location, Player player, CustomBlockAction action) {}
+
+    default void onStaticBreak(BlockDefinition definition, Location location) {}
 
     default void onPlace(RuntimeBlockInstance instance) {}
 

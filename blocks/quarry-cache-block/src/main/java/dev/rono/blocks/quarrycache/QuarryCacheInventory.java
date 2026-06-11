@@ -1,7 +1,7 @@
-package dev.rono.igniscore.service.quarrycache;
+package dev.rono.blocks.quarrycache;
 
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -11,32 +11,31 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 
-public final class QuarryCacheInventory implements InventoryHolder {
-    public static final int FILTER_SLOTS = 5;
-    public static final int SEPARATOR_START = 5;
-    public static final int SEPARATOR_SLOTS = 4;
-    public static final int STORAGE_START = 9;
-    public static final int STORAGE_SLOTS = 45;
-    public static final int TOTAL_SLOTS = 54;
+final class QuarryCacheInventory implements InventoryHolder {
+    static final int FILTER_SLOTS = 5;
+    static final int SEPARATOR_START = 5;
+    static final int STORAGE_START = 9;
+    static final int STORAGE_SLOTS = 45;
+    static final int TOTAL_SLOTS = 54;
 
     private final Location location;
     private final Inventory inventory;
 
-    public QuarryCacheInventory(Location location, Component title) {
+    QuarryCacheInventory(Location location, Component title) {
         this.location = location.clone();
-        this.inventory = Bukkit.createInventory(this, TOTAL_SLOTS, title);
+        this.inventory = StrategySupport.createInventory(this, TOTAL_SLOTS, title);
         fillSeparators();
     }
 
-    public static boolean isFilterSlot(int slot) {
+    static boolean isFilterSlot(int slot) {
         return slot >= 0 && slot < FILTER_SLOTS;
     }
 
-    public static boolean isSeparatorSlot(int slot) {
+    static boolean isSeparatorSlot(int slot) {
         return slot >= SEPARATOR_START && slot < STORAGE_START;
     }
 
-    public static boolean isStorageSlot(int slot) {
+    static boolean isStorageSlot(int slot) {
         return slot >= STORAGE_START && slot < TOTAL_SLOTS;
     }
 
@@ -52,11 +51,11 @@ public final class QuarryCacheInventory implements InventoryHolder {
         }
     }
 
-    public Location getCacheLocation() {
+    Location getCacheLocation() {
         return location.clone();
     }
 
-    public ItemStack[] getFilterItems() {
+    ItemStack[] getFilterItems() {
         ItemStack[] filters = new ItemStack[FILTER_SLOTS];
         for (int i = 0; i < FILTER_SLOTS; i++) {
             ItemStack item = inventory.getItem(i);
@@ -65,7 +64,7 @@ public final class QuarryCacheInventory implements InventoryHolder {
         return filters;
     }
 
-    public void restoreSeparators() {
+    void restoreSeparators() {
         fillSeparators();
     }
 
@@ -74,7 +73,7 @@ public final class QuarryCacheInventory implements InventoryHolder {
         return inventory;
     }
 
-    public boolean accepts(ItemStack stack) {
+    boolean accepts(ItemStack stack) {
         if (stack == null || stack.getType().isAir()) {
             return false;
         }

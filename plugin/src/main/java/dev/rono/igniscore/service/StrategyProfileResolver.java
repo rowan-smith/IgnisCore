@@ -5,6 +5,7 @@ import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.model.BlockDefinition;
 
 import java.util.Map;
@@ -33,8 +34,8 @@ public class StrategyProfileResolver {
         StrategyProfile.Builder builder = profile.toBuilder()
                 .placeable(definition.isPlaceable())
                 .breakable(definition.isBreakable())
-                .defaultFuse(definition.getFuse())
-                .defaultRadius(definition.getRadius());
+                .defaultFuse(StrategySupport.customInt(definition.getCustomData(), "fuse", profile.getDefaultFuse()))
+                .defaultRadius(StrategySupport.customDouble(definition.getCustomData(), "radius", profile.getDefaultRadius()));
 
         if (definition.getDisplaySettings().containsKey("scale")) {
             Object scale = definition.getDisplaySettings().get("scale");

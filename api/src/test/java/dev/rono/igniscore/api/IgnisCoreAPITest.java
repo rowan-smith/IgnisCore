@@ -6,7 +6,6 @@ import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
-import dev.rono.igniscore.api.service.IgnisQuarryCacheService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -196,32 +195,6 @@ class IgnisCoreAPITest {
         @Override
         public IgnisEffectService getEffectService() {
             return effectService;
-        }
-
-        @Override
-        public IgnisQuarryCacheService getQuarryCacheService() {
-            return new IgnisQuarryCacheService() {
-                @Override
-                public void register(Location location, BlockDefinition definition) {
-                }
-
-                @Override
-                public void unregister(Location location) {
-                }
-
-                @Override
-                public boolean isCache(Location location) {
-                    return false;
-                }
-
-                @Override
-                public void openGui(org.bukkit.entity.Player player, Location location) {
-                }
-
-                @Override
-                public void dropContents(Location location) {
-                }
-            };
         }
 
         @Override

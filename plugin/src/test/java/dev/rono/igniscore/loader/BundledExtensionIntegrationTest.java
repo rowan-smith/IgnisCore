@@ -55,7 +55,7 @@ class BundledExtensionIntegrationTest {
             IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(
                     classLoader,
                     manifest.getStrategyClass(),
-                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null, null),
+                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null),
                     registry,
                     descriptor,
                     ExtensionKind.BLOCK
@@ -84,7 +84,7 @@ class BundledExtensionIntegrationTest {
             IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(
                     classLoader,
                     manifest.getStrategyClass(),
-                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null, null),
+                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null),
                     registry,
                     descriptor,
                     ExtensionKind.ITEM
@@ -107,8 +107,8 @@ class BundledExtensionIntegrationTest {
 
         assertEquals("nuke", definition.getId());
         assertEquals("nuclear", definition.getStrategy());
-        assertEquals(160, definition.getFuse());
-        assertEquals(30.0, definition.getRadius());
+        assertEquals(160, definition.getCustomData().get("fuse"));
+        assertEquals(30.0, definition.getCustomData().get("radius"));
     }
 
     static boolean nuclearConfigFixtureExists() {

@@ -5,7 +5,6 @@ import dev.rono.igniscore.api.IgnisCoreFacade;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
-import dev.rono.igniscore.api.service.IgnisQuarryCacheService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.command.CommandRegistrar;
 import dev.rono.igniscore.command.IgnisCommand;
@@ -14,7 +13,6 @@ import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.listener.BlockListener;
 import dev.rono.igniscore.listener.ItemListener;
-import dev.rono.igniscore.listener.QuarryCacheListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
@@ -26,7 +24,6 @@ import dev.rono.igniscore.service.BlockItemFactory;
 import dev.rono.igniscore.service.ItemFactory;
 import dev.rono.igniscore.service.NBTService;
 import dev.rono.igniscore.service.ProtocolService;
-import dev.rono.igniscore.service.quarrycache.QuarryCacheService;
 import dev.rono.igniscore.service.RuntimeBlockService;
 import dev.rono.igniscore.service.VisualEffectService;
 import org.bukkit.Location;
@@ -58,7 +55,6 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     private final IgnisStrategyRegistry strategyRegistry;
     private final BlockExtensionLoader blockExtensionLoader;
     private final ItemExtensionLoader itemExtensionLoader;
-    private final QuarryCacheService quarryCacheService;
     private final List<Listener> listeners;
 
     @Inject
@@ -67,7 +63,6 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
                                 IgnisCommand ignisCommand,
                                 BlockListener blockListener,
                                 ItemListener itemListener,
-                                QuarryCacheListener quarryCacheListener,
                                 ResourcePackStatusListener resourcePackStatusListener,
                                 BlockManager blockManager,
                                 ItemManager itemManager,
@@ -82,8 +77,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
                                 ExtensionBootstrap extensionBootstrap,
                                 IgnisStrategyRegistry strategyRegistry,
                                 BlockExtensionLoader blockExtensionLoader,
-                                ItemExtensionLoader itemExtensionLoader,
-                                QuarryCacheService quarryCacheService) {
+                                ItemExtensionLoader itemExtensionLoader) {
         this.plugin = plugin;
         this.commandRegistrar = commandRegistrar;
         this.ignisCommand = ignisCommand;
@@ -101,8 +95,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
         this.strategyRegistry = strategyRegistry;
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
-        this.quarryCacheService = quarryCacheService;
-        this.listeners = List.of(blockListener, itemListener, quarryCacheListener, resourcePackStatusListener);
+        this.listeners = List.of(blockListener, itemListener, resourcePackStatusListener);
     }
 
     public void enable() {
@@ -115,7 +108,6 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     public void disable() {
         blockExtensionLoader.unloadAll();
         itemExtensionLoader.unloadAll();
-        quarryCacheService.cleanup();
         blockManager.cleanup();
         resourcePackService.stopServer();
     }
@@ -188,11 +180,6 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     @Override
     public IgnisEffectService getEffectService() {
         return effectService;
-    }
-
-    @Override
-    public IgnisQuarryCacheService getQuarryCacheService() {
-        return quarryCacheService;
     }
 
     @Override

@@ -49,7 +49,5 @@ interactions:
 behavior:
   strategy: quarry-cache
   strategy_name: Quarry Cache
-  fuse: 0
-  radius: 5.0
   custom_data:
     collectRadius: 5.0

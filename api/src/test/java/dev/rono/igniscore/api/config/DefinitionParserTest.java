@@ -89,8 +89,8 @@ class DefinitionParserTest {
         assertFalse(definition.isBreakable());
         assertEquals("custom-top.png", definition.getTopTexture());
         assertEquals("phantom", definition.getStrategy());
-        assertEquals(40, definition.getFuse());
-        assertEquals(6.5, definition.getRadius());
+        assertEquals(40, definition.getCustomData().get("fuse"));
+        assertEquals(6.5, definition.getCustomData().get("radius"));
         assertEquals(3.0, definition.getCustomData().get("power"));
         assertEquals(30, definition.getBreakSettings().get("ticks"));
         assertEquals("ignite", ((Map<?, ?>) definition.getInteractionSettings().get("right_click")).get("action"));
@@ -128,8 +128,8 @@ class DefinitionParserTest {
         BlockDefinition definition = DefinitionParser.parseBlock(config, "legacy", 10001, "legacy-block");
 
         assertEquals("erupting", definition.getStrategy());
-        assertEquals(55, definition.getFuse());
-        assertEquals(9.0, definition.getRadius());
+        assertEquals(55, definition.getCustomData().get("fuse"));
+        assertEquals(9.0, definition.getCustomData().get("radius"));
         assertEquals(7.5, definition.getCustomData().get("power"));
         assertEquals(2.0, definition.getCustomData().get("multiplier"));
         assertEquals(true, definition.getCustomData().get("fire"));
@@ -160,8 +160,8 @@ class DefinitionParserTest {
         BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuclear-block");
 
         assertEquals("nuclear", definition.getStrategy());
-        assertEquals(120, definition.getFuse());
-        assertEquals(20.0, definition.getRadius());
+        assertEquals(120, definition.getCustomData().get("fuse"));
+        assertEquals(20.0, definition.getCustomData().get("radius"));
     }
 
     @Test
@@ -210,8 +210,8 @@ class DefinitionParserTest {
 
             assertEquals("nuke", definition.getId());
             assertEquals("nuclear", definition.getStrategy());
-            assertEquals(160, definition.getFuse());
-            assertEquals(30.0, definition.getRadius());
+            assertEquals(160, definition.getCustomData().get("fuse"));
+            assertEquals(30.0, definition.getCustomData().get("radius"));
             assertEquals(30.0, definition.getCustomData().get("power"));
             assertTrue(definition.isPlaceable());
             assertTrue(definition.isBreakable());

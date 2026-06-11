@@ -1,9 +1,6 @@
-package dev.rono.igniscore.listener;
+package dev.rono.blocks.quarrycache;
 
-import com.google.inject.Inject;
-import dev.rono.igniscore.manager.BlockManager;
-import dev.rono.igniscore.service.quarrycache.QuarryCacheInventory;
-import dev.rono.igniscore.service.quarrycache.QuarryCacheService;
+import dev.rono.igniscore.api.IgnisCoreAPI;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -23,20 +20,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class QuarryCacheListener implements Listener {
-    private final BlockManager blockManager;
-    private final QuarryCacheService quarryCacheService;
+final class QuarryCacheListener implements Listener {
+    private final QuarryCacheRegistry registry;
 
-    @Inject
-    public QuarryCacheListener(BlockManager blockManager, QuarryCacheService quarryCacheService) {
-        this.blockManager = blockManager;
-        this.quarryCacheService = quarryCacheService;
+    QuarryCacheListener(QuarryCacheRegistry registry) {
+        this.registry = registry;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (blockManager.getPlacedBlockType(block.getLocation()) != null) {
+        if (IgnisCoreAPI.getPlacedBlockType(block.getLocation()) != null) {
             return;
         }
 
@@ -47,7 +41,7 @@ public class QuarryCacheListener implements Listener {
             return;
         }
 
-        if (quarryCacheService.tryCollect(block.getLocation(), drops)) {
+        if (registry.tryCollect(block.getLocation(), drops)) {
             event.setDropItems(false);
             event.setExpToDrop(0);
         }
@@ -56,7 +50,7 @@ public class QuarryCacheListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemSpawn(ItemSpawnEvent event) {
         ItemStack stack = event.getEntity().getItemStack();
-        if (quarryCacheService.tryCollect(event.getLocation(), List.of(stack))) {
+        if (registry.tryCollect(event.getLocation(), List.of(stack))) {
             event.setCancelled(true);
         }
     }
