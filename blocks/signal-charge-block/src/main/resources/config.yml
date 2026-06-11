@@ -13,9 +13,9 @@ display:
     - "&7to detonate remotely"
 
 textures:
-  top: top.png
-  side: side.png
-  bottom: bottom.png
+  top: top.jpg
+  side: side.jpg
+  bottom: bottom.jpg
 
 model:
   type: "block_display"
