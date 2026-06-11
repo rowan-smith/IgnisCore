@@ -31,8 +31,9 @@ class CustomBlockPlacementServiceTest extends MockBukkitTestBase {
     void setUpService() {
         nbtService = new PdcBackedNbtService();
         blockManager = StubBlockManager.with(TestDefinitions.block("nuke", "nuclear"));
-        blockItemFactory = new BlockItemFactory(blockManager, nbtService);
-        placementService = new CustomBlockPlacementService(plugin, blockManager, new BlockItemIdentifier(plugin, nbtService));
+        blockItemFactory = new BlockItemFactory(blockManager, nbtService, platformHooks);
+        placementService = new CustomBlockPlacementService(
+                plugin, blockManager, new BlockItemIdentifier(plugin, nbtService), platformHooks);
     }
 
     @Test

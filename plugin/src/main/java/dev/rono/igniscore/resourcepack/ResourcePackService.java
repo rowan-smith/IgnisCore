@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
-import net.kyori.adventure.text.Component;
+import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
@@ -15,6 +15,7 @@ public class ResourcePackService {
     private final ItemManager itemManager;
     private final ResourcePackBuilder packBuilder;
     private final ResourcePackServer packServer;
+    private final PlatformHooks platformHooks;
 
     private String latestHash;
 
@@ -22,11 +23,13 @@ public class ResourcePackService {
     public ResourcePackService(Main plugin,
                                BlockManager blockManager,
                                ItemManager itemManager,
-                               ResourcePackBuilder packBuilder) {
+                               ResourcePackBuilder packBuilder,
+                               PlatformHooks platformHooks) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.itemManager = itemManager;
         this.packBuilder = packBuilder;
+        this.platformHooks = platformHooks;
         this.packServer = new ResourcePackServer(plugin);
     }
 
@@ -55,16 +58,16 @@ public class ResourcePackService {
     public void requestPack(Player player) {
         String url = plugin.getConfig().getString("resource-pack.public-url");
         if (url == null || url.isEmpty()) {
-            player.sendMessage(plugin.message("<red>Resource pack URL not configured in config.yml"));
+            platformHooks.sendMessage(player, plugin.message("<red>Resource pack URL not configured in config.yml"));
             return;
         }
 
         if (latestHash != null) {
-            player.setResourcePack(versionedUrl(url), hexToBytes(latestHash), (Component) null, false);
+            platformHooks.sendResourcePack(player, versionedUrl(url), hexToBytes(latestHash), false);
         } else {
-            player.setResourcePack(url, (byte[]) null, (Component) null, false);
+            platformHooks.sendResourcePack(player, url, null, false);
         }
-        player.sendMessage(plugin.message("<green>Resource pack requested."));
+        platformHooks.sendMessage(player, plugin.message("<green>Resource pack requested."));
     }
 
     public String getLatestHash() {

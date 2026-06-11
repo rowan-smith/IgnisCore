@@ -3,6 +3,7 @@ package dev.rono.igniscore.service;
 import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,7 +39,7 @@ public class CustomBlockIgnitionService {
         }
 
         Location location = block.getLocation();
-        Location center = location.toCenterLocation();
+        Location center = Locations.toCenter(location);
         Map<String, Object> igniteSettings = getMap(definition.getInteractionSettings(), ACTION_IGNITE);
         effectService.playSound(center, getString(igniteSettings, "sound", "ITEM_FLINTANDSTEEL_USE"), 1.0f, 1.0f);
         effectService.spawnConfiguredParticles(center, getList(igniteSettings, "particles"), Particle.FLAME,

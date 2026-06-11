@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -27,14 +28,14 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public void onStaticPlace(BlockDefinition definition, Location location) {
-        Location center = location.toCenterLocation();
+        Location center = Locations.toCenter(location);
         center.getWorld().spawnParticle(Particle.FLAME, center, 16, 0.35, 0.35, 0.35, 0.02);
         center.getWorld().spawnParticle(Particle.SMOKE, center, 10, 0.3, 0.3, 0.3, 0.01);
     }
 
     @Override
     public void onPlace(RuntimeBlockInstance instance) {
-        Location center = instance.getLocation().toCenterLocation();
+        Location center = Locations.toCenter(instance.getLocation());
         center.getWorld().playSound(center, Sound.BLOCK_BEACON_ACTIVATE, 2.0f, 0.6f);
     }
 
@@ -47,7 +48,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
-        Location loc = instance.getLocation().toCenterLocation();
+        Location loc = Locations.toCenter(instance.getLocation());
         double basePower = def.getRadius() > 0 ? def.getRadius() : getCustomDouble(def, "power", 10.0);
         float finalPower = (float) (basePower * getCustomDouble(def, "multiplier", 1.0));
 

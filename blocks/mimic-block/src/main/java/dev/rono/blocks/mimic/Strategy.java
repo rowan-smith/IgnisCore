@@ -5,6 +5,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Location;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
@@ -23,7 +24,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     @Override
     public void onPlace(RuntimeBlockInstance instance) {
         BlockDefinition def = instance.getDefinition();
-        Location loc = instance.getLocation().toCenterLocation();
+        Location loc = Locations.toCenter(instance.getLocation());
 
         if (instance.getDisplayEntity() != null) {
             instance.getDisplayEntity().remove();

@@ -5,6 +5,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,7 +24,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
-        Location loc = instance.getLocation().toCenterLocation();
+        Location loc = Locations.toCenter(instance.getLocation());
         Vector direction;
         if (context instanceof org.bukkit.event.block.TNTPrimeEvent event && event.getPrimingEntity() != null) {
             direction = event.getPrimingEntity().getLocation().getDirection();

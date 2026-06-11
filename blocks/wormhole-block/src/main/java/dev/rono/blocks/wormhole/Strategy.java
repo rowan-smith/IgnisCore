@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.util.Locations;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -30,7 +31,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public void onTick(RuntimeBlockInstance instance) {
-        Location loc = instance.getLocation().toCenterLocation();
+        Location loc = Locations.toCenter(instance.getLocation());
         int ticksLeft = instance.getTicksLeft();
         BlockDefinition def = instance.getDefinition();
 
@@ -95,7 +96,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
-        Location loc = instance.getLocation().toCenterLocation();
+        Location loc = Locations.toCenter(instance.getLocation());
         BlockDefinition def = instance.getDefinition();
 
         float power = ExplosiveStrategySupport.resolvePower(def, 10.0);
