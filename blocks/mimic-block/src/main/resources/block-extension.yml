@@ -1,0 +1,6 @@
+id: mimic-block
+name: Mimic Block
+version: 1.0.0
+api-version: 1.0.0
+author: IgnisCore
+strategy: dev.rono.blocks.mimic.Strategy

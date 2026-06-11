@@ -1,0 +1,121 @@
+package dev.rono.igniscore.manager;
+
+import dev.rono.igniscore.model.BlockDefinition;
+import dev.rono.igniscore.model.ItemDefinition;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public final class DefinitionParser {
+    private DefinitionParser() {
+    }
+
+    public static BlockDefinition parseBlock(YamlConfiguration config, String fallbackId, int modelData, String extensionId) {
+        String id = config.getString("id", fallbackId);
+
+        String titleStr = config.getString("display.title", id);
+        Component title = LegacyComponentSerializer.legacyAmpersand().deserialize(titleStr);
+
+        List<String> descStrings = config.getStringList("display.description");
+        List<Component> description = new ArrayList<>();
+        for (String line : descStrings) {
+            description.add(LegacyComponentSerializer.legacyAmpersand().deserialize(line));
+        }
+
+        boolean placeable = config.getBoolean("block.placeable", true);
+        boolean breakable = config.getBoolean("block.breakable", true);
+        String baseMaterial = config.getString("block.base_material", "paper").toLowerCase();
+        String renderMaterial = config.getString("block.render_material", "carrot_on_a_stick").toLowerCase();
+        Map<String, Object> breakSettings = sectionToMap(config.getConfigurationSection("block.breaking"));
+
+        String top = config.getString("textures.top", id + "-top.png");
+        String side = config.getString("textures.side", id + "-side.png");
+        String bottom = config.getString("textures.bottom", id + "-bottom.png");
+
+        String strategy = config.getString("behavior.strategy", "default");
+        int fuse = config.getInt("behavior.fuse", 80);
+        double radius = config.getDouble("behavior.radius", 4.0);
+
+        Map<String, Object> customData = sectionToMap(config.getConfigurationSection("behavior.custom_data"));
+        Map<String, Object> interactionSettings = sectionToMap(config.getConfigurationSection("interactions"));
+
+        if (config.isConfigurationSection("explosion")) {
+            if ("default".equals(strategy)) {
+                strategy = config.getString("explosion.strategy", "default");
+            }
+            if (fuse == 80) {
+                fuse = config.getInt("explosion.fuse", 80);
+            }
+            if (radius == 4.0) {
+                radius = config.getDouble("explosion.radius", 4.0);
+            }
+
+            customData.put("power", config.getDouble("explosion.power", 4.0));
+            customData.put("multiplier", config.getDouble("explosion.multiplier", 1.0));
+            customData.put("fire", config.getBoolean("explosion.effects.fire", false));
+            customData.put("blockDamage", config.getBoolean("explosion.effects.destroy_blocks", true));
+            customData.put("screenShake", config.getBoolean("explosion.effects.screen_shake", false));
+
+            if (config.isConfigurationSection("explosion.entity_payload")) {
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("type", config.getString("explosion.entity_payload.type"));
+                payload.put("count", config.getInt("explosion.entity_payload.count", 0));
+                payload.put("behavior", config.getString("explosion.entity_payload.behavior", "normal"));
+                payload.put("targetPlayers", config.getBoolean("explosion.entity_payload.target_players", false));
+                customData.put("entityPayload", payload);
+            }
+        }
+
+        boolean pulse = config.getBoolean("block_display.animations.pulse", true);
+        boolean rotate = config.getBoolean("block_display.animations.rotate", true);
+        boolean floatBob = config.getBoolean("block_display.animations.float", true);
+        Map<String, Object> displaySettings = sectionToMap(config.getConfigurationSection("block_display"));
+
+        return new BlockDefinition(id, baseMaterial, renderMaterial, title, description, placeable, breakable,
+                top, side, bottom, strategy, fuse, radius, customData, breakSettings, interactionSettings,
+                displaySettings, modelData, rotate, floatBob, pulse, extensionId);
+    }
+
+    public static ItemDefinition parseItem(YamlConfiguration config, String fallbackId, int modelData, String extensionId) {
+        String id = config.getString("id", fallbackId);
+
+        String titleStr = config.getString("display.title", id);
+        Component title = LegacyComponentSerializer.legacyAmpersand().deserialize(titleStr);
+
+        List<String> descStrings = config.getStringList("display.description");
+        List<Component> description = new ArrayList<>();
+        for (String line : descStrings) {
+            description.add(LegacyComponentSerializer.legacyAmpersand().deserialize(line));
+        }
+
+        String baseMaterial = config.getString("item.base_material", "paper").toLowerCase();
+        String strategy = config.getString("behavior.strategy", "default");
+        Map<String, Object> customData = sectionToMap(config.getConfigurationSection("behavior.custom_data"));
+        Map<String, Object> interactionSettings = sectionToMap(config.getConfigurationSection("interactions"));
+
+        return new ItemDefinition(id, baseMaterial, title, description, strategy, customData,
+                interactionSettings, modelData, extensionId);
+    }
+
+    private static Map<String, Object> sectionToMap(org.bukkit.configuration.ConfigurationSection section) {
+        Map<String, Object> map = new HashMap<>();
+        if (section == null) {
+            return map;
+        }
+
+        for (String key : section.getKeys(false)) {
+            Object val = section.get(key);
+            if (val instanceof org.bukkit.configuration.ConfigurationSection subSection) {
+                map.put(key, sectionToMap(subSection));
+            } else {
+                map.put(key, val);
+            }
+        }
+        return map;
+    }
+}

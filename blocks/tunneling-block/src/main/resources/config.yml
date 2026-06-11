@@ -1,0 +1,36 @@
+# Tunneling TNT
+#
+# A directional excavation explosive designed for terrain carving.
+#
+# Rather than a single blast, it detonates repeatedly in a straight
+# line over a fixed distance, clearing blocks along its path.
+# This creates a clean tunnel or corridor through terrain, making
+# it useful for rapid mining or traversal.
+
+id: tunneling-tnt
+
+display:
+  title: "Tunneling TNT"
+  description:
+    - "&4Complete"
+    - "&4Destruction"
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+behavior:
+  strategy: tunneling
+  fuse: 60
+  radius: 4.0
+  custom_data:
+    power: 4.0
+    fire: false
+    blockDamage: true
+    tunnelLength: 16
+    tunnelGap: 2.0

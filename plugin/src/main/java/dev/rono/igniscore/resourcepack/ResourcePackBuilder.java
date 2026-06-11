@@ -1,0 +1,377 @@
+package dev.rono.igniscore.resourcepack;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import dev.rono.igniscore.Main;
+import dev.rono.igniscore.loader.ExtensionResourceProvider;
+import dev.rono.igniscore.model.BlockDefinition;
+
+import java.io.*;
+import java.nio.file.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+public class ResourcePackBuilder {
+    private final Main plugin;
+    private final ExtensionResourceProvider resourceProvider;
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    public static class PackResult {
+        private final File file;
+        private final String hash;
+
+        public PackResult(File file, String hash) {
+            this.file = file;
+            this.hash = hash;
+        }
+
+        public File getFile() { return file; }
+        public String getHash() { return hash; }
+    }
+
+    public ResourcePackBuilder(Main plugin, ExtensionResourceProvider resourceProvider) {
+        this.plugin = plugin;
+        this.resourceProvider = resourceProvider;
+    }
+
+    public PackResult buildPack(Map<String, BlockDefinition> definitions) throws IOException {
+        // Phase 1: Compilation
+        List<CompiledBlockAsset> compiledAssets = compile(definitions);
+
+        // Phase 2: Packaging
+        return packageAssets(compiledAssets);
+    }
+
+    private List<CompiledBlockAsset> compile(Map<String, BlockDefinition> definitions) {
+        List<CompiledBlockAsset> assets = new ArrayList<>();
+        for (BlockDefinition def : definitions.values()) {
+            try {
+                assets.add(compileAsset(def));
+            } catch (Exception e) {
+                plugin.getLogger().warning("Failed to compile asset for block " + def.getId() + ": " + e.getMessage());
+            }
+        }
+        return assets;
+    }
+
+    private CompiledBlockAsset compileAsset(BlockDefinition def) {
+        Map<String, String> textures = new LinkedHashMap<>();
+        textures.put("top", def.getTopTexture());
+        textures.put("side", def.getSideTexture());
+        textures.put("bottom", def.getBottomTexture());
+
+        // Block Model: assets/igniscore/models/block/<id>.json
+        JsonObject blockModel = new JsonObject();
+        blockModel.addProperty("parent", "minecraft:block/cube_bottom_top");
+        JsonObject texturesJson = new JsonObject();
+        String textureBase = "igniscore:block/" + def.getId();
+        
+        // Use deterministic texture names (phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-top.png, phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png, phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png) inside the pack
+        texturesJson.addProperty("particle", textureBase + "/side");
+        texturesJson.addProperty("top", textureBase + "/top");
+        texturesJson.addProperty("bottom", textureBase + "/bottom");
+        texturesJson.addProperty("side", textureBase + "/side");
+        blockModel.add("textures", texturesJson);
+
+        // Add display settings for ItemDisplay consistency
+        JsonObject display = new JsonObject();
+        
+        JsonObject gui = new JsonObject();
+        JsonArray guiRotation = new JsonArray();
+        guiRotation.add(30); guiRotation.add(225); guiRotation.add(0);
+        gui.add("rotation", guiRotation);
+        JsonArray guiScale = new JsonArray();
+        guiScale.add(0.625); guiScale.add(0.625); guiScale.add(0.625);
+        gui.add("scale", guiScale);
+        display.add("gui", gui);
+
+        JsonObject fixed = new JsonObject();
+        JsonArray fixedScale = new JsonArray();
+        fixedScale.add(1.0); fixedScale.add(1.0); fixedScale.add(1.0);
+        fixed.add("scale", fixedScale);
+        display.add("fixed", fixed);
+
+        JsonObject ground = new JsonObject();
+        JsonArray groundScale = new JsonArray();
+        groundScale.add(0.5); groundScale.add(0.5); groundScale.add(0.5);
+        ground.add("scale", groundScale);
+        display.add("ground", ground);
+
+        blockModel.add("display", display);
+
+        // Item Model: assets/igniscore/models/item/<id>.json
+        // Use the block model as parent to show 3D block in inventory
+        JsonObject itemModel = new JsonObject();
+        itemModel.addProperty("parent", "igniscore:block/" + def.getId());
+
+        return new CompiledBlockAsset(
+                def.getId(),
+                def.getBaseMaterial(),
+                def.getRenderMaterial(),
+                def.getCustomModelData(),
+                textures,
+                blockModel,
+                itemModel
+        );
+    }
+
+    private static class OverrideEntry {
+        int cmd;
+        String model;
+        String blockId;
+    }
+
+    private PackResult packageAssets(List<CompiledBlockAsset> assets) throws IOException {
+        Path tempDir = Files.createTempDirectory("igniscore_rp");
+        try {
+            // pack.mcmeta
+            writePackMeta(tempDir);
+
+            // Group by material for item overrides (both base and render materials)
+            Map<String, List<OverrideEntry>> materialOverrides = new HashMap<>();
+            
+            for (CompiledBlockAsset asset : assets) {
+                // Write block model: assets/igniscore/models/block/<id>.json
+                Path blockModelPath = tempDir.resolve("assets/igniscore/models/block/" + asset.getId() + ".json");
+                Files.createDirectories(blockModelPath.getParent());
+                Files.writeString(blockModelPath, gson.toJson(asset.getBlockModel()));
+                plugin.getLogger().info("Generated block model: " + blockModelPath.toString().replace("\\", "/"));
+
+                // Write item model: assets/igniscore/models/item/<id>.json
+                Path itemModelPath = tempDir.resolve("assets/igniscore/models/item/" + asset.getId() + ".json");
+                Files.createDirectories(itemModelPath.getParent());
+                Files.writeString(itemModelPath, gson.toJson(asset.getItemModel()));
+                plugin.getLogger().info("Generated item model: " + itemModelPath.toString().replace("\\", "/"));
+
+                // Modern item definition: assets/igniscore/items/<id>.json
+                Path itemDefinitionPath = tempDir.resolve("assets/igniscore/items/" + asset.getId() + ".json");
+                Files.createDirectories(itemDefinitionPath.getParent());
+                Files.writeString(itemDefinitionPath, gson.toJson(createModelItemDefinition("igniscore:item/" + asset.getId())));
+                plugin.getLogger().info("Generated item definition: " + itemDefinitionPath.toString().replace("\\", "/"));
+
+                // Write textures: assets/igniscore/textures/block/<id>/
+                Path textureDir = tempDir.resolve("assets/igniscore/textures/block/" + asset.getId());
+                Files.createDirectories(textureDir);
+                copyTextures(asset, textureDir);
+
+                // Inventory entry (baseMaterial)
+                OverrideEntry invEntry = new OverrideEntry();
+                invEntry.cmd = asset.getCustomModelData();
+                invEntry.model = "igniscore:item/" + asset.getId();
+                invEntry.blockId = asset.getId();
+                materialOverrides.computeIfAbsent(asset.getBaseMaterial(), k -> new ArrayList<>()).add(invEntry);
+
+                // Render entry (renderMaterial) - only if different
+                if (!asset.getRenderMaterial().equals(asset.getBaseMaterial())) {
+                    OverrideEntry renderEntry = new OverrideEntry();
+                    renderEntry.cmd = asset.getCustomModelData();
+                    renderEntry.model = "igniscore:item/" + asset.getId();
+                    renderEntry.blockId = asset.getId();
+                    materialOverrides.computeIfAbsent(asset.getRenderMaterial(), k -> new ArrayList<>()).add(renderEntry);
+                } else {
+                    plugin.getLogger().warning("Block " + asset.getId() + " uses same material for base and render (" + asset.getBaseMaterial() + "). Inventory and world look will be the same (2D icon). Use different materials to decouple.");
+                }
+            }
+
+            // Write item overrides: assets/minecraft/models/item/<base_item>.json
+            for (Map.Entry<String, List<OverrideEntry>> entry : materialOverrides.entrySet()) {
+                String material = entry.getKey();
+                List<OverrideEntry> overridesList = entry.getValue();
+                writeItemOverride(tempDir, material, overridesList);
+                writeModernItemDefinition(tempDir, material, overridesList);
+            }
+
+            // Zip it
+            Path tempZip = Files.createTempFile("rp_temp", ".zip");
+            zip(tempDir, tempZip);
+            
+            String hash;
+            try {
+                hash = calculateHash(tempZip.toFile());
+            } catch (NoSuchAlgorithmException e) {
+                throw new IOException("Hash algorithm not found", e);
+            }
+            
+            File packsDir = new File(plugin.getDataFolder(), "packs");
+            if (!packsDir.exists()) packsDir.mkdirs();
+            
+            File finalZip = new File(packsDir, "resourcepack_" + hash + ".zip");
+            Files.move(tempZip, finalZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            
+            plugin.getLogger().info("Final pack path: " + finalZip.getAbsolutePath());
+            plugin.getLogger().info("Final pack hash: " + hash);
+
+            return new PackResult(finalZip, hash);
+        } finally {
+            deleteDirectory(tempDir.toFile());
+        }
+    }
+
+    private String calculateHash(File file) throws IOException, NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        try (InputStream is = new FileInputStream(file)) {
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = is.read(buffer)) > 0) {
+                digest.update(buffer, 0, read);
+            }
+        }
+        byte[] hashBytes = digest.digest();
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    private void writePackMeta(Path tempDir) throws IOException {
+        JsonObject pack = new JsonObject();
+        JsonObject meta = new JsonObject();
+        meta.addProperty("pack_format", 34);
+        meta.addProperty("description", "IgnisCore Custom Blocks Pack");
+        pack.add("pack", meta);
+        Files.writeString(tempDir.resolve("pack.mcmeta"), gson.toJson(pack));
+    }
+
+    private void writeItemOverride(Path tempDir, String baseItem, List<OverrideEntry> overridesList) throws IOException {
+        Path overridePath = tempDir.resolve("assets/minecraft/models/item/" + baseItem + ".json");
+        Files.createDirectories(overridePath.getParent());
+
+        JsonObject root = new JsonObject();
+        String parent = baseItem.equalsIgnoreCase("carrot_on_a_stick") ? "minecraft:item/handheld" : "minecraft:item/generated";
+        root.addProperty("parent", parent);
+        root.addProperty("gui_light", "front");
+
+        JsonObject textures = new JsonObject();
+        textures.addProperty("layer0", "minecraft:item/" + baseItem.toLowerCase());
+        root.add("textures", textures);
+
+        JsonArray overridesArray = new JsonArray();
+        overridesList.sort(Comparator.comparingInt(o -> o.cmd));
+        
+        for (OverrideEntry entry : overridesList) {
+            JsonObject override = new JsonObject();
+            JsonObject predicate = new JsonObject();
+            predicate.addProperty("custom_model_data", entry.cmd);
+            override.add("predicate", predicate);
+            override.addProperty("model", entry.model);
+            overridesArray.add(override);
+            plugin.getLogger().info("Registered override in " + baseItem + ".json: CMD " + entry.cmd + " -> " + entry.model + " (Block: " + entry.blockId + ")");
+        }
+        root.add("overrides", overridesArray);
+
+        Files.writeString(overridePath, gson.toJson(root));
+        plugin.getLogger().info("Created " + overridePath.toString().replace("\\", "/") + " with " + overridesArray.size() + " overrides.");
+        
+        if (plugin.isDebugEnabled()) {
+             plugin.getLogger().info("Generated JSON for " + baseItem + ":\n" + gson.toJson(root));
+        }
+    }
+
+    private JsonObject createModelItemDefinition(String modelPath) {
+        JsonObject root = new JsonObject();
+        JsonObject model = new JsonObject();
+        model.addProperty("type", "minecraft:model");
+        model.addProperty("model", modelPath);
+        root.add("model", model);
+        return root;
+    }
+
+    private void writeModernItemDefinition(Path tempDir, String baseItem, List<OverrideEntry> overridesList) throws IOException {
+        Path itemDefinitionPath = tempDir.resolve("assets/minecraft/items/" + baseItem + ".json");
+        Files.createDirectories(itemDefinitionPath.getParent());
+
+        JsonObject root = new JsonObject();
+        JsonObject model = new JsonObject();
+        model.addProperty("type", "minecraft:range_dispatch");
+        model.addProperty("property", "minecraft:custom_model_data");
+        model.addProperty("index", 0);
+
+        JsonArray entries = new JsonArray();
+        overridesList.sort(Comparator.comparingInt(o -> o.cmd));
+
+        for (OverrideEntry entry : overridesList) {
+            JsonObject rangeEntry = new JsonObject();
+            rangeEntry.addProperty("threshold", entry.cmd);
+            JsonObject entryModel = new JsonObject();
+            entryModel.addProperty("type", "minecraft:model");
+            entryModel.addProperty("model", entry.model);
+            rangeEntry.add("model", entryModel);
+            entries.add(rangeEntry);
+            plugin.getLogger().info("Registered modern item definition in " + baseItem + ".json: CMD " + entry.cmd + " -> " + entry.model + " (Block: " + entry.blockId + ")");
+        }
+
+        model.add("entries", entries);
+        model.add("fallback", createModelItemDefinition("minecraft:item/" + baseItem).getAsJsonObject("model"));
+        root.add("model", model);
+
+        Files.writeString(itemDefinitionPath, gson.toJson(root));
+        plugin.getLogger().info("Created " + itemDefinitionPath.toString().replace("\\", "/") + " with " + entries.size() + " modern CMD entries.");
+
+        if (plugin.isDebugEnabled()) {
+            plugin.getLogger().info("Generated modern item definition JSON for " + baseItem + ":\n" + gson.toJson(root));
+        }
+    }
+
+    private void copyTextures(CompiledBlockAsset asset, Path destDir) throws IOException {
+        for (Map.Entry<String, String> entry : asset.getTextures().entrySet()) {
+            String key = entry.getKey();
+            String fileName = entry.getValue();
+            
+            try (InputStream is = getTextureStream(asset.getId(), fileName)) {
+                if (is != null) {
+                    Path texturePath = destDir.resolve(key + ".png");
+                    Files.copy(is, texturePath, StandardCopyOption.REPLACE_EXISTING);
+                    plugin.getLogger().info("Generated texture: " + texturePath.toString().replace("\\", "/"));
+                } else {
+                    String error = "CRITICAL: Texture missing for block " + asset.getId() + ": " + fileName;
+                    plugin.getLogger().severe(error);
+                    throw new IOException(error);
+                }
+            }
+        }
+    }
+
+    private InputStream getTextureStream(String blockId, String fileName) throws IOException {
+        BlockDefinition definition = plugin.getBlockManager().getBlockTypes().get(blockId);
+        if (definition != null) {
+            InputStream extensionStream = resourceProvider.getBlockTextureStream(definition, fileName);
+            if (extensionStream != null) {
+                return extensionStream;
+            }
+        }
+        return null;
+    }
+
+    private void zip(Path sourceDirPath, Path zipFilePath) throws IOException {
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipFilePath));
+             java.util.stream.Stream<Path> paths = Files.walk(sourceDirPath)) {
+            paths.filter(path -> !Files.isDirectory(path))
+                .forEach(path -> {
+                    ZipEntry zipEntry = new ZipEntry(sourceDirPath.relativize(path).toString().replace("\\", "/"));
+                    try {
+                        zs.putNextEntry(zipEntry);
+                        Files.copy(path, zs);
+                        zs.closeEntry();
+                    } catch (IOException e) {
+                        plugin.getLogger().severe("Failed to add entry to zip: " + zipEntry.getName());
+                    }
+                });
+        }
+    }
+
+    private void deleteDirectory(File directory) {
+        File[] allContents = directory.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directory.delete();
+    }
+}
