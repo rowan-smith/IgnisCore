@@ -1,5 +1,6 @@
 package dev.rono.igniscore.resourcepack;
 
+import com.google.inject.Inject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -37,6 +38,7 @@ public class ResourcePackBuilder {
         public String getHash() { return hash; }
     }
 
+    @Inject
     public ResourcePackBuilder(Main plugin, ItemManager itemManager, ExtensionResourceProvider resourceProvider) {
         this.plugin = plugin;
         this.itemManager = itemManager;
