@@ -1,0 +1,40 @@
+# Erupting TNT
+#
+# A volatile explosive that behaves like standard TNT until detonation.
+#
+# Instead of a single explosion, it violently erupts and launches primed
+# TNT entities into the air over time. These TNT entities fall across the
+# surrounding area, creating unpredictable delayed chain reactions and
+# widespread destruction.
+
+id: erupting-tnt
+
+display:
+  title: "Erupting TNT"
+  description:
+    - "&4Complete"
+    - "&4Destruction"
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+behavior:
+  strategy: erupting
+
+  fuse: 100
+  radius: 5.0
+
+  custom_data:
+    power: 5.0
+    fire: true
+    blockDamage: true
+    eruptionInterval: 10
+    eruptionFuse: 80
+    eruptionHorizontalPower: 0.4
+    eruptionVerticalPower: 1.2

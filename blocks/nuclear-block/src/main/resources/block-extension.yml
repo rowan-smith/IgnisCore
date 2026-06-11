@@ -1,0 +1,6 @@
+id: nuclear-block
+name: Nuclear Block
+version: 1.0.0
+api-version: 1.0.0
+author: IgnisCore
+main: dev.rono.blocks.nuclear.BlockPlugin

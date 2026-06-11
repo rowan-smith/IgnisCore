@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>dev.rono</groupId>
+    <artifactId>igniscore-parent</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+  <groupId>dev.rono.blocks</groupId>
+  <artifactId>blocks</artifactId>
+  <packaging>pom</packaging>
+
+  <name>igniscore-blocks</name>
+
+  <properties>
+    <igniscore.version>1.0.0</igniscore.version>
+  </properties>
+
+  <modules>
+    <module>nuclear-block</module>
+    <module>wormhole-block</module>
+    <module>phantom-block</module>
+    <module>erupting-block</module>
+    <module>mimic-block</module>
+    <module>tunneling-block</module>
+    <module>entity-block</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>igniscore</artifactId>
+        <version>${igniscore.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.papermc.paper</groupId>
+        <artifactId>paper-api</artifactId>
+        <version>1.21.11-R0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>de.tr7zw</groupId>
+        <artifactId>item-nbt-api-plugin</artifactId>
+        <version>2.15.7</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>de.tr7zw</groupId>
+      <artifactId>item-nbt-api-plugin</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.4.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
