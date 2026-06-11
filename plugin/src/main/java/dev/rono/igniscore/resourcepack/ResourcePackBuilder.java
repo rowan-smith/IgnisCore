@@ -93,20 +93,33 @@ public class ResourcePackBuilder {
     private CompiledBlockAsset compileAsset(BlockDefinition def) {
         Map<String, String> textures = new LinkedHashMap<>();
         textures.put("top", def.getTopTexture());
-        textures.put("side", def.getSideTexture());
         textures.put("bottom", def.getBottomTexture());
 
-        // Block Model: assets/igniscore/models/block/<id>.json
         JsonObject blockModel = new JsonObject();
-        blockModel.addProperty("parent", "minecraft:block/cube_bottom_top");
         JsonObject texturesJson = new JsonObject();
         String textureBase = "igniscore:block/" + def.getId();
-        
-        // Use deterministic texture names (phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-top.png, phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png, phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png) inside the pack
-        texturesJson.addProperty("particle", textureBase + "/side");
-        texturesJson.addProperty("top", textureBase + "/top");
-        texturesJson.addProperty("bottom", textureBase + "/bottom");
-        texturesJson.addProperty("side", textureBase + "/side");
+
+        if (def.hasPerSideTextures()) {
+            blockModel.addProperty("parent", "minecraft:block/cube");
+            for (int face = 1; face <= 4; face++) {
+                String slot = "side-" + face;
+                textures.put(slot, def.getResolvedSideTexture(face));
+            }
+            texturesJson.addProperty("particle", textureBase + "/side-1");
+            texturesJson.addProperty("up", textureBase + "/top");
+            texturesJson.addProperty("down", textureBase + "/bottom");
+            texturesJson.addProperty("north", textureBase + "/side-1");
+            texturesJson.addProperty("east", textureBase + "/side-2");
+            texturesJson.addProperty("south", textureBase + "/side-3");
+            texturesJson.addProperty("west", textureBase + "/side-4");
+        } else {
+            textures.put("side", def.getSideTexture());
+            blockModel.addProperty("parent", "minecraft:block/cube_bottom_top");
+            texturesJson.addProperty("particle", textureBase + "/side");
+            texturesJson.addProperty("top", textureBase + "/top");
+            texturesJson.addProperty("bottom", textureBase + "/bottom");
+            texturesJson.addProperty("side", textureBase + "/side");
+        }
         blockModel.add("textures", texturesJson);
 
         // Add display settings for ItemDisplay consistency

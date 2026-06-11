@@ -38,6 +38,10 @@ public final class DefinitionParser {
         String top = config.getString("textures.top", id + "-top.png");
         String side = config.getString("textures.side", id + "-side.png");
         String bottom = config.getString("textures.bottom", id + "-bottom.png");
+        String side1 = config.isSet("textures.side-1") ? config.getString("textures.side-1") : null;
+        String side2 = config.isSet("textures.side-2") ? config.getString("textures.side-2") : null;
+        String side3 = config.isSet("textures.side-3") ? config.getString("textures.side-3") : null;
+        String side4 = config.isSet("textures.side-4") ? config.getString("textures.side-4") : null;
 
         String strategy = config.getString("behavior.strategy", "default");
         int fuse = config.getInt("behavior.fuse", 80);
@@ -80,7 +84,7 @@ public final class DefinitionParser {
 
         return new BlockDefinition(id, baseMaterial, renderMaterial, title, description, placeable, breakable,
                 top, side, bottom, strategy, fuse, radius, customData, breakSettings, interactionSettings,
-                displaySettings, modelData, rotate, floatBob, pulse, extensionId);
+                displaySettings, modelData, rotate, floatBob, pulse, extensionId, side1, side2, side3, side4);
     }
 
     public static IgnisStrategyDescriptor parseStrategyDescriptor(YamlConfiguration config, ExtensionManifest manifest) {
