@@ -1,0 +1,32 @@
+# Signal Charge
+#
+# A charge that can only be detonated with a paired detonator item.
+# Left-click the charge with a detonator to link it, then right-click
+# with the detonator to set it off.
+
+id: signal-charge
+
+display:
+  title: "&cSignal Charge"
+  description:
+    - "&7Pair with a detonator"
+    - "&7to detonate remotely"
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+behavior:
+  strategy: signal-charge
+  strategy_name: Signal Charge
+  fuse: 0
+  radius: 6.0
+  custom_data:
+    power: 6.0
+    fire: false
+    blockDamage: true

@@ -1,4 +1,4 @@
-package dev.rono.blocks.remotebomb;
+package dev.rono.blocks.signalcharge;
 
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
