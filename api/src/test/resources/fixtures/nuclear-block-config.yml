@@ -1,0 +1,37 @@
+id: nuke
+
+display:
+  title: "&aNuclear Detonation"
+  description:
+    - "&4Complete"
+    - "&4Destruction"
+
+block:
+  placeable: true
+  breakable: true
+  base_material: paper
+  render_material: carrot_on_a_stick
+  breaking:
+    ticks: 45
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+interactions:
+  right_click:
+    action: ignite
+    materials:
+      - FLINT_AND_STEEL
+
+behavior:
+  strategy: nuclear
+  fuse: 160
+  radius: 30.0
+  custom_data:
+    power: 30.0
+    multiplier: 5.0
+    fire: true
+    blockDamage: true
+    screenShake: true

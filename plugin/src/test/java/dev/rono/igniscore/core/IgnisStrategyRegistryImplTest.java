@@ -36,6 +36,39 @@ class IgnisStrategyRegistryImplTest {
 
         assertEquals("default", registry.get("missing-strategy").descriptor().getId());
         assertEquals("default", registry.get("default").descriptor().getId());
+        assertTrue(registry.find(null).isEmpty());
+        assertTrue(registry.find("missing-strategy").isEmpty());
+        assertTrue(registry.find("default").isPresent());
+    }
+
+    @Test
+    void lookupIsCaseInsensitive() {
+        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        registry.register(IgnisStrategyDescriptor.of("SoNiC", "Sonic", "1.0.0", "test"),
+                testStrategy("sonic"));
+
+        assertTrue(registry.isRegistered("sonic"));
+        assertEquals("sonic", registry.get("SONIC").descriptor().getId());
+    }
+
+    @Test
+    void protectsDefaultStrategyFromUnregister() {
+        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+
+        registry.unregister("default");
+
+        assertTrue(registry.isRegistered("default"));
+        assertEquals("default", registry.get("default").descriptor().getId());
+    }
+
+    @Test
+    void exposesRegisteredDescriptors() {
+        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        registry.register(IgnisStrategyDescriptor.of("quake", "Quake", "1.0.0", "test"),
+                testStrategy("quake"));
+
+        assertEquals(2, registry.getDescriptors().size());
+        assertTrue(registry.getDescriptors().stream().anyMatch(descriptor -> "quake".equals(descriptor.getId())));
     }
 
     private IgnisStrategy testStrategy(String id) {

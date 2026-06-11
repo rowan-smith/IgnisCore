@@ -50,4 +50,27 @@ class ConfigValueReaderTest {
         assertEquals(8.5, ConfigValueReader.getDouble(Map.of("value", "8.5"), "value", 1.0));
         assertEquals(1.0, ConfigValueReader.getDouble(Map.of("value", "bad"), "value", 1.0));
     }
+
+    @Test
+    void getListReturnsEmptyListForMissingOrWrongType() {
+        assertTrue(ConfigValueReader.getList(Map.of("values", "wrong"), "values").isEmpty());
+        assertTrue(ConfigValueReader.getList(null, "values").isEmpty());
+    }
+
+    @Test
+    void getIntAndAsIntHandleNullSources() {
+        assertEquals(3, ConfigValueReader.getInt(null, "value", 3));
+        assertEquals(4, ConfigValueReader.asInt(null, 4));
+        assertEquals(5, ConfigValueReader.asInt("5", 1));
+        assertEquals(1, ConfigValueReader.asInt("bad", 1));
+    }
+
+    @Test
+    void getStringReturnsDefaultForNullValue() {
+        java.util.Map<String, Object> source = new java.util.HashMap<>();
+        source.put("value", null);
+
+        assertEquals("fallback", ConfigValueReader.getString(source, "value", "fallback"));
+        assertEquals("fallback", ConfigValueReader.getString(null, "value", "fallback"));
+    }
 }
