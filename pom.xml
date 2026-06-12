@@ -17,8 +17,10 @@
     <module>extensions</module>
     <module>spigot</module>
     <module>paper</module>
+    <module>folia</module>
     <module>sponge</module>
     <module>bootstrap</module>
+    <module>sponge-bootstrap</module>
   </modules>
 
   <properties>
@@ -96,7 +98,7 @@
     </repository>
     <repository>
       <id>spongepowered</id>
-      <url>https://repo.spongepowered.org/maven</url>
+      <url>https://repo.spongepowered.org/repository/maven-public/</url>
     </repository>
     <repository>
       <id>codemc-repo</id>
@@ -129,6 +131,31 @@
         <groupId>dev.rono</groupId>
         <artifactId>paper-v1-21-x</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>spigot-v1-20-x</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>paper-v1-20-x</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>folia-v1-21-x</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>sponge-v12-0-0</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.spongepowered</groupId>
+        <artifactId>spongeapi</artifactId>
+        <version>12.0.0</version>
       </dependency>
       <dependency>
         <groupId>dev.rono.blocks</groupId>

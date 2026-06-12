@@ -4,11 +4,10 @@ import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.api.port.PlatformBootloader;
 import dev.rono.igniscore.api.port.PlatformType;
 import dev.rono.igniscore.paper.adapter.PaperPlatformAdapter;
+import dev.rono.igniscore.spigot.boot.BukkitBootloaderSupport;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PaperV121Bootloader implements PlatformBootloader {
-
-    private static final String PAPER_MARKER = "io.papermc.paper.datacomponent.DataComponentTypes";
 
     @Override
     public String id() {
@@ -32,15 +31,7 @@ public final class PaperV121Bootloader implements PlatformBootloader {
 
     @Override
     public boolean canBoot(Object host) {
-        if (!(host instanceof JavaPlugin)) {
-            return false;
-        }
-        try {
-            Class.forName(PAPER_MARKER);
-            return true;
-        } catch (ClassNotFoundException ignored) {
-            return false;
-        }
+        return BukkitBootloaderSupport.acceptsHost(host, PlatformType.PAPER, 1, 21);
     }
 
     @Override

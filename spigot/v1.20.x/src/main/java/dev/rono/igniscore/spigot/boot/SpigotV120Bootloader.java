@@ -6,11 +6,11 @@ import dev.rono.igniscore.api.port.PlatformType;
 import dev.rono.igniscore.spigot.adapter.SpigotPlatformAdapter;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class SpigotV121Bootloader implements PlatformBootloader {
+public final class SpigotV120Bootloader implements PlatformBootloader {
 
     @Override
     public String id() {
-        return "spigot-v1.21.x";
+        return "spigot-v1.20.x";
     }
 
     @Override
@@ -20,7 +20,7 @@ public final class SpigotV121Bootloader implements PlatformBootloader {
 
     @Override
     public String minecraftVersionRange() {
-        return "1.21.x";
+        return "1.20.x";
     }
 
     @Override
@@ -30,7 +30,7 @@ public final class SpigotV121Bootloader implements PlatformBootloader {
 
     @Override
     public boolean canBoot(Object host) {
-        return BukkitBootloaderSupport.acceptsHost(host, PlatformType.SPIGOT, 1, 21);
+        return BukkitBootloaderSupport.acceptsHost(host, PlatformType.SPIGOT, 1, 20);
     }
 
     @Override

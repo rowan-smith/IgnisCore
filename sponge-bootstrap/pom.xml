@@ -10,11 +10,11 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>bootstrap</artifactId>
+  <artifactId>sponge-bootstrap</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore-bootstrap</name>
-  <description>Deployable plugin JAR with hooked platform bootloaders</description>
+  <name>igniscore-sponge-bootstrap</name>
+  <description>Deployable Sponge plugin JAR with bundled extensions</description>
 
   <dependencies>
     <dependency>
@@ -27,37 +27,29 @@
     </dependency>
     <dependency>
       <groupId>dev.rono</groupId>
-      <artifactId>spigot-v1-21-x</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>paper-v1-21-x</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>spigot-v1-20-x</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>paper-v1-20-x</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>folia-v1-21-x</artifactId>
+      <artifactId>sponge-v12-0-0</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
+      <groupId>org.spongepowered</groupId>
+      <artifactId>spongeapi</artifactId>
+      <version>12.0.0</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
 
+  <repositories>
+    <repository>
+      <id>spongepowered-public</id>
+      <url>https://repo.spongepowered.org/repository/maven-public/</url>
+    </repository>
+  </repositories>
+
   <build>
-    <finalName>igniscore-${project.version}</finalName>
+    <finalName>igniscore-sponge-${project.version}</finalName>
     <resources>
       <resource>
         <directory>src/main/resources</directory>

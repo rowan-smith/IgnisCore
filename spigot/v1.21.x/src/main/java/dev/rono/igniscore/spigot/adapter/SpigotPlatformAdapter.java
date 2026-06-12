@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 
 public class SpigotPlatformAdapter implements PlatformAdapter {
     private final JavaPlugin plugin;
-    private final BukkitIgnisScheduler scheduler;
+    private final IgnisScheduler scheduler;
     private final PlatformHooks platformHooks;
     private final BukkitAudiences audiences;
 
@@ -42,7 +42,7 @@ public class SpigotPlatformAdapter implements PlatformAdapter {
 
     public SpigotPlatformAdapter(JavaPlugin plugin, PlatformHooks platformHooks) {
         this.plugin = plugin;
-        this.scheduler = new BukkitIgnisScheduler(plugin);
+        this.scheduler = BukkitSchedulerFactory.create(plugin);
         this.platformHooks = platformHooks;
         this.audiences = BukkitAudiences.create(plugin);
     }

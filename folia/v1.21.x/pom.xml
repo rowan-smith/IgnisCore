@@ -6,24 +6,28 @@
 
   <parent>
     <groupId>dev.rono</groupId>
-    <artifactId>spigot</artifactId>
+    <artifactId>folia</artifactId>
     <version>${revision}</version>
   </parent>
 
-  <artifactId>spigot-v1-20-x</artifactId>
+  <artifactId>folia-v1-21-x</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore-spigot-v1.20.x</name>
-  <description>Spigot 1.20.x bootloader</description>
+  <name>igniscore-folia-v1.21.x</name>
+  <description>Folia 1.21.x adapter and bootloader</description>
 
   <dependencies>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>paper-v1-21-x</artifactId>
+    </dependency>
     <dependency>
       <groupId>dev.rono</groupId>
       <artifactId>spigot-v1-21-x</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

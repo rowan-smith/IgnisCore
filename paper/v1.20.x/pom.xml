@@ -10,16 +10,25 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>paper-v1-20-x-stub</artifactId>
+  <artifactId>paper-v1-20-x</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore-paper-v1.20.x-stub</name>
-  <description>Placeholder module for future Paper 1.20.x support</description>
+  <name>igniscore-paper-v1.20.x</name>
+  <description>Paper 1.20.x bootloader</description>
 
   <dependencies>
     <dependency>
       <groupId>dev.rono</groupId>
-      <artifactId>api</artifactId>
+      <artifactId>paper-v1-21-x</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>spigot-v1-21-x</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -27,4 +36,17 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>
