@@ -148,7 +148,7 @@ public class IgnisCommand implements PluginCommandHandler {
 
         try {
             resourcePackService.buildAndRegister();
-            plugin.getLogger().info("Resource pack rebuilt successfully! Hash: " + resourcePackService.getLatestHash());
+            plugin.debug("Resource pack rebuilt successfully! Hash: " + resourcePackService.getLatestHash());
             send(player, "<green>Resource pack rebuilt. Reconnect if models do not update.");
         } catch (IOException e) {
             send(player, "<red>Failed to rebuild resource pack: " + e.getMessage());
