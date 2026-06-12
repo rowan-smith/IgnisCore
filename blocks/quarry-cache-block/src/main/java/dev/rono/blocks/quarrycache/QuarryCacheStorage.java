@@ -2,6 +2,7 @@ package dev.rono.blocks.quarrycache;
 
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -343,16 +344,28 @@ final class QuarryCacheStorage {
         for (String slotKey : config.getConfigurationSection(path).getKeys(false)) {
             try {
                 int slot = Integer.parseInt(slotKey);
-                Object raw = config.get(path + "." + slotKey);
-                if (raw instanceof Map<?, ?> serialized) {
-                    ItemStack item = ItemStack.deserialize((Map<String, Object>) serialized);
-                    if (item != null && !item.getType().isAir()) {
-                        slots.put(slot, item);
-                    }
+                Map<String, Object> serialized = readSerializedItem(config.get(path + "." + slotKey));
+                if (serialized == null) {
+                    continue;
+                }
+                ItemStack item = ItemStack.deserialize(serialized);
+                if (item != null && !item.getType().isAir()) {
+                    slots.put(slot, item);
                 }
             } catch (IllegalArgumentException ignored) {
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> readSerializedItem(Object raw) {
+        if (raw instanceof ConfigurationSection section) {
+            return section.getValues(false);
+        }
+        if (raw instanceof Map<?, ?> serialized) {
+            return (Map<String, Object>) serialized;
+        }
+        return null;
     }
 
     private File fileFor(Location location) {
