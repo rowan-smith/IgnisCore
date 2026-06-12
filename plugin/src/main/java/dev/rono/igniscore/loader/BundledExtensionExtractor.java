@@ -41,7 +41,7 @@ public class BundledExtensionExtractor {
                     continue;
                 }
                 Files.copy(inputStream, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                plugin.getLogger().info("Extracted bundled extension " + jarName + " to " + destination.getName() + "/");
+                plugin.debug("Extracted bundled extension " + jarName + " to " + destination.getName() + "/");
             } catch (IOException e) {
                 plugin.getLogger().warning("Failed to extract bundled extension " + jarName + ": " + e.getMessage());
             }

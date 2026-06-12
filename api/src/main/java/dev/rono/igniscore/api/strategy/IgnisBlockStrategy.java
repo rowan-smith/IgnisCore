@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  * Runtime behavior for custom block types.
- * Assign a strategy id in block config via {@code behavior.strategy}.
+ * Implement this interface in the extension strategy class declared in {@code block-extension.yml}.
  */
 public interface IgnisBlockStrategy extends IgnisStrategy {
 

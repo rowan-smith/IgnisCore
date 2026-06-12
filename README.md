@@ -113,13 +113,10 @@ block:
   breakable: true
   base_material: paper
 
-behavior:
-  strategy: myblock
-  strategy_name: My Block Behavior   # optional
-  strategy_version: 1.0.0            # optional
-  strategy_author: YourName          # optional
+custom_data:
   fuse: 80
   radius: 6.0
+  power: 4.0
 ```
 
 **Strategy class:**
@@ -172,10 +169,8 @@ display:
 item:
   base_material: snowball
 
-behavior:
-  strategy: myitem
-  custom_data:
-    power: 4.0
+custom_data:
+  power: 4.0
 ```
 
 **Strategy class:**
@@ -195,16 +190,9 @@ public class Strategy extends AbstractIgnisItemStrategy {
 
 Implement `IgnisItemStrategy` (or extend `AbstractIgnisItemStrategy`) for item-only hooks.
 
-### Strategy metadata
+### Strategy class
 
-Strategy identity is declared in `config.yml` under `behavior`:
-
-| Key | Required | Description |
-|-----|----------|-------------|
-| `strategy` | yes | Unique strategy id used at runtime |
-| `strategy_name` | no | Display name (defaults to extension manifest name) |
-| `strategy_version` | no | Defaults to `1.0.0` |
-| `strategy_author` | no | Defaults to `IgnisCore` |
+Each extension declares its strategy class in the manifest (`block-extension.yml` or `item-extension.yml`). IgnisCore loads that class and binds metadata from the manifest (id, name, version, author).
 
 The loader validates that block extensions register an `IgnisBlockStrategy` and item extensions register an `IgnisItemStrategy`.
 

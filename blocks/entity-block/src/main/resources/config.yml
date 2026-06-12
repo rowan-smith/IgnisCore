@@ -100,10 +100,7 @@ interactions:
         offset_z: 0.45
         speed: 0.01
 
-behavior:
-  strategy: entity
-  strategy_name: Entity Spawn
-  custom_data:
+custom_data:
     fuse: 80
     radius: 10.0
     multiplier: 2.0

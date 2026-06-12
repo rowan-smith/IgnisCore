@@ -18,7 +18,7 @@ public final class TestDefinitions {
     private TestDefinitions() {
     }
 
-    public static BlockDefinition block(String id, String strategy) {
+    public static BlockDefinition block(String id) {
         return new BlockDefinition(
                 id,
                 "paper",
@@ -30,7 +30,6 @@ public final class TestDefinitions {
                 "top.png",
                 "side.png",
                 "bottom.png",
-                strategy,
                 Map.of("fuse", 80, "radius", 4.0),
                 Map.of(),
                 Map.of(),
@@ -43,13 +42,12 @@ public final class TestDefinitions {
         );
     }
 
-    public static ItemDefinition item(String id, String strategy) {
+    public static ItemDefinition item(String id) {
         return new ItemDefinition(
                 id,
                 "snowball",
                 Component.text(id),
                 List.of(Component.text("test")),
-                strategy,
                 Map.of("power", 4.0),
                 Map.of(),
                 20001,

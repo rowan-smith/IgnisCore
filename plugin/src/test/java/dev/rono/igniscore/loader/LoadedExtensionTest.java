@@ -15,7 +15,7 @@ class LoadedExtensionTest {
     @Test
     void exposesManifestJarDefinitionAndResources() throws Exception {
         try (URLClassLoader classLoader = new URLClassLoader(new java.net.URL[0], getClass().getClassLoader())) {
-            var definition = TestDefinitions.block("nuke", "nuclear");
+            var definition = TestDefinitions.block("nuke");
             ExtensionManifest manifest = ExtensionManifest.fromStream(
                     new java.io.ByteArrayInputStream("id: nuclear-block\n".getBytes()),
                     "block-extension.yml");

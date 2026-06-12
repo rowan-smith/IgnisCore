@@ -49,7 +49,7 @@ public class ItemFactory {
 
         nbtService.editItem(item, nbt -> {
             nbt.setString("ignis:item_id", typeId);
-            nbt.setString("ignis:strategy", type.getStrategy());
+            nbt.setString("ignis:extension_id", type.getExtensionId());
             nbt.setInteger("ignis:version", 1);
         });
 

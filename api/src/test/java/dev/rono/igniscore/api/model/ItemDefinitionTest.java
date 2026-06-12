@@ -16,7 +16,6 @@ class ItemDefinitionTest {
                 "snowball",
                 Component.text("Grenade"),
                 List.of(Component.text("Throwable")),
-                "grenade",
                 Map.of("power", 4.0),
                 Map.of("right_click", Map.of("action", "throw")),
                 20001,
@@ -26,7 +25,6 @@ class ItemDefinitionTest {
 
         assertEquals("grenade", definition.getId());
         assertEquals("snowball", definition.getBaseMaterial());
-        assertEquals("grenade", definition.getStrategy());
         assertEquals(4.0, definition.getCustomData().get("power"));
         assertEquals("throw", ((Map<?, ?>) definition.getInteractionSettings().get("right_click")).get("action"));
         assertEquals(20001, definition.getCustomModelData());

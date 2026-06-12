@@ -18,7 +18,6 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,7 +35,7 @@ class ExtensionJarSupportTest {
 
         assertEquals("test-block", manifest.getId());
         assertEquals("testblock", config.getString("id"));
-        assertEquals("testblock", DefinitionParser.parseStrategyDescriptor(config, manifest).getId());
+        assertEquals("test-block", DefinitionParser.parseStrategyDescriptor(manifest).getId());
     }
 
     @Test
@@ -44,8 +43,7 @@ class ExtensionJarSupportTest {
         File jarFile = TestExtensionJarBuilder.writeBlockJar(tempDir.toFile(), "test-block.jar");
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
-        YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
@@ -59,8 +57,8 @@ class ExtensionJarSupportTest {
             );
 
             assertInstanceOf(dev.rono.igniscore.api.strategy.IgnisBlockStrategy.class, strategy);
-            assertTrue(registry.isRegistered("testblock"));
-            assertEquals("Test Block Strategy", registry.get("testblock").descriptor().getName());
+            assertTrue(registry.isRegistered("test-block"));
+            assertEquals("Test Block", registry.get("test-block").descriptor().getName());
         }
     }
 
@@ -69,8 +67,7 @@ class ExtensionJarSupportTest {
         File jarFile = TestExtensionJarBuilder.writeItemJar(tempDir.toFile(), "test-item.jar");
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "item-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "item-extension.yml"));
-        YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
@@ -84,7 +81,7 @@ class ExtensionJarSupportTest {
             );
 
             assertInstanceOf(dev.rono.igniscore.api.strategy.IgnisItemStrategy.class, strategy);
-            assertTrue(registry.isRegistered("testitem"));
+            assertTrue(registry.isRegistered("test-item"));
         }
     }
 
@@ -93,8 +90,7 @@ class ExtensionJarSupportTest {
         File jarFile = TestExtensionJarBuilder.writeBlockJar(tempDir.toFile(), "test-block.jar");
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
-        YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {

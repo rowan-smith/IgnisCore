@@ -60,7 +60,6 @@ class StrategySupportTest {
                 "top.png",
                 "side.png",
                 "bottom.png",
-                "default",
                 customData,
                 Map.of(),
                 Map.of(),

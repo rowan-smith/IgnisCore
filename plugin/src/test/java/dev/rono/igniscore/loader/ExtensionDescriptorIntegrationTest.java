@@ -31,20 +31,18 @@ class ExtensionDescriptorIntegrationTest {
             "grenade-item",
             "detonator-item"
     })
-    void strategyDescriptorMatchesConfigBehavior(String moduleName) throws Exception {
+    void strategyDescriptorMatchesExtensionManifest(String moduleName) throws Exception {
         String category = moduleName.endsWith("-item") ? "items" : "blocks";
         String manifestName = category.equals("blocks") ? "block-extension.yml" : "item-extension.yml";
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, category, moduleName);
 
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, manifestName,
                 input -> ExtensionManifest.fromStream(input, manifestName));
-        YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
 
-        String strategyId = DefinitionParser.parseStrategyDescriptor(config, manifest).getId();
-        String configuredStrategy = config.getString("behavior.strategy");
+        String strategyId = DefinitionParser.parseStrategyDescriptor(manifest).getId();
 
         assertFalse(strategyId.isBlank());
-        assertEquals(configuredStrategy, strategyId);
-        assertEquals(manifest.getId(), moduleName);
+        assertEquals(manifest.getId(), strategyId);
+        assertEquals(moduleName, manifest.getId());
     }
 }

@@ -47,7 +47,6 @@ class DefaultExplosionStrategyTest {
                 "top.png",
                 "side.png",
                 "bottom.png",
-                "default",
                 Map.of("fuse", 80, "radius", 4.0),
                 Map.of(),
                 Map.of(),

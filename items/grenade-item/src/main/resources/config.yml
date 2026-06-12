@@ -11,10 +11,7 @@ item:
 textures:
   icon: icon.png
 
-behavior:
-  strategy: grenade
-  strategy_name: Throwable Grenade
-  custom_data:
+custom_data:
     power: 4.0
     fuse_ticks: 40
     throw_velocity: 1.2

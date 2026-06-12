@@ -88,11 +88,11 @@ class BlockInteractionResolverTest {
     @Test
     void strategyProfileFallbackHonorsNonCombustibleBlocks() {
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
-        registry.register(IgnisStrategyDescriptor.of("inert", "Inert", "1.0.0", "test"),
+        registry.register(IgnisStrategyDescriptor.of("inert", "Inert", "1.0.0", "inert"),
                 new dev.rono.igniscore.api.strategy.IgnisBlockStrategy() {
                     @Override
                     public dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor descriptor() {
-                        return IgnisStrategyDescriptor.of("inert", "Inert", "1.0.0", "test");
+                        return IgnisStrategyDescriptor.of("inert", "Inert", "1.0.0", "inert");
                     }
 
                     @Override
@@ -117,7 +117,6 @@ class BlockInteractionResolverTest {
                 definition.getTopTexture(),
                 definition.getSideTexture(),
                 definition.getBottomTexture(),
-                "inert",
                 definition.getCustomData(),
                 definition.getBreakSettings(),
                 definition.getInteractionSettings(),
@@ -126,7 +125,7 @@ class BlockInteractionResolverTest {
                 definition.isRotate(),
                 definition.isFloatBob(),
                 definition.isPulse(),
-                definition.getExtensionId()
+                "inert"
         );
 
         assertEquals(CustomBlockAction.NONE,
@@ -177,7 +176,6 @@ class BlockInteractionResolverTest {
                 "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-top.png",
                 "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png",
                 "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png",
-                "default",
                 Map.of("fuse", 40, "radius", 4.0),
                 Map.of(),
                 interactions,
@@ -185,7 +183,8 @@ class BlockInteractionResolverTest {
                 10001,
                 false,
                 false,
-                false
+                false,
+                "default"
         );
     }
 }

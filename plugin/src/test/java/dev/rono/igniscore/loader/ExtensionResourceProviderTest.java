@@ -27,8 +27,8 @@ class ExtensionResourceProviderTest {
 
         try (URLClassLoader blockLoader = ExtensionJarSupport.createClassLoader(blockJar, getClass().getClassLoader());
              URLClassLoader itemLoader = ExtensionJarSupport.createClassLoader(itemJar, getClass().getClassLoader())) {
-            BlockDefinition block = TestDefinitions.block("testblock", "testblock");
-            ItemDefinition item = TestDefinitions.item("testitem", "testitem");
+            BlockDefinition block = TestDefinitions.block("testblock");
+            ItemDefinition item = TestDefinitions.item("testitem");
 
             provider.setBlockExtensions(java.util.List.of(TestDefinitions.loadedBlock(block, blockLoader)));
             provider.setItemExtensions(java.util.List.of(TestDefinitions.loadedItem(item, itemLoader)));
@@ -53,7 +53,7 @@ class ExtensionResourceProviderTest {
 
         try (URLClassLoader classLoader = new URLClassLoader(new java.net.URL[]{jarPath.toUri().toURL()},
                 ClassLoader.getPlatformClassLoader())) {
-            BlockDefinition block = TestDefinitions.block("textured", "textured");
+            BlockDefinition block = TestDefinitions.block("textured");
             provider.setBlockExtensions(java.util.List.of(TestDefinitions.loadedBlock(block, classLoader)));
 
             try (InputStream prefixed = provider.getBlockTextureStream(block, "icon.png")) {

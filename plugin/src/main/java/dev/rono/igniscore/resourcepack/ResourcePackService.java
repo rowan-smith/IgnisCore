@@ -38,7 +38,7 @@ public class ResourcePackService {
                 blockManager.getBlockTypes(), itemManager.getItemTypes());
         latestHash = result.getHash();
         packServer.registerPack(latestHash, result.getFile());
-        plugin.getLogger().info("Resource pack generated successfully! Hash: " + latestHash);
+        plugin.debug("Resource pack generated successfully! Hash: " + latestHash);
     }
 
     public void reloadConfiguration() {

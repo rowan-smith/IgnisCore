@@ -10,7 +10,6 @@ public class ItemDefinition {
     private final String baseMaterial;
     private final Component title;
     private final List<Component> description;
-    private final String strategy;
     private final Map<String, Object> customData;
     private final Map<String, Object> interactionSettings;
     private final int customModelData;
@@ -18,14 +17,13 @@ public class ItemDefinition {
     private final String iconTexture;
 
     public ItemDefinition(String id, String baseMaterial, Component title, List<Component> description,
-                          String strategy, Map<String, Object> customData,
+                          Map<String, Object> customData,
                           Map<String, Object> interactionSettings, int customModelData, String extensionId,
                           String iconTexture) {
         this.id = id;
         this.baseMaterial = baseMaterial;
         this.title = title;
         this.description = description;
-        this.strategy = strategy;
         this.customData = customData;
         this.interactionSettings = interactionSettings;
         this.customModelData = customModelData;
@@ -47,10 +45,6 @@ public class ItemDefinition {
 
     public List<Component> getDescription() {
         return description;
-    }
-
-    public String getStrategy() {
-        return strategy;
     }
 
     public Map<String, Object> getCustomData() {

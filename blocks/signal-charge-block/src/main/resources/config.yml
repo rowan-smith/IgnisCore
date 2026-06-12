@@ -29,10 +29,7 @@ model:
   type: "block_display"
   mode: "auto"
 
-behavior:
-  strategy: signal-charge
-  strategy_name: Signal Charge
-  custom_data:
+custom_data:
     fuse: 0
     radius: 6.0
     power: 6.0

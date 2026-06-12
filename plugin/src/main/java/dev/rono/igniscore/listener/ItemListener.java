@@ -67,10 +67,10 @@ public class ItemListener implements Listener {
     }
 
     private IgnisItemStrategy requireItemStrategy(ItemDefinition definition) {
-        IgnisStrategy strategy = strategyRegistry.get(definition.getStrategy());
+        IgnisStrategy strategy = strategyRegistry.get(definition.getExtensionId());
         if (!(strategy instanceof IgnisItemStrategy itemStrategy)) {
-            throw new IllegalStateException("Item type " + definition.getId() + " uses a non-item strategy: "
-                    + definition.getStrategy());
+            throw new IllegalStateException("Item type " + definition.getId() + " uses a non-item strategy from extension "
+                    + definition.getExtensionId());
         }
         return itemStrategy;
     }

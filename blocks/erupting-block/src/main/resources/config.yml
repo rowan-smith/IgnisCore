@@ -32,12 +32,7 @@ model:
   type: "block_display"
   mode: "auto"
 
-behavior:
-  strategy: erupting
-  strategy_name: Erupting TNT
-
-
-  custom_data:
+custom_data:
     fuse: 100
     radius: 5.0
     power: 5.0

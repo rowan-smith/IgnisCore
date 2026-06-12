@@ -19,7 +19,7 @@ class RuntimeBlockInstanceTest extends MockBukkitTestBase {
     void initializesFromDefinitionAndTracksRuntimeState() {
         UUID uuid = UUID.randomUUID();
         Location location = new Location(world, 10, 64, -3);
-        BlockDefinition definition = TestDefinitions.block("nuke", "nuclear");
+        BlockDefinition definition = TestDefinitions.block("nuke");
 
         RuntimeBlockInstance instance = new RuntimeBlockInstance(uuid, definition, location);
 
