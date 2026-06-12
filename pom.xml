@@ -27,6 +27,7 @@
     <guice.version>7.0.0</guice.version>
     <junit.jupiter.version>6.1.0</junit.jupiter.version>
     <mockbukkit.version>4.108.0</mockbukkit.version>
+    <adventure.version>4.26.1</adventure.version>
   </properties>
 
   <build>
@@ -115,7 +116,7 @@
       </dependency>
       <dependency>
         <groupId>dev.rono.blocks</groupId>
-        <artifactId>quarry-cache-block</artifactId>
+        <artifactId>quarry-cache</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -131,17 +132,22 @@
       <dependency>
         <groupId>net.kyori</groupId>
         <artifactId>adventure-api</artifactId>
-        <version>4.17.0</version>
+        <version>${adventure.version}</version>
       </dependency>
       <dependency>
         <groupId>net.kyori</groupId>
         <artifactId>adventure-text-serializer-legacy</artifactId>
-        <version>4.17.0</version>
+        <version>${adventure.version}</version>
       </dependency>
       <dependency>
         <groupId>net.kyori</groupId>
         <artifactId>adventure-text-serializer-plain</artifactId>
-        <version>4.17.0</version>
+        <version>${adventure.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.kyori</groupId>
+        <artifactId>adventure-text-minimessage</artifactId>
+        <version>${adventure.version}</version>
       </dependency>
       <dependency>
         <groupId>net.kyori</groupId>

@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,19 +21,19 @@ class ExtensionDescriptorIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "nuclear-block",
-            "wormhole-block",
-            "phantom-block",
-            "erupting-block",
-            "mimic-block",
-            "tunneling-block",
-            "entity-block",
-            "signal-charge-block",
-            "grenade-item",
-            "detonator-item"
+            "nuke",
+            "wormhole-tnt",
+            "phantom-tnt",
+            "erupting-tnt",
+            "mimic-tnt",
+            "tunneling-tnt",
+            "spider-storm-tnt",
+            "signal-charge",
+            "grenade",
+            "detonator"
     })
     void strategyDescriptorMatchesExtensionManifest(String moduleName) throws Exception {
-        String category = moduleName.endsWith("-item") ? "items" : "blocks";
+        String category = Files.exists(Path.of("..", "items", moduleName)) ? "items" : "blocks";
         String manifestName = category.equals("blocks") ? "block-extension.yml" : "item-extension.yml";
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, category, moduleName);
 

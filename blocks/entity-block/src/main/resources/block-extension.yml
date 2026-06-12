@@ -1,6 +1,0 @@
-id: entity-block
-name: Entity Block
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore
-strategy: dev.rono.blocks.entity.Strategy

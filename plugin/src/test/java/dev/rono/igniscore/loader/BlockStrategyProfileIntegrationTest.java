@@ -27,14 +27,14 @@ class BlockStrategyProfileIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "nuclear-block",
-            "wormhole-block",
-            "phantom-block",
-            "erupting-block",
-            "mimic-block",
-            "tunneling-block",
-            "entity-block",
-            "signal-charge-block"
+            "nuke",
+            "wormhole-tnt",
+            "phantom-tnt",
+            "erupting-tnt",
+            "mimic-tnt",
+            "tunneling-tnt",
+            "spider-storm-tnt",
+            "signal-charge"
     })
     void bundledStrategiesExposeProfilesForTheirDefinitions(String moduleName) throws Exception {
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);

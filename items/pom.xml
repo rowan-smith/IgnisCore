@@ -17,8 +17,8 @@
   <name>igniscore-items</name>
 
   <modules>
-    <module>grenade-item</module>
-    <module>detonator-item</module>
+    <module>grenade</module>
+    <module>detonator</module>
   </modules>
 
   <dependencyManagement>
@@ -28,6 +28,13 @@
         <artifactId>api</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>api</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -36,6 +43,32 @@
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>de.tr7zw</groupId>
+      <artifactId>item-nbt-api-plugin</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockbukkit.mockbukkit</groupId>
+      <artifactId>mockbukkit-v1.21</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>api</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -54,6 +87,16 @@
           <version>3.4.2</version>
           <configuration>
             <finalName>${project.artifactId}</finalName>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.5.3</version>
+          <configuration>
+            <classpathDependencyExcludes>
+              <classpathDependencyExclude>org.spigotmc:spigot-api</classpathDependencyExclude>
+            </classpathDependencyExcludes>
           </configuration>
         </plugin>
       </plugins>

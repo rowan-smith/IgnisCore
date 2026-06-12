@@ -1,5 +1,0 @@
-id: grenade-item
-name: Grenade
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore

@@ -27,8 +27,8 @@ class ItemManagerTest {
 
             Map<String, ItemDefinition> types = manager.getItemTypes();
             assertEquals(2, types.size());
-            assertEquals("grenade-item", types.get("grenade").getExtensionId());
-            assertEquals("detonator-item", types.get("detonator").getExtensionId());
+            assertEquals("grenade", types.get("grenade").getExtensionId());
+            assertEquals("detonator", types.get("detonator").getExtensionId());
             assertThrows(UnsupportedOperationException.class, () -> types.put("hack", grenade.getDefinition()));
 
             manager.loadFromExtensions(List.of(grenade));

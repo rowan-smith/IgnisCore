@@ -32,15 +32,15 @@ class BundledExtensionIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "nuclear-block",
-            "wormhole-block",
-            "phantom-block",
-            "erupting-block",
-            "mimic-block",
-            "tunneling-block",
-            "entity-block",
-            "signal-charge-block",
-            "quarry-cache-block"
+            "nuke",
+            "wormhole-tnt",
+            "phantom-tnt",
+            "erupting-tnt",
+            "mimic-tnt",
+            "tunneling-tnt",
+            "spider-storm-tnt",
+            "signal-charge",
+            "quarry-cache"
     })
     void loadsBundledBlockExtensionJar(String moduleName) throws Exception {
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
@@ -71,7 +71,7 @@ class BundledExtensionIntegrationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"grenade-item", "detonator-item"})
+    @ValueSource(strings = {"grenade", "detonator"})
     void loadsBundledItemExtensionJar(String moduleName) throws Exception {
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "items", moduleName);
 
@@ -102,19 +102,19 @@ class BundledExtensionIntegrationTest {
     @Test
     @EnabledIf("nuclearConfigFixtureExists")
     void parsesRepositoryNuclearConfigFixture() throws Exception {
-        Path configPath = Path.of("..", "blocks", "nuclear-block", "src", "main", "resources", "config.yml");
+        Path configPath = Path.of("..", "blocks", "nuke", "src", "main", "resources", "config.yml");
         String yaml = Files.readString(configPath, StandardCharsets.UTF_8);
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
 
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuclear-block");
+        BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuke");
 
         assertEquals("nuke", definition.getId());
-        assertEquals("nuclear-block", definition.getExtensionId());
+        assertEquals("nuke", definition.getExtensionId());
         assertEquals(160, definition.getCustomData().get("fuse"));
         assertEquals(30.0, definition.getCustomData().get("radius"));
     }
 
     static boolean nuclearConfigFixtureExists() {
-        return Files.exists(Path.of("..", "blocks", "nuclear-block", "src", "main", "resources", "config.yml"));
+        return Files.exists(Path.of("..", "blocks", "nuke", "src", "main", "resources", "config.yml"));
     }
 }

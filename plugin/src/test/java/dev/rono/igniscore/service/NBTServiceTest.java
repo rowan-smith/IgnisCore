@@ -26,12 +26,12 @@ class NBTServiceTest extends MockBukkitTestBase {
         nbtService.editItem(item, nbt -> {
             nbt.setString("ignis:block_id", "nuke");
             nbt.setInteger("ignis:fuse", 80);
-            nbt.setString("ignis:extension_id", "nuclear-block");
+            nbt.setString("ignis:extension_id", "nuke");
         });
 
         assertEquals("nuke", nbtService.readItem(item, nbt -> nbt.getString("ignis:block_id")));
         assertEquals(80, nbtService.readItem(item, nbt -> nbt.getInteger("ignis:fuse")).intValue());
-        assertEquals("nuclear-block", nbtService.readItem(item, nbt -> nbt.getString("ignis:extension_id")));
+        assertEquals("nuke", nbtService.readItem(item, nbt -> nbt.getString("ignis:extension_id")));
     }
 
     @Test

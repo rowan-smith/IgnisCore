@@ -39,7 +39,7 @@ class ItemFactoryTest extends MockBukkitTestBase {
         assertEquals(Material.SNOWBALL, item.getType());
         assertEquals("grenade", identifier.resolveTypeId(item));
         assertEquals(20001, platformHooks.readCustomModelData(item).orElseThrow());
-        assertEquals("grenade-item", nbtService.readItem(item, nbt -> nbt.getString("ignis:extension_id")));
+        assertEquals("grenade", nbtService.readItem(item, nbt -> nbt.getString("ignis:extension_id")));
         if (item.getItemMeta().hasItemModel()) {
             assertEquals("grenade", item.getItemMeta().getItemModel().getKey());
         }

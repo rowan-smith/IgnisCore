@@ -1,0 +1,60 @@
+id: spider-storm-tnt
+
+display:
+  title: "&5Spider Storm TNT"
+  description:
+    - "&dUnleashes a swarm of spiders on detonation."
+    - "&7Spiders spread around the impact and attack nearby players."
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 35
+    hit_interval_ticks: 5
+    hit_sound: BLOCK_STONE_HIT
+    break_sound: BLOCK_STONE_BREAK
+    tool_ticks:
+      _PICKAXE: 18
+      _AXE: 24
+      _SHOVEL: 24
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+interactions:
+  left_click:
+    default_action: break
+    material_actions:
+      - action: ignite
+        materials:
+          - FLINT_AND_STEEL
+          - FIRE_CHARGE
+          - FLINT
+  right_click:
+    action: ignite
+    materials:
+      - FLINT_AND_STEEL
+      - FIRE_CHARGE
+      - FLINT
+  ignite:
+    sound: ITEM_FLINTANDSTEEL_USE
+
+custom_data:
+  fuse: 80
+  radius: 10.0
+  multiplier: 2.0
+  realExplosion: false
+  fire: false
+  blockDamage: false
+  entityPayload:
+    type: SPIDER
+    count: 40
+    behavior: aggressive
+    targetPlayers: true

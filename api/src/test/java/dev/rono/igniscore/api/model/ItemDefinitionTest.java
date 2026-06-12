@@ -19,7 +19,7 @@ class ItemDefinitionTest {
                 Map.of("power", 4.0),
                 Map.of("right_click", Map.of("action", "throw")),
                 20001,
-                "grenade-item",
+                "grenade",
                 "icon.png"
         );
 
@@ -28,7 +28,7 @@ class ItemDefinitionTest {
         assertEquals(4.0, definition.getCustomData().get("power"));
         assertEquals("throw", ((Map<?, ?>) definition.getInteractionSettings().get("right_click")).get("action"));
         assertEquals(20001, definition.getCustomModelData());
-        assertEquals("grenade-item", definition.getExtensionId());
+        assertEquals("grenade", definition.getExtensionId());
         assertEquals("icon.png", definition.getIconTexture());
     }
 }

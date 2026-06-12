@@ -1,0 +1,44 @@
+id: quarry-cache
+
+display:
+  title: "&6Quarry Cache"
+  description:
+    - "&7Collects block drops from a nearby area."
+    - "&7Radius &e5&7, depth &e5&7 blocks."
+    - ""
+    - "&eLeft-click&7 to break"
+    - "&eRight-click&7 to open storage"
+    - "&eCenter top row&7 sets item filters"
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 35
+    hit_interval_ticks: 5
+    hit_sound: BLOCK_STONE_HIT
+    break_sound: BLOCK_STONE_BREAK
+    tool_ticks:
+      _PICKAXE: 18
+      _AXE: 24
+      _SHOVEL: 24
+
+textures:
+  top: top.jpg
+  side: side.jpg
+  bottom: bottom.jpg
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+interactions:
+  left_click:
+    default_action: break
+  right_click:
+    action: open
+
+custom_data:
+  collectRadius: 5.0
+  collectDepth: 5.0
+  showCollectZone: true

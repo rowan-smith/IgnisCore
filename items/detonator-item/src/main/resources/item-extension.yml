@@ -1,5 +1,0 @@
-id: detonator-item
-name: Detonator
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore
