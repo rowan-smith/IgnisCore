@@ -1,21 +1,25 @@
 package dev.rono.igniscore.api.service;
 
-import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
-import de.tr7zw.nbtapi.iface.ReadWriteNBT;
-import de.tr7zw.nbtapi.iface.ReadableItemNBT;
-import de.tr7zw.nbtapi.iface.ReadableNBT;
-import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
+import dev.rono.igniscore.api.port.IgnisItem;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-
+/**
+ * Platform-neutral item and entity data access.
+ */
 public interface IgnisNbtService {
-    void editItem(ItemStack item, Consumer<ReadWriteItemNBT> action);
 
-    <T> T readItem(ItemStack item, Function<ReadableItemNBT, T> action);
+    void setItemString(IgnisItem item, String key, String value);
 
-    void editEntity(Entity entity, Consumer<ReadWriteNBT> action);
+    String getItemString(IgnisItem item, String key);
 
-    <T> T readEntity(Entity entity, Function<ReadableNBT, T> action);
+    void setItemInt(IgnisItem item, String key, int value);
+
+    int getItemInt(IgnisItem item, String key, int defaultValue);
+
+    void setItemBoolean(IgnisItem item, String key, boolean value);
+
+    boolean getItemBoolean(IgnisItem item, String key, boolean defaultValue);
+
+    void setEntityString(Object nativeEntity, String key, String value);
+
+    String getEntityString(Object nativeEntity, String key);
 }

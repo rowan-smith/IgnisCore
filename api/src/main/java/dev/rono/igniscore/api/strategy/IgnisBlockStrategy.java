@@ -3,13 +3,12 @@ package dev.rono.igniscore.api.strategy;
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
 
 /**
  * Runtime behavior for custom block types.
- * Implement this interface in the extension strategy class declared in {@code block-extension.yml}.
  */
 public interface IgnisBlockStrategy extends IgnisStrategy {
 
@@ -17,25 +16,25 @@ public interface IgnisBlockStrategy extends IgnisStrategy {
         return StrategyProfile.defaults();
     }
 
-    default void onStaticPlace(BlockDefinition definition, Location location) {
+    default void onStaticPlace(BlockDefinition definition, IgnisLocation location) {
         onStaticPlace(definition, location, null);
     }
 
-    default void onStaticPlace(BlockDefinition definition, Location location, ItemStack placedFrom) {}
+    default void onStaticPlace(BlockDefinition definition, IgnisLocation location, IgnisItem placedFrom) {}
 
-    default void onStaticInteract(BlockDefinition definition, Location location, Player player, CustomBlockAction action) {}
+    default void onStaticInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player, CustomBlockAction action) {}
 
-    default void onStaticBreak(BlockDefinition definition, Location location) {
+    default void onStaticBreak(BlockDefinition definition, IgnisLocation location) {
         onStaticBreak(definition, location, null);
     }
 
-    default void onStaticBreak(BlockDefinition definition, Location location, ItemStack droppedItem) {}
+    default void onStaticBreak(BlockDefinition definition, IgnisLocation location, IgnisItem droppedItem) {}
 
     default void onPlace(RuntimeBlockInstance instance) {}
 
     default void onTick(RuntimeBlockInstance instance) {}
 
-    default void onInteract(RuntimeBlockInstance instance, Player player) {}
+    default void onInteract(RuntimeBlockInstance instance, IgnisPlayer player) {}
 
     default void onBreak(RuntimeBlockInstance instance) {}
 

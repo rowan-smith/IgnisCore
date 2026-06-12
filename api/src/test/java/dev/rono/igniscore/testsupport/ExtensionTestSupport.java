@@ -1,16 +1,14 @@
 package dev.rono.igniscore.testsupport;
 
 import dev.rono.igniscore.api.config.DefinitionParser;
+import dev.rono.igniscore.api.config.YamlDefinitions;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
-import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.ExtensionSupport;
-import org.bukkit.configuration.file.YamlConfiguration;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public final class ExtensionTestSupport {
@@ -29,8 +27,11 @@ public final class ExtensionTestSupport {
     public static BlockDefinition loadBlockDefinition(Class<?> anchor, String extensionId, int customModelData) {
         try (InputStream input = anchor.getResourceAsStream("/config.yml")) {
             Objects.requireNonNull(input, "config.yml missing from module resources");
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(input, StandardCharsets.UTF_8));
-            return DefinitionParser.parseBlock(config, extensionId, customModelData, extensionId);
+            return DefinitionParser.parseBlock(
+                    YamlDefinitions.loadMap(input),
+                    extensionId,
+                    customModelData,
+                    extensionId);
         } catch (Exception error) {
             throw new IllegalStateException("Failed to load block config.yml", error);
         }
@@ -39,8 +40,11 @@ public final class ExtensionTestSupport {
     public static ItemDefinition loadItemDefinition(Class<?> anchor, String extensionId, int customModelData) {
         try (InputStream input = anchor.getResourceAsStream("/config.yml")) {
             Objects.requireNonNull(input, "config.yml missing from module resources");
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(input, StandardCharsets.UTF_8));
-            return DefinitionParser.parseItem(config, extensionId, customModelData, extensionId);
+            return DefinitionParser.parseItem(
+                    YamlDefinitions.loadMap(input),
+                    extensionId,
+                    customModelData,
+                    extensionId);
         } catch (Exception error) {
             throw new IllegalStateException("Failed to load item config.yml", error);
         }
@@ -52,9 +56,5 @@ public final class ExtensionTestSupport {
 
     public static IgnisStrategyContext context(ExtensionSupport extensionSupport) {
         return new IgnisStrategyContext(null, null, null, null, extensionSupport);
-    }
-
-    public static IgnisStrategyContext context(org.bukkit.plugin.Plugin plugin, ExtensionSupport extensionSupport) {
-        return new IgnisStrategyContext(plugin, null, null, null, extensionSupport);
     }
 }

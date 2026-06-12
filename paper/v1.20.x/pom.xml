@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>dev.rono</groupId>
+    <artifactId>paper</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>paper-v1-20-x-stub</artifactId>
+  <packaging>jar</packaging>
+
+  <name>igniscore-paper-v1.20.x-stub</name>
+  <description>Placeholder module for future Paper 1.20.x support</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

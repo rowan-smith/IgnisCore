@@ -5,7 +5,6 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -40,7 +39,7 @@ class DefinitionParserTest {
 
     @Test
     void parsesBlockDefinitionWithDefaultsAndNestedSections() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
                 id: phantom
                 display:
                   title: "&5Phantom"
@@ -70,9 +69,7 @@ class DefinitionParserTest {
                     rotate: false
                     float: false
                     pulse: false
-                """));
-
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10042, "phantom-tnt");
+                """), "fallback", 10042, "phantom-tnt");
 
         assertEquals("phantom", definition.getId());
         assertEquals("paper", definition.getBaseMaterial());
@@ -96,7 +93,7 @@ class DefinitionParserTest {
 
     @Test
     void mapsLegacyExplosionSectionIntoBehaviorFields() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
                 id: legacy
                 explosion:
                   fuse: 55
@@ -112,9 +109,7 @@ class DefinitionParserTest {
                     count: 3
                     behavior: scatter
                     target_players: true
-                """));
-
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "legacy", 10001, "legacy-block");
+                """), "legacy", 10001, "legacy-block");
 
         assertEquals(55, definition.getCustomData().get("fuse"));
         assertEquals(9.0, definition.getCustomData().get("radius"));
@@ -134,15 +129,13 @@ class DefinitionParserTest {
 
     @Test
     void preservesExplicitBehaviorValuesOverLegacyExplosionDefaults() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
                 fuse: 120
                 radius: 20.0
                 explosion:
                   fuse: 10
                   radius: 2.0
-                """));
-
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuke");
+                """), "nuke", 10001, "nuke");
 
         assertEquals(120, definition.getCustomData().get("fuse"));
         assertEquals(20.0, definition.getCustomData().get("radius"));
@@ -150,7 +143,7 @@ class DefinitionParserTest {
 
     @Test
     void parsesItemDefinition() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+        ItemDefinition definition = DefinitionParser.parseItem(yaml("""
                 id: grenade
                 display:
                   title: "&cGrenade"
@@ -166,9 +159,7 @@ class DefinitionParserTest {
                 interactions:
                   right_click:
                     action: throw
-                """));
-
-        ItemDefinition definition = DefinitionParser.parseItem(config, "fallback-item", 20005, "grenade");
+                """), "fallback-item", 20005, "grenade");
 
         assertEquals("grenade", definition.getId());
         assertEquals("snowball", definition.getBaseMaterial());
@@ -183,16 +174,14 @@ class DefinitionParserTest {
 
     @Test
     void parsesPerSideTexturesWithFallbackToSharedSide() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
                 id: custom
                 textures:
                   top: top.png
                   side: shared.png
                   side-1: north.png
                   side-3: south.png
-                """));
-
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10001, "custom-block");
+                """), "fallback", 10001, "custom-block");
 
         assertTrue(definition.hasPerSideTextures());
         assertEquals("north.png", definition.getSide1Texture());
@@ -205,7 +194,7 @@ class DefinitionParserTest {
 
     @Test
     void parsesAllPerSideTextures() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
                 id: custom
                 textures:
                   top: top.png
@@ -215,9 +204,7 @@ class DefinitionParserTest {
                   side-3: south.png
                   side-4: west.png
                   bottom: bottom.png
-                """));
-
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10001, "custom-block");
+                """), "fallback", 10001, "custom-block");
 
         assertEquals("north.png", definition.getSide1Texture());
         assertEquals("east.png", definition.getSide2Texture());
@@ -227,16 +214,14 @@ class DefinitionParserTest {
 
     @Test
     void parsesJpegTextureFilenames() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
                 id: custom
                 textures:
                   top: top.jpg
                   side: side.jpeg
                   bottom: bottom.jpg
                   side-1: north.jpg
-                """));
-
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10001, "custom-block");
+                """), "fallback", 10001, "custom-block");
 
         assertEquals("top.jpg", definition.getTopTexture());
         assertEquals("side.jpeg", definition.getSideTexture());
@@ -246,15 +231,13 @@ class DefinitionParserTest {
 
     @Test
     void singleSideTextureKeepsLegacyMode() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
+        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
                 id: custom
                 textures:
                   top: top.png
                   side: side.png
                   bottom: bottom.png
-                """));
-
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10001, "custom-block");
+                """), "fallback", 10001, "custom-block");
 
         assertFalse(definition.hasPerSideTextures());
         assertNull(definition.getSide1Texture());
@@ -263,10 +246,11 @@ class DefinitionParserTest {
     @Test
     void parsesRealNuclearBlockConfigFixture() throws Exception {
         try (var input = getClass().getResourceAsStream("/fixtures/nuclear-block-config.yml")) {
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(
-                    new String(input.readAllBytes(), StandardCharsets.UTF_8)));
-
-            BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuke");
+            BlockDefinition definition = DefinitionParser.parseBlock(
+                    YamlDefinitions.loadMap(input),
+                    "nuke",
+                    10001,
+                    "nuke");
 
             assertEquals("nuke", definition.getId());
             assertEquals(160, definition.getCustomData().get("fuse"));
@@ -276,5 +260,9 @@ class DefinitionParserTest {
             assertTrue(definition.isBreakable());
             assertTrue(definition.getInteractionSettings().isEmpty());
         }
+    }
+
+    private static Map<String, Object> yaml(String content) {
+        return YamlDefinitions.loadMap(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     }
 }

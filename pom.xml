@@ -13,11 +13,12 @@
 
   <modules>
     <module>api</module>
-    <module>platform</module>
-    <module>blocks</module>
-    <module>items</module>
-    <module>plugin</module>
-    <module>dist</module>
+    <module>common</module>
+    <module>extensions</module>
+    <module>spigot</module>
+    <module>paper</module>
+    <module>sponge</module>
+    <module>bootstrap</module>
   </modules>
 
   <properties>
@@ -28,6 +29,8 @@
     <junit.jupiter.version>6.1.0</junit.jupiter.version>
     <mockbukkit.version>4.108.0</mockbukkit.version>
     <adventure.version>4.26.1</adventure.version>
+    <spigot.api.version>1.21.11-R0.1-SNAPSHOT</spigot.api.version>
+    <paper.api.version>1.21.11-R0.1-SNAPSHOT</paper.api.version>
   </properties>
 
   <build>
@@ -92,9 +95,12 @@
       <url>https://repo.papermc.io/repository/maven-public/</url>
     </repository>
     <repository>
+      <id>spongepowered</id>
+      <url>https://repo.spongepowered.org/maven</url>
+    </repository>
+    <repository>
       <id>codemc-repo</id>
       <url>https://repo.codemc.io/repository/maven-public/</url>
-      <layout>default</layout>
     </repository>
     <repository>
       <id>dmulloy2-repo</id>
@@ -111,7 +117,17 @@
       </dependency>
       <dependency>
         <groupId>dev.rono</groupId>
-        <artifactId>plugin</artifactId>
+        <artifactId>common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>spigot-v1-21-x</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>paper-v1-21-x</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -127,7 +143,7 @@
       <dependency>
         <groupId>org.spigotmc</groupId>
         <artifactId>spigot-api</artifactId>
-        <version>1.21.11-R0.1-SNAPSHOT</version>
+        <version>${spigot.api.version}</version>
       </dependency>
       <dependency>
         <groupId>net.kyori</groupId>
@@ -157,22 +173,7 @@
       <dependency>
         <groupId>io.papermc.paper</groupId>
         <artifactId>paper-api</artifactId>
-        <version>1.21.11-R0.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>dev.rono</groupId>
-        <artifactId>platform-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>dev.rono</groupId>
-        <artifactId>platform-spigot</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>dev.rono</groupId>
-        <artifactId>platform-paper</artifactId>
-        <version>${project.version}</version>
+        <version>${paper.api.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.code.gson</groupId>

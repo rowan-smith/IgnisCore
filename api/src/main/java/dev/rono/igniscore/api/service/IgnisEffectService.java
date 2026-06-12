@@ -1,8 +1,7 @@
 package dev.rono.igniscore.api.service;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
 
 import java.util.Collection;
 
@@ -11,9 +10,9 @@ import java.util.Collection;
  */
 public interface IgnisEffectService {
 
-    void playSound(Location location, String soundName, float volume, float pitch);
+    void playSound(IgnisLocation location, String soundName, float volume, float pitch);
 
-    void playFakeExplosion(Location location, float power, Collection<Player> players);
+    void playFakeExplosion(IgnisLocation location, float power, Collection<IgnisPlayer> players);
 
-    void showBlockPreview(Player player, Location location, Material material);
+    void showBlockPreview(IgnisPlayer player, IgnisLocation location, String materialKey);
 }
