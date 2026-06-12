@@ -2,30 +2,30 @@ package dev.rono.igniscore.core;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import dev.rono.igniscore.Main;
+import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
-import dev.rono.igniscore.manager.BlockManager;
+import dev.rono.igniscore.manager.BlockTypeRegistry;
 import dev.rono.igniscore.manager.ItemManager;
 
 @Singleton
 public class ExtensionBootstrap {
-    private final Main plugin;
+    private final IgnisRuntimeHost host;
     private final BlockExtensionLoader blockExtensionLoader;
     private final ItemExtensionLoader itemExtensionLoader;
-    private final BlockManager blockManager;
+    private final BlockTypeRegistry blockTypeRegistry;
     private final ItemManager itemManager;
 
     @Inject
-    public ExtensionBootstrap(Main plugin,
+    public ExtensionBootstrap(IgnisRuntimeHost host,
                               BlockExtensionLoader blockExtensionLoader,
                               ItemExtensionLoader itemExtensionLoader,
-                              BlockManager blockManager,
+                              BlockTypeRegistry blockTypeRegistry,
                               ItemManager itemManager) {
-        this.plugin = plugin;
+        this.host = host;
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
-        this.blockManager = blockManager;
+        this.blockTypeRegistry = blockTypeRegistry;
         this.itemManager = itemManager;
     }
 
@@ -42,13 +42,13 @@ public class ExtensionBootstrap {
 
     public void reloadBlocks() {
         blockExtensionLoader.loadAll();
-        blockManager.loadFromExtensions(blockExtensionLoader.getLoadedExtensions());
-        plugin.getLogger().info("Loaded " + blockExtensionLoader.getLoadedExtensions().size() + " block extension(s).");
+        blockTypeRegistry.loadFromExtensions(blockExtensionLoader.getLoadedExtensions());
+        host.getLogger().info("Loaded " + blockExtensionLoader.getLoadedExtensions().size() + " block extension(s).");
     }
 
     public void reloadItems() {
         itemExtensionLoader.loadAll();
         itemManager.loadFromExtensions(itemExtensionLoader.getLoadedExtensions());
-        plugin.getLogger().info("Loaded " + itemExtensionLoader.getLoadedExtensions().size() + " item extension(s).");
+        host.getLogger().info("Loaded " + itemExtensionLoader.getLoadedExtensions().size() + " item extension(s).");
     }
 }

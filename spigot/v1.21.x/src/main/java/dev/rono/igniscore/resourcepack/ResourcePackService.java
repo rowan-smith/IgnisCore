@@ -2,6 +2,7 @@ package dev.rono.igniscore.resourcepack;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
+import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.platform.PlatformHooks;
@@ -24,13 +25,14 @@ public class ResourcePackService {
                                BlockManager blockManager,
                                ItemManager itemManager,
                                ResourcePackBuilder packBuilder,
-                               PlatformHooks platformHooks) {
+                               PlatformHooks platformHooks,
+                               IgnisRuntimeHost runtimeHost) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.itemManager = itemManager;
         this.packBuilder = packBuilder;
         this.platformHooks = platformHooks;
-        this.packServer = new ResourcePackServer(plugin);
+        this.packServer = new ResourcePackServer(runtimeHost);
     }
 
     public void buildAndRegister() throws IOException {

@@ -3,7 +3,7 @@ package dev.rono.igniscore.resourcepack;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import dev.rono.igniscore.Main;
+import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,16 +14,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class ResourcePackServer {
-    private final Main plugin;
+    private final Logger logger;
     private HttpServer server;
     private ExecutorService executor;
     private final Map<String, File> packs = new ConcurrentHashMap<>();
     private String latestPackId;
 
-    public ResourcePackServer(Main plugin) {
-        this.plugin = plugin;
+    public ResourcePackServer(IgnisRuntimeHost host) {
+        this.logger = host.getLogger();
     }
 
     public void start(String host, int port) {
@@ -52,44 +53,23 @@ public class ResourcePackServer {
                     return;
                 }
 
-                // HTTP Headers for Zip download
-                exchange.getResponseHeaders().set("Content-Type", "application/zip");
-                exchange.getResponseHeaders().set("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
-                exchange.getResponseHeaders().set("Cache-Control", "no-cache, no-store, must-revalidate");
-                exchange.getResponseHeaders().set("Pragma", "no-cache");
-                exchange.getResponseHeaders().set("Expires", "0");
-
                 exchange.sendResponseHeaders(200, file.length());
-
-                try (exchange; OutputStream os = exchange.getResponseBody();
+                try (OutputStream os = exchange.getResponseBody();
                      FileInputStream fis = new FileInputStream(file)) {
                     fis.transferTo(os);
-                    os.flush();
                 } catch (IOException e) {
-                    plugin.getLogger().warning("Error streaming resource pack: " + e.getMessage());
+                    logger.warning("Error streaming resource pack: " + e.getMessage());
                 }
             };
 
             server.createContext("/", handler);
-
-            executor = Executors.newCachedThreadPool();
+            executor = Executors.newFixedThreadPool(2);
             server.setExecutor(executor);
             server.start();
-            plugin.getLogger().info("Resource pack server started on " + host + ":" + port);
+            logger.info("Resource pack server started on " + host + ":" + port);
         } catch (IOException e) {
-            server = null;
-            executor = null;
-            plugin.getLogger().severe("Failed to start resource pack server: " + e.getMessage());
+            logger.severe("Failed to start resource pack server: " + e.getMessage());
         }
-    }
-
-    public void registerPack(String id, File file) {
-        this.packs.put(id, file);
-        this.latestPackId = id;
-    }
-
-    public String getLatestPackId() {
-        return latestPackId;
     }
 
     public void stop() {
@@ -101,5 +81,22 @@ public class ResourcePackServer {
             executor.shutdownNow();
             executor = null;
         }
+    }
+
+    public void registerPack(String id, File file) {
+        packs.put(id, file);
+        latestPackId = id;
+    }
+
+    public String getLatestPackId() {
+        return latestPackId;
+    }
+
+    public String getPackUrl(String host, int port) {
+        return "http://" + host + ":" + port + "/resourcepack.zip";
+    }
+
+    public String getPackUrl(String host, int port, String packId) {
+        return "http://" + host + ":" + port + "/resourcepack_" + packId + ".zip";
     }
 }

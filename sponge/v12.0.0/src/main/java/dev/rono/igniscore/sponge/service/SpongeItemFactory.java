@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
 import dev.rono.igniscore.sponge.support.SpongeRegistrySupport;
 import org.spongepowered.api.ResourceKey;
@@ -15,12 +16,12 @@ import java.util.Locale;
 public class SpongeItemFactory {
     private final PlatformAdapter platformAdapter;
     private final IgnisNbtService nbtService;
-    private final SpongeItemManager itemManager;
+    private final ItemManager itemManager;
 
     @Inject
     public SpongeItemFactory(PlatformAdapter platformAdapter,
                              IgnisNbtService nbtService,
-                             SpongeItemManager itemManager) {
+                             ItemManager itemManager) {
         this.platformAdapter = platformAdapter;
         this.nbtService = nbtService;
         this.itemManager = itemManager;

@@ -5,26 +5,18 @@ import com.google.inject.Scopes;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
-import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.command.CommandRegistrar;
 import dev.rono.igniscore.command.IgnisCommand;
-import dev.rono.igniscore.core.ExtensionBootstrap;
-import dev.rono.igniscore.core.IgnisStrategyContextProvider;
-import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
-import dev.rono.igniscore.api.strategy.ExtensionSupport;
+import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.listener.BlockListener;
 import dev.rono.igniscore.listener.ExtensionSupportListener;
 import dev.rono.igniscore.listener.ItemListener;
 import dev.rono.igniscore.listener.PlacedBlockRestoreListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
-import dev.rono.igniscore.loader.BlockExtensionLoader;
-import dev.rono.igniscore.loader.BundledExtensionExtractor;
-import dev.rono.igniscore.loader.ExtensionResourceProvider;
-import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.manager.BlockManager;
-import dev.rono.igniscore.manager.ItemManager;
-import dev.rono.igniscore.resourcepack.ResourcePackBuilder;
+import dev.rono.igniscore.manager.BlockTypeRegistry;
+import dev.rono.igniscore.module.IgnisCommonModule;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
 import dev.rono.igniscore.service.BlockInteractionResolver;
 import dev.rono.igniscore.service.BlockItemFactory;
@@ -40,12 +32,11 @@ import dev.rono.igniscore.service.NBTService;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
 import dev.rono.igniscore.service.IgnisEffectServiceImpl;
 import dev.rono.igniscore.service.ProtocolService;
-import dev.rono.igniscore.service.RuntimeBlockService;
-import dev.rono.igniscore.service.StrategyProfileResolver;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.platform.PlatformHooks;
 import dev.rono.igniscore.service.VisualEffectService;
 import dev.rono.igniscore.spigot.adapter.SpigotPlatformAdapter;
+import dev.rono.igniscore.spigot.runtime.SpigotRuntimeHost;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -53,6 +44,7 @@ public class IgnisCoreModule extends AbstractModule {
     private final JavaPlugin plugin;
     private final PlatformAdapter platformAdapter;
     private final PlatformHooks platformHooks;
+    private final IgnisRuntimeHost runtimeHost;
 
     public IgnisCoreModule(JavaPlugin plugin, PlatformAdapter platformAdapter) {
         this.plugin = plugin;
@@ -61,6 +53,7 @@ public class IgnisCoreModule extends AbstractModule {
             throw new IllegalArgumentException("Bukkit-family hosts require SpigotPlatformAdapter");
         }
         this.platformHooks = spigotAdapter.legacyHooks();
+        this.runtimeHost = new SpigotRuntimeHost(plugin);
     }
 
     public IgnisCoreModule(Main plugin, PlatformHooks platformHooks) {
@@ -69,6 +62,8 @@ public class IgnisCoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        install(new IgnisCommonModule());
+
         bind(JavaPlugin.class).toInstance(plugin);
         bind(Plugin.class).toInstance(plugin);
         if (plugin instanceof Main main) {
@@ -76,6 +71,7 @@ public class IgnisCoreModule extends AbstractModule {
         }
         bind(PlatformAdapter.class).toInstance(platformAdapter);
         bind(PlatformHooks.class).toInstance(platformHooks);
+        bind(IgnisRuntimeHost.class).toInstance(runtimeHost);
 
         bind(CommandRegistrar.class).in(Scopes.SINGLETON);
         bind(IgnisCommand.class).in(Scopes.SINGLETON);
@@ -84,19 +80,14 @@ public class IgnisCoreModule extends AbstractModule {
         bind(ExtensionSupportListener.class).in(Scopes.SINGLETON);
         bind(ResourcePackStatusListener.class).in(Scopes.SINGLETON);
 
-        bind(IgnisStrategyRegistry.class).to(IgnisStrategyRegistryImpl.class).in(Scopes.SINGLETON);
-        bind(IgnisStrategyContext.class).toProvider(IgnisStrategyContextProvider.class).in(Scopes.SINGLETON);
-
         bind(NBTService.class).in(Scopes.SINGLETON);
         bind(IgnisNbtService.class).to(NBTService.class).in(Scopes.SINGLETON);
         bind(ProtocolService.class).in(Scopes.SINGLETON);
         bind(IgnisProtocolService.class).to(ProtocolService.class).in(Scopes.SINGLETON);
         bind(IgnisEffectService.class).to(IgnisEffectServiceImpl.class).in(Scopes.SINGLETON);
-        bind(RuntimeBlockService.class).in(Scopes.SINGLETON);
         bind(VisualEffectService.class).in(Scopes.SINGLETON);
         bind(BlockManager.class).in(Scopes.SINGLETON);
-        bind(ItemManager.class).in(Scopes.SINGLETON);
-        bind(ResourcePackBuilder.class).in(Scopes.SINGLETON);
+        bind(BlockTypeRegistry.class).to(BlockManager.class).in(Scopes.SINGLETON);
         bind(ResourcePackService.class).in(Scopes.SINGLETON);
         bind(BlockItemFactory.class).in(Scopes.SINGLETON);
         bind(ItemFactory.class).in(Scopes.SINGLETON);
@@ -104,7 +95,6 @@ public class IgnisCoreModule extends AbstractModule {
         bind(ItemIdentifier.class).in(Scopes.SINGLETON);
         bind(BlockInteractionResolver.class).in(Scopes.SINGLETON);
         bind(ConfiguredEffectService.class).in(Scopes.SINGLETON);
-        bind(StrategyProfileResolver.class).in(Scopes.SINGLETON);
         bind(CustomBlockPlacementService.class).in(Scopes.SINGLETON);
         bind(CustomBlockBreakService.class).in(Scopes.SINGLETON);
         bind(CustomBlockIgnitionService.class).in(Scopes.SINGLETON);
@@ -112,10 +102,5 @@ public class IgnisCoreModule extends AbstractModule {
         bind(ExtensionSupportService.class).in(Scopes.SINGLETON);
         bind(ExtensionSupport.class).to(ExtensionSupportService.class).in(Scopes.SINGLETON);
         bind(PlacedBlockRestoreListener.class).in(Scopes.SINGLETON);
-        bind(ExtensionResourceProvider.class).in(Scopes.SINGLETON);
-        bind(BundledExtensionExtractor.class).in(Scopes.SINGLETON);
-        bind(BlockExtensionLoader.class).in(Scopes.SINGLETON);
-        bind(ItemExtensionLoader.class).in(Scopes.SINGLETON);
-        bind(ExtensionBootstrap.class).in(Scopes.SINGLETON);
     }
 }

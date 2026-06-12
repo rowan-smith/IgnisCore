@@ -1,6 +1,7 @@
 package dev.rono.igniscore.core;
 
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
+import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class IgnisStrategyRegistryImplTest {
     @Test
     void registersAndUnregistersBySource() {
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
         registry.register(IgnisStrategyDescriptor.of("sonic_boom", "Sonic Boom", "1.0.0", "test", "plugin-a"),
                 testStrategy("sonic_boom"));
         registry.register(IgnisStrategyDescriptor.of("quake", "Quake", "1.0.0", "test", "plugin-b"),
@@ -32,7 +33,7 @@ class IgnisStrategyRegistryImplTest {
 
     @Test
     void fallsBackToDefaultStrategy() {
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         assertEquals("default", registry.get("missing-strategy").descriptor().getId());
         assertEquals("default", registry.get("default").descriptor().getId());
@@ -43,7 +44,7 @@ class IgnisStrategyRegistryImplTest {
 
     @Test
     void lookupIsCaseInsensitive() {
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
         registry.register(IgnisStrategyDescriptor.of("SoNiC", "Sonic", "1.0.0", "test"),
                 testStrategy("sonic"));
 
@@ -53,7 +54,7 @@ class IgnisStrategyRegistryImplTest {
 
     @Test
     void protectsDefaultStrategyFromUnregister() {
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         registry.unregister("default");
 
@@ -63,7 +64,7 @@ class IgnisStrategyRegistryImplTest {
 
     @Test
     void exposesRegisteredDescriptors() {
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
         registry.register(IgnisStrategyDescriptor.of("quake", "Quake", "1.0.0", "test"),
                 testStrategy("quake"));
 

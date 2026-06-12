@@ -26,28 +26,28 @@ class RuntimeBlockServiceTest extends MockBukkitTestBase {
 
     @Test
     void tracksInstancesByUuidAndLocation() {
-        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke"), location);
+        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke"), BukkitBridge.toIgnis(location));
 
         assertSame(instance, service.getInstance(instance.getUuid()));
-        assertSame(instance, service.getInstanceAt(location));
+        assertSame(instance, service.getInstanceAt(BukkitBridge.toIgnis(location)));
         assertEquals(1, service.getActiveInstances().size());
         assertEquals(80, instance.getTicksLeft());
     }
 
     @Test
     void removeInstanceClearsIndexes() {
-        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke"), location);
+        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke"), BukkitBridge.toIgnis(location));
 
         service.removeInstance(instance.getUuid());
 
         assertNull(service.getInstance(instance.getUuid()));
-        assertNull(service.getInstanceAt(location));
+        assertNull(service.getInstanceAt(BukkitBridge.toIgnis(location)));
         assertTrue(service.getActiveInstances().isEmpty());
     }
 
     @Test
     void instanceSupportsNbtFlagsAndTicking() {
-        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke"), location);
+        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke"), BukkitBridge.toIgnis(location));
 
         instance.setTicksLeft(10);
         instance.tick();

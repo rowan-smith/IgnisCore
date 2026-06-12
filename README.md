@@ -7,7 +7,7 @@ IgnisCore is a multi-platform framework for custom explosive blocks and throwabl
 ```
 igniscore-parent/
 ├── api/                    Platform-neutral public contract (ports, strategies, models)
-├── common/                 Shared bootstrap utilities (PlatformBootloaderLoader)
+├── common/                 Shared runtime: extension loading, strategy registry, resource packs
 ├── extensions/
 │   ├── blocks/             Platform-agnostic block extension JARs
 │   └── items/              Platform-agnostic item extension JARs
@@ -29,7 +29,7 @@ igniscore-parent/
 | Module | Purpose |
 |--------|---------|
 | `api` | Stable extension-facing contract: `IgnisCoreAPI`, ports, strategy interfaces |
-| `common` | `PlatformBootloaderLoader`, `MinecraftVersions` parsing |
+| `common` | Extension loaders, strategy registry/bootstrap, `ItemManager`, resource pack builder, `IgnisCommonModule` |
 | `extensions/*` | Self-contained block/item JARs depending only on `api` |
 | `spigot/v1.21.x` | Bukkit runtime, listeners, services, schedulers |
 | `paper/v1.21.x` | Paper data-component hooks, `PaperV121Bootloader` |

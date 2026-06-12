@@ -16,10 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class IgnisStrategyRegistryImpl implements IgnisStrategyRegistry {
     private final Map<String, IgnisStrategy> strategies = new ConcurrentHashMap<>();
     private final Map<String, IgnisStrategyDescriptor> descriptors = new ConcurrentHashMap<>();
-    private final DefaultExplosionStrategy fallbackStrategy = new DefaultExplosionStrategy();
+    private final DefaultExplosionStrategy fallbackStrategy;
 
     @Inject
-    public IgnisStrategyRegistryImpl() {
+    public IgnisStrategyRegistryImpl(DefaultExplosionStrategy fallbackStrategy) {
+        this.fallbackStrategy = fallbackStrategy;
         register(fallbackStrategy);
     }
 

@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BlockManager {
+public class BlockManager implements BlockTypeRegistry {
     private final Main plugin;
     private final IgnisStrategyRegistry strategyRegistry;
     private final ConfiguredEffectService effectService;
@@ -130,7 +130,7 @@ public class BlockManager {
             return null;
         }
 
-        RuntimeBlockInstance instance = plugin.getRuntimeBlockService().createInstance(type, location);
+        RuntimeBlockInstance instance = plugin.getRuntimeBlockService().createInstance(type, BukkitBridge.toIgnis(location));
         renderer.spawnDisplay(instance);
         IgnisBlockStrategy strategy = requireBlockStrategy(type);
         strategy.onPlace(instance);

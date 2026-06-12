@@ -1,6 +1,7 @@
 package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.config.DefinitionParser;
+import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
@@ -46,7 +47,7 @@ class ExtensionJarSupportTest {
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
             IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(
@@ -70,7 +71,7 @@ class ExtensionJarSupportTest {
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "item-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "item-extension.yml"));
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
             IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(
@@ -93,7 +94,7 @@ class ExtensionJarSupportTest {
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
             IllegalStateException error = assertThrows(IllegalStateException.class, () -> ExtensionJarSupport.loadStrategy(

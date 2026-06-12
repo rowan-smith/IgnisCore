@@ -1,6 +1,7 @@
 package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.config.DefinitionParser;
+import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -50,7 +51,7 @@ class BundledExtensionIntegrationTest {
         Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         BlockDefinition definition = ExtensionKind.BLOCK.parseBlock(config, manifest.getId(), 10001, manifest.getId());
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
             IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(
@@ -80,7 +81,7 @@ class BundledExtensionIntegrationTest {
         Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         ItemDefinition definition = ExtensionKind.ITEM.parseItem(config, manifest.getId(), 20001, manifest.getId());
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
             IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(

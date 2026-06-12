@@ -10,41 +10,34 @@ import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.core.ExtensionBootstrap;
+import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
-import dev.rono.igniscore.sponge.adapter.SpongePlatformAdapter;
-import dev.rono.igniscore.sponge.command.SpongeIgnisCommand;
-import dev.rono.igniscore.sponge.core.SpongeExtensionBootstrap;
-import dev.rono.igniscore.sponge.listener.SpongeBlockListener;
-import dev.rono.igniscore.sponge.listener.SpongeItemListener;
-import dev.rono.igniscore.sponge.loader.SpongeBlockExtensionLoader;
-import dev.rono.igniscore.sponge.loader.SpongeItemExtensionLoader;
 import dev.rono.igniscore.sponge.service.SpongeBlockManager;
 import dev.rono.igniscore.sponge.service.SpongeItemFactory;
-import dev.rono.igniscore.sponge.service.SpongeItemManager;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public class SpongeIgnisFacade implements dev.rono.igniscore.api.IgnisCoreFacade {
     private final SpongeBlockManager blockManager;
-    private final SpongeItemManager itemManager;
+    private final ItemManager itemManager;
     private final SpongeItemFactory itemFactory;
     private final IgnisStrategyRegistry strategyRegistry;
     private final IgnisNbtService nbtService;
     private final IgnisProtocolService protocolService;
     private final IgnisEffectService effectService;
-    private final SpongeExtensionBootstrap extensionBootstrap;
+    private final ExtensionBootstrap extensionBootstrap;
 
     @Inject
     public SpongeIgnisFacade(SpongeBlockManager blockManager,
-                             SpongeItemManager itemManager,
+                             ItemManager itemManager,
                              SpongeItemFactory itemFactory,
                              IgnisStrategyRegistry strategyRegistry,
                              IgnisNbtService nbtService,
                              IgnisProtocolService protocolService,
                              IgnisEffectService effectService,
-                             SpongeExtensionBootstrap extensionBootstrap) {
+                             ExtensionBootstrap extensionBootstrap) {
         this.blockManager = blockManager;
         this.itemManager = itemManager;
         this.itemFactory = itemFactory;

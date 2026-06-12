@@ -3,8 +3,6 @@ package dev.rono.igniscore.service;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
-import dev.rono.igniscore.spigot.adapter.BukkitBridge;
-import org.bukkit.Location;
 
 import java.util.Collection;
 import java.util.Map;
@@ -17,10 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RuntimeBlockService {
     private final Map<UUID, RuntimeBlockInstance> activeInstances = new ConcurrentHashMap<>();
     private final Map<IgnisLocation, UUID> locationToUuid = new ConcurrentHashMap<>();
-
-    public RuntimeBlockInstance createInstance(BlockDefinition definition, Location location) {
-        return createInstance(definition, BukkitBridge.toIgnis(location));
-    }
 
     public RuntimeBlockInstance createInstance(BlockDefinition definition, IgnisLocation location) {
         RuntimeBlockInstance instance = new RuntimeBlockInstance(UUID.randomUUID(), definition, location);
@@ -36,10 +30,6 @@ public class RuntimeBlockService {
     public RuntimeBlockInstance getInstanceAt(IgnisLocation location) {
         UUID uuid = locationToUuid.get(location);
         return uuid != null ? activeInstances.get(uuid) : null;
-    }
-
-    public RuntimeBlockInstance getInstanceAt(Location location) {
-        return getInstanceAt(BukkitBridge.toIgnis(location));
     }
 
     public void removeInstance(UUID uuid) {

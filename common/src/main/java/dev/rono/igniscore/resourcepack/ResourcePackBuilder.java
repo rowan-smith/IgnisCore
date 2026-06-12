@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import dev.rono.igniscore.Main;
+import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.loader.ExtensionResourceProvider;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -20,10 +20,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ResourcePackBuilder {
-    private final Main plugin;
+    private final IgnisRuntimeHost host;
     private final ItemManager itemManager;
     private final ExtensionResourceProvider resourceProvider;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private Map<String, BlockDefinition> activeBlockDefinitions = Map.of();
 
     public static class PackResult {
         private final File file;
@@ -39,14 +40,15 @@ public class ResourcePackBuilder {
     }
 
     @Inject
-    public ResourcePackBuilder(Main plugin, ItemManager itemManager, ExtensionResourceProvider resourceProvider) {
-        this.plugin = plugin;
+    public ResourcePackBuilder(IgnisRuntimeHost host, ItemManager itemManager, ExtensionResourceProvider resourceProvider) {
+        this.host = host;
         this.itemManager = itemManager;
         this.resourceProvider = resourceProvider;
     }
 
     public PackResult buildPack(Map<String, BlockDefinition> blockDefinitions,
                                 Map<String, ItemDefinition> itemDefinitions) throws IOException {
+        this.activeBlockDefinitions = blockDefinitions;
         List<CompiledBlockAsset> compiledBlockAssets = compileBlocks(blockDefinitions);
         List<CompiledItemAsset> compiledItemAssets = compileItems(itemDefinitions);
         return packageAssets(compiledBlockAssets, compiledItemAssets);
@@ -58,7 +60,7 @@ public class ResourcePackBuilder {
             try {
                 assets.add(compileAsset(def));
             } catch (Exception e) {
-                plugin.getLogger().warning("Failed to compile asset for block " + def.getId() + ": " + e.getMessage());
+                host.getLogger().warning("Failed to compile asset for block " + def.getId() + ": " + e.getMessage());
             }
         }
         return assets;
@@ -70,7 +72,7 @@ public class ResourcePackBuilder {
             try {
                 assets.add(compileItemAsset(def));
             } catch (Exception e) {
-                plugin.getLogger().warning("Failed to compile asset for item " + def.getId() + ": " + e.getMessage());
+                host.getLogger().warning("Failed to compile asset for item " + def.getId() + ": " + e.getMessage());
             }
         }
         return assets;
@@ -256,7 +258,7 @@ public class ResourcePackBuilder {
                     renderEntry.blockId = asset.getId();
                     materialOverrides.computeIfAbsent(asset.getRenderMaterial(), k -> new ArrayList<>()).add(renderEntry);
                 } else {
-                    plugin.getLogger().warning("Block " + asset.getId() + " uses same material for base and render (" + asset.getBaseMaterial() + "). Inventory and world look will be the same (2D icon). Use different materials to decouple.");
+                    host.getLogger().warning("Block " + asset.getId() + " uses same material for base and render (" + asset.getBaseMaterial() + "). Inventory and world look will be the same (2D icon). Use different materials to decouple.");
                 }
             }
 
@@ -299,7 +301,7 @@ public class ResourcePackBuilder {
                 throw new IOException("Hash algorithm not found", e);
             }
             
-            File packsDir = new File(plugin.getDataFolder(), "packs");
+            File packsDir = host.getDataDirectory().resolve("packs").toFile();
             if (!packsDir.exists()) packsDir.mkdirs();
             
             File finalZip = new File(packsDir, "resourcepack_" + hash + ".zip");
@@ -428,7 +430,7 @@ public class ResourcePackBuilder {
                     debug("Generated texture: " + normalizePath(texturePath));
                 } else {
                     String error = "CRITICAL: Texture missing for block " + asset.getId() + ": " + fileName;
-                    plugin.getLogger().severe(error);
+                    host.getLogger().severe(error);
                     throw new IOException(error);
                 }
             }
@@ -436,7 +438,7 @@ public class ResourcePackBuilder {
     }
 
     private InputStream getTextureStream(String blockId, String fileName) throws IOException {
-        BlockDefinition definition = plugin.getBlockManager().getBlockTypes().get(blockId);
+        BlockDefinition definition = activeBlockDefinitions.get(blockId);
         if (definition != null) {
             InputStream extensionStream = resourceProvider.getBlockTextureStream(definition, fileName);
             if (extensionStream != null) {
@@ -471,7 +473,7 @@ public class ResourcePackBuilder {
                         Files.copy(path, zs);
                         zs.closeEntry();
                     } catch (IOException e) {
-                        plugin.getLogger().severe("Failed to add entry to zip: " + zipEntry.getName());
+                        host.getLogger().severe("Failed to add entry to zip: " + zipEntry.getName());
                     }
                 });
         }
@@ -488,7 +490,7 @@ public class ResourcePackBuilder {
     }
 
     private void debug(String message) {
-        plugin.debug(message);
+        host.debug(message);
     }
 
     private static String normalizePath(Path path) {

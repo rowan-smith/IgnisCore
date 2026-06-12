@@ -1,6 +1,7 @@
 package dev.rono.igniscore.service;
 
 import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
@@ -23,7 +24,7 @@ class StrategyProfileResolverTest {
 
     @BeforeEach
     void setUp() {
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
         registry.register(IgnisStrategyDescriptor.of("custom", "Custom", "1.0.0", "custom"),
                 customStrategy());
         resolver = new StrategyProfileResolver(registry);
@@ -86,7 +87,7 @@ class StrategyProfileResolverTest {
 
     @Test
     void rejectsNonBlockStrategies() {
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
         registry.register(IgnisStrategyDescriptor.of("item-only", "Item", "1.0.0", "item-only"),
                 new dev.rono.igniscore.api.strategy.IgnisItemStrategy() {
                     @Override

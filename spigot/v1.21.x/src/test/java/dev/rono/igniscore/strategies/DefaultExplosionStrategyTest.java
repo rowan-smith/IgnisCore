@@ -1,6 +1,7 @@
 package dev.rono.igniscore.strategies;
 
 import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.support.NoopExtensionSupport;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import net.kyori.adventure.text.Component;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DefaultExplosionStrategyTest {
     @Test
     void exposesDefaultDescriptor() {
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy();
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(NoopExtensionSupport.INSTANCE);
 
         assertEquals("default", strategy.descriptor().getId());
         assertEquals("Default Explosion", strategy.descriptor().getName());
@@ -24,7 +25,7 @@ class DefaultExplosionStrategyTest {
 
     @Test
     void usesExplosiveProfileDefaults() {
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy();
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(NoopExtensionSupport.INSTANCE);
         StrategyProfile profile = strategy.profile(sampleDefinition());
 
         assertTrue(profile.isCombustible());

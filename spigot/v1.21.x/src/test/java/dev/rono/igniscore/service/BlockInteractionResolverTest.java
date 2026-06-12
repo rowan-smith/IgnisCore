@@ -1,6 +1,7 @@
 package dev.rono.igniscore.service;
 
 import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -20,7 +21,7 @@ class BlockInteractionResolverTest {
 
     @BeforeEach
     void setUp() {
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
         resolver = new BlockInteractionResolver(new StrategyProfileResolver(registry));
     }
 
@@ -87,7 +88,7 @@ class BlockInteractionResolverTest {
 
     @Test
     void strategyProfileFallbackHonorsNonCombustibleBlocks() {
-        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
         registry.register(IgnisStrategyDescriptor.of("inert", "Inert", "1.0.0", "inert"),
                 new dev.rono.igniscore.api.strategy.IgnisBlockStrategy() {
                     @Override

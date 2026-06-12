@@ -7,7 +7,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
 import dev.rono.igniscore.sponge.service.SpongeItemIdentifier;
-import dev.rono.igniscore.sponge.service.SpongeItemManager;
+import dev.rono.igniscore.manager.ItemManager;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -16,12 +16,12 @@ import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 public class SpongeItemListener {
-    private final SpongeItemManager itemManager;
+    private final ItemManager itemManager;
     private final SpongeItemIdentifier itemIdentifier;
     private final IgnisStrategyRegistry strategyRegistry;
 
     @Inject
-    public SpongeItemListener(SpongeItemManager itemManager,
+    public SpongeItemListener(ItemManager itemManager,
                               SpongeItemIdentifier itemIdentifier,
                               IgnisStrategyRegistry strategyRegistry) {
         this.itemManager = itemManager;

@@ -4,7 +4,8 @@ import com.google.inject.Inject;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
-import dev.rono.igniscore.sponge.loader.SpongeLoadedExtension;
+import dev.rono.igniscore.loader.LoadedExtension;
+import dev.rono.igniscore.manager.BlockTypeRegistry;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SpongeBlockManager {
+public class SpongeBlockManager implements BlockTypeRegistry {
     private final Map<String, BlockDefinition> blockTypes = new HashMap<>();
     private final Map<IgnisLocation, String> placedBlocks = new ConcurrentHashMap<>();
 
@@ -21,9 +22,10 @@ public class SpongeBlockManager {
     public SpongeBlockManager() {
     }
 
-    public void loadFromExtensions(List<SpongeLoadedExtension<BlockDefinition>> extensions) {
+    @Override
+    public void loadFromExtensions(List<LoadedExtension<BlockDefinition>> extensions) {
         blockTypes.clear();
-        for (SpongeLoadedExtension<BlockDefinition> extension : extensions) {
+        for (LoadedExtension<BlockDefinition> extension : extensions) {
             blockTypes.put(extension.getDefinition().getId(), extension.getDefinition());
         }
     }

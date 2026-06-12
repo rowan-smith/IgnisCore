@@ -2,36 +2,36 @@ package dev.rono.igniscore.loader;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import dev.rono.igniscore.Main;
 import dev.rono.igniscore.api.IgnisApiVersion;
+import dev.rono.igniscore.api.config.DefinitionParser;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.extension.ExtensionResources;
-import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
-import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
-import dev.rono.igniscore.api.config.DefinitionParser;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
+import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 
 import java.io.File;
-import java.util.Map;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Singleton
-final class ExtensionLoadEngine {
-    private final Main plugin;
+public final class ExtensionLoadEngine {
+    private final IgnisRuntimeHost host;
     private final IgnisStrategyRegistry strategyRegistry;
     private final IgnisStrategyContext strategyContext;
     private final BundledExtensionExtractor bundledExtractor;
 
     @Inject
-    ExtensionLoadEngine(Main plugin,
+    ExtensionLoadEngine(IgnisRuntimeHost host,
                         IgnisStrategyRegistry strategyRegistry,
                         IgnisStrategyContext strategyContext,
                         BundledExtensionExtractor bundledExtractor) {
-        this.plugin = plugin;
+        this.host = host;
         this.strategyRegistry = strategyRegistry;
         this.strategyContext = strategyContext;
         this.bundledExtractor = bundledExtractor;
@@ -49,7 +49,7 @@ final class ExtensionLoadEngine {
             try {
                 loaded.add(loadBlockJar(jar, modelData++));
             } catch (Exception e) {
-                plugin.getLogger().severe("Failed to load block extension " + jar.getName() + ": " + e.getMessage());
+                host.getLogger().severe("Failed to load block extension " + jar.getName() + ": " + e.getMessage());
             }
         }
         return List.copyOf(loaded);
@@ -67,7 +67,7 @@ final class ExtensionLoadEngine {
             try {
                 loaded.add(loadItemJar(jar, modelData++));
             } catch (Exception e) {
-                plugin.getLogger().severe("Failed to load item extension " + jar.getName() + ": " + e.getMessage());
+                host.getLogger().severe("Failed to load item extension " + jar.getName() + ": " + e.getMessage());
             }
         }
         return List.copyOf(loaded);
@@ -84,11 +84,11 @@ final class ExtensionLoadEngine {
     }
 
     private File prepareFolder(ExtensionKind kind) {
-        File folder = new File(plugin.getDataFolder(), kind.folderName());
+        File folder = host.getDataDirectory().resolve(kind.folderName()).toFile();
         bundledExtractor.extractBundled(kind.bundledResourcePrefix(), folder);
 
         if (!folder.exists() && !folder.mkdirs()) {
-            plugin.getLogger().warning("Could not create " + kind.folderName() + " folder at " + folder.getAbsolutePath());
+            host.getLogger().warning("Could not create " + kind.folderName() + " folder at " + folder.getAbsolutePath());
             return null;
         }
         return folder;
@@ -97,7 +97,7 @@ final class ExtensionLoadEngine {
     private List<File> listJars(File folder, ExtensionKind kind) {
         File[] jars = folder.listFiles((dir, name) -> name.endsWith(".jar"));
         if (jars == null || jars.length == 0) {
-            plugin.getLogger().info("No " + kind.folderName() + " extension JARs found in " + folder.getAbsolutePath());
+            host.getLogger().info("No " + kind.folderName() + " extension JARs found in " + folder.getAbsolutePath());
             return List.of();
         }
         return List.of(jars);
@@ -134,7 +134,7 @@ final class ExtensionLoadEngine {
         String strategyId = descriptor.getId();
         String definitionId = definitionIdFor(definition);
 
-        URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, plugin.getClass().getClassLoader());
+        URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, host.getExtensionParentClassLoader());
         ExtensionResources resources = new ExtensionResources(classLoader);
 
         try {
@@ -146,7 +146,7 @@ final class ExtensionLoadEngine {
                         + " did not register strategy class " + manifest.getStrategyClass());
             }
 
-            plugin.debug("Loaded " + kind.folderName() + " extension '" + manifest.getName() + "' v"
+            host.debug("Loaded " + kind.folderName() + " extension '" + manifest.getName() + "' v"
                     + manifest.getVersion() + " (" + definitionId + ") from " + jarFile.getName());
             return new LoadedExtension<>(manifest, jarFile, classLoader, definition, resources);
         } catch (Exception e) {

@@ -1,11 +1,11 @@
 package dev.rono.igniscore.sponge.command;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.sponge.core.SpongeExtensionBootstrap;
-import dev.rono.igniscore.sponge.loader.SpongeBlockExtensionLoader;
-import dev.rono.igniscore.sponge.loader.SpongeItemExtensionLoader;
+import dev.rono.igniscore.core.ExtensionBootstrap;
+import dev.rono.igniscore.loader.BlockExtensionLoader;
+import dev.rono.igniscore.loader.ItemExtensionLoader;
+import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.sponge.service.SpongeItemFactory;
-import dev.rono.igniscore.sponge.service.SpongeItemManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.spongepowered.api.command.Command;
@@ -15,17 +15,17 @@ import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.permission.Subject;
 
 public class SpongeIgnisCommand {
-    private final SpongeItemManager itemManager;
-    private final SpongeExtensionBootstrap extensionBootstrap;
-    private final SpongeBlockExtensionLoader blockExtensionLoader;
-    private final SpongeItemExtensionLoader itemExtensionLoader;
+    private final ItemManager itemManager;
+    private final ExtensionBootstrap extensionBootstrap;
+    private final BlockExtensionLoader blockExtensionLoader;
+    private final ItemExtensionLoader itemExtensionLoader;
     private final SpongeItemFactory itemFactory;
 
     @Inject
-    public SpongeIgnisCommand(SpongeItemManager itemManager,
-                              SpongeExtensionBootstrap extensionBootstrap,
-                              SpongeBlockExtensionLoader blockExtensionLoader,
-                              SpongeItemExtensionLoader itemExtensionLoader,
+    public SpongeIgnisCommand(ItemManager itemManager,
+                              ExtensionBootstrap extensionBootstrap,
+                              BlockExtensionLoader blockExtensionLoader,
+                              ItemExtensionLoader itemExtensionLoader,
                               SpongeItemFactory itemFactory) {
         this.itemManager = itemManager;
         this.extensionBootstrap = extensionBootstrap;
