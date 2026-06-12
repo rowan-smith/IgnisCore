@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -30,7 +30,7 @@ final class QuarryCacheInventory implements IgnisCustomInventory {
     }
 
     void setOnChanged(Consumer<QuarryCacheInventory> onChanged) {
-        this.onChanged = onChanged == null ? ignored -> {} : onChanged;
+        this.onChanged = onChanged == null ? ignored -> { } : onChanged;
     }
 
     static boolean isFilterSlot(int slot) {
@@ -47,12 +47,14 @@ final class QuarryCacheInventory implements IgnisCustomInventory {
     }
 
     private void fillSeparators() {
-        ItemStack separator = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        ItemMeta meta = separator.getItemMeta();
+        var separator = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        var meta = separator.getItemMeta();
+
         if (meta != null) {
             meta.setDisplayName(" ");
             separator.setItemMeta(meta);
         }
+
         for (int slot = SEPARATOR_START; slot < STORAGE_START; slot++) {
             inventory.setItem(slot, separator.clone());
         }
@@ -63,11 +65,13 @@ final class QuarryCacheInventory implements IgnisCustomInventory {
     }
 
     ItemStack[] getFilterItems() {
-        ItemStack[] filters = new ItemStack[FILTER_SLOTS];
+        var filters = new ItemStack[FILTER_SLOTS];
+
         for (int i = 0; i < FILTER_SLOTS; i++) {
             ItemStack item = inventory.getItem(i);
             filters[i] = item == null || item.getType().isAir() ? null : item.clone();
         }
+
         return filters;
     }
 
@@ -77,7 +81,7 @@ final class QuarryCacheInventory implements IgnisCustomInventory {
     }
 
     @Override
-    public Inventory getInventory() {
+    public @NonNull Inventory getInventory() {
         return inventory;
     }
 
@@ -87,17 +91,19 @@ final class QuarryCacheInventory implements IgnisCustomInventory {
             return false;
         }
 
-        ItemStack[] filters = getFilterItems();
+        var filters = getFilterItems();
         boolean hasFilter = Arrays.stream(filters).anyMatch(item -> item != null && !item.getType().isAir());
+
         if (!hasFilter) {
             return true;
         }
 
-        for (ItemStack filter : filters) {
+        for (var filter : filters) {
             if (filter != null && !filter.getType().isAir() && filter.getType() == stack.getType()) {
                 return true;
             }
         }
+
         return false;
     }
 

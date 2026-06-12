@@ -6,9 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-final class QuarryCacheContents {
-    private final Map<Integer, ItemStack> slots;
-
+record QuarryCacheContents(Map<Integer, ItemStack> slots) {
     QuarryCacheContents(Map<Integer, ItemStack> slots) {
         this.slots = slots == null ? Map.of() : Map.copyOf(slots);
     }
@@ -17,7 +15,8 @@ final class QuarryCacheContents {
         return new QuarryCacheContents(Map.of());
     }
 
-    Map<Integer, ItemStack> getSlots() {
+    @Override
+    public Map<Integer, ItemStack> slots() {
         return Collections.unmodifiableMap(slots);
     }
 
@@ -26,10 +25,12 @@ final class QuarryCacheContents {
     }
 
     Map<Integer, ItemStack> copySlots() {
-        Map<Integer, ItemStack> copy = new HashMap<>();
-        for (Map.Entry<Integer, ItemStack> entry : slots.entrySet()) {
+        var copy = new HashMap<Integer, ItemStack>();
+
+        for (var entry : slots.entrySet()) {
             copy.put(entry.getKey(), entry.getValue().clone());
         }
+
         return copy;
     }
 }
