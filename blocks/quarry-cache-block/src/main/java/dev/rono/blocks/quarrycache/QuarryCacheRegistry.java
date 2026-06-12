@@ -42,7 +42,7 @@ final class QuarryCacheRegistry {
         inventory.setOnChanged(value -> persist(blockLocation, value));
 
         if (placedFrom != null && storage.hasStoredContents(placedFrom)) {
-            storage.applyToInventory(placedFrom, inventory);
+            storage.restoreFromItem(placedFrom, inventory);
         } else {
             storage.applyContents(inventory, storage.load(blockLocation));
         }
@@ -62,13 +62,18 @@ final class QuarryCacheRegistry {
     void handleBreak(Location location, ItemStack droppedItem) {
         Location blockLocation = location.getBlock().getLocation();
         QuarryCacheData cache = caches.get(blockLocation);
-        if (cache == null) {
-            return;
-        }
 
         if (droppedItem != null) {
-            storage.writeToItem(droppedItem, cache.inventory);
+            if (cache != null) {
+                storage.attachContentsToItem(droppedItem, cache.inventory);
+            } else {
+                QuarryCacheContents contents = storage.load(blockLocation);
+                if (!contents.isEmpty()) {
+                    storage.attachContentsToItem(droppedItem, contents);
+                }
+            }
         }
+
         unregister(blockLocation);
         storage.delete(blockLocation);
     }
