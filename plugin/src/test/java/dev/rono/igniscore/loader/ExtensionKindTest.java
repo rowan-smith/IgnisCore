@@ -27,8 +27,8 @@ class ExtensionKindTest {
                   base_material: paper
                 item:
                   base_material: snowball
-                behavior:
-                  strategy: sample
+                custom_data:
+                  fuse: 40
                 """));
 
         BlockDefinition block = ExtensionKind.BLOCK.parseBlock(config, "fallback", 10002, "sample-block");

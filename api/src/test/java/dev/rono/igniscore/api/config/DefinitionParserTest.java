@@ -57,11 +57,10 @@ class DefinitionParserTest {
                   top: custom-top.png
                   side: custom-side.png
                   bottom: custom-bottom.png
-                behavior:
+                custom_data:
                   fuse: 40
                   radius: 6.5
-                  custom_data:
-                    power: 3.0
+                  power: 3.0
                 interactions:
                   right_click:
                     action: ignite
@@ -136,9 +135,8 @@ class DefinitionParserTest {
     @Test
     void preservesExplicitBehaviorValuesOverLegacyExplosionDefaults() {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
-                behavior:
-                  fuse: 120
-                  radius: 20.0
+                fuse: 120
+                radius: 20.0
                 explosion:
                   fuse: 10
                   radius: 2.0
@@ -162,10 +160,9 @@ class DefinitionParserTest {
                   base_material: SNOWBALL
                 textures:
                   icon: grenade-icon.png
-                behavior:
-                  custom_data:
-                    power: 4.0
-                    fuse_ticks: 40
+                custom_data:
+                  power: 4.0
+                  fuse_ticks: 40
                 interactions:
                   right_click:
                     action: throw

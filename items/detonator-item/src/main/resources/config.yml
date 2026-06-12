@@ -12,8 +12,7 @@ item:
 textures:
   icon: icon.png
 
-behavior:
-  custom_data:
+custom_data:
     target_block: signal-charge
     max_links: 16
 

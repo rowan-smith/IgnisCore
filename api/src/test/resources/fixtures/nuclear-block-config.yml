@@ -15,8 +15,7 @@ model:
   type: "block_display"
   mode: "auto"
 
-behavior:
-  custom_data:
+custom_data:
     fuse: 160
     radius: 30.0
     power: 30.0

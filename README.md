@@ -113,11 +113,10 @@ block:
   breakable: true
   base_material: paper
 
-behavior:
+custom_data:
   fuse: 80
   radius: 6.0
-  custom_data:
-    power: 4.0
+  power: 4.0
 ```
 
 **Strategy class:**
@@ -170,9 +169,8 @@ display:
 item:
   base_material: snowball
 
-behavior:
-  custom_data:
-    power: 4.0
+custom_data:
+  power: 4.0
 ```
 
 **Strategy class:**

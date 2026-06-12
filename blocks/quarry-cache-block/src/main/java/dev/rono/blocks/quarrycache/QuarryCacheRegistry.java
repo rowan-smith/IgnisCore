@@ -33,6 +33,8 @@ final class QuarryCacheRegistry {
 
     void register(Location location, BlockDefinition definition, ItemStack placedFrom) {
         Location blockLocation = location.getBlock().getLocation();
+        unregister(blockLocation);
+
         double radius = resolveCollectRadius(definition);
         double depth = resolveCollectDepth(definition);
         boolean showIndicator = resolveShowIndicator(definition);
@@ -63,19 +65,29 @@ final class QuarryCacheRegistry {
         Location blockLocation = location.getBlock().getLocation();
         QuarryCacheData cache = caches.get(blockLocation);
 
+        if (cache != null) {
+            persist(blockLocation, cache.inventory);
+        }
+
+        boolean attachedToItem = false;
         if (droppedItem != null) {
             if (cache != null) {
                 storage.attachContentsToItem(droppedItem, cache.inventory);
+                attachedToItem = storage.hasStoredContents(droppedItem);
             } else {
                 QuarryCacheContents contents = storage.load(blockLocation);
                 if (!contents.isEmpty()) {
                     storage.attachContentsToItem(droppedItem, contents);
+                    attachedToItem = storage.hasStoredContents(droppedItem);
                 }
             }
         }
 
         unregister(blockLocation);
-        storage.delete(blockLocation);
+
+        if (attachedToItem || storage.load(blockLocation).isEmpty()) {
+            storage.delete(blockLocation);
+        }
     }
 
     void unregister(Location location) {

@@ -47,8 +47,7 @@ interactions:
   right_click:
     action: open
 
-behavior:
-  custom_data:
+custom_data:
     collectRadius: 5.0
     collectDepth: 5.0
     showCollectZone: true

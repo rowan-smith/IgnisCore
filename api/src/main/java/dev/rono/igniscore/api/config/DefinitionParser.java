@@ -43,14 +43,14 @@ public final class DefinitionParser {
         String side3 = config.isSet("textures.side-3") ? config.getString("textures.side-3") : null;
         String side4 = config.isSet("textures.side-4") ? config.getString("textures.side-4") : null;
 
-        Map<String, Object> customData = sectionToMap(config.getConfigurationSection("behavior.custom_data"));
+        Map<String, Object> customData = sectionToMap(config.getConfigurationSection("custom_data"));
         Map<String, Object> interactionSettings = sectionToMap(config.getConfigurationSection("interactions"));
 
-        if (config.contains("behavior.fuse")) {
-            customData.putIfAbsent("fuse", config.getInt("behavior.fuse"));
+        if (config.contains("fuse")) {
+            customData.putIfAbsent("fuse", config.getInt("fuse"));
         }
-        if (config.contains("behavior.radius")) {
-            customData.putIfAbsent("radius", config.getDouble("behavior.radius"));
+        if (config.contains("radius")) {
+            customData.putIfAbsent("radius", config.getDouble("radius"));
         }
 
         if (config.isConfigurationSection("explosion")) {
@@ -106,7 +106,7 @@ public final class DefinitionParser {
 
         String baseMaterial = config.getString("item.base_material", "paper").toLowerCase();
         String iconTexture = config.getString("textures.icon", "icon.png");
-        Map<String, Object> customData = sectionToMap(config.getConfigurationSection("behavior.custom_data"));
+        Map<String, Object> customData = sectionToMap(config.getConfigurationSection("custom_data"));
         Map<String, Object> interactionSettings = sectionToMap(config.getConfigurationSection("interactions"));
 
         return new ItemDefinition(id, baseMaterial, title, description, customData,
