@@ -148,7 +148,7 @@ final class ExtensionLoadEngine {
                         + " strategy '" + strategyId + "' was not registered");
             }
 
-            plugin.getLogger().info("Loaded " + kind.folderName() + " extension '" + manifest.getName() + "' v"
+            plugin.debug("Loaded " + kind.folderName() + " extension '" + manifest.getName() + "' v"
                     + manifest.getVersion() + " (" + definitionId + ", strategy " + strategyId + ") from "
                     + jarFile.getName());
             return new LoadedExtension<>(manifest, jarFile, classLoader, definition, resources);
