@@ -20,7 +20,7 @@ class BlockItemFactoryTest extends MockBukkitTestBase {
     @BeforeEach
     void setUpFactory() {
         nbtService = new PdcBackedNbtService();
-        StubBlockManager blockManager = StubBlockManager.with(TestDefinitions.block("nuke", "nuclear"));
+        StubBlockManager blockManager = StubBlockManager.with(TestDefinitions.block("nuke"));
         factory = new BlockItemFactory(blockManager, nbtService, platformHooks);
         identifier = new BlockItemIdentifier(plugin, nbtService);
     }
@@ -33,7 +33,7 @@ class BlockItemFactoryTest extends MockBukkitTestBase {
         assertEquals("nuke", identifier.resolveTypeId(item));
         assertEquals(10001, platformHooks.readCustomModelData(item).orElseThrow());
         assertEquals(80, nbtService.readItem(item, nbt -> nbt.getInteger("ignis:fuse")).intValue());
-        assertEquals("nuclear", nbtService.readItem(item, nbt -> nbt.getString("ignis:strategy")));
+        assertEquals("nuke-block", nbtService.readItem(item, nbt -> nbt.getString("ignis:extension_id")));
         if (item.getItemMeta().hasItemModel()) {
             assertEquals("nuke", item.getItemMeta().getItemModel().getKey());
         }

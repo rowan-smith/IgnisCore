@@ -23,10 +23,10 @@ public class StrategyProfileResolver {
     }
 
     public StrategyProfile resolve(BlockDefinition definition) {
-        IgnisStrategy strategy = strategyRegistry.get(definition.getStrategy());
+        IgnisStrategy strategy = strategyRegistry.get(definition.getExtensionId());
         if (!(strategy instanceof IgnisBlockStrategy blockStrategy)) {
-            throw new IllegalStateException("Block type " + definition.getId() + " uses a non-block strategy: "
-                    + definition.getStrategy());
+            throw new IllegalStateException("Block type " + definition.getId() + " uses a non-block strategy from extension "
+                    + definition.getExtensionId());
         }
         StrategyProfile profile = blockStrategy.profile(definition);
         Map<String, Object> interactions = definition.getInteractionSettings();

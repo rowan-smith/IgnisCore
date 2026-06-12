@@ -24,7 +24,7 @@ class StrategyProfileResolverTest {
     @BeforeEach
     void setUp() {
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
-        registry.register(IgnisStrategyDescriptor.of("custom", "Custom", "1.0.0", "test"),
+        registry.register(IgnisStrategyDescriptor.of("custom", "Custom", "1.0.0", "custom"),
                 customStrategy());
         resolver = new StrategyProfileResolver(registry);
     }
@@ -87,26 +87,26 @@ class StrategyProfileResolverTest {
     @Test
     void rejectsNonBlockStrategies() {
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
-        registry.register(IgnisStrategyDescriptor.of("item-only", "Item", "1.0.0", "test"),
+        registry.register(IgnisStrategyDescriptor.of("item-only", "Item", "1.0.0", "item-only"),
                 new dev.rono.igniscore.api.strategy.IgnisItemStrategy() {
                     @Override
                     public IgnisStrategyDescriptor descriptor() {
-                        return IgnisStrategyDescriptor.of("item-only", "Item", "1.0.0", "test");
+                        return IgnisStrategyDescriptor.of("item-only", "Item", "1.0.0", "item-only");
                     }
                 });
         StrategyProfileResolver itemResolver = new StrategyProfileResolver(registry);
 
-        BlockDefinition definition = definitionWithStrategy("item-only");
+        BlockDefinition definition = definitionWithExtensionId("item-only");
 
         IllegalStateException error = assertThrows(IllegalStateException.class, () -> itemResolver.resolve(definition));
-        assertEquals("Block type test uses a non-block strategy: item-only", error.getMessage());
+        assertEquals("Block type test uses a non-block strategy from extension item-only", error.getMessage());
     }
 
     private IgnisBlockStrategy customStrategy() {
         return new IgnisBlockStrategy() {
             @Override
             public IgnisStrategyDescriptor descriptor() {
-                return IgnisStrategyDescriptor.of("custom", "Custom", "1.0.0", "test");
+                return IgnisStrategyDescriptor.of("custom", "Custom", "1.0.0", "custom");
             }
 
             @Override
@@ -120,7 +120,7 @@ class StrategyProfileResolverTest {
         };
     }
 
-    private BlockDefinition definitionWithStrategy(String strategy) {
+    private BlockDefinition definitionWithExtensionId(String extensionId) {
         return new BlockDefinition(
                 "test",
                 "paper",
@@ -132,7 +132,6 @@ class StrategyProfileResolverTest {
                 "top.png",
                 "side.png",
                 "bottom.png",
-                strategy,
                 Map.of("fuse", 80, "radius", 4.0),
                 Map.of(),
                 Map.of(),
@@ -140,7 +139,8 @@ class StrategyProfileResolverTest {
                 10001,
                 false,
                 false,
-                false
+                false,
+                extensionId
         );
     }
 
@@ -161,7 +161,6 @@ class StrategyProfileResolverTest {
                 "top.png",
                 "side.png",
                 "bottom.png",
-                "custom",
                 Map.of("fuse", fuse, "radius", radius),
                 Map.of(),
                 interactions,
@@ -169,7 +168,8 @@ class StrategyProfileResolverTest {
                 10001,
                 false,
                 false,
-                false
+                false,
+                "custom"
         );
     }
 }

@@ -50,7 +50,7 @@ public class BlockItemFactory {
 
         nbtService.editItem(item, nbt -> {
             nbt.setString("ignis:block_id", typeId);
-            nbt.setString("ignis:strategy", type.getStrategy());
+            nbt.setString("ignis:extension_id", type.getExtensionId());
             nbt.setInteger("ignis:version", 1);
             nbt.setInteger("ignis:fuse", StrategySupport.fuse(type, 80));
         });

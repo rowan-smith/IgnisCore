@@ -26,7 +26,7 @@ class RuntimeBlockServiceTest extends MockBukkitTestBase {
 
     @Test
     void tracksInstancesByUuidAndLocation() {
-        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke", "nuclear"), location);
+        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke"), location);
 
         assertSame(instance, service.getInstance(instance.getUuid()));
         assertSame(instance, service.getInstanceAt(location));
@@ -36,7 +36,7 @@ class RuntimeBlockServiceTest extends MockBukkitTestBase {
 
     @Test
     void removeInstanceClearsIndexes() {
-        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke", "nuclear"), location);
+        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke"), location);
 
         service.removeInstance(instance.getUuid());
 
@@ -47,7 +47,7 @@ class RuntimeBlockServiceTest extends MockBukkitTestBase {
 
     @Test
     void instanceSupportsNbtFlagsAndTicking() {
-        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke", "nuclear"), location);
+        RuntimeBlockInstance instance = service.createInstance(TestDefinitions.block("nuke"), location);
 
         instance.setTicksLeft(10);
         instance.tick();

@@ -19,16 +19,16 @@ class ItemManagerTest {
         ItemManager manager = new ItemManager();
         try (URLClassLoader classLoader = new URLClassLoader(new java.net.URL[0], getClass().getClassLoader())) {
             LoadedExtension<ItemDefinition> grenade = TestDefinitions.loadedItem(
-                    TestDefinitions.item("grenade", "grenade"), classLoader);
+                    TestDefinitions.item("grenade"), classLoader);
             LoadedExtension<ItemDefinition> detonator = TestDefinitions.loadedItem(
-                    TestDefinitions.item("detonator", "detonator"), classLoader);
+                    TestDefinitions.item("detonator"), classLoader);
 
             manager.loadFromExtensions(List.of(grenade, detonator));
 
             Map<String, ItemDefinition> types = manager.getItemTypes();
             assertEquals(2, types.size());
-            assertEquals("grenade", types.get("grenade").getStrategy());
-            assertEquals("detonator", types.get("detonator").getStrategy());
+            assertEquals("grenade-item", types.get("grenade").getExtensionId());
+            assertEquals("detonator-item", types.get("detonator").getExtensionId());
             assertThrows(UnsupportedOperationException.class, () -> types.put("hack", grenade.getDefinition()));
 
             manager.loadFromExtensions(List.of(grenade));
@@ -42,7 +42,7 @@ class ItemManagerTest {
         ItemManager manager = new ItemManager();
         try (URLClassLoader classLoader = new URLClassLoader(new java.net.URL[0], getClass().getClassLoader())) {
             manager.loadFromExtensions(List.of(
-                    TestDefinitions.loadedItem(TestDefinitions.item("grenade", "grenade"), classLoader)));
+                    TestDefinitions.loadedItem(TestDefinitions.item("grenade"), classLoader)));
             manager.loadFromExtensions(List.of());
             assertTrue(manager.getItemTypes().isEmpty());
         }

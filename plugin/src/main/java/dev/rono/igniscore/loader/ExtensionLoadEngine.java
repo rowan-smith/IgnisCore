@@ -106,7 +106,7 @@ final class ExtensionLoadEngine {
     private LoadedExtension<BlockDefinition> loadBlockJar(File jarFile, int modelData) throws Exception {
         ExtensionManifest manifest = readManifest(jarFile, ExtensionKind.BLOCK);
         YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         BlockDefinition definition = ExtensionKind.BLOCK.parseBlock(config,
                 config.getString("id", manifest.getId()), modelData, manifest.getId());
         return loadExtension(jarFile, manifest, descriptor, definition, ExtensionKind.BLOCK);
@@ -115,7 +115,7 @@ final class ExtensionLoadEngine {
     private LoadedExtension<ItemDefinition> loadItemJar(File jarFile, int modelData) throws Exception {
         ExtensionManifest manifest = readManifest(jarFile, ExtensionKind.ITEM);
         YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         ItemDefinition definition = ExtensionKind.ITEM.parseItem(config,
                 config.getString("id", manifest.getId()), modelData, manifest.getId());
         return loadExtension(jarFile, manifest, descriptor, definition, ExtensionKind.ITEM);
@@ -145,12 +145,11 @@ final class ExtensionLoadEngine {
 
             if (!strategyRegistry.isRegistered(strategyId)) {
                 throw new IllegalStateException(kind.folderName() + " extension " + manifest.getId()
-                        + " strategy '" + strategyId + "' was not registered");
+                        + " did not register strategy class " + manifest.getStrategyClass());
             }
 
             plugin.debug("Loaded " + kind.folderName() + " extension '" + manifest.getName() + "' v"
-                    + manifest.getVersion() + " (" + definitionId + ", strategy " + strategyId + ") from "
-                    + jarFile.getName());
+                    + manifest.getVersion() + " (" + definitionId + ") from " + jarFile.getName());
             return new LoadedExtension<>(manifest, jarFile, classLoader, definition, resources);
         } catch (Exception e) {
             classLoader.close();

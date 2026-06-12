@@ -33,8 +33,6 @@ model:
   mode: "auto"
 
 behavior:
-  strategy: wormhole
-  strategy_name: Wormhole Distortion
 
 
   custom_data:

@@ -13,8 +13,6 @@ textures:
   icon: icon.png
 
 behavior:
-  strategy: detonator
-  strategy_name: Remote Detonator
   custom_data:
     target_block: signal-charge
     max_links: 16

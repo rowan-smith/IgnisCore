@@ -26,7 +26,7 @@ class ItemFactoryTest extends MockBukkitTestBase {
         ItemManager itemManager = new ItemManager();
         try (URLClassLoader classLoader = new URLClassLoader(new java.net.URL[0], getClass().getClassLoader())) {
             itemManager.loadFromExtensions(List.of(
-                    TestDefinitions.loadedItem(TestDefinitions.item("grenade", "grenade"), classLoader)));
+                    TestDefinitions.loadedItem(TestDefinitions.item("grenade"), classLoader)));
         }
         factory = new ItemFactory(itemManager, nbtService, platformHooks);
         identifier = new ItemIdentifier(nbtService);
@@ -39,7 +39,7 @@ class ItemFactoryTest extends MockBukkitTestBase {
         assertEquals(Material.SNOWBALL, item.getType());
         assertEquals("grenade", identifier.resolveTypeId(item));
         assertEquals(20001, platformHooks.readCustomModelData(item).orElseThrow());
-        assertEquals("grenade", nbtService.readItem(item, nbt -> nbt.getString("ignis:strategy")));
+        assertEquals("grenade-item", nbtService.readItem(item, nbt -> nbt.getString("ignis:extension_id")));
         if (item.getItemMeta().hasItemModel()) {
             assertEquals("grenade", item.getItemMeta().getItemModel().getKey());
         }

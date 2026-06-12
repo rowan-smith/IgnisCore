@@ -43,7 +43,6 @@ public final class DefinitionParser {
         String side3 = config.isSet("textures.side-3") ? config.getString("textures.side-3") : null;
         String side4 = config.isSet("textures.side-4") ? config.getString("textures.side-4") : null;
 
-        String strategy = config.getString("behavior.strategy", "default");
         Map<String, Object> customData = sectionToMap(config.getConfigurationSection("behavior.custom_data"));
         Map<String, Object> interactionSettings = sectionToMap(config.getConfigurationSection("interactions"));
 
@@ -55,9 +54,6 @@ public final class DefinitionParser {
         }
 
         if (config.isConfigurationSection("explosion")) {
-            if ("default".equals(strategy)) {
-                strategy = config.getString("explosion.strategy", "default");
-            }
             customData.putIfAbsent("fuse", config.getInt("explosion.fuse", 80));
             customData.putIfAbsent("radius", config.getDouble("explosion.radius", 4.0));
 
@@ -83,16 +79,17 @@ public final class DefinitionParser {
         Map<String, Object> displaySettings = sectionToMap(config.getConfigurationSection("block_display"));
 
         return new BlockDefinition(id, baseMaterial, renderMaterial, title, description, placeable, breakable,
-                top, side, bottom, strategy, customData, breakSettings, interactionSettings,
+                top, side, bottom, customData, breakSettings, interactionSettings,
                 displaySettings, modelData, rotate, floatBob, pulse, extensionId, side1, side2, side3, side4);
     }
 
-    public static IgnisStrategyDescriptor parseStrategyDescriptor(YamlConfiguration config, ExtensionManifest manifest) {
-        String id = config.getString("behavior.strategy", "default");
-        String name = config.getString("behavior.strategy_name", manifest.getName());
-        String version = config.getString("behavior.strategy_version", manifest.getVersion());
-        String author = config.getString("behavior.strategy_author", manifest.getAuthor());
-        return IgnisStrategyDescriptor.of(id, name, version, author, manifest.getId());
+    public static IgnisStrategyDescriptor parseStrategyDescriptor(ExtensionManifest manifest) {
+        return IgnisStrategyDescriptor.of(
+                manifest.getId(),
+                manifest.getName(),
+                manifest.getVersion(),
+                manifest.getAuthor(),
+                manifest.getId());
     }
 
     public static ItemDefinition parseItem(YamlConfiguration config, String fallbackId, int modelData, String extensionId) {
@@ -108,12 +105,11 @@ public final class DefinitionParser {
         }
 
         String baseMaterial = config.getString("item.base_material", "paper").toLowerCase();
-        String strategy = config.getString("behavior.strategy", "default");
         String iconTexture = config.getString("textures.icon", "icon.png");
         Map<String, Object> customData = sectionToMap(config.getConfigurationSection("behavior.custom_data"));
         Map<String, Object> interactionSettings = sectionToMap(config.getConfigurationSection("interactions"));
 
-        return new ItemDefinition(id, baseMaterial, title, description, strategy, customData,
+        return new ItemDefinition(id, baseMaterial, title, description, customData,
                 interactionSettings, modelData, extensionId, iconTexture);
     }
 

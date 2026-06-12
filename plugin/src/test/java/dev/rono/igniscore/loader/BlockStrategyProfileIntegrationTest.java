@@ -41,7 +41,7 @@ class BlockStrategyProfileIntegrationTest {
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         BlockDefinition definition = ExtensionKind.BLOCK.parseBlock(config, manifest.getId(), 10001, manifest.getId());
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
 

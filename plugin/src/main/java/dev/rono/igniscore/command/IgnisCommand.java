@@ -2,7 +2,6 @@ package dev.rono.igniscore.command;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
-import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.core.ExtensionBootstrap;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
@@ -12,7 +11,6 @@ import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.platform.PlatformHooks;
 import dev.rono.igniscore.service.ItemFactory;
 import org.bukkit.Bukkit;
@@ -36,7 +34,6 @@ public class IgnisCommand implements PluginCommandHandler {
     private final ItemManager itemManager;
     private final ResourcePackService resourcePackService;
     private final ExtensionBootstrap extensionBootstrap;
-    private final IgnisStrategyRegistry strategyRegistry;
     private final BlockExtensionLoader blockExtensionLoader;
     private final ItemExtensionLoader itemExtensionLoader;
     private final ItemFactory itemFactory;
@@ -48,7 +45,6 @@ public class IgnisCommand implements PluginCommandHandler {
                         ItemManager itemManager,
                         ResourcePackService resourcePackService,
                         ExtensionBootstrap extensionBootstrap,
-                        IgnisStrategyRegistry strategyRegistry,
                         BlockExtensionLoader blockExtensionLoader,
                         ItemExtensionLoader itemExtensionLoader,
                         ItemFactory itemFactory,
@@ -58,7 +54,6 @@ public class IgnisCommand implements PluginCommandHandler {
         this.itemManager = itemManager;
         this.resourcePackService = resourcePackService;
         this.extensionBootstrap = extensionBootstrap;
-        this.strategyRegistry = strategyRegistry;
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
         this.itemFactory = itemFactory;
@@ -205,14 +200,7 @@ public class IgnisCommand implements PluginCommandHandler {
             BlockDefinition definition = extension.getDefinition();
             send(sender, "<gray>- <white>" + extension.getManifest().getName()
                     + " <dark_gray>v" + extension.getManifest().getVersion()
-                    + " -> block <white>" + definition.getId()
-                    + " <dark_gray>(strategy: " + definition.getStrategy() + ")</dark_gray>");
-        }
-
-        send(sender, "<gold>Registered Strategies:");
-        for (IgnisStrategyDescriptor descriptor : strategyRegistry.getDescriptors()) {
-            send(sender, "<gray>- <white>" + descriptor.getId()
-                    + " <dark_gray>from " + descriptor.getSourcePlugin() + "</dark_gray>");
+                    + " -> block <white>" + definition.getId() + "</dark_gray>");
         }
         return true;
     }
@@ -227,8 +215,7 @@ public class IgnisCommand implements PluginCommandHandler {
         for (LoadedExtension<ItemDefinition> extension : itemExtensionLoader.getLoadedExtensions()) {
             send(sender, "<gray>- <white>" + extension.getManifest().getName()
                     + " <dark_gray>v" + extension.getManifest().getVersion()
-                    + " -> item <white>" + extension.getDefinition().getId()
-                    + " <dark_gray>(strategy: " + extension.getDefinition().getStrategy() + ")</dark_gray>");
+                    + " -> item <white>" + extension.getDefinition().getId() + "</dark_gray>");
         }
         return true;
     }
@@ -276,8 +263,7 @@ public class IgnisCommand implements PluginCommandHandler {
             send(sender, "<gray>- <white>" + def.getId());
             send(sender, "<gray>  Inventory: <white>" + def.getBaseMaterial()
                     + " (CMD " + def.getCustomModelData() + ") -> igniscore:item/" + def.getId());
-            send(sender, "<gray>  Extension: <white>" + def.getExtensionId()
-                    + " strategy: " + def.getStrategy());
+            send(sender, "<gray>  Extension: <white>" + def.getExtensionId());
         }
 
         String url = plugin.getConfig().getString("resource-pack.public-url");

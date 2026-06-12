@@ -76,9 +76,6 @@ public final class TestExtensionJarBuilder {
                   title: "&aTest Block"
                 block:
                   base_material: paper
-                behavior:
-                  strategy: testblock
-                  strategy_name: Test Block Strategy
                 """;
     }
 
@@ -100,8 +97,6 @@ public final class TestExtensionJarBuilder {
                   title: "&cTest Item"
                 item:
                   base_material: snowball
-                behavior:
-                  strategy: testitem
                 """;
     }
 

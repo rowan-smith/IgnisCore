@@ -32,8 +32,6 @@ model:
   mode: "auto"
 
 behavior:
-  strategy: phantom
-  strategy_name: Phantom Vanish
   custom_data:
     fuse: 160
     radius: 6.0

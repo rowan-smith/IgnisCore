@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DefinitionParserTest {
     @Test
-    void buildsStrategyDescriptorFromConfigAndManifest() {
+    void buildsStrategyDescriptorFromManifest() {
         ExtensionManifest manifest = ExtensionManifest.fromStream(
                 new ByteArrayInputStream("""
                         id: nuclear-block
@@ -29,16 +29,10 @@ class DefinitionParserTest {
                         """.getBytes(StandardCharsets.UTF_8)),
                 "block-extension.yml");
 
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
-                behavior:
-                  strategy: nuclear
-                  strategy_name: Nuclear Detonation
-                """));
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
 
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
-
-        assertEquals("nuclear", descriptor.getId());
-        assertEquals("Nuclear Detonation", descriptor.getName());
+        assertEquals("nuclear-block", descriptor.getId());
+        assertEquals("Nuclear Block", descriptor.getName());
         assertEquals("2.0.0", descriptor.getVersion());
         assertEquals("IgnisCore", descriptor.getAuthor());
         assertEquals("nuclear-block", descriptor.getSourcePlugin());
@@ -64,7 +58,6 @@ class DefinitionParserTest {
                   side: custom-side.png
                   bottom: custom-bottom.png
                 behavior:
-                  strategy: phantom
                   fuse: 40
                   radius: 6.5
                   custom_data:
@@ -89,7 +82,6 @@ class DefinitionParserTest {
         assertFalse(definition.isPlaceable());
         assertFalse(definition.isBreakable());
         assertEquals("custom-top.png", definition.getTopTexture());
-        assertEquals("phantom", definition.getStrategy());
         assertEquals(40, definition.getCustomData().get("fuse"));
         assertEquals(6.5, definition.getCustomData().get("radius"));
         assertEquals(3.0, definition.getCustomData().get("power"));
@@ -107,10 +99,7 @@ class DefinitionParserTest {
     void mapsLegacyExplosionSectionIntoBehaviorFields() {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
                 id: legacy
-                behavior:
-                  strategy: default
                 explosion:
-                  strategy: erupting
                   fuse: 55
                   radius: 9.0
                   power: 7.5
@@ -128,7 +117,6 @@ class DefinitionParserTest {
 
         BlockDefinition definition = DefinitionParser.parseBlock(config, "legacy", 10001, "legacy-block");
 
-        assertEquals("erupting", definition.getStrategy());
         assertEquals(55, definition.getCustomData().get("fuse"));
         assertEquals(9.0, definition.getCustomData().get("radius"));
         assertEquals(7.5, definition.getCustomData().get("power"));
@@ -149,18 +137,15 @@ class DefinitionParserTest {
     void preservesExplicitBehaviorValuesOverLegacyExplosionDefaults() {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader("""
                 behavior:
-                  strategy: nuclear
                   fuse: 120
                   radius: 20.0
                 explosion:
-                  strategy: erupting
                   fuse: 10
                   radius: 2.0
                 """));
 
         BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuclear-block");
 
-        assertEquals("nuclear", definition.getStrategy());
         assertEquals(120, definition.getCustomData().get("fuse"));
         assertEquals(20.0, definition.getCustomData().get("radius"));
     }
@@ -178,7 +163,6 @@ class DefinitionParserTest {
                 textures:
                   icon: grenade-icon.png
                 behavior:
-                  strategy: grenade
                   custom_data:
                     power: 4.0
                     fuse_ticks: 40
@@ -192,7 +176,6 @@ class DefinitionParserTest {
         assertEquals("grenade", definition.getId());
         assertEquals("snowball", definition.getBaseMaterial());
         assertEquals("Grenade", PlainTextComponentSerializer.plainText().serialize(definition.getTitle()));
-        assertEquals("grenade", definition.getStrategy());
         assertEquals(4.0, definition.getCustomData().get("power"));
         assertEquals(40, definition.getCustomData().get("fuse_ticks"));
         assertEquals("throw", ((Map<?, ?>) definition.getInteractionSettings().get("right_click")).get("action"));
@@ -289,7 +272,6 @@ class DefinitionParserTest {
             BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuclear-block");
 
             assertEquals("nuke", definition.getId());
-            assertEquals("nuclear", definition.getStrategy());
             assertEquals(160, definition.getCustomData().get("fuse"));
             assertEquals(30.0, definition.getCustomData().get("radius"));
             assertEquals(30.0, definition.getCustomData().get("power"));

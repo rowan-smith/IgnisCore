@@ -48,7 +48,7 @@ class BundledExtensionIntegrationTest {
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         BlockDefinition definition = ExtensionKind.BLOCK.parseBlock(config, manifest.getId(), 10001, manifest.getId());
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
 
@@ -78,7 +78,7 @@ class BundledExtensionIntegrationTest {
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "item-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "item-extension.yml"));
         YamlConfiguration config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
         ItemDefinition definition = ExtensionKind.ITEM.parseItem(config, manifest.getId(), 20001, manifest.getId());
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl();
 
@@ -109,7 +109,7 @@ class BundledExtensionIntegrationTest {
         BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuclear-block");
 
         assertEquals("nuke", definition.getId());
-        assertEquals("nuclear", definition.getStrategy());
+        assertEquals("nuclear-block", definition.getExtensionId());
         assertEquals(160, definition.getCustomData().get("fuse"));
         assertEquals(30.0, definition.getCustomData().get("radius"));
     }

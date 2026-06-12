@@ -26,7 +26,6 @@ class AbstractIgnisBlockStrategyTest {
                 "top.png",
                 "side.png",
                 "bottom.png",
-                "test",
                 Map.of("power", 7.5, "armed", true, "waves", 3, "fuse", 80, "radius", 4.0),
                 Map.of(),
                 Map.of(),

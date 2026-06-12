@@ -33,8 +33,6 @@ model:
   mode: "auto"
 
 behavior:
-  strategy: mimic
-  strategy_name: Mimic TNT
   custom_data:
     fuse: 80
     radius: 4.0

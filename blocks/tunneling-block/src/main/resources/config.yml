@@ -33,8 +33,6 @@ model:
   mode: "auto"
 
 behavior:
-  strategy: tunneling
-  strategy_name: Tunneling Blast
   custom_data:
     fuse: 60
     radius: 4.0

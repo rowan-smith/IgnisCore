@@ -15,8 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AllExtensionConfigsParsingTest {
     @ParameterizedTest
@@ -27,12 +27,12 @@ class AllExtensionConfigsParsingTest {
         ExtensionManifest manifest = manifestFor(extensionId, "block-extension.yml");
 
         BlockDefinition definition = DefinitionParser.parseBlock(config, extensionId, 10001, extensionId);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
 
         assertFalse(definition.getId().isBlank());
         assertFalse(descriptor.getId().isBlank());
-        assertNotNull(definition.getStrategy());
-        assertEqualsExtension(extensionId, definition.getExtensionId());
+        assertEquals(extensionId, definition.getExtensionId());
+        assertEquals(extensionId, descriptor.getId());
     }
 
     @ParameterizedTest
@@ -43,16 +43,12 @@ class AllExtensionConfigsParsingTest {
         ExtensionManifest manifest = manifestFor(extensionId, "item-extension.yml");
 
         ItemDefinition definition = DefinitionParser.parseItem(config, extensionId, 20001, extensionId);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(config, manifest);
+        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
 
         assertFalse(definition.getId().isBlank());
         assertFalse(descriptor.getId().isBlank());
-        assertNotNull(definition.getStrategy());
-        assertEqualsExtension(extensionId, definition.getExtensionId());
-    }
-
-    private static void assertEqualsExtension(String expected, String actual) {
-        org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
+        assertEquals(extensionId, definition.getExtensionId());
+        assertEquals(extensionId, descriptor.getId());
     }
 
     private static Stream<Path> blockConfigs() throws IOException {

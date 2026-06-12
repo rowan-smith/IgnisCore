@@ -48,8 +48,6 @@ interactions:
     action: open
 
 behavior:
-  strategy: quarry-cache
-  strategy_name: Quarry Cache
   custom_data:
     collectRadius: 5.0
     collectDepth: 5.0

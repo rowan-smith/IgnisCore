@@ -16,8 +16,6 @@ model:
   mode: "auto"
 
 behavior:
-  strategy: nuclear
-  strategy_name: Nuclear Detonation
   custom_data:
     fuse: 160
     radius: 30.0
