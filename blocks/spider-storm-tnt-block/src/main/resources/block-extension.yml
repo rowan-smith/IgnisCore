@@ -1,0 +1,6 @@
+id: spider-storm-tnt-block
+name: Spider Storm TNT
+version: @project.version@
+api-version: @project.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.spiderstormtnt.Strategy

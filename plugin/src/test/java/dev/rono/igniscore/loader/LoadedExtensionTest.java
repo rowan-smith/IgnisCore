@@ -17,9 +17,9 @@ class LoadedExtensionTest {
         try (URLClassLoader classLoader = new URLClassLoader(new java.net.URL[0], getClass().getClassLoader())) {
             var definition = TestDefinitions.block("nuke");
             ExtensionManifest manifest = ExtensionManifest.fromStream(
-                    new java.io.ByteArrayInputStream("id: nuclear-block\n".getBytes()),
+                    new java.io.ByteArrayInputStream("id: nuke-block\n".getBytes()),
                     "block-extension.yml");
-            File jarFile = new File("nuclear-block.jar");
+            File jarFile = new File("nuke-block.jar");
             ExtensionResources resources = new ExtensionResources(classLoader);
 
             LoadedExtension<dev.rono.igniscore.api.model.BlockDefinition> extension =

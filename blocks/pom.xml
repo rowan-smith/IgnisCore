@@ -17,13 +17,13 @@
   <name>igniscore-blocks</name>
 
   <modules>
-    <module>nuclear-block</module>
-    <module>wormhole-block</module>
-    <module>phantom-block</module>
-    <module>erupting-block</module>
-    <module>mimic-block</module>
-    <module>tunneling-block</module>
-    <module>entity-block</module>
+    <module>nuke-block</module>
+    <module>wormhole-tnt-block</module>
+    <module>phantom-tnt-block</module>
+    <module>erupting-tnt-block</module>
+    <module>mimic-tnt-block</module>
+    <module>tunneling-tnt-block</module>
+    <module>spider-storm-tnt-block</module>
     <module>signal-charge-block</module>
     <module>quarry-cache-block</module>
   </modules>

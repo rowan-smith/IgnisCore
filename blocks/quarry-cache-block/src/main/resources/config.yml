@@ -1,27 +1,18 @@
-# Quarry Cache
-#
-# Automatically collects block drops from a nearby area and stores them
-# for later retrieval. Place the block, mine nearby, and right-click to
-# open the storage GUI.
-
 id: quarry-cache
 
 display:
   title: "&6Quarry Cache"
   description:
-    - "&7Automatically collects block drops"
-    - "&7from a nearby cylinder area."
+    - "&7Collects block drops from a nearby area."
     - "&7Radius &e5&7, depth &e5&7 blocks."
     - ""
     - "&eLeft-click&7 to break"
     - "&eRight-click&7 to open storage"
-    - "&eTop row&7 sets item filters"
+    - "&eCenter top row&7 sets item filters"
 
 block:
   placeable: true
   breakable: true
-  base_material: paper
-  render_material: carrot_on_a_stick
   breaking:
     ticks: 35
     hit_interval_ticks: 5
@@ -48,6 +39,6 @@ interactions:
     action: open
 
 custom_data:
-    collectRadius: 5.0
-    collectDepth: 5.0
-    showCollectZone: true
+  collectRadius: 5.0
+  collectDepth: 5.0
+  showCollectZone: true

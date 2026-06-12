@@ -1,0 +1,6 @@
+id: erupting-tnt-block
+name: Erupting TNT Block
+version: @project.version@
+api-version: @project.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.eruptingtnt.Strategy

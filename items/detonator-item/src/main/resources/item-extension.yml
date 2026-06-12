@@ -1,5 +1,6 @@
 id: detonator-item
-name: Detonator
+name: Detonator Item
 version: @project.version@
 api-version: @project.version@
 author: IgnisCore
+strategy: dev.rono.igniscore.item.detonator.Strategy

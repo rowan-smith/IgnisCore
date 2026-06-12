@@ -1,6 +1,0 @@
-id: wormhole-block
-name: Wormhole Block
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore
-strategy: dev.rono.blocks.wormhole.Strategy

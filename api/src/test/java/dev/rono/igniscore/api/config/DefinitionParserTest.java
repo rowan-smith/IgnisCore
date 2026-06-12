@@ -22,8 +22,8 @@ class DefinitionParserTest {
     void buildsStrategyDescriptorFromManifest() {
         ExtensionManifest manifest = ExtensionManifest.fromStream(
                 new ByteArrayInputStream("""
-                        id: nuclear-block
-                        name: Nuclear Block
+                        id: nuke-block
+                        name: Nuke Block
                         version: 2.0.0
                         author: IgnisCore
                         """.getBytes(StandardCharsets.UTF_8)),
@@ -31,11 +31,11 @@ class DefinitionParserTest {
 
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
 
-        assertEquals("nuclear-block", descriptor.getId());
-        assertEquals("Nuclear Block", descriptor.getName());
+        assertEquals("nuke-block", descriptor.getId());
+        assertEquals("Nuke Block", descriptor.getName());
         assertEquals("2.0.0", descriptor.getVersion());
         assertEquals("IgnisCore", descriptor.getAuthor());
-        assertEquals("nuclear-block", descriptor.getSourcePlugin());
+        assertEquals("nuke-block", descriptor.getSourcePlugin());
     }
 
     @Test
@@ -72,7 +72,7 @@ class DefinitionParserTest {
                     pulse: false
                 """));
 
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10042, "phantom-block");
+        BlockDefinition definition = DefinitionParser.parseBlock(config, "fallback", 10042, "phantom-tnt-block");
 
         assertEquals("phantom", definition.getId());
         assertEquals("paper", definition.getBaseMaterial());
@@ -91,7 +91,7 @@ class DefinitionParserTest {
         assertFalse(definition.isFloatBob());
         assertFalse(definition.isPulse());
         assertEquals(10042, definition.getCustomModelData());
-        assertEquals("phantom-block", definition.getExtensionId());
+        assertEquals("phantom-tnt-block", definition.getExtensionId());
     }
 
     @Test
@@ -142,7 +142,7 @@ class DefinitionParserTest {
                   radius: 2.0
                 """));
 
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuclear-block");
+        BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuke-block");
 
         assertEquals(120, definition.getCustomData().get("fuse"));
         assertEquals(20.0, definition.getCustomData().get("radius"));
@@ -266,7 +266,7 @@ class DefinitionParserTest {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(
                     new String(input.readAllBytes(), StandardCharsets.UTF_8)));
 
-            BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuclear-block");
+            BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuke-block");
 
             assertEquals("nuke", definition.getId());
             assertEquals(160, definition.getCustomData().get("fuse"));

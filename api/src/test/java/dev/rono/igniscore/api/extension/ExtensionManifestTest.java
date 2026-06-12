@@ -13,22 +13,22 @@ class ExtensionManifestTest {
     @Test
     void parsesStrategyManifestFromYaml() {
         String yaml = """
-                id: nuclear-block
-                name: Nuclear Block
+                id: nuke-block
+                name: Nuke Block
                 version: 2.0.0
                 api-version: 1.0.0
                 author: Tester
-                strategy: dev.rono.blocks.nuclear.Strategy
+                strategy: dev.rono.igniscore.block.nuke.Strategy
                 """;
 
         ExtensionManifest manifest = ExtensionManifest.fromStream(
                 new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
                 "block-extension.yml");
 
-        assertEquals("nuclear-block", manifest.getId());
-        assertEquals("Nuclear Block", manifest.getName());
+        assertEquals("nuke-block", manifest.getId());
+        assertEquals("Nuke Block", manifest.getName());
         assertEquals("2.0.0", manifest.getVersion());
-        assertEquals("dev.rono.blocks.nuclear.Strategy", manifest.getStrategyClass());
+        assertEquals("dev.rono.igniscore.block.nuke.Strategy", manifest.getStrategyClass());
         assertEquals("Tester", manifest.getAuthor());
         assertEquals("1.0.0", manifest.getApiVersion());
     }
@@ -36,28 +36,28 @@ class ExtensionManifestTest {
     @Test
     void resolvesLegacyMainClassToStrategy() {
         String yaml = """
-                id: nuclear-block
-                main: dev.rono.blocks.nuclear.BlockPlugin
+                id: nuke-block
+                main: dev.rono.igniscore.block.nuke.BlockPlugin
                 """;
 
         ExtensionManifest manifest = ExtensionManifest.fromStream(
                 new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
                 "block-extension.yml");
 
-        assertEquals("dev.rono.blocks.nuclear.Strategy", manifest.getStrategyClass());
+        assertEquals("dev.rono.igniscore.block.nuke.Strategy", manifest.getStrategyClass());
     }
 
     @Test
     void infersStrategyClassFromBlockExtensionId() {
         String yaml = """
-                id: nuclear-block
+                id: nuke-block
                 """;
 
         ExtensionManifest manifest = ExtensionManifest.fromStream(
                 new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
                 "block-extension.yml");
 
-        assertEquals("dev.rono.blocks.nuclear.Strategy", manifest.getStrategyClass());
+        assertEquals("dev.rono.igniscore.block.nuke.Strategy", manifest.getStrategyClass());
     }
 
     @Test
@@ -70,21 +70,21 @@ class ExtensionManifestTest {
                 new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
                 "item-extension.yml");
 
-        assertEquals("dev.rono.items.grenade.Strategy", manifest.getStrategyClass());
+        assertEquals("dev.rono.igniscore.item.grenade.Strategy", manifest.getStrategyClass());
     }
 
     @Test
     void appliesDefaultsForMissingMetadata() {
         ExtensionManifest manifest = ExtensionManifest.fromStream(
-                new ByteArrayInputStream("id: wormhole-block\n".getBytes(StandardCharsets.UTF_8)),
+                new ByteArrayInputStream("id: wormhole-tnt-block\n".getBytes(StandardCharsets.UTF_8)),
                 "block-extension.yml");
 
-        assertEquals("wormhole-block", manifest.getId());
-        assertEquals("wormhole-block", manifest.getName());
+        assertEquals("wormhole-tnt-block", manifest.getId());
+        assertEquals("wormhole-tnt-block", manifest.getName());
         assertEquals("1.0.0", manifest.getVersion());
         assertEquals(IgnisApiVersion.CURRENT, manifest.getApiVersion());
         assertEquals("unknown", manifest.getAuthor());
-        assertEquals("dev.rono.blocks.wormhole.Strategy", manifest.getStrategyClass());
+        assertEquals("dev.rono.igniscore.block.wormholetnt.Strategy", manifest.getStrategyClass());
     }
 
     @Test

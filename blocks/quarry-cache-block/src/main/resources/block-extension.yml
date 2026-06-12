@@ -3,4 +3,4 @@ name: Quarry Cache Block
 version: @project.version@
 api-version: @project.version@
 author: IgnisCore
-strategy: dev.rono.blocks.quarrycache.Strategy
+strategy: dev.rono.igniscore.block.quarrycache.Strategy

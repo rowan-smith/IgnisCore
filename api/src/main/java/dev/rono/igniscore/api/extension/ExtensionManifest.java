@@ -55,15 +55,19 @@ public final class ExtensionManifest {
 
         if (extensionId.endsWith("-block")) {
             String segment = extensionId.substring(0, extensionId.length() - "-block".length());
-            return "dev.rono.blocks." + segment + ".Strategy";
+            return "dev.rono.igniscore.block." + toPackageSegment(segment) + ".Strategy";
         }
 
         if (extensionId.endsWith("-item")) {
             String segment = extensionId.substring(0, extensionId.length() - "-item".length());
-            return "dev.rono.items." + segment + ".Strategy";
+            return "dev.rono.igniscore.item." + toPackageSegment(segment) + ".Strategy";
         }
 
         return Objects.requireNonNull(strategy, "extension manifest requires strategy");
+    }
+
+    private static String toPackageSegment(String name) {
+        return name.replace("-", "");
     }
 
     public String getId() {

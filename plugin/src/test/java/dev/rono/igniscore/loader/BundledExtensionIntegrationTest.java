@@ -32,13 +32,13 @@ class BundledExtensionIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "nuclear-block",
-            "wormhole-block",
-            "phantom-block",
-            "erupting-block",
-            "mimic-block",
-            "tunneling-block",
-            "entity-block",
+            "nuke-block",
+            "wormhole-tnt-block",
+            "phantom-tnt-block",
+            "erupting-tnt-block",
+            "mimic-tnt-block",
+            "tunneling-tnt-block",
+            "spider-storm-tnt-block",
             "signal-charge-block",
             "quarry-cache-block"
     })
@@ -102,19 +102,19 @@ class BundledExtensionIntegrationTest {
     @Test
     @EnabledIf("nuclearConfigFixtureExists")
     void parsesRepositoryNuclearConfigFixture() throws Exception {
-        Path configPath = Path.of("..", "blocks", "nuclear-block", "src", "main", "resources", "config.yml");
+        Path configPath = Path.of("..", "blocks", "nuke-block", "src", "main", "resources", "config.yml");
         String yaml = Files.readString(configPath, StandardCharsets.UTF_8);
         YamlConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
 
-        BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuclear-block");
+        BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuke-block");
 
         assertEquals("nuke", definition.getId());
-        assertEquals("nuclear-block", definition.getExtensionId());
+        assertEquals("nuke-block", definition.getExtensionId());
         assertEquals(160, definition.getCustomData().get("fuse"));
         assertEquals(30.0, definition.getCustomData().get("radius"));
     }
 
     static boolean nuclearConfigFixtureExists() {
-        return Files.exists(Path.of("..", "blocks", "nuclear-block", "src", "main", "resources", "config.yml"));
+        return Files.exists(Path.of("..", "blocks", "nuke-block", "src", "main", "resources", "config.yml"));
     }
 }

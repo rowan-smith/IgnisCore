@@ -27,13 +27,13 @@ class BlockStrategyProfileIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "nuclear-block",
-            "wormhole-block",
-            "phantom-block",
-            "erupting-block",
-            "mimic-block",
-            "tunneling-block",
-            "entity-block",
+            "nuke-block",
+            "wormhole-tnt-block",
+            "phantom-tnt-block",
+            "erupting-tnt-block",
+            "mimic-tnt-block",
+            "tunneling-tnt-block",
+            "spider-storm-tnt-block",
             "signal-charge-block"
     })
     void bundledStrategiesExposeProfilesForTheirDefinitions(String moduleName) throws Exception {

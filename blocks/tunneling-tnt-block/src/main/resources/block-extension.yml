@@ -1,0 +1,6 @@
+id: tunneling-tnt-block
+name: Tunneling TNT Block
+version: @project.version@
+api-version: @project.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.tunnelingtnt.Strategy
