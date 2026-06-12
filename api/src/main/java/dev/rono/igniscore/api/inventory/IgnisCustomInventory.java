@@ -14,4 +14,8 @@ public interface IgnisCustomInventory extends InventoryHolder {
     void restoreDecorations();
 
     boolean isSeparatorSlot(int slot);
+
+    default void onClose() {}
+
+    default void onChange() {}
 }

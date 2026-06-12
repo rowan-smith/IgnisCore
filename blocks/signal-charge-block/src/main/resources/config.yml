@@ -12,6 +12,14 @@ display:
     - "&7Pair with a detonator"
     - "&7to detonate remotely"
 
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+    break_sound: BLOCK_GRAVEL_BREAK
+    hit_sound: BLOCK_GRAVEL_HIT
+
 textures:
   top: top.jpg
   side: side.jpg

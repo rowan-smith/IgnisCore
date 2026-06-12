@@ -13,7 +13,7 @@ public final class StubBlockManager extends BlockManager {
     private final Map<Location, String> placedBlocks = new ConcurrentHashMap<>();
 
     private StubBlockManager(Map<String, BlockDefinition> blockTypes) {
-        super(null, null, null, null);
+        super(null, null, null, null, null);
         this.blockTypes = blockTypes;
     }
 
@@ -32,11 +32,16 @@ public final class StubBlockManager extends BlockManager {
 
     @Override
     public void registerPlacedBlock(Location location, String typeId) {
-        placedBlocks.put(location, typeId);
+        placedBlocks.put(location.getBlock().getLocation(), typeId);
+    }
+
+    @Override
+    public void registerPlacedBlock(Location location, String typeId, org.bukkit.inventory.ItemStack placedFrom) {
+        registerPlacedBlock(location, typeId);
     }
 
     @Override
     public String getPlacedBlockType(Location location) {
-        return placedBlocks.get(location);
+        return placedBlocks.get(location.getBlock().getLocation());
     }
 }

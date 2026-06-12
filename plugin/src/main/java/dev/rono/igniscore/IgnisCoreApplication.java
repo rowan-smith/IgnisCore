@@ -14,6 +14,7 @@ import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.listener.BlockListener;
 import dev.rono.igniscore.listener.ExtensionSupportListener;
 import dev.rono.igniscore.listener.ItemListener;
+import dev.rono.igniscore.listener.PlacedBlockRestoreListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
@@ -58,6 +59,7 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     private final BlockExtensionLoader blockExtensionLoader;
     private final ItemExtensionLoader itemExtensionLoader;
     private final ExtensionSupportService extensionSupportService;
+    private final PlacedBlockRestoreListener placedBlockRestoreListener;
     private final List<Listener> listeners;
 
     @Inject
@@ -82,7 +84,8 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
                                 IgnisStrategyRegistry strategyRegistry,
                                 BlockExtensionLoader blockExtensionLoader,
                                 ItemExtensionLoader itemExtensionLoader,
-                                ExtensionSupportService extensionSupportService) {
+                                ExtensionSupportService extensionSupportService,
+                                PlacedBlockRestoreListener placedBlockRestoreListener) {
         this.plugin = plugin;
         this.commandRegistrar = commandRegistrar;
         this.ignisCommand = ignisCommand;
@@ -101,12 +104,15 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
         this.extensionSupportService = extensionSupportService;
-        this.listeners = List.of(itemListener, blockListener, extensionSupportListener, resourcePackStatusListener);
+        this.placedBlockRestoreListener = placedBlockRestoreListener;
+        this.listeners = List.of(itemListener, blockListener, extensionSupportListener,
+                resourcePackStatusListener, placedBlockRestoreListener);
     }
 
     public void enable() {
         extensionBootstrap.loadAll();
         registerListeners();
+        placedBlockRestoreListener.restoreLoadedChunks();
         commandRegistrar.register("ignis", ignisCommand);
         initializeResourcePack();
     }

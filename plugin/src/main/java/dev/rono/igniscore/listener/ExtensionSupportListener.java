@@ -46,17 +46,33 @@ public class ExtensionSupportListener implements Listener {
             return;
         }
 
-        if (extensionSupport.tryCollect(block.getLocation(), drops)) {
+        extensionSupport.tryCollect(block.getLocation(), drops);
+        if (drops.isEmpty()) {
             event.setDropItems(false);
             event.setExpToDrop(0);
+            return;
+        }
+
+        event.setDropItems(false);
+        for (ItemStack remaining : drops) {
+            block.getWorld().dropItemNaturally(block.getLocation(), remaining);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemSpawn(ItemSpawnEvent event) {
         ItemStack stack = event.getEntity().getItemStack();
-        if (extensionSupport.tryCollect(event.getLocation(), List.of(stack))) {
+        List<ItemStack> drops = new ArrayList<>();
+        drops.add(stack.clone());
+        extensionSupport.tryCollect(event.getLocation(), drops);
+        if (drops.isEmpty()) {
             event.setCancelled(true);
+            return;
+        }
+
+        ItemStack remaining = drops.get(0);
+        if (remaining.getAmount() != stack.getAmount()) {
+            event.getEntity().setItemStack(remaining);
         }
     }
 
@@ -83,6 +99,14 @@ public class ExtensionSupportListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInventoryClickPersist(InventoryClickEvent event) {
+        IgnisCustomInventory customInventory = extensionSupport.getCustomInventory(event.getView().getTopInventory());
+        if (customInventory != null) {
+            customInventory.onChange();
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryDrag(InventoryDragEvent event) {
         Inventory top = event.getView().getTopInventory();
@@ -99,11 +123,20 @@ public class ExtensionSupportListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInventoryDragPersist(InventoryDragEvent event) {
+        IgnisCustomInventory customInventory = extensionSupport.getCustomInventory(event.getView().getTopInventory());
+        if (customInventory != null) {
+            customInventory.onChange();
+        }
+    }
+
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         IgnisCustomInventory customInventory = extensionSupport.getCustomInventory(event.getInventory());
         if (customInventory != null) {
             customInventory.restoreDecorations();
+            customInventory.onClose();
         }
     }
 }

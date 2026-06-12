@@ -10,7 +10,8 @@ display:
   title: "&6Quarry Cache"
   description:
     - "&7Automatically collects block drops"
-    - "&7from a nearby area."
+    - "&7from a nearby cylinder area."
+    - "&7Radius &e5&7, depth &e5&7 blocks."
     - ""
     - "&eLeft-click&7 to break"
     - "&eRight-click&7 to open storage"
@@ -51,3 +52,5 @@ behavior:
   strategy_name: Quarry Cache
   custom_data:
     collectRadius: 5.0
+    collectDepth: 5.0
+    showCollectZone: true

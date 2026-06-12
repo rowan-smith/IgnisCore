@@ -47,12 +47,14 @@ public class ExtensionSupportService implements ExtensionSupport {
     }
 
     public boolean tryCollect(Location breakLocation, Collection<ItemStack> drops) {
+        boolean collectedAny = false;
         for (IgnisDropCollector collector : collectors.values()) {
             if (collector.tryCollect(breakLocation, drops)) {
-                return true;
+                collectedAny = true;
             }
         }
-        return false;
+        drops.removeIf(stack -> stack == null || stack.getType().isAir() || stack.getAmount() <= 0);
+        return collectedAny;
     }
 
     public void clear() {

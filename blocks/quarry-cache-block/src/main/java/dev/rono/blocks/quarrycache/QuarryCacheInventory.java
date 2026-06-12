@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 final class QuarryCacheInventory implements IgnisCustomInventory {
     static final int FILTER_SLOTS = 5;
@@ -20,11 +21,16 @@ final class QuarryCacheInventory implements IgnisCustomInventory {
 
     private final Location location;
     private final Inventory inventory;
+    private Consumer<QuarryCacheInventory> onChanged = ignored -> {};
 
     QuarryCacheInventory(Location location, Component title) {
         this.location = location.clone();
         this.inventory = StrategySupport.createInventory(null, TOTAL_SLOTS, title);
         fillSeparators();
+    }
+
+    void setOnChanged(Consumer<QuarryCacheInventory> onChanged) {
+        this.onChanged = onChanged == null ? ignored -> {} : onChanged;
     }
 
     static boolean isFilterSlot(int slot) {
@@ -93,5 +99,19 @@ final class QuarryCacheInventory implements IgnisCustomInventory {
             }
         }
         return false;
+    }
+
+    @Override
+    public void onChange() {
+        notifyChanged();
+    }
+
+    @Override
+    public void onClose() {
+        onChanged.accept(this);
+    }
+
+    void notifyChanged() {
+        onChanged.accept(this);
     }
 }

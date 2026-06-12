@@ -70,7 +70,7 @@ public class CustomBlockPlacementService {
 
         event.setCancelled(true);
         targetBlock.setType(CUSTOM_BLOCK_BACKING_MATERIAL);
-        blockManager.registerPlacedBlock(targetBlock.getLocation(), typeId);
+        blockManager.registerPlacedBlock(targetBlock.getLocation(), typeId, item);
         event.getPlayer().swingMainHand();
         debug("Successfully placed " + typeId + " at " + targetBlock.getLocation().toVector());
 
@@ -82,7 +82,7 @@ public class CustomBlockPlacementService {
     public void handleBlockPlace(BlockPlaceEvent event) {
         String typeId = itemIdentifier.resolveTypeId(event.getItemInHand());
         if (isKnownType(typeId)) {
-            blockManager.registerPlacedBlock(event.getBlock().getLocation(), typeId);
+            blockManager.registerPlacedBlock(event.getBlock().getLocation(), typeId, event.getItemInHand());
         }
     }
 

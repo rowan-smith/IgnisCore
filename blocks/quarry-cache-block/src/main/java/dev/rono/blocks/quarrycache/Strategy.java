@@ -7,13 +7,14 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
     private final QuarryCacheRegistry registry;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.registry = new QuarryCacheRegistry(context.getExtensionSupport());
+        this.registry = new QuarryCacheRegistry(context);
     }
 
     @Override
@@ -27,8 +28,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onStaticPlace(BlockDefinition definition, Location location) {
-        registry.register(location, definition);
+    public void onStaticPlace(BlockDefinition definition, Location location, ItemStack placedFrom) {
+        registry.register(location, definition, placedFrom);
     }
 
     @Override
@@ -39,7 +40,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onStaticBreak(BlockDefinition definition, Location location) {
-        registry.dropContents(location);
+    public void onStaticBreak(BlockDefinition definition, Location location, ItemStack droppedItem) {
+        registry.handleBreak(location, droppedItem);
     }
 }

@@ -34,17 +34,20 @@ public class CustomBlockBreakService {
     private final BlockManager blockManager;
     private final ConfiguredEffectService effectService;
     private final IgnisStrategyRegistry strategyRegistry;
+    private final StrategyProfileResolver profileResolver;
     private final Map<UUID, MiningSession> miningSessions = new ConcurrentHashMap<>();
 
     @Inject
     public CustomBlockBreakService(Main plugin,
                                    BlockManager blockManager,
                                    ConfiguredEffectService effectService,
-                                   IgnisStrategyRegistry strategyRegistry) {
+                                   IgnisStrategyRegistry strategyRegistry,
+                                   StrategyProfileResolver profileResolver) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.effectService = effectService;
         this.strategyRegistry = strategyRegistry;
+        this.profileResolver = profileResolver;
     }
 
     public void start(Player player, Block block, BlockDefinition definition) {
@@ -67,6 +70,12 @@ public class CustomBlockBreakService {
 
         Location location = block.getLocation();
         int totalTicks = getBreakTicks(definition, player.getInventory().getItemInMainHand());
+        if (totalTicks <= 0) {
+            sendBlockDamage(location, 1.0f, player.getEntityId());
+            breakBlock(block, definition, true);
+            return;
+        }
+
         MiningSession session = new MiningSession(location, typeId, player.getEntityId(), totalTicks);
         session.task = Bukkit.getScheduler().runTaskTimer(plugin, () -> tickMiningSession(player, block, definition, session),
                 0L, 1L);
@@ -103,10 +112,11 @@ public class CustomBlockBreakService {
         effectService.spawnConfiguredParticles(center, getList(getMap(definition.getBreakSettings(), "particles"), "break"),
                 Particle.BLOCK, 24, 0.35, 0.35, 0.35, 0.01);
 
-        requireBlockStrategy(definition).onStaticBreak(definition, block.getLocation());
+        ItemStack droppedItem = dropItem ? plugin.createBlockItem(definition.getId()) : null;
+        requireBlockStrategy(definition).onStaticBreak(definition, block.getLocation(), droppedItem);
 
-        if (dropItem) {
-            block.getWorld().dropItemNaturally(block.getLocation(), plugin.createBlockItem(definition.getId()));
+        if (droppedItem != null) {
+            block.getWorld().dropItemNaturally(block.getLocation(), droppedItem);
         }
         blockManager.unregisterPlacedBlock(block.getLocation());
         block.setType(Material.AIR);
@@ -138,7 +148,16 @@ public class CustomBlockBreakService {
     }
 
     private int getBreakTicks(BlockDefinition definition, ItemStack tool) {
-        int baseTicks = getInt(definition.getBreakSettings(), "ticks", CUSTOM_BLOCK_BREAK_TICKS);
+        Map<String, Object> breakSettings = definition.getBreakSettings();
+        int baseTicks;
+        if (breakSettings.containsKey("ticks")) {
+            baseTicks = getInt(breakSettings, "ticks", CUSTOM_BLOCK_BREAK_TICKS);
+        } else if (isInstantBreakBlock(definition)) {
+            baseTicks = 0;
+        } else {
+            baseTicks = CUSTOM_BLOCK_BREAK_TICKS;
+        }
+
         if (tool == null) {
             return baseTicks;
         }
@@ -148,11 +167,15 @@ public class CustomBlockBreakService {
         for (Map.Entry<String, Object> entry : toolModifiers.entrySet()) {
             String suffix = entry.getKey().toUpperCase();
             if (name.endsWith(suffix)) {
-                return Math.max(1, asInt(entry.getValue(), baseTicks));
+                return Math.max(0, asInt(entry.getValue(), baseTicks));
             }
         }
 
         return baseTicks;
+    }
+
+    private boolean isInstantBreakBlock(BlockDefinition definition) {
+        return profileResolver.resolve(definition).isCombustible();
     }
 
     private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
