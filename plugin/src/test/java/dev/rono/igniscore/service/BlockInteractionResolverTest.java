@@ -118,8 +118,6 @@ class BlockInteractionResolverTest {
                 definition.getSideTexture(),
                 definition.getBottomTexture(),
                 "inert",
-                definition.getFuse(),
-                definition.getRadius(),
                 definition.getCustomData(),
                 definition.getBreakSettings(),
                 definition.getInteractionSettings(),
@@ -135,6 +133,18 @@ class BlockInteractionResolverTest {
                 inertResolver.resolve(definition, Action.LEFT_CLICK_BLOCK, Material.FLINT_AND_STEEL));
         assertEquals(CustomBlockAction.BREAK,
                 inertResolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.STICK));
+    }
+
+    @Test
+    void rightClickOpenActionResolves() {
+        BlockDefinition definition = definitionWithInteractions(Map.of(
+                "right_click", Map.of(
+                        "action", "open"
+                )
+        ));
+
+        assertEquals(CustomBlockAction.OPEN,
+                resolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.STICK));
     }
 
     @Test
@@ -168,9 +178,7 @@ class BlockInteractionResolverTest {
                 "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-side.png",
                 "phantom-tnt-erupting-tnt-mimic-tnt-wormhole-tnt-bottom.png",
                 "default",
-                40,
-                4.0,
-                Map.of(),
+                Map.of("fuse", 40, "radius", 4.0),
                 Map.of(),
                 interactions,
                 Map.of(),

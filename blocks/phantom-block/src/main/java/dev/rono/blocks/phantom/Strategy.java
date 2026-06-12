@@ -1,7 +1,7 @@
 package dev.rono.blocks.phantom;
 
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -24,7 +24,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public void onTick(RuntimeBlockInstance instance) {
-        if (instance.getTicksLeft() == instance.getDefinition().getFuse() - 20) {
+        if (instance.getTicksLeft() == StrategySupport.fuse(instance.getDefinition(), 160) - 20) {
             if (instance.getDisplayEntity() != null) {
                 instance.getDisplayEntity().remove();
                 instance.setDisplayEntity(null);
@@ -39,6 +39,6 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
         Location loc = Locations.toCenter(instance.getLocation());
-        ExplosiveStrategySupport.createExplosion(loc, def, 4.0, false);
+        StrategySupport.createExplosion(loc, def, 4.0, false);
     }
 }

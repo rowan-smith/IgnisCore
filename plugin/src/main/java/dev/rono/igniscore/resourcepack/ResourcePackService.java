@@ -41,8 +41,14 @@ public class ResourcePackService {
         plugin.getLogger().info("Resource pack generated successfully! Hash: " + latestHash);
     }
 
-    public void reloadBuildAndRegister() throws IOException {
-        buildAndRegister();
+    public void reloadConfiguration() {
+        plugin.reloadConfig();
+        restartServer();
+    }
+
+    public void restartServer() {
+        stopServer();
+        startServer();
     }
 
     public void startServer() {

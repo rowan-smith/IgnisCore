@@ -1,7 +1,7 @@
 package dev.rono.blocks.wormhole;
 
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -43,7 +43,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
             ripBlocks(loc, ripRadius, ripChance);
         }
 
-        double radius = 8.0 + (def.getFuse() - ticksLeft) * 0.1;
+        double radius = 8.0 + (StrategySupport.fuse(def, 100) - ticksLeft) * 0.1;
 
         loc.getWorld().getNearbyEntities(loc, radius, radius, radius).forEach(entity -> {
             if (entity.getUniqueId().equals(instance.getDisplayEntity() != null
@@ -62,7 +62,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         loc.getWorld().spawnParticle(Particle.PORTAL, loc, 15, 0.3, 0.3, 0.3, 0.2);
         if (ticksLeft % 5 == 0) {
             loc.getWorld().playSound(loc, Sound.BLOCK_BEACON_AMBIENT, 1.0f,
-                    0.5f + (float) (def.getFuse() - ticksLeft) / 80.0f);
+                    0.5f + (float) (StrategySupport.fuse(def, 100) - ticksLeft) / 80.0f);
         }
     }
 
@@ -99,8 +99,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         Location loc = Locations.toCenter(instance.getLocation());
         BlockDefinition def = instance.getDefinition();
 
-        float power = ExplosiveStrategySupport.resolvePower(def, 10.0);
-        ExplosiveStrategySupport.createExplosion(loc, def, 10.0, false);
+        StrategySupport.createExplosion(loc, def, 10.0, false);
         loc.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, loc, 5, 2, 2, 2, 0);
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 0.5f);
     }

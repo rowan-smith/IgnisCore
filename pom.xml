@@ -6,7 +6,7 @@
 
   <groupId>dev.rono</groupId>
   <artifactId>igniscore-parent</artifactId>
-  <version>1.0.0</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
 
   <name>igniscore-parent</name>
@@ -21,6 +21,7 @@
   </modules>
 
   <properties>
+    <revision>1.0.0</revision>
     <java.version>25</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <guice.version>7.0.0</guice.version>
@@ -49,8 +50,39 @@
           <artifactId>maven-dependency-plugin</artifactId>
           <version>3.8.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>1.6.0</version>
+          <configuration>
+            <updatePomFile>true</updatePomFile>
+            <flattenMode>resolveCiFriendliesOnly</flattenMode>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>flatten.clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <repositories>

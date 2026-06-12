@@ -1,7 +1,7 @@
 package dev.rono.blocks.erupting;
 
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -29,7 +29,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         BlockDefinition def = instance.getDefinition();
         int interval = getCustomInt(def, "eruptionInterval", 5);
 
-        if (instance.getTicksLeft() % interval == 0 && instance.getTicksLeft() < def.getFuse() - 10) {
+        if (instance.getTicksLeft() % interval == 0 && instance.getTicksLeft() < StrategySupport.fuse(def, 100) - 10) {
             Location loc = Locations.toCenter(instance.getLocation());
             TNTPrimed tnt = loc.getWorld().spawn(loc, TNTPrimed.class);
             int eruptionFuse = getCustomInt(def, "eruptionFuse", 80);
@@ -53,6 +53,6 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
         Location loc = Locations.toCenter(instance.getLocation());
-        ExplosiveStrategySupport.createExplosion(loc, def, 4.0, false);
+        StrategySupport.createExplosion(loc, def, 4.0, false);
     }
 }

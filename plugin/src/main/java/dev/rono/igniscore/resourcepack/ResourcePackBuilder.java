@@ -1,5 +1,6 @@
 package dev.rono.igniscore.resourcepack;
 
+import com.google.inject.Inject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -37,6 +38,7 @@ public class ResourcePackBuilder {
         public String getHash() { return hash; }
     }
 
+    @Inject
     public ResourcePackBuilder(Main plugin, ItemManager itemManager, ExtensionResourceProvider resourceProvider) {
         this.plugin = plugin;
         this.itemManager = itemManager;
@@ -220,19 +222,19 @@ public class ResourcePackBuilder {
                 Path blockModelPath = tempDir.resolve("assets/igniscore/models/block/" + asset.getId() + ".json");
                 Files.createDirectories(blockModelPath.getParent());
                 Files.writeString(blockModelPath, gson.toJson(asset.getBlockModel()));
-                plugin.getLogger().info("Generated block model: " + blockModelPath.toString().replace("\\", "/"));
+                debug("Generated block model: " + normalizePath(blockModelPath));
 
                 // Write item model: assets/igniscore/models/item/<id>.json
                 Path itemModelPath = tempDir.resolve("assets/igniscore/models/item/" + asset.getId() + ".json");
                 Files.createDirectories(itemModelPath.getParent());
                 Files.writeString(itemModelPath, gson.toJson(asset.getItemModel()));
-                plugin.getLogger().info("Generated item model: " + itemModelPath.toString().replace("\\", "/"));
+                debug("Generated item model: " + normalizePath(itemModelPath));
 
                 // Modern item definition: assets/igniscore/items/<id>.json
                 Path itemDefinitionPath = tempDir.resolve("assets/igniscore/items/" + asset.getId() + ".json");
                 Files.createDirectories(itemDefinitionPath.getParent());
                 Files.writeString(itemDefinitionPath, gson.toJson(createModelItemDefinition("igniscore:item/" + asset.getId())));
-                plugin.getLogger().info("Generated item definition: " + itemDefinitionPath.toString().replace("\\", "/"));
+                debug("Generated item definition: " + normalizePath(itemDefinitionPath));
 
                 // Write textures: assets/igniscore/textures/block/<id>/
                 Path textureDir = tempDir.resolve("assets/igniscore/textures/block/" + asset.getId());
@@ -303,8 +305,8 @@ public class ResourcePackBuilder {
             File finalZip = new File(packsDir, "resourcepack_" + hash + ".zip");
             Files.move(tempZip, finalZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
             
-            plugin.getLogger().info("Final pack path: " + finalZip.getAbsolutePath());
-            plugin.getLogger().info("Final pack hash: " + hash);
+            debug("Final pack path: " + finalZip.getAbsolutePath());
+            debug("Final pack hash: " + hash);
 
             return new PackResult(finalZip, hash);
         } finally {
@@ -361,16 +363,14 @@ public class ResourcePackBuilder {
             override.add("predicate", predicate);
             override.addProperty("model", entry.model);
             overridesArray.add(override);
-            plugin.getLogger().info("Registered override in " + baseItem + ".json: CMD " + entry.cmd + " -> " + entry.model + " (Block: " + entry.blockId + ")");
+            debug("Registered override in " + baseItem + ".json: CMD " + entry.cmd + " -> " + entry.model + " (Block: " + entry.blockId + ")");
         }
         root.add("overrides", overridesArray);
 
         Files.writeString(overridePath, gson.toJson(root));
-        plugin.getLogger().info("Created " + overridePath.toString().replace("\\", "/") + " with " + overridesArray.size() + " overrides.");
-        
-        if (plugin.isDebugEnabled()) {
-             plugin.getLogger().info("Generated JSON for " + baseItem + ":\n" + gson.toJson(root));
-        }
+        debug("Created " + normalizePath(overridePath) + " with " + overridesArray.size() + " overrides.");
+
+        debug("Generated JSON for " + baseItem + ":\n" + gson.toJson(root));
     }
 
     private JsonObject createModelItemDefinition(String modelPath) {
@@ -403,7 +403,7 @@ public class ResourcePackBuilder {
             entryModel.addProperty("model", entry.model);
             rangeEntry.add("model", entryModel);
             entries.add(rangeEntry);
-            plugin.getLogger().info("Registered modern item definition in " + baseItem + ".json: CMD " + entry.cmd + " -> " + entry.model + " (Block: " + entry.blockId + ")");
+            debug("Registered modern item definition in " + baseItem + ".json: CMD " + entry.cmd + " -> " + entry.model + " (Block: " + entry.blockId + ")");
         }
 
         model.add("entries", entries);
@@ -411,11 +411,9 @@ public class ResourcePackBuilder {
         root.add("model", model);
 
         Files.writeString(itemDefinitionPath, gson.toJson(root));
-        plugin.getLogger().info("Created " + itemDefinitionPath.toString().replace("\\", "/") + " with " + entries.size() + " modern CMD entries.");
+        debug("Created " + normalizePath(itemDefinitionPath) + " with " + entries.size() + " modern CMD entries.");
 
-        if (plugin.isDebugEnabled()) {
-            plugin.getLogger().info("Generated modern item definition JSON for " + baseItem + ":\n" + gson.toJson(root));
-        }
+        debug("Generated modern item definition JSON for " + baseItem + ":\n" + gson.toJson(root));
     }
 
     private void copyTextures(CompiledBlockAsset asset, Path destDir) throws IOException {
@@ -427,7 +425,7 @@ public class ResourcePackBuilder {
                 if (is != null) {
                     Path texturePath = destDir.resolve(key + ".png");
                     TextureFileWriter.writePackTexture(is, fileName, texturePath);
-                    plugin.getLogger().info("Generated texture: " + texturePath.toString().replace("\\", "/"));
+                    debug("Generated texture: " + normalizePath(texturePath));
                 } else {
                     String error = "CRITICAL: Texture missing for block " + asset.getId() + ": " + fileName;
                     plugin.getLogger().severe(error);
@@ -487,5 +485,13 @@ public class ResourcePackBuilder {
             }
         }
         directory.delete();
+    }
+
+    private void debug(String message) {
+        plugin.debug(message);
+    }
+
+    private static String normalizePath(Path path) {
+        return path.toString().replace("\\", "/");
     }
 }

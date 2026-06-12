@@ -82,8 +82,6 @@ class ResourcePackBuilderTest {
                 "side.png",
                 "bottom.png",
                 "default",
-                80,
-                4.0,
                 Map.of(),
                 Map.of(),
                 Map.of(),

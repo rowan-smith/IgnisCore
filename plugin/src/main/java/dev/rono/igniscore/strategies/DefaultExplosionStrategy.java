@@ -1,7 +1,7 @@
 package dev.rono.igniscore.strategies;
 
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfiles;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -22,11 +22,11 @@ public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
     public void onTrigger(RuntimeBlockInstance instance, Object context) {
         BlockDefinition def = instance.getDefinition();
         org.bukkit.Location loc = instance.getLocation();
-        float power = ExplosiveStrategySupport.resolvePower(def, 4.0);
+        float power = StrategySupport.resolvePower(def, 4.0);
 
         instance.getData().setFloat("ignis:blast_power", power);
 
         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
-        ExplosiveStrategySupport.createExplosion(loc, def, 4.0, false);
+        StrategySupport.createExplosion(loc, def, 4.0, false);
     }
 }

@@ -36,7 +36,25 @@ class AbstractIgnisItemStrategyTest {
 
     private static final class TestStrategy extends AbstractIgnisItemStrategy {
         private TestStrategy() {
-            super(new IgnisStrategyContext(null, null, null, null));
+            super(new IgnisStrategyContext(null, null, null, null, new ExtensionSupport() {
+                @Override
+                public void registerDropCollector(org.bukkit.Location location,
+                                                    dev.rono.igniscore.api.collection.IgnisDropCollector collector) {
+                }
+
+                @Override
+                public void unregisterDropCollector(org.bukkit.Location location) {
+                }
+
+                @Override
+                public void registerCustomInventory(org.bukkit.inventory.Inventory inventory,
+                                                      dev.rono.igniscore.api.inventory.IgnisCustomInventory handler) {
+                }
+
+                @Override
+                public void unregisterCustomInventory(org.bukkit.inventory.Inventory inventory) {
+                }
+            }));
         }
 
         double readDouble(ItemDefinition definition, String key, double defaultValue) {

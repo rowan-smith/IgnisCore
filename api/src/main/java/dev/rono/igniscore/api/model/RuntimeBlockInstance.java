@@ -2,6 +2,7 @@ package dev.rono.igniscore.api.model;
 
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Display;
@@ -33,7 +34,7 @@ public class RuntimeBlockInstance {
         this.blockDefinitionId = definition.getId();
         this.location = location;
         this.data = new NBTContainer();
-        this.ticksLeft = definition.getFuse();
+        this.ticksLeft = StrategySupport.fuse(definition, 80);
     }
 
     public UUID getUuid() {

@@ -1,7 +1,7 @@
 package dev.rono.items.grenade;
 
 import dev.rono.igniscore.api.strategy.AbstractIgnisItemStrategy;
-import dev.rono.igniscore.api.strategy.ExplosiveStrategySupport;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import org.bukkit.Location;
@@ -25,8 +25,8 @@ public class Strategy extends AbstractIgnisItemStrategy {
             return;
         }
 
-        double velocity = ExplosiveStrategySupport.customDouble(definition.getCustomData(), "throw_velocity", 1.2);
-        int fuseTicks = (int) ExplosiveStrategySupport.customDouble(definition.getCustomData(), "fuse_ticks", 40);
+        double velocity = StrategySupport.customDouble(definition.getCustomData(), "throw_velocity", 1.2);
+        int fuseTicks = StrategySupport.customInt(definition.getCustomData(), "fuse_ticks", 40);
 
         Location spawn = player.getEyeLocation();
         Vector direction = spawn.getDirection().normalize().multiply(velocity);
@@ -48,7 +48,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
                         projectile.remove();
                     }
                     impact.getWorld().playSound(impact, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
-                    ExplosiveStrategySupport.createExplosion(impact, definition, 4.0, false);
+                    StrategySupport.createExplosion(impact, definition, 4.0, false);
                     cancel();
                 }
             }

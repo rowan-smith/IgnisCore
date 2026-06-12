@@ -44,22 +44,22 @@ public final class DefinitionParser {
         String side4 = config.isSet("textures.side-4") ? config.getString("textures.side-4") : null;
 
         String strategy = config.getString("behavior.strategy", "default");
-        int fuse = config.getInt("behavior.fuse", 80);
-        double radius = config.getDouble("behavior.radius", 4.0);
-
         Map<String, Object> customData = sectionToMap(config.getConfigurationSection("behavior.custom_data"));
         Map<String, Object> interactionSettings = sectionToMap(config.getConfigurationSection("interactions"));
+
+        if (config.contains("behavior.fuse")) {
+            customData.putIfAbsent("fuse", config.getInt("behavior.fuse"));
+        }
+        if (config.contains("behavior.radius")) {
+            customData.putIfAbsent("radius", config.getDouble("behavior.radius"));
+        }
 
         if (config.isConfigurationSection("explosion")) {
             if ("default".equals(strategy)) {
                 strategy = config.getString("explosion.strategy", "default");
             }
-            if (fuse == 80) {
-                fuse = config.getInt("explosion.fuse", 80);
-            }
-            if (radius == 4.0) {
-                radius = config.getDouble("explosion.radius", 4.0);
-            }
+            customData.putIfAbsent("fuse", config.getInt("explosion.fuse", 80));
+            customData.putIfAbsent("radius", config.getDouble("explosion.radius", 4.0));
 
             customData.put("power", config.getDouble("explosion.power", 4.0));
             customData.put("multiplier", config.getDouble("explosion.multiplier", 1.0));
@@ -83,7 +83,7 @@ public final class DefinitionParser {
         Map<String, Object> displaySettings = sectionToMap(config.getConfigurationSection("block_display"));
 
         return new BlockDefinition(id, baseMaterial, renderMaterial, title, description, placeable, breakable,
-                top, side, bottom, strategy, fuse, radius, customData, breakSettings, interactionSettings,
+                top, side, bottom, strategy, customData, breakSettings, interactionSettings,
                 displaySettings, modelData, rotate, floatBob, pulse, extensionId, side1, side2, side3, side4);
     }
 

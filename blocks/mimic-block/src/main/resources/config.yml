@@ -15,6 +15,14 @@ display:
     - "&4Complete"
     - "&4Destruction"
 
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+    break_sound: BLOCK_GRAVEL_BREAK
+    hit_sound: BLOCK_GRAVEL_HIT
+
 textures:
   top: top.png
   side: side.png
@@ -27,9 +35,9 @@ model:
 behavior:
   strategy: mimic
   strategy_name: Mimic TNT
-  fuse: 80
-  radius: 4.0
   custom_data:
+    fuse: 80
+    radius: 4.0
     power: 4.0
     fire: false
     blockDamage: true

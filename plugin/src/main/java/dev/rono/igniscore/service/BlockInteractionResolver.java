@@ -20,6 +20,7 @@ import static dev.rono.igniscore.util.ConfigValueReader.getString;
 public class BlockInteractionResolver {
     private static final String ACTION_BREAK = "break";
     private static final String ACTION_IGNITE = "ignite";
+    private static final String ACTION_OPEN = "open";
 
     private final StrategyProfileResolver profileResolver;
 
@@ -37,6 +38,7 @@ public class BlockInteractionResolver {
         return switch (action) {
             case ACTION_BREAK -> CustomBlockAction.BREAK;
             case ACTION_IGNITE -> CustomBlockAction.IGNITE;
+            case ACTION_OPEN -> CustomBlockAction.OPEN;
             default -> CustomBlockAction.NONE;
         };
     }
@@ -86,6 +88,7 @@ public class BlockInteractionResolver {
         return switch (action) {
             case BREAK -> ACTION_BREAK;
             case IGNITE -> ACTION_IGNITE;
+            case OPEN -> ACTION_OPEN;
             case NONE -> "";
         };
     }

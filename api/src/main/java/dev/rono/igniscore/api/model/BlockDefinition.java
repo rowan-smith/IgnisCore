@@ -23,8 +23,6 @@ public class BlockDefinition {
     private final String side4Texture;
     
     private final String strategy;
-    private final int fuse;
-    private final double radius;
     private final Map<String, Object> customData;
     private final Map<String, Object> breakSettings;
     private final Map<String, Object> interactionSettings;
@@ -41,30 +39,30 @@ public class BlockDefinition {
     public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description, 
                            boolean placeable, boolean breakable,
                            String topTexture, String sideTexture, String bottomTexture, 
-                           String strategy, int fuse, double radius, Map<String, Object> customData, 
+                           String strategy, Map<String, Object> customData, 
                            Map<String, Object> breakSettings, Map<String, Object> interactionSettings,
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse) {
         this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
-                bottomTexture, strategy, fuse, radius, customData, breakSettings, interactionSettings, displaySettings,
+                bottomTexture, strategy, customData, breakSettings, interactionSettings, displaySettings,
                 customModelData, rotate, floatBob, pulse, "builtin", null, null, null, null);
     }
 
     public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description,
                            boolean placeable, boolean breakable,
                            String topTexture, String sideTexture, String bottomTexture,
-                           String strategy, int fuse, double radius, Map<String, Object> customData,
+                           String strategy, Map<String, Object> customData,
                            Map<String, Object> breakSettings, Map<String, Object> interactionSettings,
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
                            String extensionId) {
         this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
-                bottomTexture, strategy, fuse, radius, customData, breakSettings, interactionSettings, displaySettings,
+                bottomTexture, strategy, customData, breakSettings, interactionSettings, displaySettings,
                 customModelData, rotate, floatBob, pulse, extensionId, null, null, null, null);
     }
 
     public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description,
                            boolean placeable, boolean breakable,
                            String topTexture, String sideTexture, String bottomTexture,
-                           String strategy, int fuse, double radius, Map<String, Object> customData,
+                           String strategy, Map<String, Object> customData,
                            Map<String, Object> breakSettings, Map<String, Object> interactionSettings,
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
                            String extensionId, String side1Texture, String side2Texture, String side3Texture, String side4Texture) {
@@ -83,8 +81,6 @@ public class BlockDefinition {
         this.side3Texture = side3Texture;
         this.side4Texture = side4Texture;
         this.strategy = strategy;
-        this.fuse = fuse;
-        this.radius = radius;
         this.customData = customData;
         this.breakSettings = breakSettings;
         this.interactionSettings = interactionSettings;
@@ -126,8 +122,6 @@ public class BlockDefinition {
         return texture != null ? texture : sideTexture;
     }
     public String getStrategy() { return strategy; }
-    public int getFuse() { return fuse; }
-    public double getRadius() { return radius; }
     public Map<String, Object> getCustomData() { return customData; }
     public Map<String, Object> getBreakSettings() { return breakSettings; }
     public Map<String, Object> getInteractionSettings() { return interactionSettings; }

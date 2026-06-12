@@ -7,7 +7,7 @@
   <parent>
     <groupId>dev.rono</groupId>
     <artifactId>igniscore-parent</artifactId>
-    <version>1.0.0</version>
+    <version>${revision}</version>
   </parent>
 
   <artifactId>dist</artifactId>
@@ -23,7 +23,7 @@
   </dependencies>
 
   <build>
-    <finalName>igniscore</finalName>
+    <finalName>igniscore-${project.version}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

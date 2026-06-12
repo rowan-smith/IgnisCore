@@ -8,6 +8,8 @@ import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.service.CustomBlockBreakService;
 import dev.rono.igniscore.service.CustomBlockIgnitionService;
 import dev.rono.igniscore.service.CustomBlockPlacementService;
+import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
+import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.service.ItemIdentifier;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,6 +33,7 @@ public class BlockListener implements Listener {
     private final CustomBlockBreakService breakService;
     private final CustomBlockIgnitionService ignitionService;
     private final ItemIdentifier itemIdentifier;
+    private final IgnisStrategyRegistry strategyRegistry;
 
     @Inject
     public BlockListener(BlockManager blockManager,
@@ -38,13 +41,15 @@ public class BlockListener implements Listener {
                          CustomBlockPlacementService placementService,
                          CustomBlockBreakService breakService,
                          CustomBlockIgnitionService ignitionService,
-                         ItemIdentifier itemIdentifier) {
+                         ItemIdentifier itemIdentifier,
+                         IgnisStrategyRegistry strategyRegistry) {
         this.blockManager = blockManager;
         this.interactionResolver = interactionResolver;
         this.placementService = placementService;
         this.breakService = breakService;
         this.ignitionService = ignitionService;
         this.itemIdentifier = itemIdentifier;
+        this.strategyRegistry = strategyRegistry;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -197,8 +202,20 @@ public class BlockListener implements Listener {
             ignitionService.ignite(clickedBlock, definition, event.getPlayer(), heldItem);
         } else if (action == CustomBlockAction.BREAK) {
             breakService.start(event.getPlayer(), clickedBlock, definition);
+        } else {
+            requireBlockStrategy(definition).onStaticInteract(
+                    definition, clickedBlock.getLocation(), event.getPlayer(), action);
         }
         return true;
+    }
+
+    private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
+        var strategy = strategyRegistry.get(definition.getStrategy());
+        if (!(strategy instanceof IgnisBlockStrategy blockStrategy)) {
+            throw new IllegalStateException("Block type " + definition.getId() + " uses a non-block strategy: "
+                    + definition.getStrategy());
+        }
+        return blockStrategy;
     }
 
     private BlockDefinition getPlacedDefinition(Block block) {

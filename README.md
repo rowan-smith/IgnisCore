@@ -21,7 +21,7 @@ igniscore-parent/
 | `items/*` | Individual item extensions depending only on `api` |
 | `platform` | Hookable platform layer: Spigot implementations with optional Paper enhancements |
 | `plugin` | Runtime that loads extensions, renders blocks, handles events |
-| `dist` | Unpacks the plugin, bundles extension JARs, produces `igniscore.jar` |
+| `dist` | Unpacks the plugin, bundles extension JARs, produces `igniscore-<version>.jar` |
 
 ## Build output
 
@@ -34,8 +34,10 @@ mvn clean package
 Deploy this file to your server:
 
 ```
-dist/target/igniscore.jar
+dist/target/igniscore-1.0.0.jar
 ```
+
+The version comes from the `revision` property in the root `pom.xml` (currently `1.0.0`). Change it there to bump the plugin, bundled extensions, and API version together.
 
 On first run, bundled extensions are extracted to:
 
@@ -44,7 +46,7 @@ plugins/IgnisCore/blocks/*.jar
 plugins/IgnisCore/items/*.jar
 ```
 
-Drop additional extension JARs into those folders and run `/ignis reload blocks`, `/ignis reload items`, or `/ignis reload all`.
+Drop additional extension JARs into those folders and run `/ignis reload blocks`, `/ignis reload items`, `/ignis reload server`, or `/ignis reload all`.
 
 ## Public API
 
@@ -92,8 +94,8 @@ dev/rono/blocks/.../Strategy.class
 ```yaml
 id: my-block
 name: My Block
-version: 1.0.0
-api-version: 1.0.0
+version: @project.version@
+api-version: @project.version@
 author: YourName
 strategy: dev.rono.blocks.myblock.Strategy
 ```
@@ -153,8 +155,8 @@ dev/rono/items/.../Strategy.class
 ```yaml
 id: my-item
 name: My Item
-version: 1.0.0
-api-version: 1.0.0
+version: @project.version@
+api-version: @project.version@
 author: YourName
 strategy: dev.rono.items.myitem.Strategy
 ```
@@ -214,10 +216,12 @@ Extension modules should depend only on the `api` artifact:
 <dependency>
   <groupId>dev.rono</groupId>
   <artifactId>api</artifactId>
-  <version>1.0.0</version>
+  <version>${revision}</version>
   <scope>provided</scope>
 </dependency>
 ```
+
+When depending on IgnisCore from another project, use the same version as the published `api` artifact.
 
 ### Custom model data
 
@@ -227,9 +231,12 @@ Block icons use custom model data starting at `10001`; items start at `20001`. T
 
 | Command | Description |
 |---------|-------------|
-| `/ignis reload blocks` | Reload block extensions |
-| `/ignis reload items` | Reload item extensions |
-| `/ignis reload all` | Reload everything and rebuild the resource pack |
+| `/ignis give <player> block <id>` | Give a custom block item |
+| `/ignis give <player> item <id>` | Give a custom item |
+| `/ignis reload blocks` | Reload block extensions and rebuild the resource pack |
+| `/ignis reload items` | Reload item extensions and rebuild the resource pack |
+| `/ignis reload server` | Reload config and restart the resource pack web server |
+| `/ignis reload all` | Reload all extensions, rebuild the resource pack, and restart the web server |
 
 ## Platform support
 
