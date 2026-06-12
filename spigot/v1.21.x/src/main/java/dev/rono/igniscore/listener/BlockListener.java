@@ -103,22 +103,22 @@ public class BlockListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onNotePlay(org.bukkit.event.block.NotePlayEvent event) {
-        if (blockManager.getPlacedBlockType(event.getBlock().getLocation()) != null) {
+        if (blockManager.getPlacedBlockType(BukkitBridge.toIgnis(event.getBlock().getLocation())) != null) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTNTPrime(org.bukkit.event.block.TNTPrimeEvent event) {
-        String typeId = blockManager.getPlacedBlockType(event.getBlock().getLocation());
+        String typeId = blockManager.getPlacedBlockType(BukkitBridge.toIgnis(event.getBlock().getLocation()));
         if (typeId == null) {
             return;
         }
 
         event.setCancelled(true);
         event.getBlock().setType(Material.AIR);
-        blockManager.unregisterPlacedBlock(event.getBlock().getLocation());
-        blockManager.triggerBlock(event.getBlock().getLocation(), typeId, event);
+        blockManager.unregisterPlacedBlock(BukkitBridge.toIgnis(event.getBlock().getLocation()));
+        blockManager.triggerBlock(BukkitBridge.toIgnis(event.getBlock().getLocation()), typeId, event);
 
         Entity primingEntity = event.getPrimingEntity();
         if (primingEntity instanceof Projectile) {
@@ -193,7 +193,13 @@ public class BlockListener implements Listener {
         }
 
         ItemStack heldItem = event.getItem();
-        CustomBlockAction action = interactionResolver.resolve(definition, event.getAction(), heldItem);
+        String clickSide = switch (event.getAction()) {
+            case LEFT_CLICK_BLOCK -> "LEFT_CLICK";
+            case RIGHT_CLICK_BLOCK -> "RIGHT_CLICK";
+            default -> "";
+        };
+        String materialKey = heldItem != null && !heldItem.getType().isAir() ? heldItem.getType().name() : "AIR";
+        CustomBlockAction action = interactionResolver.resolve(definition, clickSide, materialKey);
         if (action == CustomBlockAction.NONE) {
             return false;
         }
@@ -223,7 +229,7 @@ public class BlockListener implements Listener {
     }
 
     private BlockDefinition getPlacedDefinition(Block block) {
-        String typeId = blockManager.getPlacedBlockType(block.getLocation());
+        String typeId = blockManager.getPlacedBlockType(BukkitBridge.toIgnis(block.getLocation()));
         if (typeId == null) {
             return null;
         }

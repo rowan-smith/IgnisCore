@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import dev.rono.igniscore.api.IgnisCoreAPI;
 import dev.rono.igniscore.api.port.PlatformAdapter;
+import dev.rono.igniscore.core.IgnisCoreFacadeImpl;
 import dev.rono.igniscore.sponge.adapter.SpongePlatformAdapter;
 import dev.rono.igniscore.sponge.command.SpongeIgnisCommand;
 import dev.rono.igniscore.sponge.support.SpongeRuntimeHolder;
@@ -51,7 +52,7 @@ public final class IgnisSpongePlugin {
         injector = Guice.createInjector(new SpongeIgnisModule(this, platformAdapter));
         application = injector.getInstance(SpongeIgnisApplication.class);
 
-        IgnisCoreAPI.init(injector.getInstance(SpongeIgnisFacade.class));
+        IgnisCoreAPI.init(injector.getInstance(IgnisCoreFacadeImpl.class));
         application.enable();
 
         logger.info("IgnisCore enabled on Sponge for Minecraft " + platformAdapter.getMinecraftVersion());

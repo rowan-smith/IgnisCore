@@ -6,8 +6,6 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
-import org.bukkit.event.block.Action;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +28,7 @@ class BlockInteractionResolverTest {
         BlockDefinition definition = definitionWithInteractions(Map.of());
 
         assertEquals(CustomBlockAction.BREAK,
-                resolver.resolve(definition, Action.LEFT_CLICK_BLOCK, (Material) null));
+                resolver.resolve(definition, "LEFT_CLICK", "AIR"));
     }
 
     @Test
@@ -38,7 +36,7 @@ class BlockInteractionResolverTest {
         BlockDefinition definition = definitionWithInteractions(Map.of());
 
         assertEquals(CustomBlockAction.IGNITE,
-                resolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.FLINT_AND_STEEL));
+                resolver.resolve(definition, "RIGHT_CLICK", "FLINT_AND_STEEL"));
     }
 
     @Test
@@ -51,9 +49,9 @@ class BlockInteractionResolverTest {
         ));
 
         assertEquals(CustomBlockAction.IGNITE,
-                resolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.FLINT_AND_STEEL));
+                resolver.resolve(definition, "RIGHT_CLICK", "FLINT_AND_STEEL"));
         assertEquals(CustomBlockAction.NONE,
-                resolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.STICK));
+                resolver.resolve(definition, "RIGHT_CLICK", "STICK"));
     }
 
     @Test
@@ -68,9 +66,9 @@ class BlockInteractionResolverTest {
         ));
 
         assertEquals(CustomBlockAction.IGNITE,
-                resolver.resolve(definition, Action.LEFT_CLICK_BLOCK, Material.FIRE_CHARGE));
+                resolver.resolve(definition, "LEFT_CLICK", "FIRE_CHARGE"));
         assertEquals(CustomBlockAction.BREAK,
-                resolver.resolve(definition, Action.LEFT_CLICK_BLOCK, Material.STICK));
+                resolver.resolve(definition, "LEFT_CLICK", "STICK"));
     }
 
     @Test
@@ -83,7 +81,7 @@ class BlockInteractionResolverTest {
         ));
 
         assertEquals(CustomBlockAction.NONE,
-                resolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, (Material) null));
+                resolver.resolve(definition, "RIGHT_CLICK", "AIR"));
     }
 
     @Test
@@ -130,9 +128,9 @@ class BlockInteractionResolverTest {
         );
 
         assertEquals(CustomBlockAction.NONE,
-                inertResolver.resolve(definition, Action.LEFT_CLICK_BLOCK, Material.FLINT_AND_STEEL));
+                inertResolver.resolve(definition, "LEFT_CLICK", "FLINT_AND_STEEL"));
         assertEquals(CustomBlockAction.BREAK,
-                inertResolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.STICK));
+                inertResolver.resolve(definition, "RIGHT_CLICK", "STICK"));
     }
 
     @Test
@@ -144,7 +142,7 @@ class BlockInteractionResolverTest {
         ));
 
         assertEquals(CustomBlockAction.OPEN,
-                resolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.STICK));
+                resolver.resolve(definition, "RIGHT_CLICK", "STICK"));
     }
 
     @Test
@@ -160,9 +158,9 @@ class BlockInteractionResolverTest {
         ));
 
         assertEquals(CustomBlockAction.IGNITE,
-                resolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.FIRE_CHARGE));
+                resolver.resolve(definition, "RIGHT_CLICK", "FIRE_CHARGE"));
         assertEquals(CustomBlockAction.BREAK,
-                resolver.resolve(definition, Action.RIGHT_CLICK_BLOCK, Material.STICK));
+                resolver.resolve(definition, "RIGHT_CLICK", "STICK"));
     }
 
     private BlockDefinition definitionWithInteractions(Map<String, Object> interactions) {

@@ -3,6 +3,7 @@ package dev.rono.igniscore.listener;
 import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
+import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,24 +37,25 @@ public class PlacedBlockRestoreListener implements Listener {
     }
 
     private void restoreChunk(Chunk chunk) {
-        Map<String, String> entries = persistenceService.entriesInChunk(chunk);
+        Map<String, String> entries = persistenceService.entriesInChunk(
+                chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
         if (entries.isEmpty()) {
             return;
         }
 
         for (Map.Entry<String, String> entry : entries.entrySet()) {
             Location location = parseLocation(chunk, entry.getKey());
-            if (location == null || blockManager.getPlacedBlockType(location) != null) {
+            if (location == null || blockManager.getPlacedBlockType(BukkitBridge.toIgnis(location)) != null) {
                 continue;
             }
 
             Block block = location.getBlock();
             if (block.getType() != Material.BARRIER) {
-                persistenceService.removePlacement(location);
+                persistenceService.removePlacement(BukkitBridge.toIgnis(location));
                 continue;
             }
 
-            blockManager.restorePlacedBlock(location, entry.getValue());
+            blockManager.restorePlacedBlock(BukkitBridge.toIgnis(location), entry.getValue());
         }
     }
 

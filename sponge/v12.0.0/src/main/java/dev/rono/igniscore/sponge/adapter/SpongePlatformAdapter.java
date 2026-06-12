@@ -217,6 +217,36 @@ public class SpongePlatformAdapter implements PlatformAdapter {
     }
 
     @Override
+    public IgnisWorld resolveWorld(IgnisLocation location) {
+        if (location == null || location.worldName() == null) {
+            return server().worldManager().worlds().stream()
+                    .findFirst()
+                    .map(SpongeBridge::wrap)
+                    .orElse(null);
+        }
+        return server().worldManager().world(org.spongepowered.api.ResourceKey.resolve(location.worldName()))
+                .or(() -> server().worldManager().worlds().stream().findFirst())
+                .map(SpongeBridge::wrap)
+                .orElse(null);
+    }
+
+    @Override
+    public IgnisItem createMaterialItem(String materialKey, int amount) {
+        org.spongepowered.api.ResourceKey key = org.spongepowered.api.ResourceKey.resolve(materialKey.toLowerCase(Locale.ROOT));
+        var itemType = dev.rono.igniscore.sponge.support.SpongeRegistrySupport.findItemType(key)
+                .orElse(org.spongepowered.api.item.ItemTypes.STONE.get());
+        return SpongeBridge.wrap(ItemStack.of(itemType, amount));
+    }
+
+    @Override
+    public void clearBlock(IgnisLocation location) {
+        IgnisWorld world = resolveWorld(location);
+        if (world != null) {
+            world.setBlockMaterialKey(dev.rono.igniscore.api.util.Locations.toBlock(location), "minecraft:air");
+        }
+    }
+
+    @Override
     public void shutdown() {
         Scheduler scheduler = game.server().scheduler();
         scheduler.tasks(container).forEach(task -> task.cancel());

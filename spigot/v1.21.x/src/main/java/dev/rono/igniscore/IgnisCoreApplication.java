@@ -2,210 +2,133 @@ package dev.rono.igniscore;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.IgnisCoreFacade;
-import dev.rono.igniscore.api.port.IgnisItem;
-import dev.rono.igniscore.api.port.IgnisLocation;
-import dev.rono.igniscore.api.service.IgnisEffectService;
-import dev.rono.igniscore.api.service.IgnisNbtService;
-import dev.rono.igniscore.api.service.IgnisProtocolService;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
-import dev.rono.igniscore.command.CommandRegistrar;
-import dev.rono.igniscore.command.IgnisCommand;
-import dev.rono.igniscore.core.ExtensionBootstrap;
+import dev.rono.igniscore.core.IgnisCoreFacadeImpl;
+import dev.rono.igniscore.core.IgnisRuntimeLifecycle;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
-import dev.rono.igniscore.listener.BlockListener;
-import dev.rono.igniscore.listener.ExtensionSupportListener;
-import dev.rono.igniscore.listener.ItemListener;
-import dev.rono.igniscore.listener.PlacedBlockRestoreListener;
-import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.ItemDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
 import dev.rono.igniscore.service.BlockItemFactory;
-import dev.rono.igniscore.service.ItemFactory;
 import dev.rono.igniscore.service.NBTService;
 import dev.rono.igniscore.service.ProtocolService;
-import dev.rono.igniscore.service.ExtensionSupportService;
 import dev.rono.igniscore.service.RuntimeBlockService;
 import dev.rono.igniscore.service.VisualEffectService;
-import dev.rono.igniscore.spigot.adapter.BukkitBridge;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.event.Listener;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 public class IgnisCoreApplication implements IgnisCoreFacade {
-    private final Main plugin;
-    private final CommandRegistrar commandRegistrar;
-    private final IgnisCommand ignisCommand;
+    private final IgnisCoreFacadeImpl facade;
+    private final IgnisRuntimeLifecycle lifecycle;
+    private final BlockItemFactory blockItemFactory;
     private final BlockManager blockManager;
     private final ItemManager itemManager;
-    private final ResourcePackService resourcePackService;
-    private final BlockItemFactory blockItemFactory;
-    private final ItemFactory itemFactory;
     private final NBTService nbtService;
     private final ProtocolService protocolService;
-    private final IgnisEffectService effectService;
     private final RuntimeBlockService runtimeBlockService;
     private final VisualEffectService visualEffectService;
-    private final ExtensionBootstrap extensionBootstrap;
-    private final IgnisStrategyRegistry strategyRegistry;
+    private final ResourcePackService resourcePackService;
     private final BlockExtensionLoader blockExtensionLoader;
     private final ItemExtensionLoader itemExtensionLoader;
-    private final ExtensionSupportService extensionSupportService;
-    private final PlacedBlockRestoreListener placedBlockRestoreListener;
-    private final List<Listener> listeners;
 
     @Inject
-    public IgnisCoreApplication(Main plugin,
-                                CommandRegistrar commandRegistrar,
-                                IgnisCommand ignisCommand,
-                                BlockListener blockListener,
-                                ItemListener itemListener,
-                                ExtensionSupportListener extensionSupportListener,
-                                ResourcePackStatusListener resourcePackStatusListener,
+    public IgnisCoreApplication(IgnisCoreFacadeImpl facade,
+                                IgnisRuntimeLifecycle lifecycle,
+                                BlockItemFactory blockItemFactory,
                                 BlockManager blockManager,
                                 ItemManager itemManager,
-                                ResourcePackService resourcePackService,
-                                BlockItemFactory blockItemFactory,
-                                ItemFactory itemFactory,
                                 NBTService nbtService,
                                 ProtocolService protocolService,
-                                IgnisEffectService effectService,
                                 RuntimeBlockService runtimeBlockService,
                                 VisualEffectService visualEffectService,
-                                ExtensionBootstrap extensionBootstrap,
-                                IgnisStrategyRegistry strategyRegistry,
+                                ResourcePackService resourcePackService,
                                 BlockExtensionLoader blockExtensionLoader,
-                                ItemExtensionLoader itemExtensionLoader,
-                                ExtensionSupportService extensionSupportService,
-                                PlacedBlockRestoreListener placedBlockRestoreListener) {
-        this.plugin = plugin;
-        this.commandRegistrar = commandRegistrar;
-        this.ignisCommand = ignisCommand;
+                                ItemExtensionLoader itemExtensionLoader) {
+        this.facade = facade;
+        this.lifecycle = lifecycle;
+        this.blockItemFactory = blockItemFactory;
         this.blockManager = blockManager;
         this.itemManager = itemManager;
-        this.resourcePackService = resourcePackService;
-        this.blockItemFactory = blockItemFactory;
-        this.itemFactory = itemFactory;
         this.nbtService = nbtService;
         this.protocolService = protocolService;
-        this.effectService = effectService;
         this.runtimeBlockService = runtimeBlockService;
         this.visualEffectService = visualEffectService;
-        this.extensionBootstrap = extensionBootstrap;
-        this.strategyRegistry = strategyRegistry;
+        this.resourcePackService = resourcePackService;
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
-        this.extensionSupportService = extensionSupportService;
-        this.placedBlockRestoreListener = placedBlockRestoreListener;
-        this.listeners = List.of(itemListener, blockListener, extensionSupportListener,
-                resourcePackStatusListener, placedBlockRestoreListener);
     }
 
     public void enable() {
-        extensionBootstrap.loadAll();
-        registerListeners();
-        placedBlockRestoreListener.restoreLoadedChunks();
-        commandRegistrar.register("ignis", ignisCommand);
-        initializeResourcePack();
+        lifecycle.enable();
     }
 
     public void disable() {
-        blockExtensionLoader.unloadAll();
-        itemExtensionLoader.unloadAll();
-        extensionSupportService.clear();
-        blockManager.cleanup();
-        resourcePackService.stopServer();
+        lifecycle.disable();
     }
 
     @Override
-    public Map<String, BlockDefinition> getBlockTypes() {
-        return blockManager.getBlockTypes();
+    public java.util.Map<String, dev.rono.igniscore.api.model.BlockDefinition> getBlockTypes() {
+        return facade.getBlockTypes();
     }
 
     @Override
-    public Map<String, ItemDefinition> getItemTypes() {
-        return itemManager.getItemTypes();
+    public java.util.Map<String, dev.rono.igniscore.api.model.ItemDefinition> getItemTypes() {
+        return facade.getItemTypes();
     }
 
     @Override
-    public RuntimeBlockInstance triggerBlock(IgnisLocation location, String typeId, Object context) {
-        return blockManager.triggerBlock(BukkitBridge.toBukkit(location), typeId, context);
+    public dev.rono.igniscore.api.model.RuntimeBlockInstance triggerBlock(
+            dev.rono.igniscore.api.port.IgnisLocation location, String typeId, Object context) {
+        return facade.triggerBlock(location, typeId, context);
     }
 
     @Override
-    public RuntimeBlockInstance ignitePlacedBlock(IgnisLocation location, Object context) {
-        org.bukkit.Location bukkitLocation = BukkitBridge.toBukkit(location);
-        String typeId = blockManager.getPlacedBlockType(bukkitLocation);
-        if (typeId == null) {
-            return null;
-        }
-
-        blockManager.unregisterPlacedBlock(bukkitLocation);
-        Block block = bukkitLocation.getBlock();
-        if (block.getType() != Material.AIR) {
-            block.setType(Material.AIR);
-        }
-        return blockManager.triggerBlock(bukkitLocation, typeId, context);
+    public dev.rono.igniscore.api.model.RuntimeBlockInstance ignitePlacedBlock(
+            dev.rono.igniscore.api.port.IgnisLocation location, Object context) {
+        return facade.ignitePlacedBlock(location, context);
     }
 
     @Override
-    public String getPlacedBlockType(IgnisLocation location) {
-        return blockManager.getPlacedBlockType(BukkitBridge.toBukkit(location));
+    public String getPlacedBlockType(dev.rono.igniscore.api.port.IgnisLocation location) {
+        return facade.getPlacedBlockType(location);
     }
 
     @Override
-    public Collection<RuntimeBlockInstance> getActiveBlocks() {
-        return blockManager.getActiveBlocks();
+    public java.util.Collection<dev.rono.igniscore.api.model.RuntimeBlockInstance> getActiveBlocks() {
+        return facade.getActiveBlocks();
     }
 
     @Override
-    public IgnisItem createBlockItem(String typeId) {
-        return BukkitBridge.wrap(blockItemFactory.createBlockItem(typeId));
+    public dev.rono.igniscore.api.port.IgnisItem createBlockItem(String typeId) {
+        return facade.createBlockItem(typeId);
     }
 
     @Override
-    public IgnisItem createItem(String typeId) {
-        return BukkitBridge.wrap(itemFactory.createItem(typeId));
+    public dev.rono.igniscore.api.port.IgnisItem createItem(String typeId) {
+        return facade.createItem(typeId);
     }
 
     @Override
-    public IgnisStrategyRegistry getStrategyRegistry() {
-        return strategyRegistry;
+    public dev.rono.igniscore.api.strategy.IgnisStrategyRegistry getStrategyRegistry() {
+        return facade.getStrategyRegistry();
     }
 
     @Override
-    public IgnisNbtService getNbtService() {
-        return nbtService;
+    public dev.rono.igniscore.api.service.IgnisNbtService getNbtService() {
+        return facade.getNbtService();
     }
 
     @Override
-    public IgnisProtocolService getProtocolService() {
-        return protocolService;
+    public dev.rono.igniscore.api.service.IgnisProtocolService getProtocolService() {
+        return facade.getProtocolService();
     }
 
     @Override
-    public IgnisEffectService getEffectService() {
-        return effectService;
+    public dev.rono.igniscore.api.service.IgnisEffectService getEffectService() {
+        return facade.getEffectService();
     }
 
     @Override
     public void reloadExtensions() {
-        extensionBootstrap.reloadAll();
-        try {
-            resourcePackService.buildAndRegister();
-            resourcePackService.reloadConfiguration();
-        } catch (IOException e) {
-            plugin.getLogger().severe("Failed to rebuild resource pack after reload: " + e.getMessage());
-        }
+        facade.reloadExtensions();
     }
 
     public BlockItemFactory getBlockItemFactory() {
@@ -246,20 +169,5 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
 
     public ItemExtensionLoader getItemExtensionLoader() {
         return itemExtensionLoader;
-    }
-
-    private void registerListeners() {
-        for (Listener listener : listeners) {
-            plugin.getServer().getPluginManager().registerEvents(listener, plugin);
-        }
-    }
-
-    private void initializeResourcePack() {
-        try {
-            resourcePackService.buildAndRegister();
-            resourcePackService.startServer();
-        } catch (IOException e) {
-            plugin.getLogger().severe("Failed to generate resource pack: " + e.getMessage());
-        }
     }
 }

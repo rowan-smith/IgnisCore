@@ -2,8 +2,9 @@ package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.Main;
-import dev.rono.igniscore.manager.BlockManager;
+import dev.rono.igniscore.manager.PlacedBlockRegistry;
 import dev.rono.igniscore.platform.PlatformHooks;
+import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -17,27 +18,27 @@ public class CustomBlockPlacementService {
     private static final Material CUSTOM_BLOCK_BACKING_MATERIAL = Material.BARRIER;
 
     private final Plugin plugin;
-    private final BlockManager blockManager;
+    private final PlacedBlockRegistry blockRegistry;
     private final BlockItemIdentifier itemIdentifier;
     private final PlatformHooks platformHooks;
 
     @Inject
     public CustomBlockPlacementService(Main plugin,
-                                       BlockManager blockManager,
+                                       PlacedBlockRegistry blockRegistry,
                                        BlockItemIdentifier itemIdentifier,
                                        PlatformHooks platformHooks) {
         this.plugin = plugin;
-        this.blockManager = blockManager;
+        this.blockRegistry = blockRegistry;
         this.itemIdentifier = itemIdentifier;
         this.platformHooks = platformHooks;
     }
 
     CustomBlockPlacementService(Plugin plugin,
-                                BlockManager blockManager,
+                                PlacedBlockRegistry blockRegistry,
                                 BlockItemIdentifier itemIdentifier,
                                 PlatformHooks platformHooks) {
         this.plugin = plugin;
-        this.blockManager = blockManager;
+        this.blockRegistry = blockRegistry;
         this.itemIdentifier = itemIdentifier;
         this.platformHooks = platformHooks;
     }
@@ -70,7 +71,7 @@ public class CustomBlockPlacementService {
 
         event.setCancelled(true);
         targetBlock.setType(CUSTOM_BLOCK_BACKING_MATERIAL);
-        blockManager.registerPlacedBlock(targetBlock.getLocation(), typeId, item);
+        blockRegistry.registerPlacedBlock(BukkitBridge.toIgnis(targetBlock.getLocation()), typeId, BukkitBridge.wrap(item));
         event.getPlayer().swingMainHand();
         debug("Successfully placed " + typeId + " at " + targetBlock.getLocation().toVector());
 
@@ -82,12 +83,12 @@ public class CustomBlockPlacementService {
     public void handleBlockPlace(BlockPlaceEvent event) {
         String typeId = itemIdentifier.resolveTypeId(event.getItemInHand());
         if (isKnownType(typeId)) {
-            blockManager.registerPlacedBlock(event.getBlock().getLocation(), typeId, event.getItemInHand());
+            blockRegistry.registerPlacedBlock(BukkitBridge.toIgnis(event.getBlock().getLocation()), typeId, BukkitBridge.wrap(event.getItemInHand()));
         }
     }
 
     private boolean isKnownType(String typeId) {
-        return typeId != null && blockManager.getBlockTypes().containsKey(typeId);
+        return typeId != null && blockRegistry.getBlockTypes().containsKey(typeId);
     }
 
     private void debug(String message) {

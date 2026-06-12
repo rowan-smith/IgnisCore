@@ -54,5 +54,11 @@ public interface PlatformAdapter {
 
     void registerCommand(String name, Object commandExecutor);
 
+    IgnisWorld resolveWorld(IgnisLocation location);
+
+    IgnisItem createMaterialItem(String materialKey, int amount);
+
+    void clearBlock(IgnisLocation location);
+
     void shutdown();
 }

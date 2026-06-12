@@ -46,12 +46,12 @@ public class CustomBlockIgnitionService {
         effectService.spawnConfiguredParticles(center, getList(igniteSettings, "particles"), Particle.FLAME,
                 18, 0.35, 0.35, 0.35, 0.03);
 
-        blockManager.unregisterPlacedBlock(location);
+        blockManager.unregisterPlacedBlock(BukkitBridge.toIgnis(location));
         block.setType(Material.AIR);
         if (player != null && ignitionItem != null) {
             damageIgnitionItem(player, ignitionItem);
         }
-        blockManager.triggerBlock(location, definition.getId(), player);
+        blockManager.triggerBlock(BukkitBridge.toIgnis(location), definition.getId(), player);
     }
 
     private void damageIgnitionItem(Player player, ItemStack item) {

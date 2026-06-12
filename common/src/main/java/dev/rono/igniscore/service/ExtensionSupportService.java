@@ -11,18 +11,13 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.api.strategy.ExtensionSupport;
-import dev.rono.igniscore.spigot.adapter.BukkitBridge;
+import dev.rono.igniscore.api.util.Locations;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,12 +34,12 @@ public class ExtensionSupportService implements ExtensionSupport {
 
     @Override
     public void registerDropCollector(IgnisLocation location, IgnisDropCollector collector) {
-        collectors.put(blockLocation(location), collector);
+        collectors.put(Locations.toBlock(location), collector);
     }
 
     @Override
     public void unregisterDropCollector(IgnisLocation location) {
-        collectors.remove(blockLocation(location));
+        collectors.remove(Locations.toBlock(location));
     }
 
     @Override
@@ -59,8 +54,7 @@ public class ExtensionSupportService implements ExtensionSupport {
 
     @Override
     public IgnisWorld resolveWorld(IgnisLocation location) {
-        Location bukkitLocation = BukkitBridge.toBukkit(location);
-        return platformAdapter.wrapWorld(bukkitLocation.getWorld());
+        return platformAdapter.resolveWorld(location);
     }
 
     @Override
@@ -70,11 +64,7 @@ public class ExtensionSupportService implements ExtensionSupport {
 
     @Override
     public IgnisItem createItem(String materialKey, int amount) {
-        Material material = Material.matchMaterial(materialKey);
-        if (material == null) {
-            material = Material.STONE;
-        }
-        return BukkitBridge.wrap(new ItemStack(material, amount));
+        return platformAdapter.createMaterialItem(materialKey, amount);
     }
 
     @Override
@@ -84,13 +74,7 @@ public class ExtensionSupportService implements ExtensionSupport {
 
     @Override
     public IgnisPlayer wrapPlayer(Object nativeObject) {
-        if (nativeObject instanceof Player player) {
-            return BukkitBridge.wrap(player);
-        }
-        if (nativeObject instanceof IgnisPlayer ignisPlayer) {
-            return ignisPlayer;
-        }
-        return null;
+        return platformAdapter.wrapPlayer(nativeObject);
     }
 
     @Override
@@ -102,14 +86,9 @@ public class ExtensionSupportService implements ExtensionSupport {
         return customInventories.get(nativeInventory);
     }
 
-    public boolean tryCollect(Location breakLocation, Collection<ItemStack> drops) {
-        IgnisLocation ignisLocation = blockLocation(BukkitBridge.toIgnis(breakLocation));
-        List<IgnisItem> ignisDrops = new ArrayList<>();
-        for (ItemStack stack : drops) {
-            if (stack != null && !stack.getType().isAir()) {
-                ignisDrops.add(BukkitBridge.wrap(stack));
-            }
-        }
+    public boolean tryCollect(IgnisLocation breakLocation, Collection<IgnisItem> drops) {
+        IgnisLocation ignisLocation = Locations.toBlock(breakLocation);
+        List<IgnisItem> ignisDrops = new ArrayList<>(drops);
 
         boolean collectedAny = false;
         for (IgnisDropCollector collector : collectors.values()) {
@@ -119,28 +98,14 @@ public class ExtensionSupportService implements ExtensionSupport {
         }
 
         drops.clear();
-        for (IgnisItem item : ignisDrops) {
-            ItemStack stack = BukkitBridge.unwrap(item);
-            if (stack != null && !stack.getType().isAir() && stack.getAmount() > 0) {
-                drops.add(stack);
-            }
-        }
+        drops.addAll(ignisDrops.stream()
+                .filter(item -> item != null && item.getAmount() > 0)
+                .toList());
         return collectedAny;
     }
 
     public void clear() {
         collectors.clear();
         customInventories.clear();
-    }
-
-    private static IgnisLocation blockLocation(IgnisLocation location) {
-        return new IgnisLocation(
-                location.worldId(),
-                location.worldName(),
-                Math.floor(location.x()),
-                Math.floor(location.y()),
-                Math.floor(location.z()),
-                location.yaw(),
-                location.pitch());
     }
 }

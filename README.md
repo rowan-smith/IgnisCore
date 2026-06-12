@@ -31,10 +31,10 @@ igniscore-parent/
 | `api` | Stable extension-facing contract: `IgnisCoreAPI`, ports, strategy interfaces |
 | `common` | Extension loaders, strategy registry/bootstrap, `ItemManager`, resource pack builder, `IgnisCommonModule` |
 | `extensions/*` | Self-contained block/item JARs depending only on `api` |
-| `spigot/v1.21.x` | Bukkit runtime, listeners, services, schedulers |
+| `spigot/v1.21.x` | Bukkit adapters, listeners, block visuals, platform services |
 | `paper/v1.21.x` | Paper data-component hooks, `PaperV121Bootloader` |
 | `folia/v1.21.x` | Folia region scheduler, `FoliaV121Bootloader` (priority 150) |
-| `sponge/v12.0.0` | Sponge adapter, extension loading, `/ignis` command |
+| `sponge/v12.0.0` | Sponge adapter, listeners, `/ignis` command (uses `common` runtime) |
 | `bootstrap` | `igniscore-<version>.jar` for Spigot/Paper/Folia |
 | `sponge-bootstrap` | `igniscore-sponge-<version>.jar` for SpongeVanilla |
 

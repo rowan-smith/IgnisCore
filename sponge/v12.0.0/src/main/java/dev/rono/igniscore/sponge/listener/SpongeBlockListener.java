@@ -5,8 +5,8 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
-import dev.rono.igniscore.sponge.service.SpongeBlockManager;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -15,11 +15,11 @@ import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.filter.cause.First;
 
 public class SpongeBlockListener {
-    private final SpongeBlockManager blockManager;
+    private final BlockManager blockManager;
     private final IgnisStrategyRegistry strategyRegistry;
 
     @Inject
-    public SpongeBlockListener(SpongeBlockManager blockManager,
+    public SpongeBlockListener(BlockManager blockManager,
                                IgnisStrategyRegistry strategyRegistry) {
         this.blockManager = blockManager;
         this.strategyRegistry = strategyRegistry;

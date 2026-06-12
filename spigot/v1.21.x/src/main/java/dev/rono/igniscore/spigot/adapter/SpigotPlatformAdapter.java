@@ -194,6 +194,30 @@ public class SpigotPlatformAdapter implements PlatformAdapter {
     }
 
     @Override
+    public IgnisWorld resolveWorld(IgnisLocation location) {
+        Location bukkitLocation = BukkitBridge.toBukkit(location);
+        return bukkitLocation.getWorld() != null ? BukkitBridge.wrap(bukkitLocation.getWorld()) : null;
+    }
+
+    @Override
+    public IgnisItem createMaterialItem(String materialKey, int amount) {
+        org.bukkit.Material material = org.bukkit.Material.matchMaterial(materialKey);
+        if (material == null) {
+            material = org.bukkit.Material.STONE;
+        }
+        return BukkitBridge.wrap(new ItemStack(material, amount));
+    }
+
+    @Override
+    public void clearBlock(IgnisLocation location) {
+        Location bukkitLocation = BukkitBridge.toBukkit(location);
+        Block block = bukkitLocation.getBlock();
+        if (block.getType() != org.bukkit.Material.AIR) {
+            block.setType(org.bukkit.Material.AIR);
+        }
+    }
+
+    @Override
     public void shutdown() {
         platformHooks.shutdown();
         audiences.close();

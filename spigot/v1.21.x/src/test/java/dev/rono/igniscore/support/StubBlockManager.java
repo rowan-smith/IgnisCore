@@ -1,19 +1,23 @@
 package dev.rono.igniscore.support;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.manager.BlockManager;
-import org.bukkit.Location;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.util.Locations;
+import dev.rono.igniscore.loader.LoadedExtension;
+import dev.rono.igniscore.manager.BlockTypeRegistry;
+import dev.rono.igniscore.manager.PlacedBlockRegistry;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class StubBlockManager extends BlockManager {
+public final class StubBlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     private final Map<String, BlockDefinition> blockTypes;
-    private final Map<Location, String> placedBlocks = new ConcurrentHashMap<>();
+    private final Map<IgnisLocation, String> placedBlocks = new ConcurrentHashMap<>();
 
     private StubBlockManager(Map<String, BlockDefinition> blockTypes) {
-        super(null, null, null, null, null, null);
         this.blockTypes = blockTypes;
     }
 
@@ -26,22 +30,21 @@ public final class StubBlockManager extends BlockManager {
     }
 
     @Override
+    public void loadFromExtensions(List<LoadedExtension<BlockDefinition>> extensions) {
+    }
+
+    @Override
     public Map<String, BlockDefinition> getBlockTypes() {
         return blockTypes;
     }
 
     @Override
-    public void registerPlacedBlock(Location location, String typeId) {
-        placedBlocks.put(location.getBlock().getLocation(), typeId);
+    public void registerPlacedBlock(IgnisLocation location, String typeId, IgnisItem placedFrom) {
+        placedBlocks.put(Locations.toBlock(location), typeId);
     }
 
     @Override
-    public void registerPlacedBlock(Location location, String typeId, org.bukkit.inventory.ItemStack placedFrom) {
-        registerPlacedBlock(location, typeId);
-    }
-
-    @Override
-    public String getPlacedBlockType(Location location) {
-        return placedBlocks.get(location.getBlock().getLocation());
+    public String getPlacedBlockType(IgnisLocation location) {
+        return placedBlocks.get(Locations.toBlock(location));
     }
 }

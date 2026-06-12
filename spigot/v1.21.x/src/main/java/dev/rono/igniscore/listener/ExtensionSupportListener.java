@@ -1,6 +1,8 @@
 package dev.rono.igniscore.listener;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.inventory.IgnisCustomInventory;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.service.ExtensionSupportService;
@@ -36,18 +38,22 @@ public class ExtensionSupportListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (blockManager.getPlacedBlockType(block.getLocation()) != null) {
+        if (blockManager.getPlacedBlockType(BukkitBridge.toIgnis(block.getLocation())) != null) {
             return;
         }
 
         Player player = event.getPlayer();
         ItemStack tool = player.getGameMode() == GameMode.CREATIVE ? null : player.getInventory().getItemInMainHand();
-        Collection<ItemStack> drops = new ArrayList<>(block.getDrops(tool, player));
-        if (drops.isEmpty()) {
+        Collection<ItemStack> nativeDrops = new ArrayList<>(block.getDrops(tool, player));
+        if (nativeDrops.isEmpty()) {
             return;
         }
 
-        extensionSupport.tryCollect(block.getLocation(), drops);
+        List<IgnisItem> drops = new ArrayList<>();
+        for (ItemStack stack : nativeDrops) {
+            drops.add(BukkitBridge.wrap(stack));
+        }
+        extensionSupport.tryCollect(BukkitBridge.toIgnis(block.getLocation()), drops);
         if (drops.isEmpty()) {
             event.setDropItems(false);
             event.setExpToDrop(0);
@@ -55,24 +61,27 @@ public class ExtensionSupportListener implements Listener {
         }
 
         event.setDropItems(false);
-        for (ItemStack remaining : drops) {
-            block.getWorld().dropItemNaturally(block.getLocation(), remaining);
+        for (IgnisItem remaining : drops) {
+            ItemStack stack = BukkitBridge.unwrap(remaining);
+            if (stack != null && !stack.getType().isAir() && stack.getAmount() > 0) {
+                block.getWorld().dropItemNaturally(block.getLocation(), stack);
+            }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemSpawn(ItemSpawnEvent event) {
         ItemStack stack = event.getEntity().getItemStack();
-        List<ItemStack> drops = new ArrayList<>();
-        drops.add(stack.clone());
-        extensionSupport.tryCollect(event.getLocation(), drops);
+        List<IgnisItem> drops = new ArrayList<>();
+        drops.add(BukkitBridge.wrap(stack.clone()));
+        extensionSupport.tryCollect(BukkitBridge.toIgnis(event.getLocation()), drops);
         if (drops.isEmpty()) {
             event.setCancelled(true);
             return;
         }
 
-        ItemStack remaining = drops.get(0);
-        if (remaining.getAmount() != stack.getAmount()) {
+        ItemStack remaining = BukkitBridge.unwrap(drops.getFirst());
+        if (remaining != null && remaining.getAmount() != stack.getAmount()) {
             event.getEntity().setItemStack(remaining);
         }
     }

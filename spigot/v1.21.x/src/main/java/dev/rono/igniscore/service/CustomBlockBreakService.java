@@ -123,12 +123,12 @@ public class CustomBlockBreakService {
         if (droppedItem != null) {
             block.getWorld().dropItemNaturally(block.getLocation(), droppedItem);
         }
-        blockManager.unregisterPlacedBlock(block.getLocation());
+        blockManager.unregisterPlacedBlock(BukkitBridge.toIgnis(block.getLocation()));
         block.setType(Material.AIR);
     }
 
     private void tickMiningSession(Player player, Block block, BlockDefinition definition, MiningSession session) {
-        if (!player.isOnline() || !session.typeId.equals(blockManager.getPlacedBlockType(session.location))) {
+        if (!player.isOnline() || !session.typeId.equals(blockManager.getPlacedBlockType(BukkitBridge.toIgnis(session.location)))) {
             cancel(player.getUniqueId());
             return;
         }

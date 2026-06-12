@@ -1,43 +1,56 @@
-package dev.rono.igniscore.sponge;
+package dev.rono.igniscore.core;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.api.port.IgnisItem;
-import dev.rono.igniscore.api.port.IgnisLocation;
+import com.google.inject.Singleton;
+import dev.rono.igniscore.api.IgnisCoreFacade;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.port.IgnisCustomItemFactory;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.PlatformAdapter;
+import dev.rono.igniscore.api.port.ResourcePackHost;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
-import dev.rono.igniscore.core.ExtensionBootstrap;
+import dev.rono.igniscore.loader.BlockExtensionLoader;
+import dev.rono.igniscore.loader.ItemExtensionLoader;
+import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
-import dev.rono.igniscore.sponge.adapter.SpongeBridge;
-import dev.rono.igniscore.sponge.service.SpongeBlockManager;
-import dev.rono.igniscore.sponge.service.SpongeItemFactory;
+import dev.rono.igniscore.service.ExtensionSupportService;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.logging.Logger;
 
-public class SpongeIgnisFacade implements dev.rono.igniscore.api.IgnisCoreFacade {
-    private final SpongeBlockManager blockManager;
+@Singleton
+public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
+    private final BlockManager blockManager;
     private final ItemManager itemManager;
-    private final SpongeItemFactory itemFactory;
+    private final IgnisCustomItemFactory itemFactory;
     private final IgnisStrategyRegistry strategyRegistry;
     private final IgnisNbtService nbtService;
     private final IgnisProtocolService protocolService;
     private final IgnisEffectService effectService;
     private final ExtensionBootstrap extensionBootstrap;
+    private final ResourcePackHost resourcePackHost;
+    private final PlatformAdapter platformAdapter;
+    private final Logger logger;
 
     @Inject
-    public SpongeIgnisFacade(SpongeBlockManager blockManager,
-                             ItemManager itemManager,
-                             SpongeItemFactory itemFactory,
-                             IgnisStrategyRegistry strategyRegistry,
-                             IgnisNbtService nbtService,
-                             IgnisProtocolService protocolService,
-                             IgnisEffectService effectService,
-                             ExtensionBootstrap extensionBootstrap) {
+    public IgnisCoreFacadeImpl(BlockManager blockManager,
+                               ItemManager itemManager,
+                               IgnisCustomItemFactory itemFactory,
+                               IgnisStrategyRegistry strategyRegistry,
+                               IgnisNbtService nbtService,
+                               IgnisProtocolService protocolService,
+                               IgnisEffectService effectService,
+                               ExtensionBootstrap extensionBootstrap,
+                               ResourcePackHost resourcePackHost,
+                               PlatformAdapter platformAdapter) {
         this.blockManager = blockManager;
         this.itemManager = itemManager;
         this.itemFactory = itemFactory;
@@ -46,6 +59,9 @@ public class SpongeIgnisFacade implements dev.rono.igniscore.api.IgnisCoreFacade
         this.protocolService = protocolService;
         this.effectService = effectService;
         this.extensionBootstrap = extensionBootstrap;
+        this.resourcePackHost = resourcePackHost;
+        this.platformAdapter = platformAdapter;
+        this.logger = platformAdapter.getLogger();
     }
 
     @Override
@@ -69,7 +85,9 @@ public class SpongeIgnisFacade implements dev.rono.igniscore.api.IgnisCoreFacade
         if (typeId == null) {
             return null;
         }
+
         blockManager.unregisterPlacedBlock(location);
+        platformAdapter.clearBlock(location);
         return blockManager.triggerBlock(location, typeId, context);
     }
 
@@ -85,12 +103,12 @@ public class SpongeIgnisFacade implements dev.rono.igniscore.api.IgnisCoreFacade
 
     @Override
     public IgnisItem createBlockItem(String typeId) {
-        return SpongeBridge.wrap(itemFactory.createItem(typeId));
+        return itemFactory.createBlockItem(typeId);
     }
 
     @Override
     public IgnisItem createItem(String typeId) {
-        return SpongeBridge.wrap(itemFactory.createItem(typeId));
+        return itemFactory.createItem(typeId);
     }
 
     @Override
@@ -116,5 +134,11 @@ public class SpongeIgnisFacade implements dev.rono.igniscore.api.IgnisCoreFacade
     @Override
     public void reloadExtensions() {
         extensionBootstrap.reloadAll();
+        try {
+            resourcePackHost.buildAndRegister();
+            resourcePackHost.reloadConfiguration();
+        } catch (IOException error) {
+            logger.severe("Failed to rebuild resource pack after reload: " + error.getMessage());
+        }
     }
 }

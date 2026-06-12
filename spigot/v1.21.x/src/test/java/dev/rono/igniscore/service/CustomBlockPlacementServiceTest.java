@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import dev.rono.igniscore.support.MockBukkitTestBase;
 import dev.rono.igniscore.support.PdcBackedNbtService;
 import dev.rono.igniscore.support.TestDefinitions;
@@ -54,7 +55,7 @@ class CustomBlockPlacementServiceTest extends MockBukkitTestBase {
 
         assertTrue(event.isCancelled());
         assertEquals(Material.BARRIER, world.getBlockAt(0, 65, 0).getType());
-        assertEquals("nuke", blockManager.getPlacedBlockType(world.getBlockAt(0, 65, 0).getLocation()));
+        assertEquals("nuke", blockManager.getPlacedBlockType(BukkitBridge.toIgnis(world.getBlockAt(0, 65, 0).getLocation())));
         assertEquals(1, event.getItem().getAmount());
     }
 
@@ -86,6 +87,6 @@ class CustomBlockPlacementServiceTest extends MockBukkitTestBase {
         BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), block, item, player, true, EquipmentSlot.HAND);
         placementService.handleBlockPlace(event);
 
-        assertEquals("nuke", blockManager.getPlacedBlockType(block.getLocation()));
+        assertEquals("nuke", blockManager.getPlacedBlockType(BukkitBridge.toIgnis(block.getLocation())));
     }
 }

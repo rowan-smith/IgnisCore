@@ -1,57 +1,62 @@
 package dev.rono.igniscore.manager;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.Main;
+import com.google.inject.Singleton;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.port.BlockVisualRenderer;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisScheduler;
+import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.loader.LoadedExtension;
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.util.Locations;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
-import dev.rono.igniscore.renderer.BlockDisplayRenderer;
-import dev.rono.igniscore.service.ConfiguredEffectService;
+import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
+import dev.rono.igniscore.service.RuntimeBlockService;
 import dev.rono.igniscore.service.StrategyProfileResolver;
-import dev.rono.igniscore.spigot.adapter.BukkitBridge;
-import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BlockManager implements BlockTypeRegistry {
-    private final Main plugin;
+@Singleton
+public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
+    private final RuntimeBlockService runtimeBlockService;
     private final IgnisStrategyRegistry strategyRegistry;
-    private final ConfiguredEffectService effectService;
+    private final IgnisEffectService effectService;
     private final StrategyProfileResolver profileResolver;
     private final PlacedBlockPersistenceService placedBlockPersistence;
     private final IgnisScheduler scheduler;
+    private final BlockVisualRenderer visualRenderer;
     private final Map<String, BlockDefinition> blockTypes = new HashMap<>();
-    private final Map<Location, String> placedBlocks = new ConcurrentHashMap<>();
-    private final Map<Location, org.bukkit.entity.Display> blockVisuals = new ConcurrentHashMap<>();
-    private final BlockDisplayRenderer renderer;
+    private final Map<IgnisLocation, String> placedBlocks = new ConcurrentHashMap<>();
+    private final Map<IgnisLocation, Object> blockVisuals = new ConcurrentHashMap<>();
 
     @Inject
-    public BlockManager(Main plugin,
+    public BlockManager(RuntimeBlockService runtimeBlockService,
                         IgnisStrategyRegistry strategyRegistry,
-                        ConfiguredEffectService effectService,
+                        IgnisEffectService effectService,
                         StrategyProfileResolver profileResolver,
                         PlacedBlockPersistenceService placedBlockPersistence,
-                        dev.rono.igniscore.spigot.adapter.BukkitIgnisScheduler scheduler) {
-        this.plugin = plugin;
+                        IgnisScheduler scheduler,
+                        BlockVisualRenderer visualRenderer) {
+        this.runtimeBlockService = runtimeBlockService;
         this.strategyRegistry = strategyRegistry;
         this.effectService = effectService;
         this.profileResolver = profileResolver;
         this.placedBlockPersistence = placedBlockPersistence;
         this.scheduler = scheduler;
-        this.renderer = new BlockDisplayRenderer(plugin);
+        this.visualRenderer = visualRenderer;
     }
 
+    @Override
     public void loadFromExtensions(List<LoadedExtension<BlockDefinition>> extensions) {
         blockTypes.clear();
         for (LoadedExtension<BlockDefinition> extension : extensions) {
@@ -60,27 +65,25 @@ public class BlockManager implements BlockTypeRegistry {
         }
     }
 
-    public void registerPlacedBlock(Location location, String typeId) {
+    public void registerPlacedBlock(IgnisLocation location, String typeId) {
         registerPlacedBlock(location, typeId, null);
     }
 
-    public void registerPlacedBlock(Location location, String typeId, ItemStack placedFrom) {
-        Location blockLocation = location.getBlock().getLocation();
+    public void registerPlacedBlock(IgnisLocation location, String typeId, IgnisItem placedFrom) {
+        IgnisLocation blockLocation = blockKey(location);
         placedBlocks.put(blockLocation, typeId);
-        if (placedBlockPersistence != null) {
-            placedBlockPersistence.recordPlacement(blockLocation, typeId);
-        }
+        placedBlockPersistence.recordPlacement(blockLocation, typeId);
 
         BlockDefinition type = blockTypes.get(typeId);
         if (type != null) {
-            org.bukkit.entity.Display display = renderer.spawnStaticDisplay(blockLocation, type);
+            Object display = visualRenderer.spawnStaticDisplay(blockLocation, type);
             blockVisuals.put(blockLocation, display);
             playPlacementEffects(blockLocation, type, placedFrom);
         }
     }
 
-    public void restorePlacedBlock(Location location, String typeId) {
-        Location blockLocation = location.getBlock().getLocation();
+    public void restorePlacedBlock(IgnisLocation location, String typeId) {
+        IgnisLocation blockLocation = blockKey(location);
         if (placedBlocks.containsKey(blockLocation)) {
             return;
         }
@@ -91,53 +94,50 @@ public class BlockManager implements BlockTypeRegistry {
             return;
         }
 
-        org.bukkit.entity.Display display = renderer.spawnStaticDisplay(blockLocation, type);
+        Object display = visualRenderer.spawnStaticDisplay(blockLocation, type);
         blockVisuals.put(blockLocation, display);
-        requireBlockStrategy(type).onStaticPlace(type, BukkitBridge.toIgnis(blockLocation), null);
+        requireBlockStrategy(type).onStaticPlace(type, blockLocation, null);
     }
 
-    private void playPlacementEffects(Location location, BlockDefinition type, ItemStack placedFrom) {
+    private void playPlacementEffects(IgnisLocation location, BlockDefinition type, IgnisItem placedFrom) {
         StrategyProfile profile = profileResolver.resolve(type);
-        IgnisLocation center = Locations.toCenter(BukkitBridge.toIgnis(location));
+        IgnisLocation center = Locations.toCenter(location);
 
         if (profile.getPlacementSound() != null) {
             effectService.playSound(center, profile.getPlacementSound(), 1.6f, 0.7f);
         }
 
-        IgnisItem placedItem = placedFrom != null ? BukkitBridge.wrap(placedFrom) : null;
-        requireBlockStrategy(type).onStaticPlace(type, BukkitBridge.toIgnis(location), placedItem);
+        requireBlockStrategy(type).onStaticPlace(type, location, placedFrom);
     }
 
-    public void unregisterPlacedBlock(Location location) {
-        Location blockLocation = location.getBlock().getLocation();
+    public void unregisterPlacedBlock(IgnisLocation location) {
+        IgnisLocation blockLocation = blockKey(location);
         placedBlocks.remove(blockLocation);
-        if (placedBlockPersistence != null) {
-            placedBlockPersistence.removePlacement(blockLocation);
-        }
-        org.bukkit.entity.Display display = blockVisuals.remove(blockLocation);
+        placedBlockPersistence.removePlacement(blockLocation);
+        Object display = blockVisuals.remove(blockLocation);
         if (display != null) {
-            display.remove();
+            visualRenderer.removeStaticDisplay(display);
         }
     }
 
-    public String getPlacedBlockType(Location location) {
-        return placedBlocks.get(location.getBlock().getLocation());
+    public String getPlacedBlockType(IgnisLocation location) {
+        return placedBlocks.get(blockKey(location));
     }
 
-    public RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context) {
+    public RuntimeBlockInstance triggerBlock(IgnisLocation location, String typeId, Object context) {
         BlockDefinition type = blockTypes.get(typeId);
         if (type == null) {
             return null;
         }
 
-        RuntimeBlockInstance instance = plugin.getRuntimeBlockService().createInstance(type, BukkitBridge.toIgnis(location));
-        renderer.spawnDisplay(instance);
+        RuntimeBlockInstance instance = runtimeBlockService.createInstance(type, location);
+        visualRenderer.spawnAnimatedDisplay(instance);
         IgnisBlockStrategy strategy = requireBlockStrategy(type);
         strategy.onPlace(instance);
 
         instance.setTask(scheduler.runRepeating(instance.getLocation(), () -> {
             instance.tick();
-            renderer.updateAnimation(instance);
+            visualRenderer.updateAnimation(instance);
             strategy.onTick(instance);
 
             if (instance.getTicksLeft() <= 0) {
@@ -152,8 +152,8 @@ public class BlockManager implements BlockTypeRegistry {
         if (instance.getTask() != null) {
             instance.getTask().cancel();
         }
-        plugin.getRuntimeBlockService().removeInstance(instance.getUuid());
-        renderer.removeDisplay(instance);
+        runtimeBlockService.removeInstance(instance.getUuid());
+        visualRenderer.removeDisplay(instance);
         requireBlockStrategy(instance.getDefinition()).onTrigger(instance, context);
     }
 
@@ -166,30 +166,30 @@ public class BlockManager implements BlockTypeRegistry {
         return blockStrategy;
     }
 
-    public Main getPlugin() {
-        return plugin;
-    }
-
     public Map<String, BlockDefinition> getBlockTypes() {
         return Collections.unmodifiableMap(blockTypes);
     }
 
     public Collection<RuntimeBlockInstance> getActiveBlocks() {
-        return plugin.getRuntimeBlockService().getActiveInstances();
+        return runtimeBlockService.getActiveInstances();
     }
 
     public void cleanup() {
-        for (RuntimeBlockInstance instance : plugin.getRuntimeBlockService().getActiveInstances()) {
+        for (RuntimeBlockInstance instance : runtimeBlockService.getActiveInstances()) {
             if (instance.getTask() != null) {
                 instance.getTask().cancel();
             }
-            renderer.removeDisplay(instance);
+            visualRenderer.removeDisplay(instance);
         }
 
-        for (org.bukkit.entity.Display display : blockVisuals.values()) {
-            display.remove();
+        for (Object display : blockVisuals.values()) {
+            visualRenderer.removeStaticDisplay(display);
         }
         blockVisuals.clear();
         placedBlocks.clear();
+    }
+
+    private static IgnisLocation blockKey(IgnisLocation location) {
+        return Locations.toBlock(location);
     }
 }
