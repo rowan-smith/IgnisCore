@@ -2,6 +2,7 @@ package dev.rono.blocks.quarrycache;
 
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -34,8 +35,9 @@ final class QuarryCacheStorage {
         if (baseDir == null) {
             return;
         }
-        File file = fileFor(location);
-        File parent = file.getParentFile();
+
+        var file = fileFor(location);
+        var parent = file.getParentFile();
         if (parent != null && !parent.exists() && !parent.mkdirs()) {
             plugin.getLogger().warning("Could not create quarry cache storage directory: " + parent);
             return;
@@ -46,9 +48,9 @@ final class QuarryCacheStorage {
         config.set("x", location.getBlockX());
         config.set("y", location.getBlockY());
         config.set("z", location.getBlockZ());
+
         writeInventory(config, "filters", inventory.getInventory(), 0, QuarryCacheInventory.FILTER_SLOTS, slot -> false);
-        writeInventory(config, "storage", inventory.getInventory(), QuarryCacheInventory.STORAGE_START,
-                QuarryCacheInventory.TOTAL_SLOTS, inventory::isSeparatorSlot);
+        writeInventory(config, "storage", inventory.getInventory(), QuarryCacheInventory.STORAGE_START, QuarryCacheInventory.TOTAL_SLOTS, inventory::isSeparatorSlot);
 
         try {
             config.save(file);
@@ -64,7 +66,7 @@ final class QuarryCacheStorage {
             return QuarryCacheContents.empty();
         }
 
-        File file = fileFor(location);
+        var file = fileFor(location);
         if (!file.exists()) {
             return QuarryCacheContents.empty();
         }
@@ -77,7 +79,7 @@ final class QuarryCacheStorage {
             return;
         }
 
-        File file = fileFor(location);
+        var file = fileFor(location);
         if (file.exists() && !file.delete() && plugin != null) {
             plugin.getLogger().warning("Failed to delete quarry cache storage file: " + file);
         }
@@ -92,10 +94,11 @@ final class QuarryCacheStorage {
             return;
         }
 
-        String portableId = savePortable(contents);
+        var portableId = savePortable(contents);
         if (portableId == null) {
             return;
         }
+
         writePortableId(item, portableId);
     }
 
@@ -104,9 +107,10 @@ final class QuarryCacheStorage {
             return;
         }
 
-        String portableId = readPortableId(item);
+        var portableId = readPortableId(item);
         if (portableId != null) {
-            QuarryCacheContents portableContents = loadPortable(portableId);
+            var portableContents = loadPortable(portableId);
+
             if (!portableContents.isEmpty()) {
                 applyContents(inventory, portableContents);
                 deletePortable(portableId);
@@ -124,23 +128,26 @@ final class QuarryCacheStorage {
             return false;
         }
 
-        String portableId = readPortableId(item);
+        var portableId = readPortableId(item);
         if (portableId != null && portableFile(portableId).exists()) {
             return true;
         }
 
-        String encoded = nbtService.readItem(item, nbt -> nbt.getString(INLINE_CONTENTS_KEY));
+        var encoded = nbtService.readItem(item, nbt -> nbt.getString(INLINE_CONTENTS_KEY));
         return encoded != null && !encoded.isEmpty();
     }
 
     void applyContents(QuarryCacheInventory inventory, QuarryCacheContents contents) {
-        Inventory backing = inventory.getInventory();
+        var backing = inventory.getInventory();
+
         for (Map.Entry<Integer, ItemStack> entry : contents.copySlots().entrySet()) {
             if (inventory.isSeparatorSlot(entry.getKey())) {
                 continue;
             }
+
             backing.setItem(entry.getKey(), entry.getValue());
         }
+
         inventory.restoreDecorations();
     }
 
@@ -149,14 +156,14 @@ final class QuarryCacheStorage {
             return;
         }
 
-        QuarryCacheContents contents = readInventoryContents(source, skipSeparator);
+        var contents = readInventoryContents(source, skipSeparator);
         if (contents.isEmpty()) {
             clearPortableId(item);
             clearInlineContents(item);
             return;
         }
 
-        String portableId = savePortable(contents);
+        var portableId = savePortable(contents);
         if (portableId == null) {
             writeInlineContents(item, source, skipSeparator);
             return;
@@ -175,21 +182,25 @@ final class QuarryCacheStorage {
             if (plugin != null) {
                 plugin.getLogger().warning("Could not create quarry cache portable directory: " + portableDir);
             }
+
             return null;
         }
 
-        String portableId = UUID.randomUUID().toString();
-        File file = portableFile(portableId);
-        YamlConfiguration config = new YamlConfiguration();
+        var portableId = UUID.randomUUID().toString();
+        var file = portableFile(portableId);
+        var config = new YamlConfiguration();
+
         writeContentsMap(config, contents.copySlots());
 
         try {
             config.save(file);
             return portableId;
+
         } catch (IOException error) {
             if (plugin != null) {
                 plugin.getLogger().log(Level.WARNING, "Failed to save portable quarry cache " + portableId, error);
             }
+
             return null;
         }
     }
@@ -199,7 +210,7 @@ final class QuarryCacheStorage {
             return QuarryCacheContents.empty();
         }
 
-        File file = portableFile(portableId);
+        var file = portableFile(portableId);
         if (!file.exists()) {
             return QuarryCacheContents.empty();
         }
@@ -212,7 +223,7 @@ final class QuarryCacheStorage {
             return;
         }
 
-        File file = portableFile(portableId);
+        var file = portableFile(portableId);
         if (file.exists() && !file.delete() && plugin != null) {
             plugin.getLogger().warning("Failed to delete portable quarry cache file: " + file);
         }
@@ -222,6 +233,7 @@ final class QuarryCacheStorage {
         if (nbtService == null) {
             return;
         }
+
         nbtService.editItem(item, nbt -> nbt.setString(PORTABLE_ID_KEY, portableId));
     }
 
@@ -229,6 +241,7 @@ final class QuarryCacheStorage {
         if (nbtService == null || item == null || item.getType().isAir()) {
             return null;
         }
+
         return nbtService.readItem(item, nbt -> nbt.getString(PORTABLE_ID_KEY));
     }
 
@@ -236,6 +249,7 @@ final class QuarryCacheStorage {
         if (nbtService == null || item == null || item.getType().isAir()) {
             return;
         }
+
         nbtService.editItem(item, nbt -> nbt.removeKey(PORTABLE_ID_KEY));
     }
 
@@ -244,12 +258,11 @@ final class QuarryCacheStorage {
             return;
         }
 
-        YamlConfiguration config = new YamlConfiguration();
+        var config = new YamlConfiguration();
         writeInventory(config, "filters", source, 0, QuarryCacheInventory.FILTER_SLOTS, slot -> false);
-        writeInventory(config, "storage", source, QuarryCacheInventory.STORAGE_START,
-                QuarryCacheInventory.TOTAL_SLOTS, skipSeparator::test);
+        writeInventory(config, "storage", source, QuarryCacheInventory.STORAGE_START, QuarryCacheInventory.TOTAL_SLOTS, skipSeparator::test);
 
-        String encoded = config.saveToString();
+        var encoded = config.saveToString();
         nbtService.editItem(item, nbt -> nbt.setString(INLINE_CONTENTS_KEY, encoded));
     }
 
@@ -258,18 +271,20 @@ final class QuarryCacheStorage {
             return;
         }
 
-        String encoded = nbtService.readItem(item, nbt -> nbt.getString(INLINE_CONTENTS_KEY));
+        var encoded = nbtService.readItem(item, nbt -> nbt.getString(INLINE_CONTENTS_KEY));
         if (encoded == null || encoded.isEmpty()) {
             return;
         }
 
-        YamlConfiguration config = new YamlConfiguration();
+        var config = new YamlConfiguration();
         try {
             config.loadFromString(encoded);
+
         } catch (Exception error) {
             if (plugin != null) {
                 plugin.getLogger().log(Level.WARNING, "Failed to read inline quarry cache item contents", error);
             }
+
             return;
         }
 
@@ -281,55 +296,61 @@ final class QuarryCacheStorage {
         if (nbtService == null || item == null || item.getType().isAir()) {
             return;
         }
+
         nbtService.editItem(item, nbt -> nbt.removeKey(INLINE_CONTENTS_KEY));
     }
 
     private QuarryCacheContents readInventoryContents(Inventory inventory, SlotPredicate skipSeparator) {
-        Map<Integer, ItemStack> slots = new HashMap<>();
+        var slots = new HashMap<Integer, ItemStack>();
+
         collectInventorySlots(slots, inventory, 0, QuarryCacheInventory.FILTER_SLOTS, slot -> false);
-        collectInventorySlots(slots, inventory, QuarryCacheInventory.STORAGE_START,
-                QuarryCacheInventory.TOTAL_SLOTS, skipSeparator::test);
+        collectInventorySlots(slots, inventory, QuarryCacheInventory.STORAGE_START, QuarryCacheInventory.TOTAL_SLOTS, skipSeparator::test);
+
         return new QuarryCacheContents(slots);
     }
 
-    private void collectInventorySlots(Map<Integer, ItemStack> slots, Inventory inventory, int start, int end,
-                                       SlotPredicate skip) {
+    private void collectInventorySlots(Map<Integer, ItemStack> slots, Inventory inventory, int start, int end, SlotPredicate skip) {
         for (int slot = start; slot < end; slot++) {
             if (skip.test(slot)) {
                 continue;
             }
-            ItemStack item = inventory.getItem(slot);
+
+            var item = inventory.getItem(slot);
             if (item == null || item.getType().isAir()) {
                 continue;
             }
+
             slots.put(slot, item.clone());
         }
     }
 
     private void writeContentsMap(YamlConfiguration config, Map<Integer, ItemStack> slots) {
-        for (Map.Entry<Integer, ItemStack> entry : slots.entrySet()) {
-            String section = entry.getKey() < QuarryCacheInventory.STORAGE_START ? "filters" : "storage";
+        for (var entry : slots.entrySet()) {
+            var section = entry.getKey() < QuarryCacheInventory.STORAGE_START ? "filters" : "storage";
             config.set(section + "." + entry.getKey(), entry.getValue().serialize());
         }
     }
 
     private QuarryCacheContents readContents(YamlConfiguration config) {
-        Map<Integer, ItemStack> slots = new HashMap<>();
+        var slots = new HashMap<Integer, ItemStack>();
+
         readInventory(config, "filters", slots);
         readInventory(config, "storage", slots);
+
         return new QuarryCacheContents(slots);
     }
 
-    private void writeInventory(YamlConfiguration config, String path, Inventory inventory, int start, int end,
-                                SlotPredicate skip) {
+    private void writeInventory(YamlConfiguration config, String path, Inventory inventory, int start, int end, SlotPredicate skip) {
         for (int slot = start; slot < end; slot++) {
             if (skip.test(slot)) {
                 continue;
             }
-            ItemStack item = inventory.getItem(slot);
+
+            var item = inventory.getItem(slot);
             if (item == null || item.getType().isAir()) {
                 continue;
             }
+
             config.set(path + "." + slot, item.serialize());
         }
     }
@@ -340,24 +361,39 @@ final class QuarryCacheStorage {
             return;
         }
 
-        for (String slotKey : config.getConfigurationSection(path).getKeys(false)) {
+        for (var slotKey : config.getConfigurationSection(path).getKeys(false)) {
             try {
-                int slot = Integer.parseInt(slotKey);
-                Object raw = config.get(path + "." + slotKey);
-                if (raw instanceof Map<?, ?> serialized) {
-                    ItemStack item = ItemStack.deserialize((Map<String, Object>) serialized);
-                    if (item != null && !item.getType().isAir()) {
-                        slots.put(slot, item);
-                    }
+                var slot = Integer.parseInt(slotKey);
+                var serialized = readSerializedItem(config.get(path + "." + slotKey));
+                if (serialized == null) {
+                    continue;
                 }
+
+                var item = ItemStack.deserialize(serialized);
+                if (item != null && !item.getType().isAir()) {
+                    slots.put(slot, item);
+                }
+
             } catch (IllegalArgumentException ignored) {
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> readSerializedItem(Object raw) {
+        if (raw instanceof ConfigurationSection section) {
+            return section.getValues(false);
+        }
+
+        if (raw instanceof Map<?, ?> serialized) {
+            return (Map<String, Object>) serialized;
+        }
+
+        return null;
+    }
+
     private File fileFor(Location location) {
-        return new File(new File(baseDir, requireWorldName(location)),
-                location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ() + ".yml");
+        return new File(new File(baseDir, requireWorldName(location)), location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ() + ".yml");
     }
 
     private File portableFile(String portableId) {
@@ -368,6 +404,7 @@ final class QuarryCacheStorage {
         if (location.getWorld() == null) {
             throw new IllegalArgumentException("Location world must not be null");
         }
+
         return location.getWorld().getName();
     }
 

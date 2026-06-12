@@ -32,50 +32,51 @@ final class QuarryCacheRegistry {
     }
 
     void register(Location location, BlockDefinition definition, ItemStack placedFrom) {
-        Location blockLocation = location.getBlock().getLocation();
+        var blockLocation = location.getBlock().getLocation();
         unregister(blockLocation);
 
-        double radius = resolveCollectRadius(definition);
-        double depth = resolveCollectDepth(definition);
-        boolean showIndicator = resolveShowIndicator(definition);
-        Component title = definition.getTitle() == null ? Component.text("Quarry Cache") : definition.getTitle();
+        var radius = resolveCollectRadius(definition);
+        var depth = resolveCollectDepth(definition);
+        var showIndicator = resolveShowIndicator(definition);
+        var title = definition.getTitle() == null ? Component.text("Quarry Cache") : definition.getTitle();
 
-        QuarryCacheInventory inventory = new QuarryCacheInventory(blockLocation, title);
+        var inventory = new QuarryCacheInventory(blockLocation, title);
         inventory.setOnChanged(value -> persist(blockLocation, value));
 
-        if (placedFrom != null && storage.hasStoredContents(placedFrom)) {
+        if (storage.hasStoredContents(placedFrom)) {
             storage.restoreFromItem(placedFrom, inventory);
         } else {
             storage.applyContents(inventory, storage.load(blockLocation));
         }
 
         extensionSupport.registerCustomInventory(inventory.getInventory(), inventory);
-        QuarryCacheData cache = new QuarryCacheData(blockLocation, radius, depth, showIndicator, inventory);
+
+        var cache = new QuarryCacheData(blockLocation, radius, depth, showIndicator, inventory);
+
         caches.put(blockLocation, cache);
         extensionSupport.registerDropCollector(blockLocation, (breakLocation, drops) -> tryCollect(cache, breakLocation, drops));
         persist(blockLocation, inventory);
 
         if (showIndicator) {
-            indicatorTasks.put(blockLocation, Bukkit.getScheduler().runTaskTimer(
-                    plugin, () -> QuarryCacheZoneIndicator.spawn(cache), 20L, 40L));
+            indicatorTasks.put(blockLocation, Bukkit.getScheduler().runTaskTimer(plugin, () -> QuarryCacheZoneIndicator.spawn(cache), 20L, 40L));
         }
     }
 
     void handleBreak(Location location, ItemStack droppedItem) {
-        Location blockLocation = location.getBlock().getLocation();
-        QuarryCacheData cache = caches.get(blockLocation);
+        var blockLocation = location.getBlock().getLocation();
+        var cache = caches.get(blockLocation);
 
         if (cache != null) {
-            persist(blockLocation, cache.inventory);
+            persist(blockLocation, cache.inventory());
         }
 
-        boolean attachedToItem = false;
+        var attachedToItem = false;
         if (droppedItem != null) {
             if (cache != null) {
-                storage.attachContentsToItem(droppedItem, cache.inventory);
+                storage.attachContentsToItem(droppedItem, cache.inventory());
                 attachedToItem = storage.hasStoredContents(droppedItem);
             } else {
-                QuarryCacheContents contents = storage.load(blockLocation);
+                var contents = storage.load(blockLocation);
                 if (!contents.isEmpty()) {
                     storage.attachContentsToItem(droppedItem, contents);
                     attachedToItem = storage.hasStoredContents(droppedItem);
@@ -91,53 +92,64 @@ final class QuarryCacheRegistry {
     }
 
     void unregister(Location location) {
-        Location blockLocation = location.getBlock().getLocation();
-        QuarryCacheData cache = caches.remove(blockLocation);
+        var blockLocation = location.getBlock().getLocation();
+        var cache = caches.remove(blockLocation);
+
         extensionSupport.unregisterDropCollector(blockLocation);
-        BukkitTask indicatorTask = indicatorTasks.remove(blockLocation);
+
+        var indicatorTask = indicatorTasks.remove(blockLocation);
+
         if (indicatorTask != null) {
             indicatorTask.cancel();
         }
+
         if (cache != null) {
-            extensionSupport.unregisterCustomInventory(cache.inventory.getInventory());
+            extensionSupport.unregisterCustomInventory(cache.inventory().getInventory());
         }
     }
 
     void openGui(Player player, Location location) {
-        QuarryCacheData cache = caches.get(location.getBlock().getLocation());
+        var cache = caches.get(location.getBlock().getLocation());
+
         if (cache == null) {
             return;
         }
-        cache.inventory.restoreDecorations();
-        player.openInventory(cache.inventory.getInventory());
+
+        cache.inventory().restoreDecorations();
+        player.openInventory(cache.inventory().getInventory());
     }
 
     private boolean tryCollect(QuarryCacheData cache, Location breakLocation, Collection<ItemStack> drops) {
         if (!cache.isWithinRadius(breakLocation)) {
             return false;
         }
+
         return tryStore(cache, drops);
     }
 
     private boolean tryStore(QuarryCacheData cache, Collection<ItemStack> drops) {
-        boolean storedAny = false;
-        Inventory inventory = cache.inventory.getInventory();
-        Iterator<ItemStack> iterator = drops.iterator();
+        var storedAny = false;
+        var inventory = cache.inventory().getInventory();
+        var iterator = drops.iterator();
 
         while (iterator.hasNext()) {
-            ItemStack drop = iterator.next();
+            var drop = iterator.next();
+
             if (drop == null || drop.getType().isAir()) {
                 iterator.remove();
                 continue;
             }
-            if (!cache.inventory.accepts(drop)) {
+
+            if (!cache.inventory().accepts(drop)) {
                 continue;
             }
 
-            ItemStack remaining = storeInStorage(inventory, drop.clone());
+            var remaining = storeInStorage(inventory, drop.clone());
+
             if (remaining == null || remaining.getAmount() <= 0) {
                 iterator.remove();
                 storedAny = true;
+
             } else if (remaining.getAmount() < drop.getAmount()) {
                 drop.setAmount(remaining.getAmount());
                 storedAny = true;
@@ -145,22 +157,27 @@ final class QuarryCacheRegistry {
         }
 
         if (storedAny) {
-            cache.inventory.notifyChanged();
+            cache.inventory().notifyChanged();
         }
+
         return storedAny;
     }
 
     private ItemStack storeInStorage(Inventory inventory, ItemStack stack) {
         for (int slot = QuarryCacheInventory.STORAGE_START; slot < QuarryCacheInventory.TOTAL_SLOTS; slot++) {
-            ItemStack existing = inventory.getItem(slot);
+            var existing = inventory.getItem(slot);
+
             if (existing == null || existing.getType().isAir()) {
                 inventory.setItem(slot, stack);
                 return null;
             }
+
             if (existing.isSimilar(stack) && existing.getAmount() < existing.getMaxStackSize()) {
-                int transferable = Math.min(stack.getAmount(), existing.getMaxStackSize() - existing.getAmount());
+                var transferable = Math.min(stack.getAmount(), existing.getMaxStackSize() - existing.getAmount());
+
                 existing.setAmount(existing.getAmount() + transferable);
                 stack.setAmount(stack.getAmount() - transferable);
+
                 if (stack.getAmount() <= 0) {
                     return null;
                 }
@@ -168,12 +185,14 @@ final class QuarryCacheRegistry {
         }
 
         for (int slot = QuarryCacheInventory.STORAGE_START; slot < QuarryCacheInventory.TOTAL_SLOTS; slot++) {
-            ItemStack existing = inventory.getItem(slot);
+            var existing = inventory.getItem(slot);
+
             if (existing == null || existing.getType().isAir()) {
                 inventory.setItem(slot, stack);
                 return null;
             }
         }
+
         return stack;
     }
 
@@ -182,26 +201,32 @@ final class QuarryCacheRegistry {
     }
 
     private double resolveCollectRadius(BlockDefinition definition) {
-        Map<String, Object> customData = definition.getCustomData();
+        var customData = definition.getCustomData();
+
         if (customData.containsKey("collectRadius")) {
             return StrategySupport.customDouble(customData, "collectRadius", 5.0);
         }
+
         return StrategySupport.customDouble(customData, "collect_radius", 5.0);
     }
 
     private double resolveCollectDepth(BlockDefinition definition) {
-        Map<String, Object> customData = definition.getCustomData();
+        var customData = definition.getCustomData();
+
         if (customData.containsKey("collectDepth")) {
             return StrategySupport.customDouble(customData, "collectDepth", 5.0);
         }
+
         return StrategySupport.customDouble(customData, "collect_depth", 5.0);
     }
 
     private boolean resolveShowIndicator(BlockDefinition definition) {
-        Map<String, Object> customData = definition.getCustomData();
+        var customData = definition.getCustomData();
+
         if (customData.containsKey("showCollectZone")) {
             return StrategySupport.customBoolean(customData, "showCollectZone", true);
         }
+
         return StrategySupport.customBoolean(customData, "show_collect_zone", true);
     }
 }

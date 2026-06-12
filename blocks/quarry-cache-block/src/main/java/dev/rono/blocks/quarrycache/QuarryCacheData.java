@@ -2,15 +2,8 @@ package dev.rono.blocks.quarrycache;
 
 import org.bukkit.Location;
 
-final class QuarryCacheData {
-    final Location location;
-    final double collectRadius;
-    final double collectDepth;
-    final boolean showIndicator;
-    final QuarryCacheInventory inventory;
-
-    QuarryCacheData(Location location, double collectRadius, double collectDepth, boolean showIndicator,
-                    QuarryCacheInventory inventory) {
+record QuarryCacheData(Location location, double collectRadius, double collectDepth, boolean showIndicator, QuarryCacheInventory inventory) {
+    QuarryCacheData(Location location, double collectRadius, double collectDepth, boolean showIndicator, QuarryCacheInventory inventory) {
         this.location = location.getBlock().getLocation();
         this.collectRadius = collectRadius;
         this.collectDepth = collectDepth;
@@ -23,8 +16,7 @@ final class QuarryCacheData {
     }
 
     boolean isWithinRadius(Location target) {
-        if (location.getWorld() == null || target.getWorld() == null
-                || !location.getWorld().equals(target.getWorld())) {
+        if (location.getWorld() == null || target.getWorld() == null || !location.getWorld().equals(target.getWorld())) {
             return false;
         }
 
@@ -33,6 +25,7 @@ final class QuarryCacheData {
         double centerZ = location.getZ() + 0.5;
         double dx = target.getX() - centerX;
         double dz = target.getZ() - centerZ;
+
         if ((dx * dx) + (dz * dz) > collectRadius * collectRadius) {
             return false;
         }

@@ -18,8 +18,8 @@ final class QuarryCacheZoneIndicator {
             return;
         }
 
-        double radius = cache.collectRadius;
-        double depth = cache.collectDepth;
+        double radius = cache.collectRadius();
+        double depth = cache.collectDepth();
         double centerX = center.getX() + 0.5;
         double centerY = center.getY() + 0.5;
         double centerZ = center.getZ() + 0.5;
