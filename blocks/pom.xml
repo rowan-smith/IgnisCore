@@ -17,15 +17,15 @@
   <name>igniscore-blocks</name>
 
   <modules>
-    <module>nuke-block</module>
-    <module>wormhole-tnt-block</module>
-    <module>phantom-tnt-block</module>
-    <module>erupting-tnt-block</module>
-    <module>mimic-tnt-block</module>
-    <module>tunneling-tnt-block</module>
-    <module>spider-storm-tnt-block</module>
-    <module>signal-charge-block</module>
-    <module>quarry-cache-block</module>
+    <module>nuke</module>
+    <module>wormhole-tnt</module>
+    <module>phantom-tnt</module>
+    <module>erupting-tnt</module>
+    <module>mimic-tnt</module>
+    <module>tunneling-tnt</module>
+    <module>spider-storm-tnt</module>
+    <module>signal-charge</module>
+    <module>quarry-cache</module>
   </modules>
 
   <dependencyManagement>
@@ -34,6 +34,13 @@
         <groupId>dev.rono</groupId>
         <artifactId>api</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>api</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -54,6 +61,27 @@
       <artifactId>item-nbt-api-plugin</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockbukkit.mockbukkit</groupId>
+      <artifactId>mockbukkit-v1.21</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>api</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -72,6 +100,11 @@
           <configuration>
             <finalName>${project.artifactId}</finalName>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.5.3</version>
         </plugin>
       </plugins>
     </pluginManagement>

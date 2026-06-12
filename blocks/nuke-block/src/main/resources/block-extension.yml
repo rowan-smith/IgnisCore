@@ -1,6 +1,0 @@
-id: nuke-block
-name: Nuke Block
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.nuke.Strategy

@@ -13,7 +13,7 @@ class ExtensionManifestTest {
     @Test
     void parsesStrategyManifestFromYaml() {
         String yaml = """
-                id: nuke-block
+                id: nuke
                 name: Nuke Block
                 version: 2.0.0
                 api-version: 1.0.0
@@ -25,7 +25,7 @@ class ExtensionManifestTest {
                 new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
                 "block-extension.yml");
 
-        assertEquals("nuke-block", manifest.getId());
+        assertEquals("nuke", manifest.getId());
         assertEquals("Nuke Block", manifest.getName());
         assertEquals("2.0.0", manifest.getVersion());
         assertEquals("dev.rono.igniscore.block.nuke.Strategy", manifest.getStrategyClass());
@@ -36,7 +36,7 @@ class ExtensionManifestTest {
     @Test
     void resolvesLegacyMainClassToStrategy() {
         String yaml = """
-                id: nuke-block
+                id: nuke
                 main: dev.rono.igniscore.block.nuke.BlockPlugin
                 """;
 
@@ -50,7 +50,7 @@ class ExtensionManifestTest {
     @Test
     void infersStrategyClassFromBlockExtensionId() {
         String yaml = """
-                id: nuke-block
+                id: nuke
                 """;
 
         ExtensionManifest manifest = ExtensionManifest.fromStream(
@@ -63,7 +63,7 @@ class ExtensionManifestTest {
     @Test
     void infersStrategyClassFromItemExtensionId() {
         String yaml = """
-                id: grenade-item
+                id: grenade
                 """;
 
         ExtensionManifest manifest = ExtensionManifest.fromStream(
@@ -76,11 +76,11 @@ class ExtensionManifestTest {
     @Test
     void appliesDefaultsForMissingMetadata() {
         ExtensionManifest manifest = ExtensionManifest.fromStream(
-                new ByteArrayInputStream("id: wormhole-tnt-block\n".getBytes(StandardCharsets.UTF_8)),
+                new ByteArrayInputStream("id: wormhole-tnt\n".getBytes(StandardCharsets.UTF_8)),
                 "block-extension.yml");
 
-        assertEquals("wormhole-tnt-block", manifest.getId());
-        assertEquals("wormhole-tnt-block", manifest.getName());
+        assertEquals("wormhole-tnt", manifest.getId());
+        assertEquals("wormhole-tnt", manifest.getName());
         assertEquals("1.0.0", manifest.getVersion());
         assertEquals(IgnisApiVersion.CURRENT, manifest.getApiVersion());
         assertEquals("unknown", manifest.getAuthor());
@@ -102,7 +102,7 @@ class ExtensionManifestTest {
         NullPointerException error = assertThrows(NullPointerException.class,
                 () -> ExtensionManifest.fromStream(
                         new ByteArrayInputStream("id: custom-extension\n".getBytes(StandardCharsets.UTF_8)),
-                        "block-extension.yml"));
+                        "unknown-manifest.yml"));
 
         assertEquals("extension manifest requires strategy", error.getMessage());
     }

@@ -27,9 +27,9 @@ class IgnisStrategyDescriptorTest {
     @Test
     void storesSourcePluginWhenProvided() {
         IgnisStrategyDescriptor descriptor = IgnisStrategyDescriptor.of(
-                "grenade", "Grenade", "2.1.0", "IgnisCore", "grenade-item");
+                "grenade", "Grenade", "2.1.0", "IgnisCore", "grenade");
 
-        assertEquals("grenade-item", descriptor.getSourcePlugin());
+        assertEquals("grenade", descriptor.getSourcePlugin());
         assertEquals("Grenade", descriptor.getName());
         assertEquals("2.1.0", descriptor.getVersion());
     }

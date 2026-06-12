@@ -1,6 +1,0 @@
-id: quarry-cache-block
-name: Quarry Cache Block
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.quarrycache.Strategy

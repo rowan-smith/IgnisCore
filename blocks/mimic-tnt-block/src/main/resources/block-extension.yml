@@ -1,6 +1,0 @@
-id: mimic-tnt-block
-name: Mimic TNT Block
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.mimictnt.Strategy

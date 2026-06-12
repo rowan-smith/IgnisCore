@@ -33,7 +33,7 @@ class BlockItemFactoryTest extends MockBukkitTestBase {
         assertEquals("nuke", identifier.resolveTypeId(item));
         assertEquals(10001, platformHooks.readCustomModelData(item).orElseThrow());
         assertEquals(80, nbtService.readItem(item, nbt -> nbt.getInteger("ignis:fuse")).intValue());
-        assertEquals("nuke-block", nbtService.readItem(item, nbt -> nbt.getString("ignis:extension_id")));
+        assertEquals("nuke", nbtService.readItem(item, nbt -> nbt.getString("ignis:extension_id")));
         if (item.getItemMeta().hasItemModel()) {
             assertEquals("nuke", item.getItemMeta().getItemModel().getKey());
         }

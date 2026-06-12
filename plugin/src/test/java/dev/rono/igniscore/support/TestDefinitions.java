@@ -38,7 +38,7 @@ public final class TestDefinitions {
                 false,
                 false,
                 false,
-                id + "-block"
+                id
         );
     }
 
@@ -51,7 +51,7 @@ public final class TestDefinitions {
                 Map.of("power", 4.0),
                 Map.of(),
                 20001,
-                id + "-item",
+                id,
                 "icon.png"
         );
     }

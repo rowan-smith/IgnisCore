@@ -1,6 +1,0 @@
-id: phantom-tnt-block
-name: Phantom TNT Block
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.phantomtnt.Strategy

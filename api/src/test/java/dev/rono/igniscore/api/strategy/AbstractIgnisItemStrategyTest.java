@@ -23,7 +23,7 @@ class AbstractIgnisItemStrategyTest {
                 Map.of("power", 4.0, "fuse_ticks", 40, "fire", false),
                 Map.of(),
                 20001,
-                "grenade-item",
+                "grenade",
                 "icon.png"
         );
 

@@ -1,6 +1,0 @@
-id: grenade-item
-name: Grenade Item
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.item.grenade.Strategy

@@ -1,6 +1,0 @@
-id: wormhole-tnt-block
-name: Wormhole TNT Block
-version: @project.version@
-api-version: @project.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.wormholetnt.Strategy

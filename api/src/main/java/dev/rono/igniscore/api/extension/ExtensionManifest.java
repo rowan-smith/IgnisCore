@@ -33,7 +33,7 @@ public final class ExtensionManifest {
                 config.getString("name", id),
                 config.getString("version", "1.0.0"),
                 config.getString("api-version", IgnisApiVersion.CURRENT),
-                requireStrategyClass(config, id),
+                requireStrategyClass(config, id, manifestFileName),
                 config.getString("author", "unknown")
         );
     }
@@ -42,7 +42,7 @@ public final class ExtensionManifest {
         return YamlConfiguration.loadConfiguration(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
     }
 
-    private static String requireStrategyClass(YamlConfiguration config, String extensionId) {
+    private static String requireStrategyClass(YamlConfiguration config, String extensionId, String manifestFileName) {
         String strategy = config.getString("strategy");
         if (strategy != null && !strategy.isBlank()) {
             return strategy;
@@ -53,14 +53,12 @@ public final class ExtensionManifest {
             return main.replace("BlockPlugin", "Strategy");
         }
 
-        if (extensionId.endsWith("-block")) {
-            String segment = extensionId.substring(0, extensionId.length() - "-block".length());
-            return "dev.rono.igniscore.block." + toPackageSegment(segment) + ".Strategy";
+        if ("block-extension.yml".equals(manifestFileName)) {
+            return "dev.rono.igniscore.block." + toPackageSegment(extensionId) + ".Strategy";
         }
 
-        if (extensionId.endsWith("-item")) {
-            String segment = extensionId.substring(0, extensionId.length() - "-item".length());
-            return "dev.rono.igniscore.item." + toPackageSegment(segment) + ".Strategy";
+        if ("item-extension.yml".equals(manifestFileName)) {
+            return "dev.rono.igniscore.item." + toPackageSegment(extensionId) + ".Strategy";
         }
 
         return Objects.requireNonNull(strategy, "extension manifest requires strategy");
