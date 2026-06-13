@@ -46,6 +46,7 @@ public class IgnisRuntimeLifecycle {
     }
 
     public void enable() {
+        platformIntegration.registerCommands();
         extensionBootstrap.loadAll();
         platformIntegration.onRuntimeEnable();
         initializeResourcePack();

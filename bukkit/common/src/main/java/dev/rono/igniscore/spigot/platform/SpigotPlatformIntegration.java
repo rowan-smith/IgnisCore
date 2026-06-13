@@ -39,12 +39,16 @@ public class SpigotPlatformIntegration implements IgnisPlatformIntegration {
     }
 
     @Override
+    public void registerCommands() {
+        commandRegistrar.register("ignis", ignisCommand);
+    }
+
+    @Override
     public void onRuntimeEnable() {
         for (Listener listener : listeners) {
             plugin.getServer().getPluginManager().registerEvents(listener, plugin);
         }
         plugin.getServer().getScheduler().runTask(plugin, placedBlockRestoreListener::restoreLoadedChunks);
-        commandRegistrar.register("ignis", ignisCommand);
     }
 
     @Override
