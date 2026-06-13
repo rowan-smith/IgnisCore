@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component;
 import java.util.List;
 import java.util.Map;
 
-public class ItemDefinition implements ExtensionDefinition {
+public final class ItemDefinition implements ExtensionDefinition {
     private final String id;
     private final String baseMaterial;
     private final Component title;

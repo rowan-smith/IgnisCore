@@ -1,0 +1,5 @@
+id: test-block
+name: Test Block
+version: 1.0.0
+api-version: 1
+strategy: dev.example.Strategy

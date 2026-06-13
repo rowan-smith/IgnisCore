@@ -39,39 +39,11 @@ public final class ExtensionLoadEngine {
     }
 
     List<LoadedExtension<BlockDefinition>> loadBlocks() {
-        File folder = prepareFolder(ExtensionKind.BLOCK);
-        if (folder == null) {
-            return List.of();
-        }
-
-        List<LoadedExtension<BlockDefinition>> loaded = new ArrayList<>();
-        int modelData = ExtensionKind.BLOCK.modelDataStart();
-        for (File jar : listJars(folder, ExtensionKind.BLOCK)) {
-            try {
-                loaded.add(loadBlockJar(jar, modelData++));
-            } catch (Exception e) {
-                host.getLogger().severe("Failed to load block extension " + jar.getName() + ": " + e.getMessage());
-            }
-        }
-        return List.copyOf(loaded);
+        return loadAll(ExtensionKind.BLOCK);
     }
 
     List<LoadedExtension<ItemDefinition>> loadItems() {
-        File folder = prepareFolder(ExtensionKind.ITEM);
-        if (folder == null) {
-            return List.of();
-        }
-
-        List<LoadedExtension<ItemDefinition>> loaded = new ArrayList<>();
-        int modelData = ExtensionKind.ITEM.modelDataStart();
-        for (File jar : listJars(folder, ExtensionKind.ITEM)) {
-            try {
-                loaded.add(loadItemJar(jar, modelData++));
-            } catch (Exception e) {
-                host.getLogger().severe("Failed to load item extension " + jar.getName() + ": " + e.getMessage());
-            }
-        }
-        return List.copyOf(loaded);
+        return loadAll(ExtensionKind.ITEM);
     }
 
     void unload(List<? extends LoadedExtension<?>> extensions) {
@@ -82,6 +54,26 @@ public final class ExtensionLoadEngine {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <D extends ExtensionDefinition> List<LoadedExtension<D>> loadAll(ExtensionKind kind) {
+        File folder = prepareFolder(kind);
+        if (folder == null) {
+            return List.of();
+        }
+
+        List<LoadedExtension<D>> loaded = new ArrayList<>();
+        int modelData = kind.modelDataStart();
+        for (File jar : listJars(folder, kind)) {
+            try {
+                loaded.add((LoadedExtension<D>) loadJar(jar, modelData++, kind));
+            } catch (Exception e) {
+                host.getLogger().severe("Failed to load " + kind.folderName() + " extension "
+                        + jar.getName() + ": " + e.getMessage());
+            }
+        }
+        return List.copyOf(loaded);
     }
 
     private File prepareFolder(ExtensionKind kind) {
@@ -104,20 +96,14 @@ public final class ExtensionLoadEngine {
         return List.of(jars);
     }
 
-    private LoadedExtension<BlockDefinition> loadBlockJar(File jarFile, int modelData) throws Exception {
-        ExtensionManifest manifest = readManifest(jarFile, ExtensionKind.BLOCK);
+    private <D extends ExtensionDefinition> LoadedExtension<D> loadJar(File jarFile, int modelData, ExtensionKind kind)
+            throws Exception {
+        ExtensionManifest manifest = readManifest(jarFile, kind);
         Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        BlockDefinition definition = ExtensionKind.BLOCK.parseBlock(config, manifest.getId(), modelData, manifest.getId());
-        return loadExtension(jarFile, manifest, descriptor, definition, ExtensionKind.BLOCK);
-    }
-
-    private LoadedExtension<ItemDefinition> loadItemJar(File jarFile, int modelData) throws Exception {
-        ExtensionManifest manifest = readManifest(jarFile, ExtensionKind.ITEM);
-        Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        ItemDefinition definition = ExtensionKind.ITEM.parseItem(config, manifest.getId(), modelData, manifest.getId());
-        return loadExtension(jarFile, manifest, descriptor, definition, ExtensionKind.ITEM);
+        @SuppressWarnings("unchecked")
+        D definition = (D) kind.parseDefinition(config, manifest.getId(), modelData, manifest.getId());
+        return loadExtension(jarFile, manifest, descriptor, definition, kind);
     }
 
     private ExtensionManifest readManifest(File jarFile, ExtensionKind kind) throws Exception {
@@ -126,10 +112,10 @@ public final class ExtensionLoadEngine {
     }
 
     private <D extends ExtensionDefinition> LoadedExtension<D> loadExtension(File jarFile,
-                                                 ExtensionManifest manifest,
-                                                 IgnisStrategyDescriptor descriptor,
-                                                 D definition,
-                                                 ExtensionKind kind) throws Exception {
+                                                               ExtensionManifest manifest,
+                                                               IgnisStrategyDescriptor descriptor,
+                                                               D definition,
+                                                               ExtensionKind kind) throws Exception {
         IgnisApiVersion.requireCompatible(manifest.getApiVersion(), manifest.getId());
 
         String strategyId = descriptor.getId();

@@ -43,7 +43,7 @@ class BlockStrategyProfileIntegrationTest {
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        BlockDefinition definition = ExtensionKind.BLOCK.parseBlock(config, manifest.getId(), 10001, manifest.getId());
+        BlockDefinition definition = (BlockDefinition) ExtensionKind.BLOCK.parseDefinition(config, manifest.getId(), 10001, manifest.getId());
         IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {

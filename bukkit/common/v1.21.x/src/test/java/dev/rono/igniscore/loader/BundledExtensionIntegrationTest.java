@@ -50,7 +50,7 @@ class BundledExtensionIntegrationTest {
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        BlockDefinition definition = ExtensionKind.BLOCK.parseBlock(config, manifest.getId(), 10001, manifest.getId());
+        BlockDefinition definition = (BlockDefinition) ExtensionKind.BLOCK.parseDefinition(config, manifest.getId(), 10001, manifest.getId());
         IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
@@ -80,7 +80,7 @@ class BundledExtensionIntegrationTest {
                 input -> ExtensionManifest.fromStream(input, "item-extension.yml"));
         Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        ItemDefinition definition = ExtensionKind.ITEM.parseItem(config, manifest.getId(), 20001, manifest.getId());
+        ItemDefinition definition = (ItemDefinition) ExtensionKind.ITEM.parseDefinition(config, manifest.getId(), 20001, manifest.getId());
         IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {

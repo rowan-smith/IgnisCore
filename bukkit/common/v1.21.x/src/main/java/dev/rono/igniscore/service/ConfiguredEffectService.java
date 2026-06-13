@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static dev.rono.igniscore.util.ConfigValueReader.asMapList;
 import static dev.rono.igniscore.util.ConfigValueReader.getDouble;
 import static dev.rono.igniscore.util.ConfigValueReader.getInt;
 import static dev.rono.igniscore.util.ConfigValueReader.getString;
@@ -65,13 +66,7 @@ public class ConfiguredEffectService {
             return;
         }
 
-        for (Object particleConfig : particles) {
-            if (!(particleConfig instanceof Map<?, ?> rawMap)) {
-                continue;
-            }
-
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) rawMap;
+        for (Map<String, Object> map : asMapList(particles)) {
             Particle particle;
             try {
                 particle = Particle.valueOf(getString(map, "type", fallbackParticle.name()).toUpperCase());

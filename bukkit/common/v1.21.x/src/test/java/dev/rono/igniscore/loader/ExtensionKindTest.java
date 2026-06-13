@@ -3,6 +3,8 @@ package dev.rono.igniscore.loader;
 import dev.rono.igniscore.api.config.YamlDefinitions;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
+import dev.rono.igniscore.api.strategy.IgnisItemStrategy;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -10,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ExtensionKindTest {
     @Test
@@ -24,7 +25,13 @@ class ExtensionKindTest {
     }
 
     @Test
-    void parsesDefinitionsForMatchingKindOnly() {
+    void bindsStrategyTypesToDefinitionKinds() {
+        assertEquals(IgnisBlockStrategy.class, ExtensionKind.BLOCK.strategyType());
+        assertEquals(IgnisItemStrategy.class, ExtensionKind.ITEM.strategyType());
+    }
+
+    @Test
+    void parsesDefinitionsForEachKind() {
         Map<String, Object> config = YamlDefinitions.loadMap(new ByteArrayInputStream("""
                 id: sample
                 block:
@@ -35,22 +42,14 @@ class ExtensionKindTest {
                   fuse: 40
                 """.getBytes(StandardCharsets.UTF_8)));
 
-        BlockDefinition block = ExtensionKind.BLOCK.parseBlock(config, "fallback", 10002, "sample-block");
-        ItemDefinition item = ExtensionKind.ITEM.parseItem(config, "fallback", 20002, "sample-item");
+        BlockDefinition block = (BlockDefinition) ExtensionKind.BLOCK.parseDefinition(
+                config, "fallback", 10002, "sample-block");
+        ItemDefinition item = (ItemDefinition) ExtensionKind.ITEM.parseDefinition(
+                config, "fallback", 20002, "sample-item");
 
         assertEquals("sample", block.getId());
         assertEquals("sample", item.getId());
         assertEquals(10002, block.getCustomModelData());
         assertEquals(20002, item.getCustomModelData());
-    }
-
-    @Test
-    void rejectsCrossKindParsing() {
-        Map<String, Object> config = YamlDefinitions.loadMap(new ByteArrayInputStream("id: sample".getBytes(StandardCharsets.UTF_8)));
-
-        assertThrows(IllegalStateException.class,
-                () -> ExtensionKind.ITEM.parseBlock(config, "sample", 10001, "sample-block"));
-        assertThrows(IllegalStateException.class,
-                () -> ExtensionKind.BLOCK.parseItem(config, "sample", 20001, "sample-item"));
     }
 }

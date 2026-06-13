@@ -1,0 +1,5 @@
+id: test-item
+name: Test Item
+version: 1.0.0
+api-version: 1
+strategy: dev.example.Strategy

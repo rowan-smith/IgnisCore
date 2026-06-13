@@ -9,8 +9,8 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 
 import java.util.Map;
 
-import static dev.rono.igniscore.util.ConfigValueReader.getList;
 import static dev.rono.igniscore.util.ConfigValueReader.getMap;
+import static dev.rono.igniscore.util.ConfigValueReader.getMapList;
 import static dev.rono.igniscore.util.ConfigValueReader.getString;
 
 public class StrategyProfileResolver {
@@ -58,12 +58,10 @@ public class StrategyProfileResolver {
             return true;
         }
 
-        for (Object materialAction : getList(getMap(interactions, "left_click"), "material_actions")) {
-            if (materialAction instanceof Map<?, ?> map) {
-                Object action = map.get("action");
-                if (action != null && "ignite".equalsIgnoreCase(action.toString())) {
-                    return true;
-                }
+        for (Map<String, Object> map : getMapList(getMap(interactions, "left_click"), "material_actions")) {
+            Object action = map.get("action");
+            if (action != null && "ignite".equalsIgnoreCase(action.toString())) {
+                return true;
             }
         }
 
