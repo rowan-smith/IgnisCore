@@ -102,6 +102,29 @@ class BlockManagerBehaviorTest {
     }
 
     @Test
+    void stopActiveBlocksCancelsRuntimeInstances() {
+        IgnisLocation location = new IgnisLocation("world", 2, 64, 2);
+        blockManager.triggerBlock(location, definition.getId(), null);
+
+        blockManager.stopActiveBlocks();
+
+        assertTrue(blockManager.getActiveBlocks().isEmpty());
+        assertTrue(visualRenderer.removedAnimatedCount() >= 1);
+    }
+
+    @Test
+    void refreshPlacedBlockVisualsRespawnsDisplays() {
+        IgnisLocation location = new IgnisLocation("world", 4, 64, 8);
+        blockManager.registerPlacedBlock(location, definition.getId());
+        int beforeRefresh = visualRenderer.removedStaticCount();
+
+        blockManager.refreshPlacedBlockVisuals();
+
+        assertEquals(beforeRefresh + 1, visualRenderer.removedStaticCount());
+        assertEquals(2, visualRenderer.staticDisplays().size());
+    }
+
+    @Test
     void cleanupClearsActiveDisplays() {
         IgnisLocation location = new IgnisLocation("world", 2, 64, 2);
         blockManager.registerPlacedBlock(location, definition.getId());

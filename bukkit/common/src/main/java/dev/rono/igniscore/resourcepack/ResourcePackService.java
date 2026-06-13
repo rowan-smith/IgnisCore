@@ -3,21 +3,17 @@ package dev.rono.igniscore.resourcepack;
 import com.google.inject.Inject;
 import dev.rono.igniscore.IgnisPluginContext;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.ExtensionDefinition;
+import dev.rono.igniscore.resourcepack.ResourcePackFingerprint;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
-import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -60,7 +56,10 @@ public class ResourcePackService {
     public void buildAndRegister() throws IOException {
         Map<String, BlockDefinition> blocks = Map.copyOf(blockManager.getBlockTypes());
         Map<String, ItemDefinition> items = Map.copyOf(itemManager.getItemTypes());
-        String fingerprint = computeFingerprint(blocks, items);
+        String fingerprint = ResourcePackFingerprint.compute(
+                blocks, items,
+                blockExtensionLoader.getLoadedExtensions(),
+                itemExtensionLoader.getLoadedExtensions());
         registerBuiltPack(packBuilder.buildPack(blocks, items));
         lastBuiltFingerprint = fingerprint;
     }
@@ -68,7 +67,10 @@ public class ResourcePackService {
     public void buildAndRegisterAsync(Runnable onSuccess, Consumer<IOException> onFailure) {
         Map<String, BlockDefinition> blocks = Map.copyOf(blockManager.getBlockTypes());
         Map<String, ItemDefinition> items = Map.copyOf(itemManager.getItemTypes());
-        String fingerprint = computeFingerprint(blocks, items);
+        String fingerprint = ResourcePackFingerprint.compute(
+                blocks, items,
+                blockExtensionLoader.getLoadedExtensions(),
+                itemExtensionLoader.getLoadedExtensions());
 
         synchronized (buildLock) {
             if (fingerprint.equals(lastBuiltFingerprint) && latestHash != null) {
@@ -147,35 +149,6 @@ public class ResourcePackService {
         if (queuedSuccess != null) {
             buildAndRegisterAsync(queuedSuccess, queuedFailure);
         }
-    }
-
-    private String computeFingerprint(Map<String, BlockDefinition> blocks, Map<String, ItemDefinition> items) {
-        List<String> parts = new ArrayList<>();
-        blocks.values().stream()
-                .sorted(Comparator.comparing(BlockDefinition::getId))
-                .forEach(definition -> parts.add("block:" + definition.getId()
-                        + ":" + definition.getCustomModelData()
-                        + ":" + definition.getBaseMaterial()
-                        + ":" + definition.getExtensionId()));
-        items.values().stream()
-                .sorted(Comparator.comparing(ItemDefinition::getId))
-                .forEach(definition -> parts.add("item:" + definition.getId()
-                        + ":" + definition.getCustomModelData()
-                        + ":" + definition.getBaseMaterial()
-                        + ":" + definition.getExtensionId()
-                        + ":" + definition.getIconTexture()));
-        extensionJarParts(blockExtensionLoader.getLoadedExtensions(), "block-jar").forEach(parts::add);
-        extensionJarParts(itemExtensionLoader.getLoadedExtensions(), "item-jar").forEach(parts::add);
-        return String.join("|", parts);
-    }
-
-    private static List<String> extensionJarParts(List<? extends LoadedExtension<? extends ExtensionDefinition>> extensions,
-                                                  String prefix) {
-        return extensions.stream()
-                .sorted(Comparator.comparing(extension -> extension.getManifest().getId()))
-                .map(extension -> prefix + ":" + extension.getManifest().getId()
-                        + ":" + extension.getJarFile().lastModified())
-                .toList();
     }
 
     private void registerBuiltPack(ResourcePackBuilder.PackResult result) {

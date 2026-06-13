@@ -20,6 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 @Singleton
@@ -32,6 +36,12 @@ public class PlacedBlockPersistenceService {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Map<String, Map<String, String>> worldIndexes = new ConcurrentHashMap<>();
     private final Map<String, Map<String, Map<String, String>>> chunkIndexes = new ConcurrentHashMap<>();
+    private final ExecutorService saveExecutor = Executors.newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "igniscore-placed-block-save");
+        thread.setDaemon(true);
+        return thread;
+    });
+    private final AtomicBoolean saveDirty = new AtomicBoolean();
 
     @Inject
     public PlacedBlockPersistenceService(IgnisRuntimeHost host) {
@@ -51,7 +61,7 @@ public class PlacedBlockPersistenceService {
                 .computeIfAbsent(worldName, ignored -> new ConcurrentHashMap<>())
                 .computeIfAbsent(chunkKey(blockLocation), ignored -> new ConcurrentHashMap<>())
                 .put(key, typeId);
-        saveIndex();
+        saveIndexAsync();
     }
 
     public void removePlacement(IgnisLocation location) {
@@ -80,7 +90,7 @@ public class PlacedBlockPersistenceService {
                 chunkIndexes.remove(worldName);
             }
         }
-        saveIndex();
+        saveIndexAsync();
     }
 
     public Set<String> chunkKeysForWorld(String worldName) {
@@ -102,6 +112,28 @@ public class PlacedBlockPersistenceService {
             return Map.of();
         }
         return Map.copyOf(chunkEntries);
+    }
+
+    public void flush() {
+        saveDirty.set(true);
+        try {
+            saveExecutor.submit(this::drainSaves).get();
+        } catch (Exception error) {
+            host.getLogger().log(Level.WARNING, "Failed to flush placed block index", error);
+        }
+    }
+
+    public void shutdown() {
+        flush();
+        saveExecutor.shutdown();
+        try {
+            if (!saveExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                saveExecutor.shutdownNow();
+            }
+        } catch (InterruptedException error) {
+            saveExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 
     private void loadIndex() {
@@ -187,6 +219,37 @@ public class PlacedBlockPersistenceService {
                     .put(entry.getKey(), entry.getValue());
         }
         chunkIndexes.put(worldName, worldChunks);
+    }
+
+    private void saveIndexAsync() {
+        saveDirty.set(true);
+        saveExecutor.execute(this::drainSaves);
+    }
+
+    private void drainSaves() {
+        while (saveDirty.getAndSet(false)) {
+            writeSnapshot(snapshotWorldIndexes());
+        }
+    }
+
+    private Map<String, Map<String, String>> snapshotWorldIndexes() {
+        Map<String, Map<String, String>> snapshot = new HashMap<>();
+        for (Map.Entry<String, Map<String, String>> worldEntry : worldIndexes.entrySet()) {
+            snapshot.put(worldEntry.getKey(), Map.copyOf(worldEntry.getValue()));
+        }
+        return snapshot;
+    }
+
+    private void writeSnapshot(Map<String, Map<String, String>> snapshot) {
+        try {
+            Files.createDirectories(indexFile.getParent());
+            try (Writer writer = Files.newBufferedWriter(indexFile)) {
+                gson.toJson(snapshot, INDEX_TYPE, writer);
+            }
+        } catch (IOException error) {
+            host.getLogger().log(Level.WARNING, "Failed to save placed block index", error);
+            saveDirty.set(true);
+        }
     }
 
     private void saveIndex() {

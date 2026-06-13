@@ -54,6 +54,17 @@ class PlacedBlockPersistenceServiceTest {
     }
 
     @Test
+    void flushPersistsAsyncWritesToDisk() throws Exception {
+        PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(CommonTestSupport.runtimeHost(tempDir));
+        service.recordPlacement(new IgnisLocation("world", 1, 64, 2), "nuke");
+        service.flush();
+
+        String persisted = Files.readString(tempDir.resolve("placed-blocks.json"));
+        assertTrue(persisted.contains("nuke"));
+        service.shutdown();
+    }
+
+    @Test
     void migratesLegacyYamlIndexToJson() throws Exception {
         Path yaml = tempDir.resolve("placed-blocks.yml");
         Files.writeString(yaml, """

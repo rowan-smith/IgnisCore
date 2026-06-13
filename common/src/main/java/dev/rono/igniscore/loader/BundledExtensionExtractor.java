@@ -73,12 +73,31 @@ public class BundledExtensionExtractor {
                         String jarName = path.getFileName().toString();
                         File target = new File(destination, jarName);
                         try (InputStream inputStream = Files.newInputStream(path)) {
+                            if (shouldSkipExtraction(path, target)) {
+                                host.debug("Skipping unchanged bundled extension " + jarName);
+                                return;
+                            }
                             Files.copy(inputStream, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
                             host.debug("Extracted bundled extension " + jarName + " to " + destination.getName() + "/");
                         } catch (IOException e) {
                             host.getLogger().warning("Failed to extract bundled extension " + jarName + ": " + e.getMessage());
                         }
                     });
+        }
+    }
+
+    private boolean shouldSkipExtraction(Path bundledJar, File destination) {
+        if (!destination.isFile()) {
+            return false;
+        }
+
+        try {
+            if (destination.length() != Files.size(bundledJar)) {
+                return false;
+            }
+            return Files.mismatch(bundledJar, destination.toPath()) == -1L;
+        } catch (IOException error) {
+            return false;
         }
     }
 

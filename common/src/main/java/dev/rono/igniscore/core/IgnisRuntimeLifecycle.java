@@ -8,6 +8,7 @@ import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.service.ExtensionSupportService;
+import dev.rono.igniscore.service.PlacedBlockPersistenceService;
 
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ public class IgnisRuntimeLifecycle {
     private final ItemExtensionLoader itemExtensionLoader;
     private final ExtensionSupportService extensionSupportService;
     private final BlockManager blockManager;
+    private final PlacedBlockPersistenceService placedBlockPersistenceService;
     private final ResourcePackHost resourcePackHost;
     private final IgnisPlatformIntegration platformIntegration;
     private final Logger logger;
@@ -28,6 +30,7 @@ public class IgnisRuntimeLifecycle {
                                    ItemExtensionLoader itemExtensionLoader,
                                    ExtensionSupportService extensionSupportService,
                                    BlockManager blockManager,
+                                   PlacedBlockPersistenceService placedBlockPersistenceService,
                                    ResourcePackHost resourcePackHost,
                                    IgnisPlatformIntegration platformIntegration,
                                    dev.rono.igniscore.api.port.PlatformAdapter platformAdapter) {
@@ -36,6 +39,7 @@ public class IgnisRuntimeLifecycle {
         this.itemExtensionLoader = itemExtensionLoader;
         this.extensionSupportService = extensionSupportService;
         this.blockManager = blockManager;
+        this.placedBlockPersistenceService = placedBlockPersistenceService;
         this.resourcePackHost = resourcePackHost;
         this.platformIntegration = platformIntegration;
         this.logger = platformAdapter.getLogger();
@@ -52,6 +56,7 @@ public class IgnisRuntimeLifecycle {
         itemExtensionLoader.unloadAll();
         extensionSupportService.clear();
         blockManager.cleanup();
+        placedBlockPersistenceService.shutdown();
         resourcePackHost.stopServer();
         platformIntegration.onRuntimeDisable();
     }

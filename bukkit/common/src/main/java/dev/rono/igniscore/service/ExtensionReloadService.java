@@ -10,12 +10,14 @@ import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.command.CommandSender;
 
 import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Singleton
 public class ExtensionReloadService {
     private final IgnisPluginContext pluginContext;
     private final ExtensionBootstrap extensionBootstrap;
     private final PlatformHooks platformHooks;
+    private final AtomicBoolean reloadInProgress = new AtomicBoolean();
 
     @Inject
     public ExtensionReloadService(IgnisPluginContext pluginContext,
@@ -31,6 +33,13 @@ public class ExtensionReloadService {
                             String inProgressMessage,
                             String successMessage,
                             Runnable onSuccess) {
+        if (!reloadInProgress.compareAndSet(false, true)) {
+            if (sender != null) {
+                platformHooks.sendMessage(sender, pluginContext.message("<red>A reload is already in progress."));
+            }
+            return;
+        }
+
         if (sender != null && inProgressMessage != null) {
             platformHooks.sendMessage(sender, pluginContext.message(inProgressMessage));
         }
@@ -39,16 +48,30 @@ public class ExtensionReloadService {
         extensionBootstrap.prepareForReload(scope);
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            ExtensionLoadResult result = extensionBootstrap.loadFresh(scope);
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                extensionBootstrap.commitReload(scope, result);
-                if (sender != null && successMessage != null) {
-                    platformHooks.sendMessage(sender, pluginContext.message(successMessage));
-                }
-                if (onSuccess != null) {
-                    onSuccess.run();
-                }
-            });
+            try {
+                ExtensionLoadResult result = extensionBootstrap.loadFresh(scope);
+                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    try {
+                        extensionBootstrap.commitReload(scope, result);
+                        if (sender != null && successMessage != null) {
+                            platformHooks.sendMessage(sender, pluginContext.message(successMessage));
+                        }
+                        if (onSuccess != null) {
+                            onSuccess.run();
+                        }
+                    } finally {
+                        reloadInProgress.set(false);
+                    }
+                });
+            } catch (RuntimeException error) {
+                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    reloadInProgress.set(false);
+                    if (sender != null) {
+                        platformHooks.sendMessage(sender, pluginContext.message(
+                                "<red>Reload failed: " + error.getMessage()));
+                    }
+                });
+            }
         });
     }
 

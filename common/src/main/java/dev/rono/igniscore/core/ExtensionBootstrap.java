@@ -11,6 +11,8 @@ import dev.rono.igniscore.manager.BlockTypeRegistry;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.service.ExtensionSupportService;
 
+import java.util.concurrent.CompletableFuture;
+
 @Singleton
 public class ExtensionBootstrap {
     private final IgnisRuntimeHost host;
@@ -42,7 +44,6 @@ public class ExtensionBootstrap {
     }
 
     public void loadAll() {
-        bundledExtractor.extractAll();
         commitReload(ExtensionReloadScope.ALL, loadFresh(ExtensionReloadScope.ALL));
     }
 
@@ -76,10 +77,16 @@ public class ExtensionBootstrap {
 
     public ExtensionLoadResult loadFresh(ExtensionReloadScope scope) {
         bundledExtractor.extractAll();
-        var blocks = scope == ExtensionReloadScope.ALL || scope == ExtensionReloadScope.BLOCKS
+        if (scope == ExtensionReloadScope.ALL) {
+            var blocksFuture = CompletableFuture.supplyAsync(blockExtensionLoader::loadFresh);
+            var itemsFuture = CompletableFuture.supplyAsync(itemExtensionLoader::loadFresh);
+            return new ExtensionLoadResult(blocksFuture.join(), itemsFuture.join());
+        }
+
+        var blocks = scope == ExtensionReloadScope.BLOCKS
                 ? blockExtensionLoader.loadFresh()
                 : null;
-        var items = scope == ExtensionReloadScope.ALL || scope == ExtensionReloadScope.ITEMS
+        var items = scope == ExtensionReloadScope.ITEMS
                 ? itemExtensionLoader.loadFresh()
                 : null;
         return new ExtensionLoadResult(blocks, items);
