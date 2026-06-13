@@ -48,6 +48,7 @@ public class IgnisCoreModule extends AbstractModule {
     private final JavaPlugin plugin;
     private final PlatformAdapter platformAdapter;
     private final PlatformHooks platformHooks;
+    private final IgnisPluginContext pluginContext;
     private final IgnisRuntimeHost runtimeHost;
 
     public IgnisCoreModule(JavaPlugin plugin, PlatformAdapter platformAdapter) {
@@ -57,7 +58,8 @@ public class IgnisCoreModule extends AbstractModule {
             throw new IllegalArgumentException("Bukkit-family hosts require BukkitPlatformAdapter");
         }
         this.platformHooks = bukkitAdapter.legacyHooks();
-        this.runtimeHost = new SpigotRuntimeHost(plugin);
+        this.pluginContext = new IgnisPluginContext(plugin);
+        this.runtimeHost = new SpigotRuntimeHost(plugin, pluginContext);
     }
 
     public IgnisCoreModule(Main plugin, PlatformHooks platformHooks) {
@@ -70,6 +72,7 @@ public class IgnisCoreModule extends AbstractModule {
 
         bind(JavaPlugin.class).toInstance(plugin);
         bind(Plugin.class).toInstance(plugin);
+        bind(IgnisPluginContext.class).toInstance(pluginContext);
         if (plugin instanceof Main main) {
             bind(Main.class).toInstance(main);
         }

@@ -1,7 +1,7 @@
 package dev.rono.igniscore.resourcepack;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.Main;
+import dev.rono.igniscore.IgnisPluginContext;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import java.io.IOException;
 
 public class ResourcePackService {
-    private final Main plugin;
+    private final IgnisPluginContext pluginContext;
     private final BlockManager blockManager;
     private final ItemManager itemManager;
     private final ResourcePackBuilder packBuilder;
@@ -21,13 +21,13 @@ public class ResourcePackService {
     private String latestHash;
 
     @Inject
-    public ResourcePackService(Main plugin,
+    public ResourcePackService(IgnisPluginContext pluginContext,
                                BlockManager blockManager,
                                ItemManager itemManager,
                                ResourcePackBuilder packBuilder,
                                PlatformHooks platformHooks,
                                IgnisRuntimeHost runtimeHost) {
-        this.plugin = plugin;
+        this.pluginContext = pluginContext;
         this.blockManager = blockManager;
         this.itemManager = itemManager;
         this.packBuilder = packBuilder;
@@ -40,11 +40,11 @@ public class ResourcePackService {
                 blockManager.getBlockTypes(), itemManager.getItemTypes());
         latestHash = result.getHash();
         packServer.registerPack(latestHash, result.getFile());
-        plugin.debug("Resource pack generated successfully! Hash: " + latestHash);
+        pluginContext.debug("Resource pack generated successfully! Hash: " + latestHash);
     }
 
     public void reloadConfiguration() {
-        plugin.reloadConfig();
+        pluginContext.plugin().reloadConfig();
         restartServer();
     }
 
@@ -54,8 +54,8 @@ public class ResourcePackService {
     }
 
     public void startServer() {
-        String host = plugin.getConfig().getString("resource-pack.host", "0.0.0.0");
-        int port = plugin.getConfig().getInt("resource-pack.port", 8080);
+        String host = pluginContext.plugin().getConfig().getString("resource-pack.host", "0.0.0.0");
+        int port = pluginContext.plugin().getConfig().getInt("resource-pack.port", 8080);
         packServer.start(host, port);
     }
 
@@ -64,9 +64,9 @@ public class ResourcePackService {
     }
 
     public void requestPack(Player player) {
-        String url = plugin.getConfig().getString("resource-pack.public-url");
+        String url = pluginContext.plugin().getConfig().getString("resource-pack.public-url");
         if (url == null || url.isEmpty()) {
-            platformHooks.sendMessage(player, plugin.message("<red>Resource pack URL not configured in config.yml"));
+            platformHooks.sendMessage(player, pluginContext.message("<red>Resource pack URL not configured in config.yml"));
             return;
         }
 
@@ -75,7 +75,7 @@ public class ResourcePackService {
         } else {
             platformHooks.sendResourcePack(player, url, null, false);
         }
-        platformHooks.sendMessage(player, plugin.message("<green>Resource pack requested."));
+        platformHooks.sendMessage(player, pluginContext.message("<green>Resource pack requested."));
     }
 
     public String getLatestHash() {

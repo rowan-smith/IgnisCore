@@ -1,7 +1,7 @@
 package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.Main;
+import dev.rono.igniscore.IgnisPluginContext;
 import dev.rono.igniscore.manager.PlacedBlockRegistry;
 import dev.rono.igniscore.platform.PlatformHooks;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;
@@ -21,16 +21,18 @@ public class CustomBlockPlacementService {
     private final PlacedBlockRegistry blockRegistry;
     private final BlockItemIdentifier itemIdentifier;
     private final PlatformHooks platformHooks;
+    private final IgnisPluginContext pluginContext;
 
     @Inject
-    public CustomBlockPlacementService(Main plugin,
+    public CustomBlockPlacementService(IgnisPluginContext pluginContext,
                                        PlacedBlockRegistry blockRegistry,
                                        BlockItemIdentifier itemIdentifier,
                                        PlatformHooks platformHooks) {
-        this.plugin = plugin;
+        this.plugin = pluginContext.plugin();
         this.blockRegistry = blockRegistry;
         this.itemIdentifier = itemIdentifier;
         this.platformHooks = platformHooks;
+        this.pluginContext = pluginContext;
     }
 
     CustomBlockPlacementService(Plugin plugin,
@@ -41,6 +43,7 @@ public class CustomBlockPlacementService {
         this.blockRegistry = blockRegistry;
         this.itemIdentifier = itemIdentifier;
         this.platformHooks = platformHooks;
+        this.pluginContext = null;
     }
 
     public void handleInteractPlacement(PlayerInteractEvent event) {
@@ -92,8 +95,8 @@ public class CustomBlockPlacementService {
     }
 
     private void debug(String message) {
-        if (plugin instanceof Main main) {
-            main.debug(message);
+        if (pluginContext != null) {
+            pluginContext.debug(message);
         }
     }
 }
