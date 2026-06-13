@@ -6,17 +6,17 @@
 
   <parent>
     <groupId>dev.rono</groupId>
-    <artifactId>igniscore-parent</artifactId>
+    <artifactId>bukkit</artifactId>
     <version>${revision}</version>
   </parent>
 
-  <artifactId>bukkit-common</artifactId>
+  <artifactId>spigot</artifactId>
   <packaging>pom</packaging>
 
-  <name>igniscore-bukkit-common</name>
-  <description>Shared Bukkit-family runtime used by Spigot, Paper, and Folia server software modules</description>
+  <name>igniscore-spigot</name>
 
   <modules>
     <module>v1.21.x</module>
+    <module>v1.20.x</module>
   </modules>
 </project>

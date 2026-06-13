@@ -8,35 +8,34 @@ IgnisCore is a multi-platform framework for custom explosive blocks and throwabl
 igniscore-parent/
 ├── api/                    Platform-neutral public contract (ports, strategies, models)
 ├── common/                 Shared runtime: loaders, registry, BlockManager, lifecycle
-├── bukkit-common/
-│   └── v1.21.x/            Shared Bukkit-family runtime (listeners, services, adapters)
+├── bukkit/
+│   ├── common/v1.21.x/     Shared Bukkit-family runtime (listeners, services, adapters)
+│   ├── spigot/
+│   │   ├── v1.21.x/        Spigot 1.21.x server software (bootloader)
+│   │   └── v1.20.x/        Spigot 1.20.x server software (bootloader)
+│   ├── paper/
+│   │   ├── v1.21.x/        Paper 1.21.x server software (adapter + bootloader)
+│   │   └── v1.20.x/        Paper 1.20.x server software (bootloader)
+│   └── folia/v1.21.x/      Folia 1.21.x server software (adapter + region scheduler)
 ├── extensions/
 │   ├── blocks/             Platform-agnostic block extension JARs
 │   └── items/              Platform-agnostic item extension JARs
-├── spigot/
-│   ├── v1.21.x/            Spigot 1.21.x server software (bootloader)
-│   └── v1.20.x/            Spigot 1.20.x server software (bootloader)
-├── paper/
-│   ├── v1.21.x/            Paper 1.21.x server software (adapter + bootloader)
-│   └── v1.20.x/            Paper 1.20.x server software (bootloader)
-├── folia/
-│   └── v1.21.x/            Folia 1.21.x server software (adapter + region scheduler)
 ├── sponge/
 │   ├── v12.0.0/            SpongeVanilla 12.x / MC 1.21.x server software
 │   └── v8.5.0/             Reserved for SpongeAPI 8.x / MC 1.20.x (stub)
 └── bootstrap/              Single deployable JAR for all server software
 ```
 
-Each **server software** module (Spigot, Paper, Folia, Sponge) is independent. Version lines (`v1.21.x`, `v1.20.x`, `v12.0.0`) are separate modules for that software. Shared logic lives in `common/` and `bukkit-common/`, not in the Spigot module.
+Each **server software** module (Spigot, Paper, Folia, Sponge) is independent. Version lines (`v1.21.x`, `v1.20.x`, `v12.0.0`) are separate modules for that software. Shared Bukkit logic lives in `bukkit/common/`, not in the Spigot module.
 
 | Module | Purpose |
 |--------|---------|
 | `api` | Stable extension-facing contract: `IgnisCoreAPI`, ports, strategy interfaces |
 | `common` | Extension loaders, strategy registry, `BlockManager`, `IgnisRuntimeLifecycle`, `IgnisCommonModule` |
-| `bukkit-common/v1.21.x` | Bukkit listeners, commands, NBT/protocol/effect services, `BukkitPlatformAdapter` |
-| `spigot/v1.21.x` | Spigot 1.21.x `PlatformBootloader` only |
-| `paper/v1.21.x` | Paper 1.21.x adapter + bootloader (depends on `bukkit-common`, not `spigot`) |
-| `folia/v1.21.x` | Folia 1.21.x adapter, region scheduler, bootloader |
+| `bukkit/common/v1.21.x` | Bukkit listeners, commands, NBT/protocol/effect services, `BukkitPlatformAdapter` |
+| `bukkit/spigot/v1.21.x` | Spigot 1.21.x `PlatformBootloader` only |
+| `bukkit/paper/v1.21.x` | Paper 1.21.x adapter + bootloader (depends on `bukkit/common`, not `spigot`) |
+| `bukkit/folia/v1.21.x` | Folia 1.21.x adapter, region scheduler, bootloader |
 | `sponge/v12.0.0` | Sponge runtime, adapter, listeners, `/ignis` command |
 | `bootstrap` | Produces one deployable JAR for every supported server (see Build output) |
 

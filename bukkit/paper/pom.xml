@@ -6,7 +6,7 @@
 
   <parent>
     <groupId>dev.rono</groupId>
-    <artifactId>igniscore-parent</artifactId>
+    <artifactId>bukkit</artifactId>
     <version>${revision}</version>
   </parent>
 

@@ -15,10 +15,7 @@
     <module>api</module>
     <module>common</module>
     <module>extensions</module>
-    <module>bukkit-common</module>
-    <module>spigot</module>
-    <module>paper</module>
-    <module>folia</module>
+    <module>bukkit</module>
     <module>sponge</module>
     <module>bootstrap</module>
   </modules>

@@ -15,7 +15,7 @@ public final class BundledExtensionJarFactory {
     }
 
     public static File buildFromModule(Path outputDirectory, String category, String moduleName) throws IOException {
-        Path modulePath = Path.of("..", "..", "extensions", category, moduleName);
+        Path modulePath = Path.of("..", "..", "..", "extensions", category, moduleName);
         Path classesDirectory = modulePath.resolve("target/classes");
 
         if (!Files.isDirectory(classesDirectory)) {

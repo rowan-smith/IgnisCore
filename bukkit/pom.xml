@@ -10,13 +10,16 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>spigot</artifactId>
+  <artifactId>bukkit</artifactId>
   <packaging>pom</packaging>
 
-  <name>igniscore-spigot</name>
+  <name>igniscore-bukkit</name>
+  <description>Bukkit-family server software: shared runtime, Spigot, Paper, and Folia</description>
 
   <modules>
-    <module>v1.21.x</module>
-    <module>v1.20.x</module>
+    <module>common</module>
+    <module>spigot</module>
+    <module>paper</module>
+    <module>folia</module>
   </modules>
 </project>

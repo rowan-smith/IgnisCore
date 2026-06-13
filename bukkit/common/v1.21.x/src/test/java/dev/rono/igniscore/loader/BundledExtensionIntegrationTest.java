@@ -103,7 +103,7 @@ class BundledExtensionIntegrationTest {
     @Test
     @EnabledIf("nuclearConfigFixtureExists")
     void parsesRepositoryNuclearConfigFixture() throws Exception {
-        Path configPath = Path.of("..", "..", "extensions", "blocks", "nuke", "src", "main", "resources", "config.yml");
+        Path configPath = Path.of("..", "..", "..", "extensions", "blocks", "nuke", "src", "main", "resources", "config.yml");
         Map<String, Object> config = YamlDefinitions.loadMap(Files.newInputStream(configPath));
 
         BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuke");
@@ -115,6 +115,6 @@ class BundledExtensionIntegrationTest {
     }
 
     static boolean nuclearConfigFixtureExists() {
-        return Files.exists(Path.of("..", "..", "extensions", "blocks", "nuke", "src", "main", "resources", "config.yml"));
+        return Files.exists(Path.of("..", "..", "..", "extensions", "blocks", "nuke", "src", "main", "resources", "config.yml"));
     }
 }
