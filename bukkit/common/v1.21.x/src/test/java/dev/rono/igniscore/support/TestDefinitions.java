@@ -42,6 +42,30 @@ public final class TestDefinitions {
         );
     }
 
+    public static BlockDefinition breakableStorage() {
+        return new BlockDefinition(
+                "storage",
+                "paper",
+                "carrot_on_a_stick",
+                Component.text("storage"),
+                List.of(Component.text("test")),
+                true,
+                true,
+                "top.png",
+                "side.png",
+                "bottom.png",
+                Map.of("fuse", 80, "radius", 4.0),
+                Map.of("ticks", 5),
+                Map.of(),
+                Map.of(),
+                10002,
+                false,
+                false,
+                false,
+                "storage"
+        );
+    }
+
     public static ItemDefinition item(String id) {
         return new ItemDefinition(
                 id,

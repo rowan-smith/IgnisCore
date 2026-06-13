@@ -47,4 +47,8 @@ public final class StubBlockManager implements BlockTypeRegistry, PlacedBlockReg
     public String getPlacedBlockType(IgnisLocation location) {
         return placedBlocks.get(Locations.toBlock(location));
     }
+
+    public void unregisterPlacedBlock(IgnisLocation location) {
+        placedBlocks.remove(Locations.toBlock(location));
+    }
 }
