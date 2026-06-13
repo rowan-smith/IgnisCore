@@ -20,7 +20,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,50 +144,59 @@ public class IgnisCommand implements PluginCommandHandler {
             return true;
         }
 
-        try {
-            resourcePackService.buildAndRegister();
-            pluginContext.debug("Resource pack rebuilt successfully! Hash: " + resourcePackService.getLatestHash());
-            send(player, "<green>Resource pack rebuilt. Reconnect if models do not update.");
-        } catch (IOException e) {
-            send(player, "<red>Failed to rebuild resource pack: " + e.getMessage());
-            return true;
-        }
-
-        resourcePackService.requestPack(player);
+        send(player, "<yellow>Rebuilding resource pack...");
+        resourcePackService.buildAndRegisterAsync(
+                () -> {
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    pluginContext.debug("Resource pack rebuilt successfully! Hash: " + resourcePackService.getLatestHash());
+                    send(player, "<green>Resource pack rebuilt. Reconnect if models do not update.");
+                    resourcePackService.requestPack(player);
+                },
+                error -> {
+                    if (player.isOnline()) {
+                        send(player, "<red>Failed to rebuild resource pack: " + error.getMessage());
+                    }
+                });
         return true;
     }
 
     private boolean handleReload(CommandSender sender, String[] args) {
         String target = args.length > 1 ? args[1].toLowerCase() : "all";
-        try {
-            switch (target) {
-                case "server" -> {
-                    resourcePackService.reloadConfiguration();
-                    send(sender, "<green>IgnisCore server configuration reloaded.");
-                }
-                case "all" -> {
-                    extensionBootstrap.reloadAll();
-                    resourcePackService.buildAndRegister();
-                    resourcePackService.reloadConfiguration();
-                    send(sender, "<green>IgnisCore fully reloaded.");
-                }
-                case "blocks" -> {
-                    extensionBootstrap.reloadBlocks();
-                    resourcePackService.buildAndRegister();
-                    send(sender, "<green>IgnisCore block extensions reloaded.");
-                }
-                case "items" -> {
-                    extensionBootstrap.reloadItems();
-                    resourcePackService.buildAndRegister();
-                    send(sender, "<green>IgnisCore item extensions reloaded.");
-                }
-                default -> {
-                    send(sender, "<red>Usage: /ignis reload <all|blocks|items|server>");
-                    return true;
-                }
+        switch (target) {
+            case "server" -> {
+                resourcePackService.reloadConfiguration();
+                send(sender, "<green>IgnisCore server configuration reloaded.");
             }
-        } catch (IOException e) {
-            send(sender, "<red>Reload failed: " + e.getMessage());
+            case "all" -> {
+                extensionBootstrap.reloadAll();
+                send(sender, "<yellow>Extensions reloaded. Rebuilding resource pack...");
+                resourcePackService.buildAndRegisterAsync(
+                        () -> {
+                            resourcePackService.reloadConfiguration();
+                            send(sender, "<green>IgnisCore fully reloaded.");
+                        },
+                        error -> send(sender, "<red>Reload failed: " + error.getMessage()));
+            }
+            case "blocks" -> {
+                extensionBootstrap.reloadBlocks();
+                send(sender, "<yellow>Block extensions reloaded. Rebuilding resource pack...");
+                resourcePackService.buildAndRegisterAsync(
+                        () -> send(sender, "<green>IgnisCore block extensions reloaded."),
+                        error -> send(sender, "<red>Reload failed: " + error.getMessage()));
+            }
+            case "items" -> {
+                extensionBootstrap.reloadItems();
+                send(sender, "<yellow>Item extensions reloaded. Rebuilding resource pack...");
+                resourcePackService.buildAndRegisterAsync(
+                        () -> send(sender, "<green>IgnisCore item extensions reloaded."),
+                        error -> send(sender, "<red>Reload failed: " + error.getMessage()));
+            }
+            default -> {
+                send(sender, "<red>Usage: /ignis reload <all|blocks|items|server>");
+                return true;
+            }
         }
         return true;
     }

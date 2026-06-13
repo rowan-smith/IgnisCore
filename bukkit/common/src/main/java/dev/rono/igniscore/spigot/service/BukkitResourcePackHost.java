@@ -31,4 +31,9 @@ public class BukkitResourcePackHost implements ResourcePackHost {
     public void reloadConfiguration() {
         resourcePackService.reloadConfiguration();
     }
+
+    @Override
+    public void buildAndRegisterAsync(Runnable onSuccess, java.util.function.Consumer<java.io.IOException> onFailure) {
+        resourcePackService.buildAndRegisterAsync(onSuccess, onFailure);
+    }
 }

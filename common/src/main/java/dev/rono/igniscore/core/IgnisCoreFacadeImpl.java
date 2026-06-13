@@ -21,7 +21,6 @@ import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.service.ExtensionSupportService;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -134,11 +133,14 @@ public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
     @Override
     public void reloadExtensions() {
         extensionBootstrap.reloadAll();
-        try {
-            resourcePackHost.buildAndRegister();
-            resourcePackHost.reloadConfiguration();
-        } catch (IOException error) {
-            logger.severe("Failed to rebuild resource pack after reload: " + error.getMessage());
-        }
+        resourcePackHost.buildAndRegisterAsync(
+                () -> {
+                    try {
+                        resourcePackHost.reloadConfiguration();
+                    } catch (RuntimeException error) {
+                        logger.severe("Failed to reload resource pack configuration: " + error.getMessage());
+                    }
+                },
+                error -> logger.severe("Failed to rebuild resource pack after reload: " + error.getMessage()));
     }
 }

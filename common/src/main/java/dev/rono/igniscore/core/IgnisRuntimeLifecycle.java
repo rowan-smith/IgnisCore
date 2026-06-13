@@ -9,7 +9,6 @@ import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.service.ExtensionSupportService;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 @Singleton
@@ -58,11 +57,8 @@ public class IgnisRuntimeLifecycle {
     }
 
     private void initializeResourcePack() {
-        try {
-            resourcePackHost.buildAndRegister();
-            resourcePackHost.startServer();
-        } catch (IOException error) {
-            logger.severe("Failed to generate resource pack: " + error.getMessage());
-        }
+        resourcePackHost.buildAndRegisterAsync(
+                resourcePackHost::startServer,
+                error -> logger.severe("Failed to generate resource pack: " + error.getMessage()));
     }
 }

@@ -2,6 +2,8 @@ package dev.rono.igniscore.resourcepack;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.IgnisPluginContext;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
@@ -9,6 +11,8 @@ import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class ResourcePackService {
     private final IgnisPluginContext pluginContext;
@@ -36,8 +40,33 @@ public class ResourcePackService {
     }
 
     public void buildAndRegister() throws IOException {
-        ResourcePackBuilder.PackResult result = packBuilder.buildPack(
-                blockManager.getBlockTypes(), itemManager.getItemTypes());
+        registerBuiltPack(packBuilder.buildPack(
+                blockManager.getBlockTypes(), itemManager.getItemTypes()));
+    }
+
+    public void buildAndRegisterAsync(Runnable onSuccess, Consumer<IOException> onFailure) {
+        Map<String, BlockDefinition> blocks = Map.copyOf(blockManager.getBlockTypes());
+        Map<String, ItemDefinition> items = Map.copyOf(itemManager.getItemTypes());
+        var plugin = pluginContext.plugin();
+
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                ResourcePackBuilder.PackResult result = packBuilder.buildPack(blocks, items);
+                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    try {
+                        registerBuiltPack(result);
+                        onSuccess.run();
+                    } catch (RuntimeException error) {
+                        onFailure.accept(new IOException(error.getMessage(), error));
+                    }
+                });
+            } catch (IOException error) {
+                plugin.getServer().getScheduler().runTask(plugin, () -> onFailure.accept(error));
+            }
+        });
+    }
+
+    private void registerBuiltPack(ResourcePackBuilder.PackResult result) {
         latestHash = result.getHash();
         packServer.registerPack(latestHash, result.getFile());
         pluginContext.debug("Resource pack generated successfully! Hash: " + latestHash);
