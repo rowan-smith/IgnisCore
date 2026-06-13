@@ -31,31 +31,33 @@ class ExtensionResourceProviderTest {
         BlockDefinition block = sampleBlock("nuke");
         ItemDefinition item = sampleItem("grenade");
 
-        provider.setBlockExtensions(List.of(extension(block, "textures/top.png", "block-extension.yml")));
-        provider.setItemExtensions(List.of(extension(item, "textures/icon.png", "item-extension.yml")));
+        Path blockJar = blockJar(block.getId(), "textures/top.png", "block-extension.yml");
+        Path itemJar = itemJar(item.getId(), "textures/icon.png", "item-extension.yml");
 
-        assertNotNull(provider.getBlockTextureStream(block, "top.png"));
-        assertNotNull(provider.getItemTextureStream(item, "icon.png"));
-        assertNull(provider.getBlockTextureStream(block, "missing.png"));
-        assertNull(provider.getItemTextureStream(item, "missing.png"));
-    }
+        try (URLClassLoader blockLoader = new URLClassLoader(new java.net.URL[]{blockJar.toUri().toURL()},
+                ClassLoader.getPlatformClassLoader());
+             URLClassLoader itemLoader = new URLClassLoader(new java.net.URL[]{itemJar.toUri().toURL()},
+                     ClassLoader.getPlatformClassLoader())) {
+            provider.setBlockExtensions(List.of(loadedExtension(
+                    block, "block-extension.yml", blockJar, blockLoader)));
+            provider.setItemExtensions(List.of(loadedExtension(
+                    item, "item-extension.yml", itemJar, itemLoader)));
 
-    private LoadedExtension<BlockDefinition> extension(BlockDefinition definition, String resourcePath, String manifestName)
-            throws Exception {
-        return loadedExtension(definition, resourcePath, manifestName, blockJar(definition.getId(), resourcePath, manifestName));
-    }
-
-    private LoadedExtension<ItemDefinition> extension(ItemDefinition definition, String resourcePath, String manifestName)
-            throws Exception {
-        return loadedExtension(definition, resourcePath, manifestName, itemJar(definition.getId(), resourcePath, manifestName));
+            try (var blockStream = provider.getBlockTextureStream(block, "top.png");
+                 var itemStream = provider.getItemTextureStream(item, "icon.png")) {
+                assertNotNull(blockStream);
+                assertNotNull(itemStream);
+            }
+            assertNull(provider.getBlockTextureStream(block, "missing.png"));
+            assertNull(provider.getItemTextureStream(item, "missing.png"));
+        }
     }
 
     private <D extends dev.rono.igniscore.api.model.ExtensionDefinition> LoadedExtension<D> loadedExtension(
             D definition,
-            String resourcePath,
             String manifestName,
-            Path jarPath) throws Exception {
-        URLClassLoader classLoader = new URLClassLoader(new java.net.URL[]{jarPath.toUri().toURL()});
+            Path jarPath,
+            URLClassLoader classLoader) throws Exception {
         ExtensionResources resources = new ExtensionResources(classLoader);
         ExtensionManifest manifest = ExtensionManifest.fromStream(
                 getClass().getResourceAsStream("/loader/" + manifestName),
