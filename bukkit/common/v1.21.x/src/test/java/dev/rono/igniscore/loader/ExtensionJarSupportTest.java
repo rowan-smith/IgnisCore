@@ -135,7 +135,7 @@ class ExtensionJarSupportTest {
         File jarFile = TestExtensionJarBuilder.writeBlockJar(tempDir.toFile(), "test-block.jar");
         Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
 
-        BlockDefinition blockDefinition = ExtensionKind.BLOCK.parseBlock(config, "fallback", 10055, "test-block");
+        BlockDefinition blockDefinition = (BlockDefinition) ExtensionKind.BLOCK.parseDefinition(config, "fallback", 10055, "test-block");
 
         assertEquals("testblock", blockDefinition.getId());
         assertEquals(10055, blockDefinition.getCustomModelData());

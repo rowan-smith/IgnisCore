@@ -1,5 +1,6 @@
 package dev.rono.igniscore.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,10 +8,32 @@ public final class ConfigValueReader {
     private ConfigValueReader() {
     }
 
+    public static List<Map<String, Object>> getMapList(Map<String, Object> source, String key) {
+        return asMapList(getList(source, key));
+    }
+
+    public static List<Map<String, Object>> asMapList(List<?> raw) {
+        if (raw == null || raw.isEmpty()) {
+            return List.of();
+        }
+        List<Map<String, Object>> maps = new ArrayList<>(raw.size());
+        for (Object entry : raw) {
+            if (entry instanceof Map<?, ?> map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> typed = (Map<String, Object>) map;
+                maps.add(typed);
+            }
+        }
+        return List.copyOf(maps);
+    }
+
     @SuppressWarnings("unchecked")
     public static Map<String, Object> getMap(Map<String, Object> source, String key) {
         if (source == null) {
             return Map.of();
+        }
+        if (key == null) {
+            return (Map<String, Object>) source;
         }
         Object value = source.get(key);
         if (value instanceof Map<?, ?> map) {

@@ -10,7 +10,6 @@ import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.util.Locations;
@@ -158,12 +157,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     }
 
     private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
-        IgnisStrategy strategy = strategyRegistry.get(definition.getExtensionId());
-        if (!(strategy instanceof IgnisBlockStrategy blockStrategy)) {
-            throw new IllegalStateException("Block type " + definition.getId() + " uses a non-block strategy from extension "
-                    + definition.getExtensionId());
-        }
-        return blockStrategy;
+        return strategyRegistry.requireBlockStrategy(definition.getExtensionId(), definition.getId());
     }
 
     public Map<String, BlockDefinition> getBlockTypes() {

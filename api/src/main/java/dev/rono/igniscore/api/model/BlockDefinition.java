@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import java.util.List;
 import java.util.Map;
 
-public class BlockDefinition {
+public final class BlockDefinition implements ExtensionDefinition {
     private final String id;
     private final String baseMaterial;
     private final String renderMaterial;

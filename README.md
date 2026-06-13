@@ -22,7 +22,7 @@ igniscore-parent/
 │   └── items/              Platform-agnostic item extension JARs
 ├── sponge/
 │   ├── v12.0.0/            SpongeVanilla 12.x / MC 1.21.x server software
-│   └── v8.5.0/             Reserved for SpongeAPI 8.x / MC 1.20.x (stub)
+│   └── v8.5.0/             SpongeAPI 8.x / MC 1.20.x server software
 └── bootstrap/              Single deployable JAR for all server software
 ```
 
@@ -37,6 +37,7 @@ Each **server software** module (Spigot, Paper, Folia, Sponge) is independent. V
 | `bukkit/paper/v1.21.x` | Paper 1.21.x adapter + bootloader (depends on `bukkit/common`, not `spigot`) |
 | `bukkit/folia/v1.21.x` | Folia 1.21.x adapter, region scheduler, bootloader |
 | `sponge/v12.0.0` | Sponge runtime, adapter, listeners, `/ignis` command |
+| `sponge/v8.5.0` | SpongeAPI 8.x runtime for Minecraft 1.20.x |
 | `bootstrap` | Produces one deployable JAR for every supported server (see Build output) |
 
 ## Build output

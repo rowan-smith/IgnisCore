@@ -75,9 +75,9 @@ final class SpongeBridgeTest {
     }
 
     @Test
-    void bootloaderDetectsSpongePluginMarker() {
+    void bootloaderRejectsNonSpongeHosts() {
         SpongeV1200Bootloader bootloader = new SpongeV1200Bootloader();
-        assertTrue(bootloader.canBoot(new MarkedHost()));
+        assertFalse(bootloader.canBoot(new MarkedHost()));
         assertFalse(bootloader.canBoot("not-a-plugin-host"));
     }
 

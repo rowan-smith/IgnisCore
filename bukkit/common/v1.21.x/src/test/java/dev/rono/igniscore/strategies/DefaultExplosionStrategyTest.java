@@ -1,6 +1,8 @@
 package dev.rono.igniscore.strategies;
 
 import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.support.NoopExtensionSupport;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -34,6 +36,18 @@ class DefaultExplosionStrategyTest {
         assertEquals(80, profile.getDefaultFuse());
         assertEquals(4.0, profile.getDefaultRadius());
         assertEquals("BLOCK_BEACON_ACTIVATE", profile.getPlacementSound());
+    }
+
+    @Test
+    void triggerStoresBlastPowerAndExplodes() {
+        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport());
+        RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(sampleDefinition());
+
+        strategy.onTrigger(instance, null);
+
+        assertEquals(4.0, instance.getData().getDouble("ignis:blast_power"));
+        org.junit.jupiter.api.Assertions.assertFalse(ctx.world().explosions().isEmpty());
     }
 
     private BlockDefinition sampleDefinition() {

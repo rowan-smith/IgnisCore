@@ -73,4 +73,17 @@ class ConfigValueReaderTest {
         assertEquals("fallback", ConfigValueReader.getString(source, "value", "fallback"));
         assertEquals("fallback", ConfigValueReader.getString(null, "value", "fallback"));
     }
+
+    @Test
+    void getMapListReturnsNestedMaps() {
+        java.util.Map<String, Object> source = java.util.Map.of(
+                "entries", java.util.List.of(
+                        java.util.Map.of("id", "a"),
+                        java.util.Map.of("id", "b")));
+
+        java.util.List<java.util.Map<String, Object>> maps = ConfigValueReader.getMapList(source, "entries");
+
+        assertEquals(2, maps.size());
+        assertEquals("a", maps.get(0).get("id"));
+    }
 }

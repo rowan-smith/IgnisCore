@@ -14,8 +14,8 @@
   <artifactId>v8.5.0</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore-sponge-v8.5.0-stub</name>
-  <description>Stub for SpongeAPI 8.x (Minecraft 1.20.x)</description>
+  <name>igniscore-sponge-v8.5.0</name>
+  <description>SpongeAPI 8.x adapter and bootloader for Minecraft 1.20.x</description>
 
   <dependencies>
     <dependency>
@@ -23,9 +23,59 @@
       <artifactId>api</artifactId>
     </dependency>
     <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.spongepowered</groupId>
+      <artifactId>spongeapi</artifactId>
+      <version>8.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-minimessage</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>spongepowered-public</id>
+      <url>https://repo.spongepowered.org/repository/maven-public/</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>

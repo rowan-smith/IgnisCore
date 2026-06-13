@@ -145,6 +145,16 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>dev.rono.bukkit.folia</groupId>
+        <artifactId>v1.21.x</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono.sponge</groupId>
+        <artifactId>v8.5.0</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>dev.rono.sponge</groupId>
         <artifactId>v12.0.0</artifactId>
         <version>${project.version}</version>

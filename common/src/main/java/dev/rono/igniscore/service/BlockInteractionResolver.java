@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static dev.rono.igniscore.util.ConfigValueReader.getList;
 import static dev.rono.igniscore.util.ConfigValueReader.getMap;
+import static dev.rono.igniscore.util.ConfigValueReader.getMapList;
 import static dev.rono.igniscore.util.ConfigValueReader.getString;
 
 @Singleton
@@ -42,13 +43,7 @@ public class BlockInteractionResolver {
     private String getConfiguredAction(BlockDefinition definition, String clickSide, String materialKey) {
         String clickKey = LEFT_CLICK.equalsIgnoreCase(clickSide) ? "left_click" : "right_click";
         Map<String, Object> clickSettings = getMap(definition.getInteractionSettings(), clickKey);
-        for (Object materialAction : getList(clickSettings, "material_actions")) {
-            if (!(materialAction instanceof Map<?, ?> rawMap)) {
-                continue;
-            }
-
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) rawMap;
+        for (Map<String, Object> map : getMapList(clickSettings, "material_actions")) {
             String action = getString(map, "action", "");
             if (!action.isEmpty() && matchesConfiguredMaterials(map, materialKey)) {
                 return action.toLowerCase(Locale.ROOT);

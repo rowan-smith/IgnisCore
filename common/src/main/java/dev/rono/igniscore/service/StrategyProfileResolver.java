@@ -2,7 +2,6 @@ package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.strategy.StrategySupport;
@@ -10,8 +9,8 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 
 import java.util.Map;
 
-import static dev.rono.igniscore.util.ConfigValueReader.getList;
 import static dev.rono.igniscore.util.ConfigValueReader.getMap;
+import static dev.rono.igniscore.util.ConfigValueReader.getMapList;
 import static dev.rono.igniscore.util.ConfigValueReader.getString;
 
 public class StrategyProfileResolver {
@@ -23,11 +22,8 @@ public class StrategyProfileResolver {
     }
 
     public StrategyProfile resolve(BlockDefinition definition) {
-        IgnisStrategy strategy = strategyRegistry.get(definition.getExtensionId());
-        if (!(strategy instanceof IgnisBlockStrategy blockStrategy)) {
-            throw new IllegalStateException("Block type " + definition.getId() + " uses a non-block strategy from extension "
-                    + definition.getExtensionId());
-        }
+        IgnisBlockStrategy blockStrategy = strategyRegistry.requireBlockStrategy(
+                definition.getExtensionId(), definition.getId());
         StrategyProfile profile = blockStrategy.profile(definition);
         Map<String, Object> interactions = definition.getInteractionSettings();
 
@@ -62,12 +58,10 @@ public class StrategyProfileResolver {
             return true;
         }
 
-        for (Object materialAction : getList(getMap(interactions, "left_click"), "material_actions")) {
-            if (materialAction instanceof Map<?, ?> map) {
-                Object action = map.get("action");
-                if (action != null && "ignite".equalsIgnoreCase(action.toString())) {
-                    return true;
-                }
+        for (Map<String, Object> map : getMapList(getMap(interactions, "left_click"), "material_actions")) {
+            Object action = map.get("action");
+            if (action != null && "ignite".equalsIgnoreCase(action.toString())) {
+                return true;
             }
         }
 
