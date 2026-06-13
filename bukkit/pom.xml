@@ -14,12 +14,11 @@
   <packaging>pom</packaging>
 
   <name>igniscore-bukkit</name>
-  <description>Bukkit-family server software: shared runtime, Spigot, Paper, and Folia</description>
+  <description>Bukkit-family server software: shared runtime, Spigot, and Paper</description>
 
   <modules>
     <module>common</module>
     <module>spigot</module>
     <module>paper</module>
-    <module>folia</module>
   </modules>
 </project>

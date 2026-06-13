@@ -10,7 +10,8 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>spigot-v1-20-x</artifactId>
+  <groupId>dev.rono.bukkit.spigot</groupId>
+  <artifactId>v1.20.x</artifactId>
   <packaging>jar</packaging>
 
   <name>igniscore-spigot-v1.20.x</name>
@@ -18,8 +19,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>bukkit-common-v1-21-x</artifactId>
+      <groupId>dev.rono.bukkit.common</groupId>
+      <artifactId>v1.21.x</artifactId>
     </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>

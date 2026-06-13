@@ -10,7 +10,8 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>bukkit-common</artifactId>
+  <groupId>dev.rono.bukkit</groupId>
+  <artifactId>common</artifactId>
   <packaging>pom</packaging>
 
   <name>igniscore-bukkit-common</name>

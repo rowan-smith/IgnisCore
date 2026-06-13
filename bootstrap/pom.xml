@@ -26,32 +26,28 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>bukkit-common-v1-21-x</artifactId>
+      <groupId>dev.rono.bukkit.common</groupId>
+      <artifactId>v1.21.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>spigot-v1-21-x</artifactId>
+      <groupId>dev.rono.bukkit.spigot</groupId>
+      <artifactId>v1.21.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>paper-v1-21-x</artifactId>
+      <groupId>dev.rono.bukkit.paper</groupId>
+      <artifactId>v1.21.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>spigot-v1-20-x</artifactId>
+      <groupId>dev.rono.bukkit.spigot</groupId>
+      <artifactId>v1.20.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>paper-v1-20-x</artifactId>
+      <groupId>dev.rono.bukkit.paper</groupId>
+      <artifactId>v1.20.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>folia-v1-21-x</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>sponge-v12-0-0</artifactId>
+      <groupId>dev.rono.sponge</groupId>
+      <artifactId>v12.0.0</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>

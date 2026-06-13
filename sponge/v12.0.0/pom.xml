@@ -10,7 +10,8 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>sponge-v12-0-0</artifactId>
+  <groupId>dev.rono.sponge</groupId>
+  <artifactId>v12.0.0</artifactId>
   <packaging>jar</packaging>
 
   <name>igniscore-sponge-v12.0.0</name>
@@ -60,7 +61,6 @@
   </repositories>
 
   <build>
-    <finalName>igniscore-sponge-v12-0-0</finalName>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
