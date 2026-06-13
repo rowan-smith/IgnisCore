@@ -11,29 +11,35 @@ igniscore-parent/
 ├── bukkit/
 │   ├── common/v1.21.x/     Shared Bukkit-family runtime (listeners, services, adapters)
 │   ├── spigot/
+│   │   ├── v26.1.x/        Spigot 26.1.x server software (bootloader)
 │   │   ├── v1.21.x/        Spigot 1.21.x server software (bootloader)
 │   │   └── v1.20.x/        Spigot 1.20.x server software (bootloader)
 │   ├── paper/
+│   │   ├── v26.1.x/        Paper 26.1.x server software (bootloader)
 │   │   ├── v1.21.x/        Paper 1.21.x server software (adapter + bootloader)
 │   │   └── v1.20.x/        Paper 1.20.x server software (bootloader)
 ├── extensions/
 │   ├── blocks/             Platform-agnostic block extension JARs
 │   └── items/              Platform-agnostic item extension JARs
 ├── sponge/
+│   ├── v19.0.0/            SpongeAPI 19.x / MC 26.1.x server software
 │   ├── v12.0.0/            SpongeVanilla 12.x / MC 1.21.x server software
 │   └── v8.5.0/             SpongeAPI 8.x / MC 1.20.x server software
 └── bootstrap/              Single deployable JAR for all server software
 ```
 
-Each **server software** module (Spigot, Paper, Sponge) is independent. Version lines (`v1.21.x`, `v1.20.x`, `v12.0.0`) are separate modules for that software. Shared Bukkit logic lives in `bukkit/common/`, not in the Spigot module.
+Each **server software** module (Spigot, Paper, Sponge) is independent. Version lines (`v26.1.x`, `v1.21.x`, `v1.20.x`, `v19.0.0`) are separate modules for that software. Shared Bukkit logic lives in `bukkit/common/`, not in the Spigot module.
 
 | Module | Purpose |
 |--------|---------|
 | `api` | Stable extension-facing contract: `IgnisCoreAPI`, ports, strategy interfaces |
 | `common` | Extension loaders, strategy registry, `BlockManager`, `IgnisRuntimeLifecycle`, `IgnisCommonModule` |
 | `bukkit/common/v1.21.x` | Bukkit listeners, commands, NBT/protocol/effect services, `BukkitPlatformAdapter` |
+| `bukkit/spigot/v26.1.x` | Spigot 26.1.x `PlatformBootloader` only |
 | `bukkit/spigot/v1.21.x` | Spigot 1.21.x `PlatformBootloader` only |
+| `bukkit/paper/v26.1.x` | Paper 26.1.x bootloader (reuses `bukkit/paper/v1.21.x` adapter) |
 | `bukkit/paper/v1.21.x` | Paper 1.21.x adapter + bootloader (depends on `bukkit/common`, not `spigot`) |
+| `sponge/v19.0.0` | SpongeAPI 19.x runtime for Minecraft 26.1.x |
 | `sponge/v12.0.0` | Sponge runtime, adapter, listeners, `/ignis` command |
 | `sponge/v8.5.0` | SpongeAPI 8.x runtime for Minecraft 1.20.x |
 | `bootstrap` | Produces one deployable JAR for every supported server (see Build output) |
@@ -62,9 +68,9 @@ All platforms use `PlatformBootloaderLoader` (`common`) to identify server softw
 
 | Priority | Bootloader | Server software |
 |----------|------------|-----------------|
-| 100 | `PaperV121Bootloader` / `PaperV120Bootloader` | Paper 1.21.x / 1.20.x |
-| 50 | `SpigotV121Bootloader` / `SpigotV120Bootloader` | Spigot 1.21.x / 1.20.x |
-| 200 | `SpongeV1200Bootloader` | Sponge 12.x / MC 1.21.x |
+| 100 | `PaperV261Bootloader` / `PaperV121Bootloader` / `PaperV120Bootloader` | Paper 26.1.x / 1.21.x / 1.20.x |
+| 50 | `SpigotV261Bootloader` / `SpigotV121Bootloader` / `SpigotV120Bootloader` | Spigot 26.1.x / 1.21.x / 1.20.x |
+| 200 | `SpongeV1900Bootloader` / `SpongeV1200Bootloader` | Sponge 19.x / MC 26.1.x · Sponge 12.x / MC 1.21.x |
 
 ## Platform ports
 
@@ -82,9 +88,9 @@ Shared enable/disable is handled by `IgnisRuntimeLifecycle` in `common/` (extens
 
 ## Requirements
 
-**Spigot / Paper:** 1.20.x or 1.21.x — Java 25, NBTAPI (required), ProtocolLib (optional)
+**Spigot / Paper:** 1.20.x, 1.21.x, or 26.1.x — Java 25, NBTAPI (required), ProtocolLib (optional)
 
-**SpongeVanilla:** 1.21.x with SpongeAPI 12.x — Java 25
+**SpongeVanilla:** 1.20.x (SpongeAPI 8.5.x), 1.21.x (SpongeAPI 12.x), or 26.1.x (SpongeAPI 19.x) — Java 25
 
 ## Persistence note
 

@@ -32,6 +32,9 @@
     <adventure.version>4.26.1</adventure.version>
     <spigot.api.version>1.21.11-R0.1-SNAPSHOT</spigot.api.version>
     <paper.api.version>1.21.11-R0.1-SNAPSHOT</paper.api.version>
+    <spigot.api.version.26.1>26.1.2-R0.1-SNAPSHOT</spigot.api.version.26.1>
+    <paper.api.version.26.1>26.1.2-R0.1-SNAPSHOT</paper.api.version.26.1>
+    <sponge.api.version.19.0>19.0.0-SNAPSHOT</sponge.api.version.19.0>
   </properties>
 
   <build>
@@ -147,6 +150,16 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>dev.rono.bukkit.spigot</groupId>
+        <artifactId>v26.1.x</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono.bukkit.paper</groupId>
+        <artifactId>v26.1.x</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>dev.rono.sponge</groupId>
         <artifactId>v8.5.0</artifactId>
         <version>${project.version}</version>
@@ -154,6 +167,11 @@
       <dependency>
         <groupId>dev.rono.sponge</groupId>
         <artifactId>v12.0.0</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono.sponge</groupId>
+        <artifactId>v19.0.0</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

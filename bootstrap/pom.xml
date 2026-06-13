@@ -46,8 +46,20 @@
       <artifactId>v1.20.x</artifactId>
     </dependency>
     <dependency>
+      <groupId>dev.rono.bukkit.spigot</groupId>
+      <artifactId>v26.1.x</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono.bukkit.paper</groupId>
+      <artifactId>v26.1.x</artifactId>
+    </dependency>
+    <dependency>
       <groupId>dev.rono.sponge</groupId>
       <artifactId>v12.0.0</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono.sponge</groupId>
+      <artifactId>v19.0.0</artifactId>
     </dependency>
     <dependency>
       <groupId>dev.rono.sponge</groupId>
