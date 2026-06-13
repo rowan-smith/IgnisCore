@@ -32,6 +32,14 @@ class IgnisStrategyRegistryImplTest {
     }
 
     @Test
+    void requireBlockStrategyThrowsWhenExtensionMissing() {
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
+
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class,
+                () -> registry.requireBlockStrategy("missing-extension", "missing-block"));
+    }
+
+    @Test
     void fallsBackToDefaultStrategy() {
         IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 

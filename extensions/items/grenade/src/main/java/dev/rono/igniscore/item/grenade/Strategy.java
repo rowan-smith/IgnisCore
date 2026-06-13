@@ -18,6 +18,9 @@ public class Strategy extends AbstractIgnisItemStrategy {
 
     @Override
     public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisInteraction action) {
+        if (!"throw".equals(definition.interactionAction(action))) {
+            return;
+        }
         if (context == null) {
             return;
         }

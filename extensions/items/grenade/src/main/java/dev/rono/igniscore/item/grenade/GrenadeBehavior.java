@@ -17,8 +17,8 @@ final class GrenadeBehavior {
     }
 
     void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item) {
-        double velocity = StrategySupport.customDouble(definition.getCustomData(), "throw_velocity", 1.2);
-        int fuseTicks = StrategySupport.customInt(definition.getCustomData(), "fuse_ticks", 40);
+        double velocity = definition.getCustomConfig().getDouble("throw_velocity", 1.2);
+        int fuseTicks = definition.getCustomConfig().getInt("fuse_ticks", 40);
 
         IgnisLocation spawn = player.getEyeLocation();
         double yawRad = Math.toRadians(spawn.yaw());

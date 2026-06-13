@@ -8,27 +8,11 @@ public abstract class AbstractIgnisItemStrategy extends AbstractIgnisStrategy im
         super(context);
     }
 
-    protected double getCustomDouble(ItemDefinition def, String key, double defaultValue) {
-        Object val = def.getCustomData().get(key);
-        if (val instanceof Number number) {
-            return number.doubleValue();
-        }
-        return defaultValue;
+    protected AbstractIgnisItemStrategy(IgnisStrategyDescriptor descriptor) {
+        super(descriptor);
     }
 
-    protected int getCustomInt(ItemDefinition def, String key, int defaultValue) {
-        Object val = def.getCustomData().get(key);
-        if (val instanceof Number number) {
-            return number.intValue();
-        }
-        return defaultValue;
-    }
-
-    protected boolean getCustomBoolean(ItemDefinition def, String key, boolean defaultValue) {
-        Object val = def.getCustomData().get(key);
-        if (val instanceof Boolean value) {
-            return value;
-        }
-        return defaultValue;
+    protected AbstractIgnisItemStrategy(IgnisStrategyDescriptor descriptor, IgnisStrategyContext context) {
+        super(descriptor, context);
     }
 }

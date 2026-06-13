@@ -16,6 +16,11 @@ public interface IgnisStrategyRegistry {
 
     Optional<IgnisStrategy> find(String strategyId);
 
+    /**
+     * Returns a registered strategy, or the built-in {@code default} explosion strategy when the id
+     * is missing. Prefer {@link #requireBlockStrategy} / {@link #requireItemStrategy} for extension
+     * lookups so unregistered extension ids fail fast.
+     */
     IgnisStrategy get(String strategyId);
 
     Collection<IgnisStrategyDescriptor> getDescriptors();
@@ -39,10 +44,17 @@ public interface IgnisStrategyRegistry {
     }
 
     default <T extends IgnisStrategy> T require(String extensionId, Class<T> type, Supplier<String> errorMessage) {
-        IgnisStrategy strategy = get(extensionId);
-        if (!type.isInstance(strategy)) {
+        if (extensionId == null || extensionId.isBlank()) {
+            throw new IllegalStateException(errorMessage.get() + " (extension id is missing)");
+        }
+        Optional<IgnisStrategy> strategy = find(extensionId);
+        if (strategy.isEmpty()) {
+            throw new IllegalStateException(
+                    errorMessage.get() + " (no strategy registered for extension id '" + extensionId + "')");
+        }
+        if (!type.isInstance(strategy.get())) {
             throw new IllegalStateException(errorMessage.get());
         }
-        return type.cast(strategy);
+        return type.cast(strategy.get());
     }
 }

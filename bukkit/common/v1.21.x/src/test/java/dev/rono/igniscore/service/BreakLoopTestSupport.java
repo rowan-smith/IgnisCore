@@ -81,6 +81,7 @@ public final class BreakLoopTestSupport {
                 })
                 .toList();
         blockManager.loadFromExtensions(loaded);
+        registerMissingBlockStrategies(strategyRegistry, behaviorContext, definitions);
 
         PdcBackedNbtService nbtService = new PdcBackedNbtService();
         BlockItemFactory blockItemFactory = new BlockItemFactory(blockManager, nbtService, platformHooks);
@@ -136,6 +137,21 @@ public final class BreakLoopTestSupport {
     public static void performTicks(ServerMock server, long ticks) {
         BukkitSchedulerMock scheduler = (BukkitSchedulerMock) server.getScheduler();
         scheduler.performTicks(ticks);
+    }
+
+    private static void registerMissingBlockStrategies(IgnisStrategyRegistryImpl strategyRegistry,
+                                                     BehaviorTestSupport.TestContext behaviorContext,
+                                                     BlockDefinition... definitions) {
+        DefaultExplosionStrategy fallback = new DefaultExplosionStrategy(
+                behaviorContext.context().getExtensionSupport());
+        for (BlockDefinition definition : definitions) {
+            String extensionId = definition.getExtensionId();
+            if (!strategyRegistry.isRegistered(extensionId)) {
+                strategyRegistry.register(
+                        IgnisStrategyDescriptor.of(extensionId, extensionId, "1.0.0", "test"),
+                        fallback);
+            }
+        }
     }
 
     private static AbstractIgnisBlockStrategy storageStrategy() {
