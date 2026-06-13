@@ -28,4 +28,19 @@ class IgnisBootstrapPluginTest {
             assertTrue(json.contains("igniscore-v850"));
         }
     }
+
+    @Test
+    void shadedJarRegistersPaperBootloader() throws Exception {
+        java.nio.file.Path jar = java.nio.file.Path.of("target/igniscore-1.0.0.jar");
+        org.junit.jupiter.api.Assumptions.assumeTrue(java.nio.file.Files.isRegularFile(jar),
+                "Packaged bootstrap JAR is required for this check");
+
+        try (java.util.jar.JarFile jarFile = new java.util.jar.JarFile(jar.toFile())) {
+            java.util.jar.JarEntry entry = jarFile.getJarEntry(
+                    "META-INF/services/dev.rono.igniscore.api.port.PlatformBootloader");
+            assertNotNull(entry, "PlatformBootloader service file should be shaded into the JAR");
+            String services = new String(jarFile.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8);
+            assertTrue(services.contains("dev.rono.igniscore.paper.boot.PaperV121Bootloader"));
+        }
+    }
 }
