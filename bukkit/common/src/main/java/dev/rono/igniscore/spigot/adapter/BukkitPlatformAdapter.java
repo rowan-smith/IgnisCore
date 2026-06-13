@@ -10,6 +10,7 @@ import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.api.port.PlatformType;
 import dev.rono.igniscore.command.PluginCommandHandler;
+import dev.rono.igniscore.spigot.command.BukkitCommandRegistration;
 import dev.rono.igniscore.platform.PlatformHookLoader;
 import dev.rono.igniscore.platform.PlatformHooks;
 import net.kyori.adventure.text.Component;
@@ -193,14 +194,7 @@ public class BukkitPlatformAdapter implements PlatformAdapter {
         if (!(commandExecutor instanceof PluginCommandHandler handler)) {
             return;
         }
-
-        org.bukkit.command.PluginCommand command = plugin.getCommand(name);
-        if (command == null) {
-            plugin.getLogger().warning("Command missing from plugin.yml: " + name);
-            return;
-        }
-        command.setExecutor(handler);
-        command.setTabCompleter(handler);
+        BukkitCommandRegistration.register(plugin, name, handler);
     }
 
     @Override

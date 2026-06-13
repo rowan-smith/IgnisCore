@@ -9,13 +9,6 @@ depend: [NBTAPI]
 softdepend: [ProtocolLib]
 prefix: IgnisCore
 
-commands:
-  ignis:
-    description: Main command for IgnisCore
-    usage: /ignis <give|pack|reload|debug|blocks|items>
-    aliases: [igniscore, ic]
-    permission: igniscore.admin
-
 permissions:
   igniscore.admin:
     description: Allows access to all IgnisCore commands

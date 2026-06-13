@@ -1,0 +1,4 @@
+name: IgnisCore
+version: '${project.version}'
+bootstrapper: dev.rono.igniscore.paper.boot.IgnisPaperBootstrap
+api-version: '1.21'
