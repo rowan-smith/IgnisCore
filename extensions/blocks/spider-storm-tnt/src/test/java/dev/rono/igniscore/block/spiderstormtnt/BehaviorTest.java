@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class BehaviorTest {
     @Test
-    void staticPlaceSpawnsParticles() {
+    void placedSpawnsParticles() {
         BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "spider-storm-tnt", 10001);
         Strategy strategy = new Strategy(ctx.context());
