@@ -1,5 +1,7 @@
 package dev.rono.igniscore.api;
 
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
@@ -7,34 +9,29 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
-import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.Map;
 
 /**
- * Public runtime facade implemented by the core plugin.
+ * Public runtime facade implemented by the core runtime.
  */
 public interface IgnisCoreFacade {
     Map<String, BlockDefinition> getBlockTypes();
 
     Map<String, ItemDefinition> getItemTypes();
 
-    RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context);
+    RuntimeBlockInstance triggerBlock(IgnisLocation location, String typeId, Object context);
 
-    /**
-     * Removes a placed custom block and starts its fuse at the given location.
-     */
-    RuntimeBlockInstance ignitePlacedBlock(Location location, Object context);
+    RuntimeBlockInstance ignitePlacedBlock(IgnisLocation location, Object context);
 
-    String getPlacedBlockType(Location location);
+    String getPlacedBlockType(IgnisLocation location);
 
     Collection<RuntimeBlockInstance> getActiveBlocks();
 
-    ItemStack createBlockItem(String typeId);
+    IgnisItem createBlockItem(String typeId);
 
-    ItemStack createItem(String typeId);
+    IgnisItem createItem(String typeId);
 
     IgnisStrategyRegistry getStrategyRegistry();
 

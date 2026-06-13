@@ -1,5 +1,7 @@
 package dev.rono.igniscore.api;
 
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
@@ -7,8 +9,6 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
-import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.Map;
@@ -31,15 +31,15 @@ public final class IgnisCoreAPI {
         return requireFacade().getItemTypes();
     }
 
-    public static RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context) {
+    public static RuntimeBlockInstance triggerBlock(IgnisLocation location, String typeId, Object context) {
         return requireFacade().triggerBlock(location, typeId, context);
     }
 
-    public static RuntimeBlockInstance ignitePlacedBlock(Location location, Object context) {
+    public static RuntimeBlockInstance ignitePlacedBlock(IgnisLocation location, Object context) {
         return requireFacade().ignitePlacedBlock(location, context);
     }
 
-    public static String getPlacedBlockType(Location location) {
+    public static String getPlacedBlockType(IgnisLocation location) {
         return requireFacade().getPlacedBlockType(location);
     }
 
@@ -47,11 +47,11 @@ public final class IgnisCoreAPI {
         return requireFacade().getActiveBlocks();
     }
 
-    public static ItemStack createBlockItem(String typeId) {
+    public static IgnisItem createBlockItem(String typeId) {
         return requireFacade().createBlockItem(typeId);
     }
 
-    public static ItemStack createItem(String typeId) {
+    public static IgnisItem createItem(String typeId) {
         return requireFacade().createItem(typeId);
     }
 

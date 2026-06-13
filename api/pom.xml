@@ -8,38 +8,28 @@
     <groupId>dev.rono</groupId>
     <artifactId>igniscore-parent</artifactId>
     <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>api</artifactId>
   <packaging>jar</packaging>
 
-  <name>api</name>
+  <name>igniscore-api</name>
+  <description>Platform-neutral public contract for IgnisCore</description>
 
   <dependencies>
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>net.kyori</groupId>
       <artifactId>adventure-api</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>net.kyori</groupId>
       <artifactId>adventure-text-serializer-legacy</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>de.tr7zw</groupId>
-      <artifactId>item-nbt-api-plugin</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.kyori</groupId>
-      <artifactId>adventure-text-serializer-plain</artifactId>
-      <scope>test</scope>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>2.4</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -47,13 +37,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.papermc.paper</groupId>
-      <artifactId>paper-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockbukkit.mockbukkit</groupId>
-      <artifactId>mockbukkit-v1.21</artifactId>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-serializer-plain</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

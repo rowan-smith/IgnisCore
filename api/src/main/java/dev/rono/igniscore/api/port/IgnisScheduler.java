@@ -1,0 +1,15 @@
+package dev.rono.igniscore.api.port;
+
+/**
+ * Platform-neutral scheduler. Location-scoped tasks support region-threaded servers (Folia).
+ */
+public interface IgnisScheduler {
+
+    IgnisTask runLater(IgnisLocation location, Runnable task, long delayTicks);
+
+    IgnisTask runRepeating(IgnisLocation location, Runnable task, long delayTicks, long periodTicks);
+
+    void runGlobal(Runnable task);
+
+    void runGlobalLater(Runnable task, long delayTicks);
+}

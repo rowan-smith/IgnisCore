@@ -1,7 +1,7 @@
 package dev.rono.igniscore.api.collection;
 
-import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
 
 import java.util.Collection;
 
@@ -12,5 +12,5 @@ import java.util.Collection;
 @FunctionalInterface
 public interface IgnisDropCollector {
 
-    boolean tryCollect(Location location, Collection<ItemStack> drops);
+    boolean tryCollect(IgnisLocation location, Collection<IgnisItem> drops);
 }

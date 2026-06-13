@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>dev.rono</groupId>
+    <artifactId>igniscore-parent</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>bootstrap</artifactId>
+  <packaging>jar</packaging>
+
+  <name>igniscore-bootstrap</name>
+  <description>Deployable plugin JAR with hooked platform bootloaders</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>spigot-v1-21-x</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>paper-v1-21-x</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>spigot-v1-20-x</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>paper-v1-20-x</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>folia-v1-21-x</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>igniscore-${project.version}</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>module-info.class</exclude>
+                    <exclude>META-INF/versions/**/module-info.class</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <relocations>
+                <relocation>
+                  <pattern>com.google.inject</pattern>
+                  <shadedPattern>dev.rono.igniscore.libs.com.google.inject</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.google.common</pattern>
+                  <shadedPattern>dev.rono.igniscore.libs.com.google.common</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>jakarta.inject</pattern>
+                  <shadedPattern>dev.rono.igniscore.libs.jakarta.inject</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>bundle-extensions</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <mkdir dir="${project.build.outputDirectory}/bundled/blocks"/>
+                <copy todir="${project.build.outputDirectory}/bundled/blocks" flatten="true">
+                  <fileset dir="${project.basedir}/../extensions/blocks">
+                    <include name="*/target/*.jar"/>
+                    <exclude name="*/target/original-*.jar"/>
+                  </fileset>
+                </copy>
+                <mkdir dir="${project.build.outputDirectory}/bundled/items"/>
+                <copy todir="${project.build.outputDirectory}/bundled/items" flatten="true">
+                  <fileset dir="${project.basedir}/../extensions/items">
+                    <include name="*/target/*.jar"/>
+                    <exclude name="*/target/original-*.jar"/>
+                  </fileset>
+                </copy>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+        <configuration>
+          <forceCreation>true</forceCreation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

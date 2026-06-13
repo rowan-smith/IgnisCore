@@ -1,6 +1,7 @@
 package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.testsupport.NoopExtensionSupport;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.Test;
 
@@ -35,25 +36,7 @@ class AbstractIgnisItemStrategyTest {
 
     private static final class TestStrategy extends AbstractIgnisItemStrategy {
         private TestStrategy() {
-            super(new IgnisStrategyContext(null, null, null, null, new ExtensionSupport() {
-                @Override
-                public void registerDropCollector(org.bukkit.Location location,
-                                                    dev.rono.igniscore.api.collection.IgnisDropCollector collector) {
-                }
-
-                @Override
-                public void unregisterDropCollector(org.bukkit.Location location) {
-                }
-
-                @Override
-                public void registerCustomInventory(org.bukkit.inventory.Inventory inventory,
-                                                      dev.rono.igniscore.api.inventory.IgnisCustomInventory handler) {
-                }
-
-                @Override
-                public void unregisterCustomInventory(org.bukkit.inventory.Inventory inventory) {
-                }
-            }));
+            super(new IgnisStrategyContext(null, null, null, null, NoopExtensionSupport.INSTANCE));
         }
 
         double readDouble(ItemDefinition definition, String key, double defaultValue) {

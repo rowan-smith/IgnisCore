@@ -5,7 +5,6 @@ import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +22,7 @@ class AllExtensionConfigsParsingTest {
     @ParameterizedTest
     @MethodSource("blockConfigs")
     void parsesEveryBlockExtensionConfig(Path configPath) throws IOException {
-        YamlConfiguration config = load(configPath);
+        Map<String, Object> config = YamlDefinitions.loadMap(configPath);
         String extensionId = configPath.getName(configPath.getNameCount() - 5).toString();
         ExtensionManifest manifest = manifestFor(extensionId, "block-extension.yml");
 
@@ -38,7 +38,7 @@ class AllExtensionConfigsParsingTest {
     @ParameterizedTest
     @MethodSource("itemConfigs")
     void parsesEveryItemExtensionConfig(Path configPath) throws IOException {
-        YamlConfiguration config = load(configPath);
+        Map<String, Object> config = YamlDefinitions.loadMap(configPath);
         String extensionId = configPath.getName(configPath.getNameCount() - 5).toString();
         ExtensionManifest manifest = manifestFor(extensionId, "item-extension.yml");
 
@@ -60,7 +60,7 @@ class AllExtensionConfigsParsingTest {
     }
 
     private static Stream<Path> extensionConfigs(String category) throws IOException {
-        Path root = Path.of("..", category);
+        Path root = Path.of("..", "extensions", category);
         if (!Files.isDirectory(root)) {
             return Stream.empty();
         }
@@ -74,14 +74,9 @@ class AllExtensionConfigsParsingTest {
         }
     }
 
-    private static YamlConfiguration load(Path configPath) throws IOException {
-        return YamlConfiguration.loadConfiguration(new java.io.StringReader(
-                Files.readString(configPath, StandardCharsets.UTF_8)));
-    }
-
     private static ExtensionManifest manifestFor(String extensionId, String fileName) throws IOException {
         String category = fileName.startsWith("block") ? "blocks" : "items";
-        Path manifestPath = Path.of("..", category, extensionId, "src/main/resources", fileName);
+        Path manifestPath = Path.of("..", "extensions", category, extensionId, "src/main/resources", fileName);
         String manifest = Files.readString(manifestPath, StandardCharsets.UTF_8)
                 .replace("@project.version@", IgnisApiVersion.CURRENT);
         return ExtensionManifest.fromStream(

@@ -1,12 +1,10 @@
 package dev.rono.igniscore.api.model;
 
-import de.tr7zw.nbtapi.NBTContainer;
-import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import dev.rono.igniscore.api.port.IgnisDataContainer;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisTask;
+import dev.rono.igniscore.api.port.MapIgnisDataContainer;
 import dev.rono.igniscore.api.strategy.StrategySupport;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Display;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,21 +17,20 @@ public class RuntimeBlockInstance {
     private final UUID uuid;
     private final String blockDefinitionId;
     private final BlockDefinition definition;
-    private final Location location;
+    private final IgnisLocation location;
     private final Set<Integer> displayEntityIds = new HashSet<>();
-    private final ReadWriteNBT data;
-    
-    // Runtime state
-    private int ticksLeft;
-    private Display displayEntity;
-    private BukkitTask task;
+    private final IgnisDataContainer data;
 
-    public RuntimeBlockInstance(UUID uuid, BlockDefinition definition, Location location) {
+    private int ticksLeft;
+    private Object displayEntity;
+    private IgnisTask task;
+
+    public RuntimeBlockInstance(UUID uuid, BlockDefinition definition, IgnisLocation location) {
         this.uuid = uuid;
         this.definition = definition;
         this.blockDefinitionId = definition.getId();
         this.location = location;
-        this.data = new NBTContainer();
+        this.data = new MapIgnisDataContainer();
         this.ticksLeft = StrategySupport.fuse(definition, 80);
     }
 
@@ -49,11 +46,11 @@ public class RuntimeBlockInstance {
         return definition;
     }
 
-    public World getWorld() {
-        return location.getWorld();
+    public String getWorldName() {
+        return location.worldName();
     }
 
-    public Location getLocation() {
+    public IgnisLocation getLocation() {
         return location;
     }
 
@@ -61,10 +58,7 @@ public class RuntimeBlockInstance {
         return displayEntityIds;
     }
 
-    /**
-     * @return The NBT data container for this instance.
-     */
-    public ReadWriteNBT getData() {
+    public IgnisDataContainer getData() {
         return data;
     }
 
@@ -80,26 +74,26 @@ public class RuntimeBlockInstance {
         this.ticksLeft--;
     }
 
-    public Display getDisplayEntity() {
+    public Object getDisplayEntity() {
         return displayEntity;
     }
 
-    public void setDisplayEntity(Display displayEntity) {
+    public void setDisplayEntity(Object displayEntity) {
         this.displayEntity = displayEntity;
-        if (displayEntity != null) {
-            this.displayEntityIds.add(displayEntity.getEntityId());
-        }
     }
 
-    public BukkitTask getTask() {
+    public void registerDisplayEntityId(int entityId) {
+        this.displayEntityIds.add(entityId);
+    }
+
+    public IgnisTask getTask() {
         return task;
     }
 
-    public void setTask(BukkitTask task) {
+    public void setTask(IgnisTask task) {
         this.task = task;
     }
 
-    // Convenience methods for strategy data
     public void setFlag(String key, boolean value) {
         data.setBoolean(key, value);
     }

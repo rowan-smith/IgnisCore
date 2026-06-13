@@ -1,11 +1,11 @@
 package dev.rono.igniscore.api.extension;
 
 import dev.rono.igniscore.api.IgnisApiVersion;
-import org.bukkit.configuration.file.YamlConfiguration;
+import dev.rono.igniscore.api.config.YamlDefinitions;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.Map;
 import java.util.Objects;
 
 public final class ExtensionManifest {
@@ -26,29 +26,34 @@ public final class ExtensionManifest {
     }
 
     public static ExtensionManifest fromStream(InputStream inputStream, String manifestFileName) {
-        YamlConfiguration config = readYaml(inputStream);
-        String id = Objects.requireNonNull(config.getString("id"), manifestFileName + " requires id");
+        return fromMap(YamlDefinitions.loadMap(inputStream), manifestFileName, null);
+    }
+
+    public static ExtensionManifest fromMap(Map<String, Object> config, Path source) {
+        String fileName = source != null ? source.getFileName().toString() : "extension.yml";
+        return fromMap(config, fileName, source);
+    }
+
+    private static ExtensionManifest fromMap(Map<String, Object> config, String manifestFileName, Path source) {
+        String id = Objects.requireNonNull(YamlDefinitions.string(config, "id", null),
+                manifestFileName + " requires id");
         return new ExtensionManifest(
                 id,
-                config.getString("name", id),
-                config.getString("version", "1.0.0"),
-                config.getString("api-version", IgnisApiVersion.CURRENT),
+                YamlDefinitions.string(config, "name", id),
+                YamlDefinitions.string(config, "version", "1.0.0"),
+                YamlDefinitions.string(config, "api-version", IgnisApiVersion.CURRENT),
                 requireStrategyClass(config, id, manifestFileName),
-                config.getString("author", "unknown")
+                YamlDefinitions.string(config, "author", "unknown")
         );
     }
 
-    private static YamlConfiguration readYaml(InputStream inputStream) {
-        return YamlConfiguration.loadConfiguration(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-    }
-
-    private static String requireStrategyClass(YamlConfiguration config, String extensionId, String manifestFileName) {
-        String strategy = config.getString("strategy");
+    private static String requireStrategyClass(Map<String, Object> config, String extensionId, String manifestFileName) {
+        String strategy = YamlDefinitions.string(config, "strategy", null);
         if (strategy != null && !strategy.isBlank()) {
             return strategy;
         }
 
-        String main = config.getString("main");
+        String main = YamlDefinitions.string(config, "main", null);
         if (main != null && main.endsWith("BlockPlugin")) {
             return main.replace("BlockPlugin", "Strategy");
         }

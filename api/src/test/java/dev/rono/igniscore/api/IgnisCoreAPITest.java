@@ -3,12 +3,13 @@ package dev.rono.igniscore.api;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
-import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -92,20 +93,38 @@ class IgnisCoreAPITest {
         };
         private final IgnisNbtService nbtService = new IgnisNbtService() {
             @Override
-            public void editItem(ItemStack item, java.util.function.Consumer<de.tr7zw.nbtapi.iface.ReadWriteItemNBT> action) {
+            public void setItemString(IgnisItem item, String key, String value) {
             }
 
             @Override
-            public <T> T readItem(ItemStack item, java.util.function.Function<de.tr7zw.nbtapi.iface.ReadableItemNBT, T> action) {
+            public String getItemString(IgnisItem item, String key) {
                 return null;
             }
 
             @Override
-            public void editEntity(org.bukkit.entity.Entity entity, java.util.function.Consumer<de.tr7zw.nbtapi.iface.ReadWriteNBT> action) {
+            public void setItemInt(IgnisItem item, String key, int value) {
             }
 
             @Override
-            public <T> T readEntity(org.bukkit.entity.Entity entity, java.util.function.Function<de.tr7zw.nbtapi.iface.ReadableNBT, T> action) {
+            public int getItemInt(IgnisItem item, String key, int defaultValue) {
+                return defaultValue;
+            }
+
+            @Override
+            public void setItemBoolean(IgnisItem item, String key, boolean value) {
+            }
+
+            @Override
+            public boolean getItemBoolean(IgnisItem item, String key, boolean defaultValue) {
+                return defaultValue;
+            }
+
+            @Override
+            public void setEntityString(Object nativeEntity, String key, String value) {
+            }
+
+            @Override
+            public String getEntityString(Object nativeEntity, String key) {
                 return null;
             }
         };
@@ -116,20 +135,20 @@ class IgnisCoreAPITest {
             }
 
             @Override
-            public void sendFakeExplosion(Location location, float power, java.util.Collection<org.bukkit.entity.Player> players) {
+            public void sendFakeExplosion(IgnisLocation location, float power, Collection<IgnisPlayer> players) {
             }
         };
         private final IgnisEffectService effectService = new IgnisEffectService() {
             @Override
-            public void playSound(Location location, String soundName, float volume, float pitch) {
+            public void playSound(IgnisLocation location, String soundName, float volume, float pitch) {
             }
 
             @Override
-            public void playFakeExplosion(Location location, float power, java.util.Collection<org.bukkit.entity.Player> players) {
+            public void playFakeExplosion(IgnisLocation location, float power, Collection<IgnisPlayer> players) {
             }
 
             @Override
-            public void showBlockPreview(org.bukkit.entity.Player player, Location location, org.bukkit.Material material) {
+            public void showBlockPreview(IgnisPlayer player, IgnisLocation location, String materialKey) {
             }
         };
 
@@ -147,17 +166,17 @@ class IgnisCoreAPITest {
         }
 
         @Override
-        public RuntimeBlockInstance triggerBlock(Location location, String typeId, Object context) {
+        public RuntimeBlockInstance triggerBlock(IgnisLocation location, String typeId, Object context) {
             return null;
         }
 
         @Override
-        public RuntimeBlockInstance ignitePlacedBlock(Location location, Object context) {
+        public RuntimeBlockInstance ignitePlacedBlock(IgnisLocation location, Object context) {
             return null;
         }
 
         @Override
-        public String getPlacedBlockType(Location location) {
+        public String getPlacedBlockType(IgnisLocation location) {
             return null;
         }
 
@@ -167,12 +186,12 @@ class IgnisCoreAPITest {
         }
 
         @Override
-        public ItemStack createBlockItem(String typeId) {
+        public IgnisItem createBlockItem(String typeId) {
             return null;
         }
 
         @Override
-        public ItemStack createItem(String typeId) {
+        public IgnisItem createItem(String typeId) {
             lastItemType = typeId;
             return null;
         }

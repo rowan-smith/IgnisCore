@@ -1,15 +1,13 @@
 package dev.rono.igniscore.api.inventory;
 
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
+import dev.rono.igniscore.api.port.IgnisItem;
 
 /**
  * Marker for custom block inventories opened by strategies.
- * Implemented by extension modules; handled by the core plugin listener.
  */
-public interface IgnisCustomInventory extends InventoryHolder {
+public interface IgnisCustomInventory {
 
-    boolean accepts(ItemStack stack);
+    boolean accepts(IgnisItem stack);
 
     void restoreDecorations();
 

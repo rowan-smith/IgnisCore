@@ -1,0 +1,22 @@
+name: IgnisCore
+version: '${project.version}'
+author: Rono
+description: Multi-platform custom block and item system for Minecraft
+
+main: dev.rono.igniscore.bootstrap.IgnisBootstrapPlugin
+api-version: '1.21'
+depend: [NBTAPI]
+softdepend: [ProtocolLib]
+prefix: IgnisCore
+
+commands:
+  ignis:
+    description: Main command for IgnisCore
+    usage: /ignis <give|pack|reload|debug|blocks|items>
+    aliases: [igniscore, ic]
+    permission: igniscore.admin
+
+permissions:
+  igniscore.admin:
+    description: Allows access to all IgnisCore commands
+    default: op

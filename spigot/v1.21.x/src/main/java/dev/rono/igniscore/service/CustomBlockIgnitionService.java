@@ -1,0 +1,75 @@
+package dev.rono.igniscore.service;
+
+import com.google.inject.Inject;
+import dev.rono.igniscore.manager.BlockManager;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.util.Locations;
+import dev.rono.igniscore.spigot.adapter.BukkitBridge;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
+
+import static dev.rono.igniscore.util.ConfigValueReader.getList;
+import static dev.rono.igniscore.util.ConfigValueReader.getMap;
+import static dev.rono.igniscore.util.ConfigValueReader.getString;
+
+public class CustomBlockIgnitionService {
+    private static final String ACTION_IGNITE = "ignite";
+
+    private final BlockManager blockManager;
+    private final CustomBlockBreakService breakService;
+    private final ConfiguredEffectService effectService;
+
+    @Inject
+    public CustomBlockIgnitionService(BlockManager blockManager, CustomBlockBreakService breakService,
+                                      ConfiguredEffectService effectService) {
+        this.blockManager = blockManager;
+        this.breakService = breakService;
+        this.effectService = effectService;
+    }
+
+    public void ignite(Block block, BlockDefinition definition, Player player, ItemStack ignitionItem) {
+        if (player != null) {
+            breakService.cancel(player.getUniqueId());
+        }
+
+        Location location = block.getLocation();
+        Location center = BukkitBridge.toBukkit(Locations.toCenter(BukkitBridge.toIgnis(location)));
+        Map<String, Object> igniteSettings = getMap(definition.getInteractionSettings(), ACTION_IGNITE);
+        effectService.playSound(center, getString(igniteSettings, "sound", "ITEM_FLINTANDSTEEL_USE"), 1.0f, 1.0f);
+        effectService.spawnConfiguredParticles(center, getList(igniteSettings, "particles"), Particle.FLAME,
+                18, 0.35, 0.35, 0.35, 0.03);
+
+        blockManager.unregisterPlacedBlock(BukkitBridge.toIgnis(location));
+        block.setType(Material.AIR);
+        if (player != null && ignitionItem != null) {
+            damageIgnitionItem(player, ignitionItem);
+        }
+        blockManager.triggerBlock(BukkitBridge.toIgnis(location), definition.getId(), player);
+    }
+
+    private void damageIgnitionItem(Player player, ItemStack item) {
+        if (player.getGameMode() == GameMode.CREATIVE || item == null) {
+            return;
+        }
+
+        if (item.getType() == Material.FIRE_CHARGE) {
+            item.setAmount(item.getAmount() - 1);
+            return;
+        }
+
+        if (item.getItemMeta() instanceof org.bukkit.inventory.meta.Damageable damageable) {
+            damageable.setDamage(damageable.getDamage() + 1);
+            item.setItemMeta(damageable);
+            if (damageable.getDamage() >= item.getType().getMaxDurability()) {
+                item.setAmount(item.getAmount() - 1);
+            }
+        }
+    }
+}

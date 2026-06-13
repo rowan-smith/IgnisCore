@@ -3,17 +3,14 @@ package dev.rono.igniscore.api.strategy;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.World;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisWorld;
 
 import java.util.Map;
 
+/**
+ * Pure data helpers for strategy implementations. World mutations use {@link IgnisWorld}.
+ */
 public final class StrategySupport {
     private StrategySupport() {
     }
@@ -42,16 +39,19 @@ public final class StrategySupport {
         return (float) (base * customDouble(customData, "multiplier", 1.0));
     }
 
-    public static void createExplosion(Location location, BlockDefinition definition, double defaultPower, boolean defaultFire) {
-        createExplosion(location, definition.getCustomData(), defaultPower, defaultFire);
+    public static void createExplosion(IgnisWorld world, IgnisLocation location, BlockDefinition definition,
+                                       double defaultPower, boolean defaultFire) {
+        createExplosion(world, location, definition.getCustomData(), defaultPower, defaultFire);
     }
 
-    public static void createExplosion(Location location, ItemDefinition definition, double defaultPower, boolean defaultFire) {
-        createExplosion(location, definition.getCustomData(), defaultPower, defaultFire);
+    public static void createExplosion(IgnisWorld world, IgnisLocation location, ItemDefinition definition,
+                                       double defaultPower, boolean defaultFire) {
+        createExplosion(world, location, definition.getCustomData(), defaultPower, defaultFire);
     }
 
-    public static void createExplosion(Location location, Map<String, Object> customData, double defaultPower, boolean defaultFire) {
-        location.getWorld().createExplosion(
+    public static void createExplosion(IgnisWorld world, IgnisLocation location, Map<String, Object> customData,
+                                       double defaultPower, boolean defaultFire) {
+        world.createExplosion(
                 location,
                 resolvePower(customData, defaultPower),
                 customBoolean(customData, "fire", defaultFire),
@@ -59,23 +59,8 @@ public final class StrategySupport {
         );
     }
 
-    public static void createExplosion(Location location, float power, boolean fire, boolean blockDamage) {
-        location.getWorld().createExplosion(location, power, fire, blockDamage);
-    }
-
-    public static Inventory createInventory(InventoryHolder holder, int size, Component title) {
-        String legacyTitle = LegacyComponentSerializer.legacySection().serialize(title);
-        return Bukkit.createInventory(holder, size, legacyTitle);
-    }
-
-    public static void spawnParticles(Location center, Particle particle, int count,
-                                      double offsetX, double offsetY, double offsetZ, double speed) {
-        center.getWorld().spawnParticle(particle, center, count, offsetX, offsetY, offsetZ, speed);
-    }
-
-    public static void spawnParticles(Location center, Particle particle, int count,
-                                      double offsetX, double offsetY, double offsetZ, double speed, Object data) {
-        center.getWorld().spawnParticle(particle, center, count, offsetX, offsetY, offsetZ, speed, data);
+    public static void createExplosion(IgnisWorld world, IgnisLocation location, float power, boolean fire, boolean blockDamage) {
+        world.createExplosion(location, power, fire, blockDamage);
     }
 
     public static double customDouble(BlockDefinition definition, String key, double defaultValue) {
