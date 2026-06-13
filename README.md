@@ -24,7 +24,7 @@ igniscore-parent/
 ├── sponge/
 │   ├── v12.0.0/            SpongeVanilla 12.x / MC 1.21.x server software
 │   └── v8.5.0/             Reserved for SpongeAPI 8.x / MC 1.20.x (stub)
-└── bootstrap/              Unified packaging → Bukkit-family + Sponge deployable JARs
+└── bootstrap/              Single deployable JAR for all server software
 ```
 
 Each **server software** module (Spigot, Paper, Folia, Sponge) is independent. Version lines (`v1.21.x`, `v1.20.x`, `v12.0.0`) are separate modules for that software. Shared logic lives in `common/` and `bukkit-common/`, not in the Spigot module.
@@ -38,7 +38,7 @@ Each **server software** module (Spigot, Paper, Folia, Sponge) is independent. V
 | `paper/v1.21.x` | Paper 1.21.x adapter + bootloader (depends on `bukkit-common`, not `spigot`) |
 | `folia/v1.21.x` | Folia 1.21.x adapter, region scheduler, bootloader |
 | `sponge/v12.0.0` | Sponge runtime, adapter, listeners, `/ignis` command |
-| `bootstrap` | Produces both deployable JARs (see Build output) |
+| `bootstrap` | Produces one deployable JAR for every supported server (see Build output) |
 
 ## Build output
 
@@ -46,17 +46,19 @@ Each **server software** module (Spigot, Paper, Folia, Sponge) is independent. V
 mvn clean package
 ```
 
-| Server software | Deploy |
-|-----------------|--------|
+Deploy **`bootstrap/target/igniscore-1.0.0.jar`** on any supported server. The JAR contains both Bukkit (`plugin.yml`) and Sponge (`META-INF/sponge_plugins.json`) entry descriptors; each server software loads only its own entry point, then `PlatformBootloaderLoader` selects the matching adapter (Spigot, Paper, Folia, or Sponge).
+
+| Server software | Same artifact |
+|-----------------|---------------|
 | Spigot / Paper / Folia | `bootstrap/target/igniscore-1.0.0.jar` |
-| SpongeVanilla | `bootstrap/target/igniscore-sponge-1.0.0.jar` |
+| SpongeVanilla | `bootstrap/target/igniscore-1.0.0.jar` |
 
 ## Boot flow
 
-All platforms use `PlatformBootloaderLoader` (`common`) to select a `PlatformBootloader` via `ServiceLoader`:
+All platforms use `PlatformBootloaderLoader` (`common`) to identify server software and select a `PlatformBootloader` via `ServiceLoader`:
 
-- **Bukkit family:** `IgnisBootstrapPlugin` (in `bootstrap`) → Guice + `IgnisCoreApplication` (in `bukkit-common`)
-- **Sponge:** `IgnisSpongePlugin` → same loader → `SpongeIgnisApplication`
+- **Bukkit family:** server loads `IgnisBootstrapPlugin` from `plugin.yml` → Guice + `IgnisCoreApplication`
+- **Sponge:** server loads `IgnisSpongePlugin` from `sponge_plugins.json` → same loader → `SpongeIgnisApplication`
 
 ### Bootloader priority (Bukkit family)
 
