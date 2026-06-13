@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>dev.rono</groupId>
+    <artifactId>sponge</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <groupId>dev.rono.sponge</groupId>
+  <artifactId>v19.0.0</artifactId>
+  <packaging>jar</packaging>
+
+  <name>igniscore-sponge-v19.0.0</name>
+  <description>SpongeAPI 19.x adapter and bootloader for Minecraft 26.1.x</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.spongepowered</groupId>
+      <artifactId>spongeapi</artifactId>
+      <version>${sponge.api.version.19.0}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-minimessage</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>spongepowered-public</id>
+      <url>https://repo.spongepowered.org/repository/maven-public/</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

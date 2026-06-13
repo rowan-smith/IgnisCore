@@ -50,7 +50,6 @@ public final class BukkitBootloaderSupport {
         return switch (type) {
             case SPIGOT -> !isPaperRuntime() && !isFoliaRuntime();
             case PAPER -> isPaperRuntime() && !isFoliaRuntime();
-            case FOLIA -> isFoliaRuntime();
             default -> false;
         };
     }

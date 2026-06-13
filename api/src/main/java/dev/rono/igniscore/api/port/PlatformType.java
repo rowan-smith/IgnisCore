@@ -7,6 +7,5 @@ public enum PlatformType {
     SPIGOT,
     PAPER,
     SPONGE,
-    FABRIC,
-    FOLIA
+    FABRIC
 }

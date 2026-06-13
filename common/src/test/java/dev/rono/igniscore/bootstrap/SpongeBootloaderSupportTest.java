@@ -22,6 +22,14 @@ class SpongeBootloaderSupportTest {
     }
 
     @Test
+    void acceptsYearBasedMinecraftVersion() {
+        TestPlugin plugin = new TestPlugin("26.1.2");
+
+        assertTrue(SpongeBootloaderSupport.acceptsHost(plugin, TestPlugin.class, TestPlugin::version, 26, 1));
+        assertFalse(SpongeBootloaderSupport.acceptsHost(plugin, TestPlugin.class, TestPlugin::version, 1, 21));
+    }
+
+    @Test
     void requireHostReturnsTypedInstance() {
         TestPlugin plugin = new TestPlugin("1.21.4");
 

@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Parses Bukkit-style version strings such as {@code 1.21.4-R0.1-SNAPSHOT}.
+ * Parses Bukkit-style version strings such as {@code 1.21.4-R0.1-SNAPSHOT} or {@code 26.1.2-R0.1-SNAPSHOT}.
  */
 public final class MinecraftVersions {
     private static final Pattern VERSION = Pattern.compile("(\\d+)\\.(\\d+)(?:\\.(\\d+))?");
