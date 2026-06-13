@@ -26,32 +26,20 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono.bukkit.common</groupId>
-      <artifactId>v1.21.x</artifactId>
+      <groupId>dev.rono.bukkit</groupId>
+      <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono.bukkit.spigot</groupId>
-      <artifactId>v1.21.x</artifactId>
+      <groupId>dev.rono.bukkit</groupId>
+      <artifactId>spigot</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono.bukkit.paper</groupId>
-      <artifactId>v1.21.x</artifactId>
+      <groupId>dev.rono.bukkit</groupId>
+      <artifactId>paper</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono.bukkit.spigot</groupId>
-      <artifactId>v1.20.x</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono.bukkit.paper</groupId>
-      <artifactId>v1.20.x</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono.bukkit.spigot</groupId>
-      <artifactId>v26.1.x</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono.bukkit.paper</groupId>
-      <artifactId>v26.1.x</artifactId>
+      <groupId>dev.rono.sponge</groupId>
+      <artifactId>common</artifactId>
     </dependency>
     <dependency>
       <groupId>dev.rono.sponge</groupId>

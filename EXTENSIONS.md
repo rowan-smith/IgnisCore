@@ -2,39 +2,11 @@
 
 This guide explains how to create **block** and **item** extensions for IgnisCore. Extensions are platform-agnostic JARs loaded at runtime from the server data folder.
 
-## Quick start with Maven archetypes
+## Quick start
 
-After building IgnisCore (`mvn clean install`), generate a new extension module:
+Copy an existing extension under `extensions/blocks/` or `extensions/items/` as a template (for example `extensions/blocks/nuke` or `extensions/items/grenade`), rename packages and IDs, then build with Maven.
 
-### Block extension
-
-```bash
-mvn -pl archetypes/block-extension archetype:generate \
-  -DarchetypeGroupId=dev.rono.archetypes \
-  -DarchetypeArtifactId=igniscore-block-extension-archetype \
-  -DarchetypeVersion=1.0.0 \
-  -DgroupId=com.example.ignis \
-  -DartifactId=my-tnt \
-  -Dversion=1.0.0 \
-  -Dpackage=dev.rono.igniscore.block.mytnt \
-  -DextensionId=my-tnt
-```
-
-### Item extension
-
-```bash
-mvn -pl archetypes/item-extension archetype:generate \
-  -DarchetypeGroupId=dev.rono.archetypes \
-  -DarchetypeArtifactId=igniscore-item-extension-archetype \
-  -DarchetypeVersion=1.0.0 \
-  -DgroupId=com.example.ignis \
-  -DartifactId=my-grenade \
-  -Dversion=1.0.0 \
-  -Dpackage=dev.rono.igniscore.item.mygrenade \
-  -DextensionId=my-grenade
-```
-
-Build the generated project (`mvn package`) and copy the JAR to:
+Build the project (`mvn package`) and copy the JAR to:
 
 | Kind | Deploy path (under plugin data folder) |
 |------|----------------------------------------|

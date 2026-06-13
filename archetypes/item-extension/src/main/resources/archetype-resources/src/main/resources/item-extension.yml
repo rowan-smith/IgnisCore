@@ -1,6 +1,0 @@
-id: ${extensionId}
-name: ${extensionId}
-version: ${version}
-api-version: ${ignisApiVersion}
-author: ${groupId}
-strategy: ${package}.Strategy
