@@ -22,7 +22,6 @@ import dev.rono.igniscore.manager.BlockTypeRegistry;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.manager.PlacedBlockRegistry;
 import dev.rono.igniscore.resourcepack.ResourcePackBuilder;
-import dev.rono.igniscore.service.BlockInteractionResolver;
 import dev.rono.igniscore.service.ExtensionSupportService;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
 import dev.rono.igniscore.service.RuntimeBlockService;
@@ -39,7 +38,6 @@ public class IgnisCommonModule extends AbstractModule {
         bind(DefaultExplosionStrategy.class).in(Scopes.SINGLETON);
         bind(RuntimeBlockService.class).in(Scopes.SINGLETON);
         bind(StrategyProfileResolver.class).in(Scopes.SINGLETON);
-        bind(BlockInteractionResolver.class).in(Scopes.SINGLETON);
         bind(ItemManager.class).in(Scopes.SINGLETON);
         bind(BlockManager.class).in(Scopes.SINGLETON);
         bind(BlockTypeRegistry.class).to(BlockManager.class).in(Scopes.SINGLETON);

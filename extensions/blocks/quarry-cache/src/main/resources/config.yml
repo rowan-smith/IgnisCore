@@ -32,12 +32,6 @@ model:
   type: "block_display"
   mode: "auto"
 
-interactions:
-  left_click:
-    default_action: break
-  right_click:
-    action: open
-
 custom_data:
   collectRadius: 5.0
   collectDepth: 5.0

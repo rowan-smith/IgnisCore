@@ -108,10 +108,37 @@ Blocks have **placed** and **active** phases:
 
 | Phase | When | Callbacks |
 |-------|------|-----------|
-| **Placed** | Barrier block exists in world | `onPlaced`, `onPlacedInteract`, `onPlacedBreak` |
+| **Placed** | Barrier block exists in world | `onPlaced`, `onPlacedClick`, `onPlacedInteract`, `onPlacedBreak` |
 | **Active** | After ignition / fuse | `onPlace`, `onTick`, `onTrigger` |
 
-Override `profile(BlockDefinition)` for defaults (combustible, click actions, fuse/radius). YAML `interactions` and `breaking` override profile at runtime.
+Click behavior is implemented in strategy code via **`onPlacedClick`**, which returns a {@link CustomBlockAction} (`BREAK`, `IGNITE`, `OPEN`, `HANDLED`, or `NONE`). Override {@link StrategyProfile} for TNT-style defaults, or branch on {@link IgnisInteraction} and held items directly. Use {@link PlacedClickSupport} to reuse profile rules.
+
+Optional YAML `interactions` sections hold **tuning data only** (ignite sounds, particles) — read via `definition.getInteractionConfig()`. Breaking/mining tuning stays under `block.breaking`.
+
+### Block click example
+
+```java
+@Override
+public CustomBlockAction onPlacedClick(BlockDefinition definition, IgnisLocation location,
+                                         IgnisPlayer player, IgnisInteraction interaction,
+                                         IgnisItem heldItem) {
+    return switch (interaction) {
+        case LEFT_CLICK_BLOCK -> CustomBlockAction.BREAK;
+        case RIGHT_CLICK_BLOCK -> CustomBlockAction.OPEN;
+        default -> CustomBlockAction.NONE;
+    };
+}
+
+@Override
+public void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
+                             IgnisInteraction interaction, IgnisItem heldItem, CustomBlockAction action) {
+    if (action == CustomBlockAction.OPEN) {
+        openGui(player, location);
+    }
+}
+```
+
+TNT blocks can rely on the default {@link IgnisBlockStrategy#onPlacedClick} implementation, which delegates to {@link StrategyProfile} via {@link PlacedClickSupport}.
 
 ### Typed block config
 
@@ -125,14 +152,14 @@ Raw maps remain available via `definition.getCustomConfig()`.
 
 ## Item lifecycle
 
-Items use a single hook:
+Items use a single hook — branch on {@link IgnisInteraction} in strategy code:
 
 ```java
 @Override
 public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
                        IgnisInteraction action, IgnisBlock clickedBlock) {
-    switch (definition.interactionAction(action)) {
-        case "throw" -> throwItem(player, definition, item);
+    switch (action) {
+        case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> throwItem(player, definition, item);
         default -> { }
     }
 }
@@ -144,14 +171,6 @@ public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem i
 ThrowableItemConfig throwable = ExtensionConfigs.throwable(definition);
 double speed = throwable.throwVelocity();
 int fuseTicks = throwable.fuseTicks();
-```
-
-Declare actions under `interactions` in `config.yml`:
-
-```yaml
-interactions:
-  right_click:
-    action: throw
 ```
 
 ## Config.yml overview (blocks)
@@ -176,9 +195,8 @@ custom_data:
   power: 4.0
   fire: false
 interactions:
-  right_click:
-    action: ignite
-    materials: [FLINT_AND_STEEL]
+  ignite:
+    sound: ITEM_FLINTANDSTEEL_USE
 ```
 
 ## Config.yml overview (items)
@@ -195,9 +213,6 @@ custom_data:
   throw_velocity: 1.2
   fuse_ticks: 40
   power: 4.0
-interactions:
-  right_click:
-    action: throw
 ```
 
 ## Testing
@@ -228,9 +243,11 @@ Minimum tests:
 
 | Item | Pattern |
 |------|---------|
-| `extensions/items/grenade` | Throwable + `ThrowableItemConfig` + `interactionAction` |
-| `extensions/items/detonator` | Multi-action item via YAML interactions |
+| `extensions/items/grenade` | Throwable + `ThrowableItemConfig` + `IgnisInteraction` branching |
+| `extensions/items/detonator` | Multi-click item via `onItemUse` |
 
 ## Breaking changes (1.x)
 
 - Block placed callbacks renamed from `onStaticPlace` / `onStaticInteract` / `onStaticBreak` to **`onPlaced`** / **`onPlacedInteract`** / **`onPlacedBreak`**.
+- Click routing moved from YAML `interactions.*.action` to **`onPlacedClick`** (blocks) and **`onItemUse`** + **`IgnisInteraction`** (items). YAML `interactions` is optional tuning data only.
+- **`ItemDefinition#interactionAction`** and **`InteractionSettings`** removed.

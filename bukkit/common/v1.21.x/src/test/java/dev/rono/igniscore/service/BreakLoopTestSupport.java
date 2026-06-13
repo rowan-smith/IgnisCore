@@ -32,7 +32,6 @@ public final class BreakLoopTestSupport {
             BlockManager blockManager,
             CustomBlockBreakService breakService,
             CustomBlockIgnitionService ignitionService,
-            BlockInteractionResolver interactionResolver,
             BlockItemFactory blockItemFactory,
             BlockItemIdentifier blockItemIdentifier,
             ItemIdentifier itemIdentifier,
@@ -96,14 +95,12 @@ public final class BreakLoopTestSupport {
                 profileResolver);
         CustomBlockIgnitionService ignitionService = new CustomBlockIgnitionService(
                 blockManager, breakService, effectService);
-        BlockInteractionResolver interactionResolver = new BlockInteractionResolver(profileResolver);
         BlockItemIdentifier blockItemIdentifier = new BlockItemIdentifier(plugin, nbtService);
         ItemIdentifier itemIdentifier = new ItemIdentifier(nbtService);
         CustomBlockPlacementService placementService = new CustomBlockPlacementService(
                 plugin, blockManager, blockItemIdentifier, platformHooks);
         BlockListener blockListener = new BlockListener(
                 blockManager,
-                interactionResolver,
                 placementService,
                 breakService,
                 ignitionService,
@@ -116,7 +113,6 @@ public final class BreakLoopTestSupport {
                 blockManager,
                 breakService,
                 ignitionService,
-                interactionResolver,
                 blockItemFactory,
                 blockItemIdentifier,
                 itemIdentifier,

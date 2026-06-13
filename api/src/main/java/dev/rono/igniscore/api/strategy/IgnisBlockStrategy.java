@@ -3,6 +3,7 @@ package dev.rono.igniscore.api.strategy;
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
@@ -17,7 +18,8 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
  * <h3>Placed block callbacks</h3>
  * <ul>
  *   <li>{@link #onPlaced} — after the custom block is registered at a location</li>
- *   <li>{@link #onPlacedInteract} — player click resolved to a {@link CustomBlockAction}</li>
+ *   <li>{@link #onPlacedClick} — player click; return {@link CustomBlockAction} for core handling</li>
+ *   <li>{@link #onPlacedInteract} — follow-up for {@link CustomBlockAction#OPEN} and similar custom actions</li>
  *   <li>{@link #onPlacedBreak} — block removed (creative break, mining complete, or ignite prep)</li>
  * </ul>
  *
@@ -30,8 +32,8 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
  * </ul>
  *
  * <p>Override {@link #profile} to declare combustibility, default click actions, and ignition
- * materials. YAML {@code interactions} and {@code breaking} sections on the {@link BlockDefinition}
- * override profile defaults at runtime.</p>
+ * materials. Click behavior is implemented in {@link #onPlacedClick}; YAML {@code interactions}
+ * is optional tuning data (sounds, particles) via {@link BlockDefinition#getInteractionConfig()}.</p>
  */
 public interface IgnisBlockStrategy extends IgnisStrategy {
 
@@ -44,6 +46,30 @@ public interface IgnisBlockStrategy extends IgnisStrategy {
     }
 
     default void onPlaced(BlockDefinition definition, IgnisLocation location, IgnisItem placedFrom) {}
+
+    /**
+     * Decide how a placed block responds to a player click.
+     *
+     * @return {@link CustomBlockAction#NONE} to ignore; {@link CustomBlockAction#HANDLED} when this
+     *         method performed custom logic; {@link CustomBlockAction#BREAK} / {@link CustomBlockAction#IGNITE}
+     *         for core services; {@link CustomBlockAction#OPEN} to delegate to {@link #onPlacedInteract}
+     */
+    default CustomBlockAction onPlacedClick(BlockDefinition definition,
+                                            IgnisLocation location,
+                                            IgnisPlayer player,
+                                            IgnisInteraction interaction,
+                                            IgnisItem heldItem) {
+        return PlacedClickSupport.resolve(profile(definition), interaction, heldItem);
+    }
+
+    default void onPlacedInteract(BlockDefinition definition,
+                                  IgnisLocation location,
+                                  IgnisPlayer player,
+                                  IgnisInteraction interaction,
+                                  IgnisItem heldItem,
+                                  CustomBlockAction action) {
+        onPlacedInteract(definition, location, player, action);
+    }
 
     default void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player, CustomBlockAction action) {}
 

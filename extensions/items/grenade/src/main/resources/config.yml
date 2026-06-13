@@ -16,7 +16,3 @@ custom_data:
     fuse_ticks: 40
     throw_velocity: 1.2
     fire: false
-
-interactions:
-  right_click:
-    action: throw

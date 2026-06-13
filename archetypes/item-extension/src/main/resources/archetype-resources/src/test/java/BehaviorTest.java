@@ -17,13 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class BehaviorTest {
     @Test
-    void configuredRightClickActionIsResolved() {
-        ItemDefinition definition = ExtensionTestSupport.loadItemDefinition(BehaviorTest.class, "${extensionId}", 20001);
-        assertEquals("use", definition.interactionAction(IgnisInteraction.RIGHT_CLICK_AIR));
-    }
-
-    @Test
-    void useConsumesItemStack() {
+    void rightClickUseConsumesItemStack() {
         BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
         ItemDefinition definition = ExtensionTestSupport.loadItemDefinition(BehaviorTest.class, "${extensionId}", 20001);
         Strategy strategy = new Strategy(ctx.context());

@@ -1,8 +1,6 @@
 package dev.rono.igniscore.api.model;
 
 import dev.rono.igniscore.api.config.ExtensionConfig;
-import dev.rono.igniscore.api.config.InteractionSettings;
-import dev.rono.igniscore.api.port.IgnisInteraction;
 import net.kyori.adventure.text.Component;
 
 import java.util.List;
@@ -75,14 +73,6 @@ public final class ItemDefinition implements ExtensionDefinition {
     /** Typed view of {@link #getInteractionSettings()}. */
     public ExtensionConfig getInteractionConfig() {
         return ExtensionConfig.of(interactionSettings);
-    }
-
-    /**
-     * Returns the configured YAML action for the given interaction, such as {@code throw} or
-     * {@code detonate_linked}. Empty when the interaction is not configured.
-     */
-    public String interactionAction(IgnisInteraction interaction) {
-        return InteractionSettings.itemAction(interactionSettings, interaction);
     }
 
     public int getCustomModelData() {

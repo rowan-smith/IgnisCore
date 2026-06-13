@@ -9,13 +9,10 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
 /**
  * Runtime behavior for custom item types.
  *
- * <p>The platform cancels vanilla item use and delegates to {@link #onItemUse}. Read tuning from
- * {@link ItemDefinition#getCustomConfig()} and declared click actions from
- * {@link ItemDefinition#interactionAction(IgnisInteraction)}.</p>
- *
- * <p>YAML {@code interactions.left_click}/{@code right_click} declare action names (for example
- * {@code throw}, {@code detonate_linked}). Strategies should branch on {@link IgnisInteraction}
- * and/or the configured action string rather than hard-coding item ids.</p>
+ * <p>The platform cancels vanilla item use and delegates to {@link #onItemUse}. Branch on
+ * {@link IgnisInteraction} in strategy code. Read tuning values from
+ * {@link ItemDefinition#getCustomConfig()} or optional {@link ItemDefinition#getInteractionConfig()}
+ * sections.</p>
  */
 public interface IgnisItemStrategy extends IgnisStrategy {
 

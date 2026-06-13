@@ -23,6 +23,6 @@ custom_data:
   fire: false
 
 interactions:
-  right_click:
-    action: ignite
-    materials: [FLINT_AND_STEEL]
+  ignite:
+    sound: ITEM_FLINTANDSTEEL_USE
+

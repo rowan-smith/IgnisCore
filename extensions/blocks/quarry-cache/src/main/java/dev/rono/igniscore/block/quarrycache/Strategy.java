@@ -2,6 +2,7 @@ package dev.rono.igniscore.block.quarrycache;
 
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
@@ -33,7 +34,25 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player, CustomBlockAction action) {
+    public CustomBlockAction onPlacedClick(BlockDefinition definition,
+                                           IgnisLocation location,
+                                           IgnisPlayer player,
+                                           IgnisInteraction interaction,
+                                           IgnisItem heldItem) {
+        return switch (interaction) {
+            case LEFT_CLICK_BLOCK -> CustomBlockAction.BREAK;
+            case RIGHT_CLICK_BLOCK -> CustomBlockAction.OPEN;
+            default -> CustomBlockAction.NONE;
+        };
+    }
+
+    @Override
+    public void onPlacedInteract(BlockDefinition definition,
+                                 IgnisLocation location,
+                                 IgnisPlayer player,
+                                 IgnisInteraction interaction,
+                                 IgnisItem heldItem,
+                                 CustomBlockAction action) {
         if (action == CustomBlockAction.OPEN) {
             registry.openGui(player, location);
         }

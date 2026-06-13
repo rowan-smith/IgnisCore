@@ -1,6 +1,5 @@
 package dev.rono.igniscore.api.model;
 
-import dev.rono.igniscore.api.port.IgnisInteraction;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ItemDefinitionBuilderTest {
     @Test
-    void builderAndInteractionActionExposeConfiguredClicks() {
+    void builderExposesCustomAndInteractionConfig() {
         ItemDefinition definition = ItemDefinition.builder("detonator")
                 .baseMaterial("blaze_rod")
                 .title(Component.text("Detonator"))
@@ -27,7 +26,6 @@ class ItemDefinitionBuilderTest {
 
         assertEquals("detonator", definition.getId());
         assertEquals(16, definition.getCustomConfig().getInt("max_links", 0));
-        assertEquals("assign_bomb", definition.interactionAction(IgnisInteraction.LEFT_CLICK_BLOCK));
-        assertEquals("detonate_linked", definition.interactionAction(IgnisInteraction.RIGHT_CLICK_AIR));
+        assertEquals("assign_bomb", definition.getInteractionConfig().section("left_click").getString("action", ""));
     }
 }

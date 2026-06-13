@@ -1,15 +1,17 @@
 package dev.rono.igniscore.sponge.listener;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.action.InteractEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.filter.cause.First;
 
@@ -26,28 +28,43 @@ public class SpongeBlockListener {
 
     @Listener(order = Order.LATE)
     public void onInteractBlock(InteractBlockEvent.Secondary event, @First ServerPlayer player) {
-        BlockDefinition definition = getPlacedDefinition(event.block());
-        if (definition == null) {
-            return;
-        }
-
-        event.setCancelled(true);
-        requireBlockStrategy(definition).onPlacedInteract(
-                definition,
-                SpongeBridge.toIgnis(event.block().location().orElseThrow()),
-                SpongeBridge.wrap(player),
-                dev.rono.igniscore.api.CustomBlockAction.OPEN);
+        handleInteract(event, player, IgnisInteraction.RIGHT_CLICK_BLOCK);
     }
 
     @Listener(order = Order.LATE)
     public void onPrimaryInteractBlock(InteractBlockEvent.Primary event, @First ServerPlayer player) {
+        handleInteract(event, player, IgnisInteraction.LEFT_CLICK_BLOCK);
+    }
+
+    private void handleInteract(InteractBlockEvent event, ServerPlayer player, IgnisInteraction interaction) {
         BlockDefinition definition = getPlacedDefinition(event.block());
         if (definition == null) {
             return;
         }
 
-        if (event instanceof org.spongepowered.api.event.Cancellable cancellable) {
+        IgnisBlockStrategy strategy = requireBlockStrategy(definition);
+        CustomBlockAction action = strategy.onPlacedClick(
+                definition,
+                SpongeBridge.toIgnis(event.block().location().orElseThrow()),
+                SpongeBridge.wrap(player),
+                interaction,
+                null);
+        if (action == CustomBlockAction.NONE) {
+            return;
+        }
+
+        if (event instanceof Cancellable cancellable) {
             cancellable.setCancelled(true);
+        }
+
+        if (action == CustomBlockAction.OPEN) {
+            strategy.onPlacedInteract(
+                    definition,
+                    SpongeBridge.toIgnis(event.block().location().orElseThrow()),
+                    SpongeBridge.wrap(player),
+                    interaction,
+                    null,
+                    action);
         }
     }
 

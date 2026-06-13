@@ -7,12 +7,6 @@ import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.model.BlockDefinition;
 
-import java.util.Map;
-
-import static dev.rono.igniscore.util.ConfigValueReader.getMap;
-import static dev.rono.igniscore.util.ConfigValueReader.getMapList;
-import static dev.rono.igniscore.util.ConfigValueReader.getString;
-
 public class StrategyProfileResolver {
     private final IgnisStrategyRegistry strategyRegistry;
 
@@ -25,7 +19,6 @@ public class StrategyProfileResolver {
         IgnisBlockStrategy blockStrategy = strategyRegistry.requireBlockStrategy(
                 definition.getExtensionId(), definition.getId());
         StrategyProfile profile = blockStrategy.profile(definition);
-        Map<String, Object> interactions = definition.getInteractionSettings();
 
         StrategyProfile.Builder builder = profile.toBuilder()
                 .placeable(definition.isPlaceable())
@@ -40,31 +33,6 @@ public class StrategyProfileResolver {
             }
         }
 
-        if (!interactions.isEmpty()) {
-            builder.combustible(hasIgnitionConfigured(interactions));
-        }
-
         return builder.build();
-    }
-
-    private boolean hasIgnitionConfigured(Map<String, Object> interactions) {
-        if (interactions.containsKey("ignite")) {
-            return true;
-        }
-
-        String rightClickAction = getString(getMap(interactions, "right_click"), "action",
-                getString(getMap(interactions, "right_click"), "default_action", ""));
-        if ("ignite".equalsIgnoreCase(rightClickAction)) {
-            return true;
-        }
-
-        for (Map<String, Object> map : getMapList(getMap(interactions, "left_click"), "material_actions")) {
-            Object action = map.get("action");
-            if (action != null && "ignite".equalsIgnoreCase(action.toString())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

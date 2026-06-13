@@ -7,6 +7,7 @@ import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.igniscore.api.strategy.StrategyProfiles;
 import dev.rono.igniscore.api.strategy.StrategySupport;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
@@ -17,7 +18,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
         var explosion = ExtensionConfigs.explosion(definition);
-        return StrategyProfile.builder()
+        return StrategyProfiles.explosiveProfile().toBuilder()
                 .defaultFuse(explosion.fuse())
                 .defaultRadius(explosion.radius())
                 .build();

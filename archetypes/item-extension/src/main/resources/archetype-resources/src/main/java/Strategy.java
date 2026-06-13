@@ -18,7 +18,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
     @Override
     public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
                            IgnisInteraction action, IgnisBlock clickedBlock) {
-        if (!"use".equals(definition.interactionAction(action))) {
+        if (action != IgnisInteraction.RIGHT_CLICK_AIR && action != IgnisInteraction.RIGHT_CLICK_BLOCK) {
             return;
         }
         var throwable = ExtensionConfigs.throwable(definition);

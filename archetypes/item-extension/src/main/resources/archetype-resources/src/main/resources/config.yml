@@ -17,6 +17,3 @@ custom_data:
   power: 4.0
   fire: false
 
-interactions:
-  right_click:
-    action: use

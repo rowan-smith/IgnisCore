@@ -15,9 +15,3 @@ textures:
 custom_data:
     target_block: signal-charge
     max_links: 16
-
-interactions:
-  left_click:
-    action: assign_bomb
-  right_click:
-    action: detonate_linked
