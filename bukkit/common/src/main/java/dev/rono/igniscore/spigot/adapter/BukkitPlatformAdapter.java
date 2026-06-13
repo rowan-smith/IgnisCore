@@ -12,7 +12,6 @@ import dev.rono.igniscore.api.port.PlatformType;
 import dev.rono.igniscore.platform.PlatformHookLoader;
 import dev.rono.igniscore.platform.PlatformHooks;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -34,7 +33,6 @@ public class BukkitPlatformAdapter implements PlatformAdapter {
     private final JavaPlugin plugin;
     private final IgnisScheduler scheduler;
     private final PlatformHooks platformHooks;
-    private final BukkitAudiences audiences;
 
     public BukkitPlatformAdapter(JavaPlugin plugin) {
         this(plugin, PlatformHookLoader.load(plugin));
@@ -44,7 +42,6 @@ public class BukkitPlatformAdapter implements PlatformAdapter {
         this.plugin = plugin;
         this.scheduler = BukkitSchedulerFactory.create(plugin);
         this.platformHooks = platformHooks;
-        this.audiences = BukkitAudiences.create(plugin);
     }
 
     public PlatformHooks legacyHooks() {
@@ -220,6 +217,5 @@ public class BukkitPlatformAdapter implements PlatformAdapter {
     @Override
     public void shutdown() {
         platformHooks.shutdown();
-        audiences.close();
     }
 }
