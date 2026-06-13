@@ -1,5 +1,6 @@
 package dev.rono.igniscore.item.grenade;
 
+import dev.rono.igniscore.api.config.ThrowableItemConfig;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
@@ -17,8 +18,9 @@ final class GrenadeBehavior {
     }
 
     void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item) {
-        double velocity = definition.getCustomConfig().getDouble("throw_velocity", 1.2);
-        int fuseTicks = definition.getCustomConfig().getInt("fuse_ticks", 40);
+        ThrowableItemConfig throwable = ThrowableItemConfig.from(definition);
+        double velocity = throwable.throwVelocity();
+        int fuseTicks = throwable.fuseTicks();
 
         IgnisLocation spawn = player.getEyeLocation();
         double yawRad = Math.toRadians(spawn.yaw());
@@ -44,7 +46,7 @@ final class GrenadeBehavior {
                     world.removeEntity(projectile);
                 }
                 world.playSound(impact, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
-                StrategySupport.createExplosion(world, impact, definition, 4.0, false);
+                StrategySupport.createExplosion(world, impact, definition, throwable.power(), throwable.fire());
                 if (taskRef[0] != null) {
                     taskRef[0].cancel();
                 }

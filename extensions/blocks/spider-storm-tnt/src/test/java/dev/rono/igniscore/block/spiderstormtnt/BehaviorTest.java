@@ -16,7 +16,7 @@ class BehaviorTest {
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "spider-storm-tnt", 10001);
         Strategy strategy = new Strategy(ctx.context());
 
-        strategy.onStaticPlace(definition, new IgnisLocation("world", 1, 2, 3));
+        strategy.onPlaced(definition, new IgnisLocation("world", 1, 2, 3));
 
         assertFalse(ctx.world().particles().isEmpty());
     }

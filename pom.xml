@@ -18,10 +18,12 @@
     <module>bukkit</module>
     <module>sponge</module>
     <module>bootstrap</module>
+    <module>archetypes</module>
   </modules>
 
   <properties>
     <revision>1.0.0</revision>
+    <ignis.api.version>${revision}</ignis.api.version>
     <java.version>25</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <guice.version>7.0.0</guice.version>

@@ -32,7 +32,7 @@ public class SpongeBlockListener {
         }
 
         event.setCancelled(true);
-        requireBlockStrategy(definition).onStaticInteract(
+        requireBlockStrategy(definition).onPlacedInteract(
                 definition,
                 SpongeBridge.toIgnis(event.block().location().orElseThrow()),
                 SpongeBridge.wrap(player),

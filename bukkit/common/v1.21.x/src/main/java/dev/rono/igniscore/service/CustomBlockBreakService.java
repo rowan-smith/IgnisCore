@@ -118,7 +118,7 @@ public class CustomBlockBreakService {
                 Particle.BLOCK, 24, 0.35, 0.35, 0.35, 0.01);
 
         ItemStack droppedItem = dropItem ? blockItemFactory.createBlockItem(definition.getId()) : null;
-        requireBlockStrategy(definition).onStaticBreak(
+        requireBlockStrategy(definition).onPlacedBreak(
                 definition,
                 BukkitBridge.toIgnis(block.getLocation()),
                 droppedItem != null ? BukkitBridge.wrap(droppedItem) : null);

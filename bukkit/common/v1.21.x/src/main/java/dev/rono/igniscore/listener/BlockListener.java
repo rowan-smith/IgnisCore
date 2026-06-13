@@ -210,7 +210,7 @@ public class BlockListener implements Listener {
         } else if (action == CustomBlockAction.BREAK) {
             breakService.start(event.getPlayer(), clickedBlock, definition);
         } else {
-            requireBlockStrategy(definition).onStaticInteract(
+            requireBlockStrategy(definition).onPlacedInteract(
                     definition,
                     BukkitBridge.toIgnis(clickedBlock.getLocation()),
                     BukkitBridge.wrap(event.getPlayer()),

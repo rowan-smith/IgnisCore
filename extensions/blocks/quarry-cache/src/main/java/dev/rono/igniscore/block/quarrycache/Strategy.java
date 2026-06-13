@@ -28,19 +28,19 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onStaticPlace(BlockDefinition definition, IgnisLocation location, IgnisItem placedFrom) {
+    public void onPlaced(BlockDefinition definition, IgnisLocation location, IgnisItem placedFrom) {
         registry.register(location, definition, placedFrom);
     }
 
     @Override
-    public void onStaticInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player, CustomBlockAction action) {
+    public void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player, CustomBlockAction action) {
         if (action == CustomBlockAction.OPEN) {
             registry.openGui(player, location);
         }
     }
 
     @Override
-    public void onStaticBreak(BlockDefinition definition, IgnisLocation location, IgnisItem droppedItem) {
+    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location, IgnisItem droppedItem) {
         registry.handleBreak(location, droppedItem);
     }
 }

@@ -1,0 +1,22 @@
+id: ${extensionId}
+
+display:
+  title: "&e${extensionId}"
+  description:
+    - "&7Custom IgnisCore item"
+
+item:
+  base_material: snowball
+
+textures:
+  icon: icon.png
+
+custom_data:
+  throw_velocity: 1.2
+  fuse_ticks: 40
+  power: 4.0
+  fire: false
+
+interactions:
+  right_click:
+    action: use

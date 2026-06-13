@@ -9,7 +9,6 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.strategy.ExtensionSupport;
-import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
 import java.util.ArrayList;

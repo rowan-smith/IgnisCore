@@ -16,9 +16,9 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
  *
  * <h3>Placed block callbacks</h3>
  * <ul>
- *   <li>{@link #onStaticPlace} — after the custom block is registered at a location</li>
- *   <li>{@link #onStaticInteract} — player click resolved to a {@link CustomBlockAction}</li>
- *   <li>{@link #onStaticBreak} — block removed (creative break, mining complete, or ignite prep)</li>
+ *   <li>{@link #onPlaced} — after the custom block is registered at a location</li>
+ *   <li>{@link #onPlacedInteract} — player click resolved to a {@link CustomBlockAction}</li>
+ *   <li>{@link #onPlacedBreak} — block removed (creative break, mining complete, or ignite prep)</li>
  * </ul>
  *
  * <h3>Active block callbacks</h3>
@@ -39,19 +39,19 @@ public interface IgnisBlockStrategy extends IgnisStrategy {
         return StrategyProfile.defaults();
     }
 
-    default void onStaticPlace(BlockDefinition definition, IgnisLocation location) {
-        onStaticPlace(definition, location, null);
+    default void onPlaced(BlockDefinition definition, IgnisLocation location) {
+        onPlaced(definition, location, null);
     }
 
-    default void onStaticPlace(BlockDefinition definition, IgnisLocation location, IgnisItem placedFrom) {}
+    default void onPlaced(BlockDefinition definition, IgnisLocation location, IgnisItem placedFrom) {}
 
-    default void onStaticInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player, CustomBlockAction action) {}
+    default void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player, CustomBlockAction action) {}
 
-    default void onStaticBreak(BlockDefinition definition, IgnisLocation location) {
-        onStaticBreak(definition, location, null);
+    default void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
+        onPlacedBreak(definition, location, null);
     }
 
-    default void onStaticBreak(BlockDefinition definition, IgnisLocation location, IgnisItem droppedItem) {}
+    default void onPlacedBreak(BlockDefinition definition, IgnisLocation location, IgnisItem droppedItem) {}
 
     default void onPlace(RuntimeBlockInstance instance) {}
 

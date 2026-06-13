@@ -1,6 +1,6 @@
 id: wormhole-tnt
 name: Wormhole Tnt
 version: @project.version@
-api-version: @project.version@
+api-version: @ignis.api.version@
 author: IgnisCore
 strategy: dev.rono.igniscore.block.wormholetnt.Strategy

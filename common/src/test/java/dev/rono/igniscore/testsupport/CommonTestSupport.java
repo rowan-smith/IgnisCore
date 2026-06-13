@@ -22,7 +22,7 @@ public final class CommonTestSupport {
                         id: %s
                         name: Test
                         version: 1.0.0
-                        api-version: 1
+                        api-version: 1.0.0
                         strategy: dev.example.Strategy
                         """.formatted(definition.getExtensionId()).getBytes(StandardCharsets.UTF_8)),
                 "block-extension.yml");

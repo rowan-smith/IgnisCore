@@ -1,0 +1,28 @@
+id: ${extensionId}
+
+display:
+  title: "&e${extensionId}"
+  description:
+    - "&7Custom IgnisCore block"
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+custom_data:
+  fuse: 80
+  radius: 4.0
+  power: 4.0
+  fire: false
+
+interactions:
+  right_click:
+    action: ignite
+    materials: [FLINT_AND_STEEL]

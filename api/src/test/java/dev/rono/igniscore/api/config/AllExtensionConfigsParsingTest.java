@@ -78,7 +78,8 @@ class AllExtensionConfigsParsingTest {
         String category = fileName.startsWith("block") ? "blocks" : "items";
         Path manifestPath = Path.of("..", "extensions", category, extensionId, "src/main/resources", fileName);
         String manifest = Files.readString(manifestPath, StandardCharsets.UTF_8)
-                .replace("@project.version@", IgnisApiVersion.CURRENT);
+                .replace("@project.version@", IgnisApiVersion.CURRENT)
+                .replace("@ignis.api.version@", IgnisApiVersion.CURRENT);
         return ExtensionManifest.fromStream(
                 new java.io.ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8)),
                 fileName);

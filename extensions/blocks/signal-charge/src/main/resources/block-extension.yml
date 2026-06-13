@@ -1,6 +1,6 @@
 id: signal-charge
 name: Signal Charge
 version: @project.version@
-api-version: @project.version@
+api-version: @ignis.api.version@
 author: IgnisCore
 strategy: dev.rono.igniscore.block.signalcharge.Strategy
