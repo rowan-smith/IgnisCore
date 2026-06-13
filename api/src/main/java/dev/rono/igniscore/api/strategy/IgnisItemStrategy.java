@@ -8,6 +8,11 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
 
 /**
  * Runtime behavior for custom item types.
+ *
+ * <p>The platform cancels vanilla item use and delegates to {@link #onItemUse}. Branch on
+ * {@link IgnisInteraction} in strategy code. Read tuning values from
+ * {@link ItemDefinition#getCustomConfig()} or optional {@link ItemDefinition#getInteractionConfig()}
+ * sections.</p>
  */
 public interface IgnisItemStrategy extends IgnisStrategy {
 

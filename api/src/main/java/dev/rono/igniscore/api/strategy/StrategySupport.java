@@ -1,5 +1,6 @@
 package dev.rono.igniscore.api.strategy;
 
+import dev.rono.igniscore.api.config.ExtensionConfig;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
@@ -76,41 +77,15 @@ public final class StrategySupport {
     }
 
     public static double customDouble(Map<String, Object> customData, String key, double defaultValue) {
-        Object value = customData.get(key);
-        if (value instanceof Number number) {
-            return number.doubleValue();
-        }
-        if (value != null) {
-            try {
-                return Double.parseDouble(value.toString());
-            } catch (NumberFormatException ignored) {
-                return defaultValue;
-            }
-        }
-        return defaultValue;
+        return ExtensionConfig.of(customData).getDouble(key, defaultValue);
     }
 
     public static int customInt(Map<String, Object> customData, String key, int defaultValue) {
-        Object value = customData.get(key);
-        if (value instanceof Number number) {
-            return number.intValue();
-        }
-        if (value != null) {
-            try {
-                return Integer.parseInt(value.toString());
-            } catch (NumberFormatException ignored) {
-                return defaultValue;
-            }
-        }
-        return defaultValue;
+        return ExtensionConfig.of(customData).getInt(key, defaultValue);
     }
 
     public static boolean customBoolean(Map<String, Object> customData, String key, boolean defaultValue) {
-        Object value = customData.get(key);
-        if (value instanceof Boolean bool) {
-            return bool;
-        }
-        return defaultValue;
+        return ExtensionConfig.of(customData).getBoolean(key, defaultValue);
     }
 
     public static int fuseTicks(RuntimeBlockInstance instance, int defaultFuse) {

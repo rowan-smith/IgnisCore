@@ -12,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BehaviorTest {
     @Test
-    void staticPlaceSpawnsParticles() {
+    void placedSpawnsParticles() {
         BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "nuke", 10001);
         Strategy strategy = new Strategy(ctx.context());
 
-        strategy.onStaticPlace(definition, new IgnisLocation("world", 1, 2, 3));
+        strategy.onPlaced(definition, new IgnisLocation("world", 1, 2, 3));
 
         assertFalse(ctx.world().particles().isEmpty());
     }

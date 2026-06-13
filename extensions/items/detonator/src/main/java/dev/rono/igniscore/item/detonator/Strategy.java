@@ -19,13 +19,11 @@ public class Strategy extends AbstractIgnisItemStrategy {
     @Override
     public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
                            IgnisInteraction action, IgnisBlock clickedBlock) {
-        if (action == IgnisInteraction.LEFT_CLICK_BLOCK) {
-            behavior.assignBomb(player, definition, item, clickedBlock);
-            return;
-        }
-
-        if (action == IgnisInteraction.RIGHT_CLICK_AIR || action == IgnisInteraction.RIGHT_CLICK_BLOCK) {
-            behavior.detonateLinkedBombs(player, definition, item);
+        switch (action) {
+            case LEFT_CLICK_BLOCK -> behavior.assignBomb(player, definition, item, clickedBlock);
+            case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> behavior.detonateLinkedBombs(player, definition, item);
+            default -> {
+            }
         }
     }
 }

@@ -29,20 +29,6 @@ model:
   mode: "auto"
 
 interactions:
-  left_click:
-    default_action: break
-    material_actions:
-      - action: ignite
-        materials:
-          - FLINT_AND_STEEL
-          - FIRE_CHARGE
-          - FLINT
-  right_click:
-    action: ignite
-    materials:
-      - FLINT_AND_STEEL
-      - FIRE_CHARGE
-      - FLINT
   ignite:
     sound: ITEM_FLINTANDSTEEL_USE
 

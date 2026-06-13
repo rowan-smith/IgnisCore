@@ -3,13 +3,14 @@ package dev.rono.igniscore.listener;
 import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.service.BlockInteractionResolver;
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.service.CustomBlockBreakService;
 import dev.rono.igniscore.service.CustomBlockIgnitionService;
 import dev.rono.igniscore.service.CustomBlockPlacementService;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.api.port.IgnisInteraction;
+import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.service.ItemIdentifier;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import org.bukkit.Material;
@@ -29,7 +30,6 @@ import java.util.List;
 
 public class BlockListener implements Listener {
     private final BlockManager blockManager;
-    private final BlockInteractionResolver interactionResolver;
     private final CustomBlockPlacementService placementService;
     private final CustomBlockBreakService breakService;
     private final CustomBlockIgnitionService ignitionService;
@@ -38,14 +38,12 @@ public class BlockListener implements Listener {
 
     @Inject
     public BlockListener(BlockManager blockManager,
-                         BlockInteractionResolver interactionResolver,
                          CustomBlockPlacementService placementService,
                          CustomBlockBreakService breakService,
                          CustomBlockIgnitionService ignitionService,
                          ItemIdentifier itemIdentifier,
                          IgnisStrategyRegistry strategyRegistry) {
         this.blockManager = blockManager;
-        this.interactionResolver = interactionResolver;
         this.placementService = placementService;
         this.breakService = breakService;
         this.ignitionService = ignitionService;
@@ -192,14 +190,22 @@ public class BlockListener implements Listener {
             return false;
         }
 
+        IgnisInteraction interaction = BukkitBridge.toIgnisInteraction(event.getAction());
+        if (interaction != IgnisInteraction.LEFT_CLICK_BLOCK && interaction != IgnisInteraction.RIGHT_CLICK_BLOCK) {
+            return false;
+        }
+
         ItemStack heldItem = event.getItem();
-        String clickSide = switch (event.getAction()) {
-            case LEFT_CLICK_BLOCK -> "LEFT_CLICK";
-            case RIGHT_CLICK_BLOCK -> "RIGHT_CLICK";
-            default -> "";
-        };
-        String materialKey = heldItem != null && !heldItem.getType().isAir() ? heldItem.getType().name() : "AIR";
-        CustomBlockAction action = interactionResolver.resolve(definition, clickSide, materialKey);
+        IgnisItem ignisHeldItem = heldItem != null && !heldItem.getType().isAir()
+                ? BukkitBridge.wrap(heldItem)
+                : null;
+        IgnisBlockStrategy strategy = requireBlockStrategy(definition);
+        CustomBlockAction action = strategy.onPlacedClick(
+                definition,
+                BukkitBridge.toIgnis(clickedBlock.getLocation()),
+                BukkitBridge.wrap(event.getPlayer()),
+                interaction,
+                ignisHeldItem);
         if (action == CustomBlockAction.NONE) {
             return false;
         }
@@ -209,11 +215,13 @@ public class BlockListener implements Listener {
             ignitionService.ignite(clickedBlock, definition, event.getPlayer(), heldItem);
         } else if (action == CustomBlockAction.BREAK) {
             breakService.start(event.getPlayer(), clickedBlock, definition);
-        } else {
-            requireBlockStrategy(definition).onStaticInteract(
+        } else if (action == CustomBlockAction.OPEN) {
+            strategy.onPlacedInteract(
                     definition,
                     BukkitBridge.toIgnis(clickedBlock.getLocation()),
                     BukkitBridge.wrap(event.getPlayer()),
+                    interaction,
+                    ignisHeldItem,
                     action);
         }
         return true;

@@ -5,7 +5,8 @@ import dev.rono.igniscore.api.CustomBlockAction;
 import java.util.List;
 
 /**
- * Default behavior profile for a strategy. Block YAML can override any value.
+ * Default behavior profile for a strategy. Override {@link IgnisBlockStrategy#profile} and
+ * {@link IgnisBlockStrategy#onPlacedClick} to declare click behavior in code.
  */
 public final class StrategyProfile {
     private final boolean combustible;

@@ -23,8 +23,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onStaticPlace(BlockDefinition definition, IgnisLocation location) {
-        behavior.onStaticPlace(location);
+    public void onPlaced(BlockDefinition definition, IgnisLocation location) {
+        behavior.onPlaced(location);
     }
 
     @Override

@@ -95,7 +95,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
 
         Object display = visualRenderer.spawnStaticDisplay(blockLocation, type);
         blockVisuals.put(blockLocation, display);
-        requireBlockStrategy(type).onStaticPlace(type, blockLocation, null);
+        requireBlockStrategy(type).onPlaced(type, blockLocation, null);
     }
 
     private void playPlacementEffects(IgnisLocation location, BlockDefinition type, IgnisItem placedFrom) {
@@ -106,7 +106,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
             effectService.playSound(center, profile.getPlacementSound(), 1.6f, 0.7f);
         }
 
-        requireBlockStrategy(type).onStaticPlace(type, location, placedFrom);
+        requireBlockStrategy(type).onPlaced(type, location, placedFrom);
     }
 
     public void unregisterPlacedBlock(IgnisLocation location) {

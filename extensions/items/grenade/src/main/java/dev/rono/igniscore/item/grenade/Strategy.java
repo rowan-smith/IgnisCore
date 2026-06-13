@@ -18,7 +18,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
 
     @Override
     public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisInteraction action) {
-        if (context == null) {
+        if (action != IgnisInteraction.RIGHT_CLICK_AIR && action != IgnisInteraction.RIGHT_CLICK_BLOCK) {
             return;
         }
         behavior.onItemUse(player, definition, item);

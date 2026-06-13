@@ -94,3 +94,7 @@ Shared enable/disable is handled by `IgnisRuntimeLifecycle` in `common/` (extens
 ## Persistence note
 
 Placed custom blocks are stored in `placed-blocks.json`. Legacy `placed-blocks.yml` files are migrated automatically on first load.
+
+## Extension authoring
+
+See **[EXTENSIONS.md](EXTENSIONS.md)** for the full guide: Maven archetypes, manifest/config YAML, block/item lifecycles, semver `api-version`, and testing patterns.

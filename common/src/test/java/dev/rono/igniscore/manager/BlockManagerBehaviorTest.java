@@ -3,6 +3,7 @@ package dev.rono.igniscore.manager;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
 import dev.rono.igniscore.service.RuntimeBlockService;
@@ -50,6 +51,9 @@ class BlockManagerBehaviorTest {
                 new CommonTestSupport.ImmediateIgnisScheduler(),
                 visualRenderer);
         definition = sampleDefinition();
+        registry.register(
+                IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"),
+                new DefaultExplosionStrategy(ctx.context().getExtensionSupport()));
         blockManager.loadFromExtensions(List.of(CommonTestSupport.loadedBlock(definition)));
     }
 

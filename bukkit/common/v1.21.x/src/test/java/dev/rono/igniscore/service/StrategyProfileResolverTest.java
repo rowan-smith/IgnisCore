@@ -42,47 +42,7 @@ class StrategyProfileResolverTest {
         assertTrue(profile.isPlaceable());
         assertTrue(profile.isBreakable());
         assertEquals(CustomBlockAction.NONE, profile.getLeftClickAction());
-    }
-
-    @Test
-    void marksProfileCombustibleWhenIgniteInteractionConfigured() {
-        BlockDefinition definition = definition(
-                Map.of("right_click", Map.of("action", "ignite")),
-                Map.of(),
-                true,
-                true,
-                80,
-                4.0
-        );
-
-        StrategyProfile profile = resolver.resolve(definition);
-
-        assertTrue(profile.isCombustible());
-    }
-
-    @Test
-    void detectsIgniteFromMaterialActionsAndDedicatedSection() {
-        BlockDefinition materialActionDefinition = definition(
-                Map.of("left_click", Map.of(
-                        "material_actions", List.of(Map.of("action", "ignite", "materials", List.of("STICK")))
-                )),
-                Map.of(),
-                true,
-                true,
-                80,
-                4.0
-        );
-        BlockDefinition dedicatedSectionDefinition = definition(
-                Map.of("ignite", Map.of("sound", "ITEM_FLINTANDSTEEL_USE")),
-                Map.of(),
-                true,
-                true,
-                80,
-                4.0
-        );
-
-        assertTrue(resolver.resolve(materialActionDefinition).isCombustible());
-        assertTrue(resolver.resolve(dedicatedSectionDefinition).isCombustible());
+        assertFalse(profile.isCombustible());
     }
 
     @Test

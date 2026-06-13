@@ -1,5 +1,6 @@
 package dev.rono.igniscore.block.nuke;
 
+import dev.rono.igniscore.api.config.ExplosionConfig;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
@@ -15,7 +16,7 @@ final class NukeBehavior {
         this.context = context;
     }
 
-    void onStaticPlace(IgnisLocation location) {
+    void onPlaced(IgnisLocation location) {
         IgnisLocation center = Locations.toCenter(location);
         IgnisWorld world = worldAt(center);
         world.spawnParticle(center, "FLAME", 16, 0.35, 0.35, 0.35, 0.02);
@@ -33,8 +34,9 @@ final class NukeBehavior {
     }
 
     void onTrigger(RuntimeBlockInstance instance, BlockDefinition def) {
+        ExplosionConfig explosion = ExplosionConfig.from(def);
         IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        float finalPower = StrategySupport.resolvePower(def, 10.0);
+        float finalPower = explosion.resolvedPower();
         IgnisWorld world = worldAt(loc);
 
         instance.getData().setDouble("ignis:nuke_power", finalPower);
@@ -43,10 +45,9 @@ final class NukeBehavior {
         spawnDetonationParticles(world, loc, finalPower);
         world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 8.0f, 0.45f);
         world.playSound(loc, "ENTITY_LIGHTNING_BOLT_THUNDER", 8.0f, 0.55f);
-        StrategySupport.createExplosion(world, loc, def, 10.0,
-                StrategySupport.customBoolean(def, "fire", true));
+        StrategySupport.createExplosion(world, loc, def, explosion.power(), explosion.fire());
 
-        if (StrategySupport.customBoolean(def, "screenShake", false)) {
+        if (explosion.screenShake()) {
             for (var player : world.getPlayersNear(loc, finalPower * 2)) {
                 player.getWorld().playSound(player.getLocation(), "ENTITY_GENERIC_EXPLODE", 2.0f, 0.5f);
             }

@@ -21,7 +21,7 @@ final class SpiderStormBehavior {
         this.nbtService = context.getNbtService();
     }
 
-    void onStaticPlace(IgnisLocation location) {
+    void onPlaced(IgnisLocation location) {
         IgnisLocation center = Locations.toCenter(location);
         IgnisWorld world = worldAt(center);
         world.spawnParticle(center, "SPORE_BLOSSOM_AIR", 18, 0.45, 0.45, 0.45, 0.01);
