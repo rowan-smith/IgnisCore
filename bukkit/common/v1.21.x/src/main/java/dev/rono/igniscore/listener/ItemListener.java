@@ -2,7 +2,6 @@ package dev.rono.igniscore.listener;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.strategy.IgnisItemStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -73,11 +72,6 @@ public class ItemListener implements Listener {
     }
 
     private IgnisItemStrategy requireItemStrategy(ItemDefinition definition) {
-        IgnisStrategy strategy = strategyRegistry.get(definition.getExtensionId());
-        if (!(strategy instanceof IgnisItemStrategy itemStrategy)) {
-            throw new IllegalStateException("Item type " + definition.getId() + " uses a non-item strategy from extension "
-                    + definition.getExtensionId());
-        }
-        return itemStrategy;
+        return strategyRegistry.requireItemStrategy(definition.getExtensionId(), definition.getId());
     }
 }

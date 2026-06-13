@@ -14,18 +14,14 @@ public final class PlatformBootloaderLoader {
     }
 
     public static PlatformAdapter boot(Object host) {
-        PlatformBootloader selected = ServiceLoader.load(PlatformBootloader.class).stream()
-                .map(ServiceLoader.Provider::get)
-                .filter(bootloader -> bootloader.canBoot(host))
-                .max(Comparator.comparingInt(PlatformBootloader::priority)
-                        .thenComparing(PlatformBootloader::id))
-                .orElseThrow(() -> new IllegalStateException(
-                        "No PlatformBootloader found for host " + host.getClass().getName()));
-
-        return selected.boot(host);
+        return resolve(host).boot(host);
     }
 
     public static PlatformBootloader resolve(Object host) {
+        return select(host);
+    }
+
+    private static PlatformBootloader select(Object host) {
         return ServiceLoader.load(PlatformBootloader.class).stream()
                 .map(ServiceLoader.Provider::get)
                 .filter(bootloader -> bootloader.canBoot(host))

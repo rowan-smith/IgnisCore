@@ -2,7 +2,6 @@ package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.strategy.StrategySupport;
@@ -23,11 +22,8 @@ public class StrategyProfileResolver {
     }
 
     public StrategyProfile resolve(BlockDefinition definition) {
-        IgnisStrategy strategy = strategyRegistry.get(definition.getExtensionId());
-        if (!(strategy instanceof IgnisBlockStrategy blockStrategy)) {
-            throw new IllegalStateException("Block type " + definition.getId() + " uses a non-block strategy from extension "
-                    + definition.getExtensionId());
-        }
+        IgnisBlockStrategy blockStrategy = strategyRegistry.requireBlockStrategy(
+                definition.getExtensionId(), definition.getId());
         StrategyProfile profile = blockStrategy.profile(definition);
         Map<String, Object> interactions = definition.getInteractionSettings();
 

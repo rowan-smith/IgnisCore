@@ -1,41 +1,19 @@
 package dev.rono.igniscore.folia.boot;
 
 import dev.rono.igniscore.api.port.PlatformAdapter;
-import dev.rono.igniscore.api.port.PlatformBootloader;
 import dev.rono.igniscore.api.port.PlatformType;
 import dev.rono.igniscore.folia.adapter.FoliaPlatformAdapter;
-import dev.rono.igniscore.spigot.boot.BukkitBootloaderSupport;
+import dev.rono.igniscore.spigot.boot.JavaPluginBootloader;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class FoliaV121Bootloader implements PlatformBootloader {
+public final class FoliaV121Bootloader extends JavaPluginBootloader {
 
-    @Override
-    public String id() {
-        return "folia-v1.21.x";
+    public FoliaV121Bootloader() {
+        super("folia-v1.21.x", PlatformType.FOLIA, "1.21.x", 150, 1, 21);
     }
 
     @Override
-    public PlatformType platformType() {
-        return PlatformType.FOLIA;
-    }
-
-    @Override
-    public String minecraftVersionRange() {
-        return "1.21.x";
-    }
-
-    @Override
-    public int priority() {
-        return 150;
-    }
-
-    @Override
-    public boolean canBoot(Object host) {
-        return BukkitBootloaderSupport.acceptsHost(host, PlatformType.FOLIA, 1, 21);
-    }
-
-    @Override
-    public PlatformAdapter boot(Object host) {
-        return new FoliaPlatformAdapter((JavaPlugin) host);
+    protected PlatformAdapter createAdapter(JavaPlugin plugin) {
+        return new FoliaPlatformAdapter(plugin);
     }
 }

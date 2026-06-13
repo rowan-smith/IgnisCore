@@ -184,12 +184,7 @@ public class CustomBlockBreakService {
     }
 
     private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
-        var strategy = strategyRegistry.get(definition.getExtensionId());
-        if (!(strategy instanceof IgnisBlockStrategy blockStrategy)) {
-            throw new IllegalStateException("Block type " + definition.getId() + " uses a non-block strategy from extension "
-                    + definition.getExtensionId());
-        }
-        return blockStrategy;
+        return strategyRegistry.requireBlockStrategy(definition.getExtensionId(), definition.getId());
     }
 
     private void sendBlockDamage(Location location, float progress, int sourceEntityId) {

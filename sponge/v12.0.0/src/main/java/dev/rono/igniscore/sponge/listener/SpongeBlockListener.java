@@ -3,7 +3,6 @@ package dev.rono.igniscore.sponge.listener;
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
@@ -53,12 +52,7 @@ public class SpongeBlockListener {
     }
 
     private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
-        IgnisStrategy strategy = strategyRegistry.get(definition.getExtensionId());
-        if (!(strategy instanceof IgnisBlockStrategy blockStrategy)) {
-            throw new IllegalStateException("Block type " + definition.getId() + " uses a non-block strategy from extension "
-                    + definition.getExtensionId());
-        }
-        return blockStrategy;
+        return strategyRegistry.requireBlockStrategy(definition.getExtensionId(), definition.getId());
     }
 
     private BlockDefinition getPlacedDefinition(org.spongepowered.api.block.BlockSnapshot block) {

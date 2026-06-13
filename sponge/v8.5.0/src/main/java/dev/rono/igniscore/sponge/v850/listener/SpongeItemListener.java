@@ -3,7 +3,6 @@ package dev.rono.igniscore.sponge.v850.listener;
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.strategy.IgnisItemStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.sponge.v850.adapter.SpongeBridge;
 import dev.rono.igniscore.sponge.v850.service.SpongeItemIdentifier;
@@ -55,11 +54,8 @@ public class SpongeItemListener {
     }
 
     private IgnisItemStrategy requireItemStrategy(ItemDefinition definition) {
-        IgnisStrategy strategy = strategyRegistry.get(definition.getExtensionId());
-        if (!(strategy instanceof IgnisItemStrategy itemStrategy)) {
-            throw new IllegalStateException("Item type " + definition.getId() + " uses a non-item strategy from extension "
-                    + definition.getExtensionId());
-        }
+        IgnisItemStrategy itemStrategy = strategyRegistry.requireItemStrategy(
+                definition.getExtensionId(), definition.getId());
         return itemStrategy;
     }
 }

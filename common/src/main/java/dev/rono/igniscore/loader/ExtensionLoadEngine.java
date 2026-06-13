@@ -7,6 +7,7 @@ import dev.rono.igniscore.api.config.DefinitionParser;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.extension.ExtensionResources;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ExtensionDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
@@ -124,7 +125,7 @@ public final class ExtensionLoadEngine {
                 input -> ExtensionManifest.fromStream(input, kind.manifestFileName()));
     }
 
-    private <D> LoadedExtension<D> loadExtension(File jarFile,
+    private <D extends ExtensionDefinition> LoadedExtension<D> loadExtension(File jarFile,
                                                  ExtensionManifest manifest,
                                                  IgnisStrategyDescriptor descriptor,
                                                  D definition,
@@ -132,7 +133,6 @@ public final class ExtensionLoadEngine {
         IgnisApiVersion.requireCompatible(manifest.getApiVersion(), manifest.getId());
 
         String strategyId = descriptor.getId();
-        String definitionId = definitionIdFor(definition);
 
         URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, host.getExtensionParentClassLoader());
         ExtensionResources resources = new ExtensionResources(classLoader);
@@ -147,21 +147,11 @@ public final class ExtensionLoadEngine {
             }
 
             host.debug("Loaded " + kind.folderName() + " extension '" + manifest.getName() + "' v"
-                    + manifest.getVersion() + " (" + definitionId + ") from " + jarFile.getName());
+                    + manifest.getVersion() + " (" + definition.getId() + ") from " + jarFile.getName());
             return new LoadedExtension<>(manifest, jarFile, classLoader, definition, resources);
         } catch (Exception e) {
             classLoader.close();
             throw e;
         }
-    }
-
-    private static String definitionIdFor(Object definition) {
-        if (definition instanceof BlockDefinition blockDefinition) {
-            return blockDefinition.getId();
-        }
-        if (definition instanceof ItemDefinition itemDefinition) {
-            return itemDefinition.getId();
-        }
-        throw new IllegalStateException("Unsupported definition type: " + definition.getClass().getName());
     }
 }

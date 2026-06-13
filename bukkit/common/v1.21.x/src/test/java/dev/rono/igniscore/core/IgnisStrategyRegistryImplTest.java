@@ -72,6 +72,32 @@ class IgnisStrategyRegistryImplTest {
         assertTrue(registry.getDescriptors().stream().anyMatch(descriptor -> "quake".equals(descriptor.getId())));
     }
 
+    @Test
+    void typedFindFiltersByStrategyKind() {
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
+        registry.register(IgnisStrategyDescriptor.of("quake", "Quake", "1.0.0", "test"),
+                testStrategy("quake"));
+
+        assertTrue(registry.find("quake", IgnisBlockStrategy.class).isPresent());
+        assertTrue(registry.find("quake", IgnisStrategy.class).isPresent());
+        assertTrue(registry.find("missing", IgnisBlockStrategy.class).isEmpty());
+    }
+
+    @Test
+    void requireBlockStrategyRejectsWrongKind() {
+        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
+        registry.register(IgnisStrategyDescriptor.of("bad-item", "Bad", "1.0.0", "test"),
+                new dev.rono.igniscore.api.strategy.IgnisItemStrategy() {
+                    @Override
+                    public IgnisStrategyDescriptor descriptor() {
+                        return IgnisStrategyDescriptor.of("bad-item", "Bad", "1.0.0", "test");
+                    }
+                });
+
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class,
+                () -> registry.requireBlockStrategy("bad-item", "bad-item"));
+    }
+
     private IgnisStrategy testStrategy(String id) {
         return new IgnisBlockStrategy() {
             @Override
