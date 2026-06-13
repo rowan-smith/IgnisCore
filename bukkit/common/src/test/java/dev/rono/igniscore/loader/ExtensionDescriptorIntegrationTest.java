@@ -32,7 +32,9 @@ class ExtensionDescriptorIntegrationTest {
             "detonator"
     })
     void strategyDescriptorMatchesExtensionManifest(String moduleName) throws Exception {
-        String category = Files.exists(Path.of("..", "..", "..", "extensions", "items", moduleName)) ? "items" : "blocks";
+        String category = Files.exists(BundledExtensionJarFactory.moduleDirectory("items", moduleName))
+                ? "items"
+                : "blocks";
         String manifestName = category.equals("blocks") ? "block-extension.yml" : "item-extension.yml";
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, category, moduleName);
 

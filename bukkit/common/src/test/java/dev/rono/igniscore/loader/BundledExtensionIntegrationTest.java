@@ -17,6 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -103,7 +104,8 @@ class BundledExtensionIntegrationTest {
     @Test
     @EnabledIf("nuclearConfigFixtureExists")
     void parsesRepositoryNuclearConfigFixture() throws Exception {
-        Path configPath = Path.of("..", "..", "..", "extensions", "blocks", "nuke", "src", "main", "resources", "config.yml");
+        Path configPath = BundledExtensionJarFactory.moduleDirectory("blocks", "nuke")
+                .resolve("src/main/resources/config.yml");
         Map<String, Object> config = YamlDefinitions.loadMap(Files.newInputStream(configPath));
 
         BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuke");
@@ -115,6 +117,11 @@ class BundledExtensionIntegrationTest {
     }
 
     static boolean nuclearConfigFixtureExists() {
-        return Files.exists(Path.of("..", "..", "..", "extensions", "blocks", "nuke", "src", "main", "resources", "config.yml"));
+        try {
+            return Files.exists(BundledExtensionJarFactory.moduleDirectory("blocks", "nuke")
+                    .resolve("src/main/resources/config.yml"));
+        } catch (IOException ignored) {
+            return false;
+        }
     }
 }
