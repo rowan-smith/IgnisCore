@@ -1,5 +1,6 @@
 package dev.rono.igniscore.core;
 
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.loader.LoadedExtension;
@@ -244,7 +245,7 @@ class ExtensionBootstrapTest {
         boolean refreshedVisuals;
 
         RecordingBlockManager() {
-            super(null, null, null, null, null, null, null);
+            super(null, null, null, null, null, null, null, PerformanceSettings.defaults());
         }
 
         @Override

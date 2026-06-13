@@ -1,6 +1,7 @@
 package dev.rono.igniscore.resourcepack;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.IgnisPluginContext;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.resourcepack.ResourcePackFingerprint;
@@ -14,7 +15,9 @@ import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class ResourcePackService {
@@ -26,6 +29,7 @@ public class ResourcePackService {
     private final ResourcePackBuilder packBuilder;
     private final ResourcePackServer packServer;
     private final PlatformHooks platformHooks;
+    private final int resourcePackRetainCount;
 
     private final Object buildLock = new Object();
     private volatile boolean buildInProgress;
@@ -42,7 +46,8 @@ public class ResourcePackService {
                                ItemExtensionLoader itemExtensionLoader,
                                ResourcePackBuilder packBuilder,
                                PlatformHooks platformHooks,
-                               IgnisRuntimeHost runtimeHost) {
+                               IgnisRuntimeHost runtimeHost,
+                               PerformanceSettings performanceSettings) {
         this.pluginContext = pluginContext;
         this.blockManager = blockManager;
         this.itemManager = itemManager;
@@ -51,6 +56,7 @@ public class ResourcePackService {
         this.packBuilder = packBuilder;
         this.platformHooks = platformHooks;
         this.packServer = new ResourcePackServer(runtimeHost);
+        this.resourcePackRetainCount = performanceSettings.resourcePackRetainCount();
     }
 
     public void buildAndRegister() throws IOException {
@@ -154,7 +160,27 @@ public class ResourcePackService {
     private void registerBuiltPack(ResourcePackBuilder.PackResult result) {
         latestHash = result.getHash();
         packServer.registerPack(latestHash, result.getFile());
+        cleanupOldPacks(result.getFile().toPath().getParent());
         pluginContext.debug("Resource pack generated successfully! Hash: " + latestHash);
+    }
+
+    private void cleanupOldPacks(Path packsDirectory) {
+        if (packsDirectory == null) {
+            return;
+        }
+
+        try {
+            Set<String> retainedHashes = ResourcePackStorage.determineRetainedHashes(
+                    packsDirectory, latestHash, resourcePackRetainCount);
+            packServer.retainOnly(latestHash, retainedHashes);
+            int deleted = ResourcePackStorage.deleteUnretainedPacks(packsDirectory, retainedHashes);
+            if (deleted > 0) {
+                pluginContext.debug("Cleaned up " + deleted + " old resource pack file(s).");
+            }
+        } catch (IOException error) {
+            pluginContext.plugin().getLogger().warning(
+                    "Failed to clean up old resource packs: " + error.getMessage());
+        }
     }
 
     public void reloadConfiguration() {

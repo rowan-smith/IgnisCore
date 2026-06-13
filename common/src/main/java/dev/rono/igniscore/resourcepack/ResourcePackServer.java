@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -86,6 +87,16 @@ public class ResourcePackServer {
     public void registerPack(String id, File file) {
         packs.put(id, file);
         latestPackId = id;
+    }
+
+    public void retainOnly(String latestId, Set<String> retainedIds) {
+        if (retainedIds == null || retainedIds.isEmpty()) {
+            packs.clear();
+            latestPackId = latestId;
+            return;
+        }
+        packs.keySet().removeIf(id -> !retainedIds.contains(id));
+        latestPackId = latestId;
     }
 
     public String getLatestPackId() {

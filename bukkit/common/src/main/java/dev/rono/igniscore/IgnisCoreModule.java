@@ -2,6 +2,8 @@ package dev.rono.igniscore;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.google.inject.util.Modules;
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.api.port.BlockVisualRenderer;
 import dev.rono.igniscore.api.port.IgnisCustomItemFactory;
 import dev.rono.igniscore.api.port.IgnisPlatformIntegration;
@@ -69,7 +71,12 @@ public class IgnisCoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        install(new IgnisCommonModule());
+        install(Modules.override(new IgnisCommonModule()).with(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(PerformanceSettings.class).toInstance(readPerformanceSettings());
+            }
+        }));
 
         bind(JavaPlugin.class).toInstance(plugin);
         bind(Plugin.class).toInstance(plugin);
@@ -110,5 +117,19 @@ public class IgnisCoreModule extends AbstractModule {
         bind(CustomBlockPlacementService.class).in(Scopes.SINGLETON);
         bind(CustomBlockBreakService.class).in(Scopes.SINGLETON);
         bind(CustomBlockIgnitionService.class).in(Scopes.SINGLETON);
+    }
+
+    private PerformanceSettings readPerformanceSettings() {
+        var section = plugin.getConfig().getConfigurationSection("performance");
+        if (section == null) {
+            return PerformanceSettings.defaults();
+        }
+        return PerformanceSettings.fromValues(
+                section.getInt("chunk-restore-blocks-per-tick",
+                        PerformanceSettings.DEFAULT_CHUNK_RESTORE_BLOCKS_PER_TICK),
+                section.getInt("visual-refresh-blocks-per-tick",
+                        PerformanceSettings.DEFAULT_VISUAL_REFRESH_BLOCKS_PER_TICK),
+                section.getInt("resource-pack-retain-count",
+                        PerformanceSettings.DEFAULT_RESOURCE_PACK_RETAIN_COUNT));
     }
 }

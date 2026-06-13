@@ -3,7 +3,9 @@ package dev.rono.igniscore.manager;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
 import dev.rono.igniscore.service.RuntimeBlockService;
@@ -49,7 +51,8 @@ class BlockManagerBehaviorTest {
                 new StrategyProfileResolver(registry),
                 persistence,
                 new CommonTestSupport.ImmediateIgnisScheduler(),
-                visualRenderer);
+                visualRenderer,
+                PerformanceSettings.fromValues(1, 1, 3));
         definition = sampleDefinition();
         registry.register(
                 IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"),
@@ -110,6 +113,35 @@ class BlockManagerBehaviorTest {
 
         assertTrue(blockManager.getActiveBlocks().isEmpty());
         assertTrue(visualRenderer.removedAnimatedCount() >= 1);
+    }
+
+    @Test
+    void refreshPlacedBlockVisualsBatchesAcrossSchedulerTicks() throws Exception {
+        CommonTestSupport.DeferredIgnisScheduler deferredScheduler = new CommonTestSupport.DeferredIgnisScheduler();
+        CommonTestSupport.RecordingBlockVisualRenderer batchedRenderer = new CommonTestSupport.RecordingBlockVisualRenderer();
+        IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl(
+                new DefaultExplosionStrategy(ctx.context().getExtensionSupport()));
+        registry.register(
+                IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"),
+                new DefaultExplosionStrategy(ctx.context().getExtensionSupport()));
+        BlockManager batchedManager = new BlockManager(
+                new RuntimeBlockService(),
+                registry,
+                ctx.effects(),
+                new StrategyProfileResolver(registry),
+                persistence,
+                deferredScheduler,
+                batchedRenderer,
+                PerformanceSettings.fromValues(16, 1, 3));
+        batchedManager.loadFromExtensions(List.of(CommonTestSupport.loadedBlock(definition)));
+        batchedManager.registerPlacedBlock(new IgnisLocation("world", 4, 64, 8), definition.getId());
+        batchedManager.registerPlacedBlock(new IgnisLocation("world", 5, 64, 8), definition.getId());
+
+        batchedManager.refreshPlacedBlockVisuals();
+
+        assertEquals(1, batchedRenderer.removedStaticCount());
+        deferredScheduler.runPending();
+        assertEquals(2, batchedRenderer.removedStaticCount());
     }
 
     @Test

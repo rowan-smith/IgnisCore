@@ -7,6 +7,7 @@ import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.core.ExtensionBootstrap;
 import dev.rono.igniscore.core.IgnisCoreFacadeImpl;
 import dev.rono.igniscore.core.IgnisRuntimeLifecycle;
@@ -62,5 +63,6 @@ public class IgnisCommonModule extends AbstractModule {
         bind(ExtensionBootstrap.class).in(Scopes.SINGLETON);
 
         bind(ResourcePackBuilder.class).in(Scopes.SINGLETON);
+        bind(PerformanceSettings.class).toInstance(PerformanceSettings.defaults());
     }
 }

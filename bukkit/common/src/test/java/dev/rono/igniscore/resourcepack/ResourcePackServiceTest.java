@@ -1,5 +1,6 @@
 package dev.rono.igniscore.resourcepack;
 
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.IgnisPluginContext;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -15,12 +16,15 @@ import org.junit.jupiter.api.Test;
 import org.mockbukkit.mockbukkit.scheduler.BukkitSchedulerMock;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ResourcePackServiceTest extends MockBukkitTestBase {
@@ -33,7 +37,7 @@ class ResourcePackServiceTest extends MockBukkitTestBase {
     void setUpService() throws Exception {
         blockManager = new StubBlockManager(sampleBlock("test-block", 10001));
         itemManager = new StubItemManager();
-        packBuilder = new RecordingPackBuilder();
+        packBuilder = new RecordingPackBuilder(plugin.getDataFolder().toPath().resolve("packs"));
         resourcePackService = new ResourcePackService(
                 new IgnisPluginContext(plugin),
                 blockManager,
@@ -42,7 +46,8 @@ class ResourcePackServiceTest extends MockBukkitTestBase {
                 new ItemExtensionLoader(null, null),
                 packBuilder,
                 platformHooks,
-                CommonTestSupport.runtimeHost(plugin.getDataFolder().toPath()));
+                CommonTestSupport.runtimeHost(plugin.getDataFolder().toPath()),
+                PerformanceSettings.fromValues(16, 32, 3));
     }
 
     @Test
@@ -87,6 +92,34 @@ class ResourcePackServiceTest extends MockBukkitTestBase {
         assertEquals(2, successCount.get());
     }
 
+    @Test
+    void cleanupRemovesOldPackFilesAfterRebuild() throws Exception {
+        ResourcePackService service = new ResourcePackService(
+                new IgnisPluginContext(plugin),
+                blockManager,
+                itemManager,
+                new BlockExtensionLoader(null, null),
+                new ItemExtensionLoader(null, null),
+                packBuilder,
+                platformHooks,
+                CommonTestSupport.runtimeHost(plugin.getDataFolder().toPath()),
+                PerformanceSettings.fromValues(16, 32, 1));
+        Path packsDir = plugin.getDataFolder().toPath().resolve("packs");
+        Files.createDirectories(packsDir);
+        Files.writeString(packsDir.resolve("resourcepack_old.zip"), "old");
+        Files.writeString(packsDir.resolve("resourcepack_keepme.zip"), "keep");
+
+        service.buildAndRegisterAsync(() -> {}, error -> {
+            throw new AssertionError(error);
+        });
+        runAsyncTasks();
+        runSyncTasks();
+
+        assertTrue(Files.exists(packsDir.resolve("resourcepack_hash1.zip")));
+        assertFalse(Files.exists(packsDir.resolve("resourcepack_old.zip")));
+        assertFalse(Files.exists(packsDir.resolve("resourcepack_keepme.zip")));
+    }
+
     private void runAsyncTasks() {
         ((BukkitSchedulerMock) server.getScheduler()).waitAsyncTasksFinished();
     }
@@ -122,7 +155,7 @@ class ResourcePackServiceTest extends MockBukkitTestBase {
         private Map<String, BlockDefinition> definitions;
 
         StubBlockManager(BlockDefinition definition) {
-            super(null, null, null, null, null, null, null);
+            super(null, null, null, null, null, null, null, PerformanceSettings.defaults());
             this.definitions = Map.of(definition.getId(), definition);
         }
 
@@ -137,17 +170,25 @@ class ResourcePackServiceTest extends MockBukkitTestBase {
 
     private static final class RecordingPackBuilder extends ResourcePackBuilder {
         int buildCount;
+        private final Path packsDir;
 
-        RecordingPackBuilder() {
+        RecordingPackBuilder(Path packsDir) {
             super(null, null, null);
+            this.packsDir = packsDir;
         }
 
         @Override
         public PackResult buildPack(Map<String, BlockDefinition> blockDefinitions,
                                     Map<String, ItemDefinition> itemDefinitions) {
             buildCount++;
-            File file = new File("target/test-pack-" + buildCount + ".zip");
-            return new PackResult(file, "hash" + buildCount);
+            try {
+                Files.createDirectories(packsDir);
+                File file = packsDir.resolve("resourcepack_hash" + buildCount + ".zip").toFile();
+                Files.writeString(file.toPath(), "pack-" + buildCount);
+                return new PackResult(file, "hash" + buildCount);
+            } catch (Exception error) {
+                throw new RuntimeException(error);
+            }
         }
     }
 }

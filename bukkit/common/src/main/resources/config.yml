@@ -2,3 +2,8 @@ resource-pack:
   host: "localhost"
   port: 8080
   public-url: "http://localhost:8080/resourcepack.zip"
+
+performance:
+  chunk-restore-blocks-per-tick: 16
+  visual-refresh-blocks-per-tick: 32
+  resource-pack-retain-count: 3

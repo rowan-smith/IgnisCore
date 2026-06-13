@@ -5,6 +5,7 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.listener.BlockListener;
 import dev.rono.igniscore.listener.ExtensionSupportListener;
@@ -68,7 +69,8 @@ public final class BreakLoopTestSupport {
                 new StrategyProfileResolver(strategyRegistry),
                 persistence,
                 new CommonTestSupport.ImmediateIgnisScheduler(),
-                visualRenderer);
+                visualRenderer,
+                PerformanceSettings.defaults());
 
         List<dev.rono.igniscore.loader.LoadedExtension<BlockDefinition>> loaded = Arrays.stream(definitions)
                 .map(definition -> {
