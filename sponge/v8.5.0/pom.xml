@@ -10,7 +10,8 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>sponge-v8-5-0-stub</artifactId>
+  <groupId>dev.rono.sponge</groupId>
+  <artifactId>v8.5.0</artifactId>
   <packaging>jar</packaging>
 
   <name>igniscore-sponge-v8.5.0-stub</name>

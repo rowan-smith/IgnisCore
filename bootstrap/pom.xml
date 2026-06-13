@@ -14,7 +14,7 @@
   <packaging>jar</packaging>
 
   <name>igniscore-bootstrap</name>
-  <description>Deployable plugin JAR with hooked platform bootloaders</description>
+  <description>Single deployable plugin JAR for all supported server software</description>
 
   <dependencies>
     <dependency>
@@ -26,24 +26,28 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>spigot-v1-21-x</artifactId>
+      <groupId>dev.rono.bukkit.common</groupId>
+      <artifactId>v1.21.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>paper-v1-21-x</artifactId>
+      <groupId>dev.rono.bukkit.spigot</groupId>
+      <artifactId>v1.21.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>spigot-v1-20-x</artifactId>
+      <groupId>dev.rono.bukkit.paper</groupId>
+      <artifactId>v1.21.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>paper-v1-20-x</artifactId>
+      <groupId>dev.rono.bukkit.spigot</groupId>
+      <artifactId>v1.20.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>folia-v1-21-x</artifactId>
+      <groupId>dev.rono.bukkit.paper</groupId>
+      <artifactId>v1.20.x</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono.sponge</groupId>
+      <artifactId>v12.0.0</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>
@@ -52,6 +56,11 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spongepowered</groupId>
+      <artifactId>spongeapi</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

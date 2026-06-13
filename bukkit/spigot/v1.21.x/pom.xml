@@ -6,44 +6,30 @@
 
   <parent>
     <groupId>dev.rono</groupId>
-    <artifactId>igniscore-parent</artifactId>
+    <artifactId>spigot</artifactId>
     <version>${revision}</version>
   </parent>
 
-  <artifactId>common</artifactId>
+  <groupId>dev.rono.bukkit.spigot</groupId>
+  <artifactId>v1.21.x</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore-common</name>
-  <description>Platform-neutral runtime shared by all adapters</description>
+  <name>igniscore-spigot-v1.21.x</name>
+  <description>Spigot 1.21.x server software adapter and bootloader</description>
 
-    <dependencies>
+  <dependencies>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>api</artifactId>
+      <groupId>dev.rono.bukkit.common</groupId>
+      <artifactId>v1.21.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>2.4</version>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>api</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
   </dependencies>

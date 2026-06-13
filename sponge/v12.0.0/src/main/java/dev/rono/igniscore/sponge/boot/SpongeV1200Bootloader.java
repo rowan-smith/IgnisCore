@@ -42,7 +42,7 @@ public final class SpongeV1200Bootloader implements PlatformBootloader {
         if (!(host instanceof IgnisSpongePlugin plugin)) {
             throw new IllegalArgumentException("Sponge bootloader requires IgnisSpongePlugin host");
         }
-        return plugin.platformAdapter();
+        return new SpongePlatformAdapter(plugin, plugin.container(), plugin.game(), plugin.game().eventManager());
     }
 
     private static boolean hasSpongePluginMarker(Object host) {
