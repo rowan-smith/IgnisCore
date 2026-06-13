@@ -68,6 +68,10 @@ All platforms use `PlatformBootloaderLoader` (`common`) to identify server softw
 
 **SpongeVanilla:** 1.20.x (SpongeAPI 8.5.x), 1.21.x (SpongeAPI 12.x), or 26.1.x (SpongeAPI 19.x) — Java 25
 
+## Persistence note
+
+Placed custom blocks are stored in `placed-blocks.json`. Legacy `placed-blocks.yml` files are migrated automatically on first load.
+
 ## Extension authoring
 
 See **[EXTENSIONS.md](EXTENSIONS.md)** for manifest/config YAML, block/item lifecycles, semver `api-version`, and testing patterns.
