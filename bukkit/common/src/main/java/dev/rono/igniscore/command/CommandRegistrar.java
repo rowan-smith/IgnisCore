@@ -12,6 +12,6 @@ public class CommandRegistrar {
     }
 
     public void register(String name, PluginCommandHandler handler) {
-        platformAdapter.registerCommand(name, handler);
+        platformAdapter.registerCommand(IgnisCommands.IGNIS, handler);
     }
 }

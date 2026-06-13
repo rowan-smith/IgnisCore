@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public final class PaperBasicCommandAdapter implements BasicCommand {
     private static final Command NO_OP_COMMAND = new Command("ignis") {
@@ -22,28 +23,39 @@ public final class PaperBasicCommandAdapter implements BasicCommand {
         }
     };
 
-    private final PluginCommandHandler handler;
+    private final AtomicReference<PluginCommandHandler> handler = new AtomicReference<>();
     private final String label;
     private final String permission;
 
-    public PaperBasicCommandAdapter(PluginCommandHandler handler, String label, String permission) {
-        this.handler = handler;
+    public PaperBasicCommandAdapter(String label, String permission) {
         this.label = label;
         this.permission = permission;
     }
 
+    public void bind(PluginCommandHandler handler) {
+        this.handler.set(handler);
+    }
+
     @Override
     public void execute(CommandSourceStack stack, String[] args) {
-        handler.onCommand(stack.getSender(), NO_OP_COMMAND, label, args);
+        requireHandler().onCommand(stack.getSender(), NO_OP_COMMAND, label, args);
     }
 
     @Override
     public Collection<String> suggest(CommandSourceStack stack, String[] args) {
-        return handler.onTabComplete(stack.getSender(), NO_OP_COMMAND, label, args);
+        return requireHandler().onTabComplete(stack.getSender(), NO_OP_COMMAND, label, args);
     }
 
     @Override
     public String permission() {
         return permission;
+    }
+
+    private PluginCommandHandler requireHandler() {
+        PluginCommandHandler current = handler.get();
+        if (current == null) {
+            throw new IllegalStateException("IgnisCore command handler is not ready yet");
+        }
+        return current;
     }
 }
