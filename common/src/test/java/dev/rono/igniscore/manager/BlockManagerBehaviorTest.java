@@ -3,7 +3,6 @@ package dev.rono.igniscore.manager;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
-import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
@@ -14,6 +13,7 @@ import dev.rono.igniscore.strategies.DefaultExplosionStrategy;
 import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.testsupport.CommonTestSupport;
 import net.kyori.adventure.text.Component;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -58,6 +58,13 @@ class BlockManagerBehaviorTest {
                 IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"),
                 new DefaultExplosionStrategy(ctx.context().getExtensionSupport()));
         blockManager.loadFromExtensions(List.of(CommonTestSupport.loadedBlock(definition)));
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (persistence != null) {
+            persistence.shutdown();
+        }
     }
 
     @Test

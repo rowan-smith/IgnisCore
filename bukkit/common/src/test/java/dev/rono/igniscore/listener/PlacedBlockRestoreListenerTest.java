@@ -10,6 +10,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockbukkit.mockbukkit.scheduler.BukkitSchedulerMock;
@@ -32,6 +33,13 @@ class PlacedBlockRestoreListenerTest extends MockBukkitTestBase {
                 blockManager,
                 persistenceService,
                 PerformanceSettings.fromValues(1, 32, 3));
+    }
+
+    @AfterEach
+    void tearDownPersistence() {
+        if (persistenceService != null) {
+            persistenceService.shutdown();
+        }
     }
 
     @Test

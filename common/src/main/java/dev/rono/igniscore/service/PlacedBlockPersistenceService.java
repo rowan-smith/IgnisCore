@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 @Singleton
-public class PlacedBlockPersistenceService {
+public class PlacedBlockPersistenceService implements AutoCloseable {
     private static final Type INDEX_TYPE = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
 
     private final IgnisRuntimeHost host;
@@ -42,6 +42,7 @@ public class PlacedBlockPersistenceService {
         return thread;
     });
     private final AtomicBoolean saveDirty = new AtomicBoolean();
+    private volatile boolean closed;
 
     @Inject
     public PlacedBlockPersistenceService(IgnisRuntimeHost host) {
@@ -124,6 +125,10 @@ public class PlacedBlockPersistenceService {
     }
 
     public void shutdown() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         flush();
         saveExecutor.shutdown();
         try {
@@ -134,6 +139,11 @@ public class PlacedBlockPersistenceService {
             saveExecutor.shutdownNow();
             Thread.currentThread().interrupt();
         }
+    }
+
+    @Override
+    public void close() {
+        shutdown();
     }
 
     private void loadIndex() {
@@ -222,12 +232,21 @@ public class PlacedBlockPersistenceService {
     }
 
     private void saveIndexAsync() {
+        if (closed) {
+            return;
+        }
         saveDirty.set(true);
         saveExecutor.execute(this::drainSaves);
     }
 
     private void drainSaves() {
+        if (closed) {
+            return;
+        }
         while (saveDirty.getAndSet(false)) {
+            if (closed) {
+                return;
+            }
             writeSnapshot(snapshotWorldIndexes());
         }
     }

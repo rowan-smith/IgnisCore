@@ -19,49 +19,54 @@ class PlacedBlockPersistenceServiceTest {
 
     @Test
     void recordsAndRemovesPlacements() {
-        PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(CommonTestSupport.runtimeHost(tempDir));
-        IgnisLocation location = new IgnisLocation("world", 10, 64, -3);
+        try (PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(
+                CommonTestSupport.runtimeHost(tempDir))) {
+            IgnisLocation location = new IgnisLocation("world", 10, 64, -3);
 
-        service.recordPlacement(location, "nuke");
-        assertEquals("nuke", service.entriesInChunk("world", 0, -1).get("10,64,-3"));
+            service.recordPlacement(location, "nuke");
+            assertEquals("nuke", service.entriesInChunk("world", 0, -1).get("10,64,-3"));
 
-        service.removePlacement(location);
-        assertTrue(service.entriesInChunk("world", 0, -1).isEmpty());
+            service.removePlacement(location);
+            assertTrue(service.entriesInChunk("world", 0, -1).isEmpty());
+        }
     }
 
     @Test
     void entriesInChunkFiltersByChunkBounds() {
-        PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(CommonTestSupport.runtimeHost(tempDir));
+        try (PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(
+                CommonTestSupport.runtimeHost(tempDir))) {
+            service.recordPlacement(new IgnisLocation("world", 0, 64, 0), "a");
+            service.recordPlacement(new IgnisLocation("world", 15, 64, 15), "b");
+            service.recordPlacement(new IgnisLocation("world", 16, 64, 0), "c");
 
-        service.recordPlacement(new IgnisLocation("world", 0, 64, 0), "a");
-        service.recordPlacement(new IgnisLocation("world", 15, 64, 15), "b");
-        service.recordPlacement(new IgnisLocation("world", 16, 64, 0), "c");
-
-        assertEquals(2, service.entriesInChunk("world", 0, 0).size());
-        assertFalse(service.entriesInChunk("world", 0, 0).containsKey("16,64,0"));
-        assertEquals("c", service.entriesInChunk("world", 1, 0).get("16,64,0"));
+            assertEquals(2, service.entriesInChunk("world", 0, 0).size());
+            assertFalse(service.entriesInChunk("world", 0, 0).containsKey("16,64,0"));
+            assertEquals("c", service.entriesInChunk("world", 1, 0).get("16,64,0"));
+        }
     }
 
     @Test
     void chunkKeysForWorldReturnsIndexedChunks() {
-        PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(CommonTestSupport.runtimeHost(tempDir));
+        try (PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(
+                CommonTestSupport.runtimeHost(tempDir))) {
+            service.recordPlacement(new IgnisLocation("world", 0, 64, 0), "a");
+            service.recordPlacement(new IgnisLocation("world", 16, 64, 0), "b");
 
-        service.recordPlacement(new IgnisLocation("world", 0, 64, 0), "a");
-        service.recordPlacement(new IgnisLocation("world", 16, 64, 0), "b");
-
-        assertEquals(Set.of("0,0", "1,0"), service.chunkKeysForWorld("world"));
-        assertTrue(service.chunkKeysForWorld("other").isEmpty());
+            assertEquals(Set.of("0,0", "1,0"), service.chunkKeysForWorld("world"));
+            assertTrue(service.chunkKeysForWorld("other").isEmpty());
+        }
     }
 
     @Test
     void flushPersistsAsyncWritesToDisk() throws Exception {
-        PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(CommonTestSupport.runtimeHost(tempDir));
-        service.recordPlacement(new IgnisLocation("world", 1, 64, 2), "nuke");
-        service.flush();
+        try (PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(
+                CommonTestSupport.runtimeHost(tempDir))) {
+            service.recordPlacement(new IgnisLocation("world", 1, 64, 2), "nuke");
+            service.flush();
 
-        String persisted = Files.readString(tempDir.resolve("placed-blocks.json"));
-        assertTrue(persisted.contains("nuke"));
-        service.shutdown();
+            String persisted = Files.readString(tempDir.resolve("placed-blocks.json"));
+            assertTrue(persisted.contains("nuke"));
+        }
     }
 
     @Test
@@ -72,11 +77,12 @@ class PlacedBlockPersistenceServiceTest {
                   1,2,3: signal-charge
                 """);
 
-        PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(CommonTestSupport.runtimeHost(tempDir));
-
-        assertEquals("signal-charge", service.entriesInChunk("world", 0, 0).get("1,2,3"));
-        assertTrue(Files.isRegularFile(tempDir.resolve("placed-blocks.json")));
-        assertFalse(Files.isRegularFile(yaml));
-        assertTrue(Files.isRegularFile(tempDir.resolve("placed-blocks.yml.migrated")));
+        try (PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(
+                CommonTestSupport.runtimeHost(tempDir))) {
+            assertEquals("signal-charge", service.entriesInChunk("world", 0, 0).get("1,2,3"));
+            assertTrue(Files.isRegularFile(tempDir.resolve("placed-blocks.json")));
+            assertFalse(Files.isRegularFile(yaml));
+            assertTrue(Files.isRegularFile(tempDir.resolve("placed-blocks.yml.migrated")));
+        }
     }
 }
