@@ -11,21 +11,39 @@
   </parent>
 
   <groupId>dev.rono.sponge</groupId>
-  <artifactId>v19.0.0</artifactId>
+  <artifactId>common</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore-sponge-v19.0.0</name>
-  <description>SpongeAPI 19.x entrypoint and bootloader for Minecraft 26.1.x</description>
+  <name>igniscore-sponge-common</name>
+  <description>Shared Sponge runtime for all SpongeAPI version lines</description>
 
   <dependencies>
     <dependency>
-      <groupId>dev.rono.sponge</groupId>
+      <groupId>dev.rono</groupId>
+      <artifactId>api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
       <artifactId>common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
     </dependency>
     <dependency>
       <groupId>org.spongepowered</groupId>
       <artifactId>spongeapi</artifactId>
-      <version>${sponge.api.version.19.0}</version>
+      <version>12.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-minimessage</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -34,13 +52,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>spongepowered-public</id>
-      <url>https://repo.spongepowered.org/repository/maven-public/</url>
-    </repository>
-  </repositories>
 
   <build>
     <plugins>

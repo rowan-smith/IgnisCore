@@ -5,7 +5,7 @@ import dev.rono.igniscore.api.port.PlatformBootloader;
 import dev.rono.igniscore.api.port.PlatformType;
 import dev.rono.igniscore.bootstrap.SpongeBootloaderSupport;
 import dev.rono.igniscore.sponge.v1900.IgnisSpongePlugin;
-import dev.rono.igniscore.sponge.v1900.adapter.SpongePlatformAdapter;
+import dev.rono.igniscore.sponge.adapter.SpongePlatformAdapter;
 
 public final class SpongeV1900Bootloader implements PlatformBootloader {
 

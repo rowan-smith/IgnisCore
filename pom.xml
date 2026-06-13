@@ -18,7 +18,6 @@
     <module>bukkit</module>
     <module>sponge</module>
     <module>bootstrap</module>
-    <module>archetypes</module>
   </modules>
 
   <properties>
@@ -125,38 +124,23 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.rono.bukkit.common</groupId>
-        <artifactId>v1.21.x</artifactId>
+        <groupId>dev.rono.bukkit</groupId>
+        <artifactId>common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.rono.bukkit.spigot</groupId>
-        <artifactId>v1.21.x</artifactId>
+        <groupId>dev.rono.bukkit</groupId>
+        <artifactId>spigot</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.rono.bukkit.paper</groupId>
-        <artifactId>v1.21.x</artifactId>
+        <groupId>dev.rono.bukkit</groupId>
+        <artifactId>paper</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.rono.bukkit.spigot</groupId>
-        <artifactId>v1.20.x</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>dev.rono.bukkit.paper</groupId>
-        <artifactId>v1.20.x</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>dev.rono.bukkit.spigot</groupId>
-        <artifactId>v26.1.x</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>dev.rono.bukkit.paper</groupId>
-        <artifactId>v26.1.x</artifactId>
+        <groupId>dev.rono.sponge</groupId>
+        <artifactId>common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
