@@ -31,9 +31,12 @@ public class SpongeIgnisModule extends AbstractModule {
     private final IgnisSpongePlugin plugin;
     private final SpongePlatformAdapter platformAdapter;
 
-    public SpongeIgnisModule(IgnisSpongePlugin plugin, SpongePlatformAdapter platformAdapter) {
+    public SpongeIgnisModule(IgnisSpongePlugin plugin, PlatformAdapter platformAdapter) {
         this.plugin = plugin;
-        this.platformAdapter = platformAdapter;
+        if (!(platformAdapter instanceof SpongePlatformAdapter spongeAdapter)) {
+            throw new IllegalArgumentException("Sponge hosts require SpongePlatformAdapter");
+        }
+        this.platformAdapter = spongeAdapter;
     }
 
     @Override

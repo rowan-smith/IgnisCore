@@ -8,6 +8,7 @@ import com.google.inject.Singleton;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.util.Locations;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -26,6 +27,7 @@ public class PlacedBlockPersistenceService {
 
     private final IgnisRuntimeHost host;
     private final Path indexFile;
+    private final Path legacyYamlFile;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Map<String, Map<String, String>> worldIndexes = new ConcurrentHashMap<>();
 
@@ -33,6 +35,7 @@ public class PlacedBlockPersistenceService {
     public PlacedBlockPersistenceService(IgnisRuntimeHost host) {
         this.host = host;
         this.indexFile = host.getDataDirectory().resolve("placed-blocks.json");
+        this.legacyYamlFile = host.getDataDirectory().resolve("placed-blocks.yml");
         loadIndex();
     }
 
@@ -85,22 +88,67 @@ public class PlacedBlockPersistenceService {
 
     private void loadIndex() {
         worldIndexes.clear();
-        if (!Files.isRegularFile(indexFile)) {
+        if (Files.isRegularFile(indexFile)) {
+            loadJsonIndex();
             return;
         }
+        if (Files.isRegularFile(legacyYamlFile)) {
+            loadLegacyYamlIndex();
+        }
+    }
 
+    private void loadJsonIndex() {
         try (Reader reader = Files.newBufferedReader(indexFile)) {
             Map<String, Map<String, String>> loaded = gson.fromJson(reader, INDEX_TYPE);
             if (loaded == null) {
                 return;
             }
-            for (Map.Entry<String, Map<String, String>> worldEntry : loaded.entrySet()) {
-                if (worldEntry.getValue() != null && !worldEntry.getValue().isEmpty()) {
-                    worldIndexes.put(worldEntry.getKey(), new ConcurrentHashMap<>(worldEntry.getValue()));
-                }
-            }
+            mergeLoadedIndex(loaded);
         } catch (IOException error) {
             host.getLogger().log(Level.WARNING, "Failed to load placed block index", error);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void loadLegacyYamlIndex() {
+        try (Reader reader = Files.newBufferedReader(legacyYamlFile)) {
+            Object loaded = new Yaml().load(reader);
+            if (!(loaded instanceof Map<?, ?> root)) {
+                return;
+            }
+            Map<String, Map<String, String>> converted = new HashMap<>();
+            for (Map.Entry<?, ?> worldEntry : root.entrySet()) {
+                if (worldEntry.getKey() == null || !(worldEntry.getValue() instanceof Map<?, ?> worldIndex)) {
+                    continue;
+                }
+                Map<String, String> entries = new HashMap<>();
+                for (Map.Entry<?, ?> blockEntry : worldIndex.entrySet()) {
+                    if (blockEntry.getKey() != null && blockEntry.getValue() != null) {
+                        entries.put(String.valueOf(blockEntry.getKey()), String.valueOf(blockEntry.getValue()));
+                    }
+                }
+                if (!entries.isEmpty()) {
+                    converted.put(String.valueOf(worldEntry.getKey()), entries);
+                }
+            }
+            mergeLoadedIndex(converted);
+            saveIndex();
+            try {
+                Files.move(legacyYamlFile, legacyYamlFile.resolveSibling("placed-blocks.yml.migrated"));
+            } catch (IOException error) {
+                host.getLogger().log(Level.WARNING, "Migrated placed blocks to JSON but failed to rename legacy YAML file", error);
+            }
+            host.getLogger().info("Migrated placed block index from YAML to JSON");
+        } catch (IOException error) {
+            host.getLogger().log(Level.WARNING, "Failed to load legacy placed block YAML index", error);
+        }
+    }
+
+    private void mergeLoadedIndex(Map<String, Map<String, String>> loaded) {
+        for (Map.Entry<String, Map<String, String>> worldEntry : loaded.entrySet()) {
+            if (worldEntry.getValue() != null && !worldEntry.getValue().isEmpty()) {
+                worldIndexes.put(worldEntry.getKey(), new ConcurrentHashMap<>(worldEntry.getValue()));
+            }
         }
     }
 

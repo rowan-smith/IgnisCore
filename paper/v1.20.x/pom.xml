@@ -19,11 +19,11 @@
   <dependencies>
     <dependency>
       <groupId>dev.rono</groupId>
-      <artifactId>paper-v1-21-x</artifactId>
+      <artifactId>bukkit-common-v1-21-x</artifactId>
     </dependency>
     <dependency>
       <groupId>dev.rono</groupId>
-      <artifactId>spigot-v1-21-x</artifactId>
+      <artifactId>paper-v1-21-x</artifactId>
     </dependency>
     <dependency>
       <groupId>io.papermc.paper</groupId>

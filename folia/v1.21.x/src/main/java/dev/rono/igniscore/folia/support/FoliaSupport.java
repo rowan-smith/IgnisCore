@@ -1,4 +1,4 @@
-package dev.rono.igniscore.spigot.support;
+package dev.rono.igniscore.folia.support;
 
 public final class FoliaSupport {
     private static final String FOLIA_MARKER = "io.papermc.paper.threadedregions.RegionizedServer";

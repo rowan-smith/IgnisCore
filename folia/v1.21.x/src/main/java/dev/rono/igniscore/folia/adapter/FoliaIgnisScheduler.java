@@ -1,8 +1,9 @@
-package dev.rono.igniscore.spigot.adapter;
+package dev.rono.igniscore.folia.adapter;
 
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.port.IgnisTask;
+import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;

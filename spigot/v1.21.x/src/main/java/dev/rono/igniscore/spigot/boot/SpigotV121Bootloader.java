@@ -3,7 +3,7 @@ package dev.rono.igniscore.spigot.boot;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.api.port.PlatformBootloader;
 import dev.rono.igniscore.api.port.PlatformType;
-import dev.rono.igniscore.spigot.adapter.SpigotPlatformAdapter;
+import dev.rono.igniscore.spigot.adapter.BukkitPlatformAdapter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SpigotV121Bootloader implements PlatformBootloader {
@@ -35,6 +35,6 @@ public final class SpigotV121Bootloader implements PlatformBootloader {
 
     @Override
     public PlatformAdapter boot(Object host) {
-        return new SpigotPlatformAdapter((JavaPlugin) host);
+        return new BukkitPlatformAdapter((JavaPlugin) host);
     }
 }

@@ -14,7 +14,7 @@
   <packaging>jar</packaging>
 
   <name>igniscore-bootstrap</name>
-  <description>Deployable plugin JAR with hooked platform bootloaders</description>
+  <description>Unified deployable plugin packaging for Bukkit-family and Sponge server software</description>
 
   <dependencies>
     <dependency>
@@ -24,6 +24,10 @@
     <dependency>
       <groupId>dev.rono</groupId>
       <artifactId>common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>bukkit-common-v1-21-x</artifactId>
     </dependency>
     <dependency>
       <groupId>dev.rono</groupId>
@@ -46,12 +50,21 @@
       <artifactId>folia-v1-21-x</artifactId>
     </dependency>
     <dependency>
+      <groupId>dev.rono</groupId>
+      <artifactId>sponge-v12-0-0</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
     </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spongepowered</groupId>
+      <artifactId>spongeapi</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -71,6 +84,7 @@
         <version>3.6.1</version>
         <executions>
           <execution>
+            <id>shade-bukkit</id>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
@@ -80,12 +94,71 @@
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
               </transformers>
+              <artifactSet>
+                <excludes>
+                  <exclude>dev.rono:sponge-v12-0-0</exclude>
+                </excludes>
+              </artifactSet>
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
                   <excludes>
                     <exclude>module-info.class</exclude>
                     <exclude>META-INF/versions/**/module-info.class</exclude>
+                    <exclude>META-INF/sponge_plugins.json</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <relocations>
+                <relocation>
+                  <pattern>com.google.inject</pattern>
+                  <shadedPattern>dev.rono.igniscore.libs.com.google.inject</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.google.common</pattern>
+                  <shadedPattern>dev.rono.igniscore.libs.com.google.common</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>jakarta.inject</pattern>
+                  <shadedPattern>dev.rono.igniscore.libs.jakarta.inject</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+          <execution>
+            <id>shade-sponge</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>igniscore-sponge-${project.version}</finalName>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+              <artifactSet>
+                <includes>
+                  <include>dev.rono:api</include>
+                  <include>dev.rono:common</include>
+                  <include>dev.rono:sponge-v12-0-0</include>
+                  <include>com.google.inject:guice</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>${project.groupId}:${project.artifactId}</artifact>
+                  <excludes>
+                    <exclude>**</exclude>
+                  </excludes>
+                </filter>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>module-info.class</exclude>
+                    <exclude>META-INF/versions/**/module-info.class</exclude>
+                    <exclude>plugin.yml</exclude>
                   </excludes>
                 </filter>
               </filters>
@@ -113,7 +186,7 @@
         <version>3.1.0</version>
         <executions>
           <execution>
-            <id>bundle-extensions</id>
+            <id>bundle-extensions-bukkit</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>run</goal>
@@ -134,6 +207,34 @@
                     <exclude name="*/target/original-*.jar"/>
                   </fileset>
                 </copy>
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bundle-extensions-sponge</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <mkdir dir="${project.build.directory}/sponge-staging/bundled/blocks"/>
+                <copy todir="${project.build.directory}/sponge-staging/bundled/blocks" flatten="true">
+                  <fileset dir="${project.basedir}/../extensions/blocks">
+                    <include name="*/target/*.jar"/>
+                    <exclude name="*/target/original-*.jar"/>
+                  </fileset>
+                </copy>
+                <mkdir dir="${project.build.directory}/sponge-staging/bundled/items"/>
+                <copy todir="${project.build.directory}/sponge-staging/bundled/items" flatten="true">
+                  <fileset dir="${project.basedir}/../extensions/items">
+                    <include name="*/target/*.jar"/>
+                    <exclude name="*/target/original-*.jar"/>
+                  </fileset>
+                </copy>
+                <zip destfile="${project.build.directory}/igniscore-sponge-${project.version}.jar" update="true">
+                  <fileset dir="${project.build.directory}/sponge-staging"/>
+                </zip>
               </target>
             </configuration>
           </execution>

@@ -35,7 +35,7 @@ import dev.rono.igniscore.service.IgnisEffectServiceImpl;
 import dev.rono.igniscore.service.ProtocolService;
 import dev.rono.igniscore.platform.PlatformHooks;
 import dev.rono.igniscore.service.VisualEffectService;
-import dev.rono.igniscore.spigot.adapter.SpigotPlatformAdapter;
+import dev.rono.igniscore.spigot.adapter.BukkitPlatformAdapter;
 import dev.rono.igniscore.spigot.platform.SpigotPlatformIntegration;
 import dev.rono.igniscore.spigot.renderer.BukkitBlockVisualRenderer;
 import dev.rono.igniscore.spigot.runtime.SpigotRuntimeHost;
@@ -53,15 +53,15 @@ public class IgnisCoreModule extends AbstractModule {
     public IgnisCoreModule(JavaPlugin plugin, PlatformAdapter platformAdapter) {
         this.plugin = plugin;
         this.platformAdapter = platformAdapter;
-        if (!(platformAdapter instanceof SpigotPlatformAdapter spigotAdapter)) {
-            throw new IllegalArgumentException("Bukkit-family hosts require SpigotPlatformAdapter");
+        if (!(platformAdapter instanceof BukkitPlatformAdapter bukkitAdapter)) {
+            throw new IllegalArgumentException("Bukkit-family hosts require BukkitPlatformAdapter");
         }
-        this.platformHooks = spigotAdapter.legacyHooks();
+        this.platformHooks = bukkitAdapter.legacyHooks();
         this.runtimeHost = new SpigotRuntimeHost(plugin);
     }
 
     public IgnisCoreModule(Main plugin, PlatformHooks platformHooks) {
-        this(plugin, new SpigotPlatformAdapter(plugin, platformHooks));
+        this(plugin, new BukkitPlatformAdapter(plugin, platformHooks));
     }
 
     @Override

@@ -30,17 +30,17 @@ import java.util.Locale;
 import java.util.OptionalInt;
 import java.util.logging.Logger;
 
-public class SpigotPlatformAdapter implements PlatformAdapter {
+public class BukkitPlatformAdapter implements PlatformAdapter {
     private final JavaPlugin plugin;
     private final IgnisScheduler scheduler;
     private final PlatformHooks platformHooks;
     private final BukkitAudiences audiences;
 
-    public SpigotPlatformAdapter(JavaPlugin plugin) {
+    public BukkitPlatformAdapter(JavaPlugin plugin) {
         this(plugin, PlatformHookLoader.load(plugin));
     }
 
-    public SpigotPlatformAdapter(JavaPlugin plugin, PlatformHooks platformHooks) {
+    public BukkitPlatformAdapter(JavaPlugin plugin, PlatformHooks platformHooks) {
         this.plugin = plugin;
         this.scheduler = BukkitSchedulerFactory.create(plugin);
         this.platformHooks = platformHooks;

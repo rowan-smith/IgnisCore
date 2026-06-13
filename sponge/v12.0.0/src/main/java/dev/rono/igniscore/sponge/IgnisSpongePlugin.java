@@ -2,10 +2,10 @@ package dev.rono.igniscore.sponge;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import dev.rono.igniscore.bootstrap.PlatformBootloaderLoader;
 import dev.rono.igniscore.api.IgnisCoreAPI;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.core.IgnisCoreFacadeImpl;
-import dev.rono.igniscore.sponge.adapter.SpongePlatformAdapter;
 import dev.rono.igniscore.sponge.command.SpongeIgnisCommand;
 import dev.rono.igniscore.sponge.support.SpongeRuntimeHolder;
 import org.spongepowered.api.Game;
@@ -28,7 +28,7 @@ public final class IgnisSpongePlugin {
 
     private Injector injector;
     private SpongeIgnisApplication application;
-    private SpongePlatformAdapter platformAdapter;
+    private PlatformAdapter platformAdapter;
 
     @Inject
     public IgnisSpongePlugin(PluginContainer container, Game game) {
@@ -48,7 +48,7 @@ public final class IgnisSpongePlugin {
     @Listener
     public void onStarted(StartedEngineEvent<Server> event) {
         SpongeRuntimeHolder.bind(event.engine());
-        platformAdapter = new SpongePlatformAdapter(this, container, game, game.eventManager());
+        platformAdapter = PlatformBootloaderLoader.boot(this);
         injector = Guice.createInjector(new SpongeIgnisModule(this, platformAdapter));
         application = injector.getInstance(SpongeIgnisApplication.class);
 
@@ -75,5 +75,13 @@ public final class IgnisSpongePlugin {
 
     public PlatformAdapter platformAdapter() {
         return platformAdapter;
+    }
+
+    public PluginContainer container() {
+        return container;
+    }
+
+    public Game game() {
+        return game;
     }
 }
