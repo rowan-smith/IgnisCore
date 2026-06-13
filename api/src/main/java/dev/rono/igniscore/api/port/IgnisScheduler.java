@@ -1,7 +1,7 @@
 package dev.rono.igniscore.api.port;
 
 /**
- * Platform-neutral scheduler. Location-scoped tasks support region-threaded servers (Folia).
+ * Platform-neutral scheduler for delayed and repeating tasks.
  */
 public interface IgnisScheduler {
 

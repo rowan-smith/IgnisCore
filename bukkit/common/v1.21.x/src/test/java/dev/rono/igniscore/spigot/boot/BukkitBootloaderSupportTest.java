@@ -12,7 +12,6 @@ class BukkitBootloaderSupportTest {
         assertFalse(BukkitBootloaderSupport.isJavaPluginHost(new Object()));
         assertFalse(BukkitBootloaderSupport.acceptsHost(new Object(), PlatformType.SPIGOT, 1, 21));
         assertFalse(BukkitBootloaderSupport.acceptsHost(new Object(), PlatformType.PAPER, 1, 21));
-        assertFalse(BukkitBootloaderSupport.acceptsHost(new Object(), PlatformType.FOLIA, 1, 21));
     }
 
     @Test

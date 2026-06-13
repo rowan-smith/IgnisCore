@@ -46,10 +46,6 @@
       <artifactId>v1.20.x</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono.bukkit.folia</groupId>
-      <artifactId>v1.21.x</artifactId>
-    </dependency>
-    <dependency>
       <groupId>dev.rono.sponge</groupId>
       <artifactId>v12.0.0</artifactId>
     </dependency>
