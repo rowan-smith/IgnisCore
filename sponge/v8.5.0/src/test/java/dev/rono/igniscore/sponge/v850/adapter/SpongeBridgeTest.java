@@ -1,8 +1,8 @@
-package dev.rono.igniscore.sponge.adapter;
+package dev.rono.igniscore.sponge.v850.adapter;
 
 import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.port.PlatformType;
-import dev.rono.igniscore.sponge.boot.SpongeV1200Bootloader;
+import dev.rono.igniscore.sponge.v850.boot.SpongeV850Bootloader;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.Test;
 import org.spongepowered.api.ResourceKey;
@@ -66,17 +66,17 @@ final class SpongeBridgeTest {
 
     @Test
     void bootloaderMetadata() {
-        SpongeV1200Bootloader bootloader = new SpongeV1200Bootloader();
+        SpongeV850Bootloader bootloader = new SpongeV850Bootloader();
 
-        assertEquals("sponge-v12.0.0", bootloader.id());
+        assertEquals("sponge-v8.5.0", bootloader.id());
         assertEquals(PlatformType.SPONGE, bootloader.platformType());
-        assertEquals("1.21.x", bootloader.minecraftVersionRange());
+        assertEquals("1.20.x", bootloader.minecraftVersionRange());
         assertEquals(200, bootloader.priority());
     }
 
     @Test
     void bootloaderRejectsNonSpongeHosts() {
-        SpongeV1200Bootloader bootloader = new SpongeV1200Bootloader();
+        SpongeV850Bootloader bootloader = new SpongeV850Bootloader();
         assertFalse(bootloader.canBoot(new MarkedHost()));
         assertFalse(bootloader.canBoot("not-a-plugin-host"));
     }

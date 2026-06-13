@@ -46,8 +46,16 @@
       <artifactId>v1.20.x</artifactId>
     </dependency>
     <dependency>
+      <groupId>dev.rono.bukkit.folia</groupId>
+      <artifactId>v1.21.x</artifactId>
+    </dependency>
+    <dependency>
       <groupId>dev.rono.sponge</groupId>
       <artifactId>v12.0.0</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono.sponge</groupId>
+      <artifactId>v8.5.0</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>
@@ -95,6 +103,7 @@
                   <excludes>
                     <exclude>module-info.class</exclude>
                     <exclude>META-INF/versions/**/module-info.class</exclude>
+                    <exclude>META-INF/sponge_plugins.json</exclude>
                   </excludes>
                 </filter>
               </filters>
