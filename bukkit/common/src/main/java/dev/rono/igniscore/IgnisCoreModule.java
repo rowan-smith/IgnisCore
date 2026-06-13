@@ -22,6 +22,7 @@ import dev.rono.igniscore.listener.PlacedBlockRestoreListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.module.IgnisCommonModule;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
+import dev.rono.igniscore.service.ExtensionReloadService;
 import dev.rono.igniscore.service.BlockItemFactory;
 import dev.rono.igniscore.service.BlockItemIdentifier;
 import dev.rono.igniscore.service.ConfiguredEffectService;
@@ -100,6 +101,7 @@ public class IgnisCoreModule extends AbstractModule {
         bind(IgnisEffectService.class).to(IgnisEffectServiceImpl.class).in(Scopes.SINGLETON);
         bind(VisualEffectService.class).in(Scopes.SINGLETON);
         bind(ResourcePackService.class).in(Scopes.SINGLETON);
+        bind(ExtensionReloadService.class).in(Scopes.SINGLETON);
         bind(BlockItemFactory.class).in(Scopes.SINGLETON);
         bind(ItemFactory.class).in(Scopes.SINGLETON);
         bind(BlockItemIdentifier.class).in(Scopes.SINGLETON);

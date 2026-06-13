@@ -21,9 +21,19 @@ public class BlockExtensionLoader {
 
     public List<LoadedExtension<BlockDefinition>> loadAll() {
         unloadAll();
-        loadedExtensions.addAll(engine.loadBlocks());
+        List<LoadedExtension<BlockDefinition>> fresh = loadFresh();
+        commitLoaded(fresh);
+        return getLoadedExtensions();
+    }
+
+    public List<LoadedExtension<BlockDefinition>> loadFresh() {
+        return List.copyOf(engine.loadBlocks());
+    }
+
+    public void commitLoaded(List<LoadedExtension<BlockDefinition>> extensions) {
+        loadedExtensions.clear();
+        loadedExtensions.addAll(extensions);
         resourceProvider.setBlockExtensions(loadedExtensions);
-        return List.copyOf(loadedExtensions);
     }
 
     public void unloadAll() {

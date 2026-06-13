@@ -169,18 +169,40 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     }
 
     public void cleanup() {
+        stopActiveBlocks();
+        for (Object display : blockVisuals.values()) {
+            visualRenderer.removeStaticDisplay(display);
+        }
+        blockVisuals.clear();
+        placedBlocks.clear();
+    }
+
+    public void stopActiveBlocks() {
         for (RuntimeBlockInstance instance : runtimeBlockService.getActiveInstances()) {
             if (instance.getTask() != null) {
                 instance.getTask().cancel();
             }
             visualRenderer.removeDisplay(instance);
         }
+        runtimeBlockService.clearAll();
+    }
 
-        for (Object display : blockVisuals.values()) {
-            visualRenderer.removeStaticDisplay(display);
+    public void refreshPlacedBlockVisuals() {
+        for (Map.Entry<IgnisLocation, String> entry : Map.copyOf(placedBlocks).entrySet()) {
+            IgnisLocation location = entry.getKey();
+            Object existing = blockVisuals.remove(location);
+            if (existing != null) {
+                visualRenderer.removeStaticDisplay(existing);
+            }
+
+            BlockDefinition type = blockTypes.get(entry.getValue());
+            if (type == null) {
+                continue;
+            }
+
+            Object display = visualRenderer.spawnStaticDisplay(location, type);
+            blockVisuals.put(location, display);
         }
-        blockVisuals.clear();
-        placedBlocks.clear();
     }
 
     private static IgnisLocation blockKey(IgnisLocation location) {

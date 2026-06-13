@@ -7,6 +7,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,6 +40,17 @@ class PlacedBlockPersistenceServiceTest {
         assertEquals(2, service.entriesInChunk("world", 0, 0).size());
         assertFalse(service.entriesInChunk("world", 0, 0).containsKey("16,64,0"));
         assertEquals("c", service.entriesInChunk("world", 1, 0).get("16,64,0"));
+    }
+
+    @Test
+    void chunkKeysForWorldReturnsIndexedChunks() {
+        PlacedBlockPersistenceService service = new PlacedBlockPersistenceService(CommonTestSupport.runtimeHost(tempDir));
+
+        service.recordPlacement(new IgnisLocation("world", 0, 64, 0), "a");
+        service.recordPlacement(new IgnisLocation("world", 16, 64, 0), "b");
+
+        assertEquals(Set.of("0,0", "1,0"), service.chunkKeysForWorld("world"));
+        assertTrue(service.chunkKeysForWorld("other").isEmpty());
     }
 
     @Test

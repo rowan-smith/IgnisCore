@@ -43,7 +43,7 @@ public class SpigotPlatformIntegration implements IgnisPlatformIntegration {
         for (Listener listener : listeners) {
             plugin.getServer().getPluginManager().registerEvents(listener, plugin);
         }
-        placedBlockRestoreListener.restoreLoadedChunks();
+        plugin.getServer().getScheduler().runTask(plugin, placedBlockRestoreListener::restoreLoadedChunks);
         commandRegistrar.register("ignis", ignisCommand);
     }
 

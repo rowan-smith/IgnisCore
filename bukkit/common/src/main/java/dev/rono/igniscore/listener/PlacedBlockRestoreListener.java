@@ -7,6 +7,7 @@ import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,8 +32,21 @@ public class PlacedBlockRestoreListener implements Listener {
     }
 
     public void restoreLoadedChunks() {
-        for (Chunk chunk : eventWorldLoadedChunks()) {
-            restoreChunk(chunk);
+        for (World world : org.bukkit.Bukkit.getWorlds()) {
+            for (String chunkKey : persistenceService.chunkKeysForWorld(world.getName())) {
+                String[] parts = chunkKey.split(",");
+                if (parts.length != 2) {
+                    continue;
+                }
+                try {
+                    int chunkX = Integer.parseInt(parts[0]);
+                    int chunkZ = Integer.parseInt(parts[1]);
+                    if (world.isChunkLoaded(chunkX, chunkZ)) {
+                        restoreChunk(world.getChunkAt(chunkX, chunkZ));
+                    }
+                } catch (NumberFormatException ignored) {
+                }
+            }
         }
     }
 
@@ -76,12 +90,4 @@ public class PlacedBlockRestoreListener implements Listener {
         }
     }
 
-    private Chunk[] eventWorldLoadedChunks() {
-        return org.bukkit.Bukkit.getWorlds().stream()
-                .flatMap(world -> {
-                    Chunk[] chunks = world.getLoadedChunks();
-                    return java.util.Arrays.stream(chunks);
-                })
-                .toArray(Chunk[]::new);
-    }
 }

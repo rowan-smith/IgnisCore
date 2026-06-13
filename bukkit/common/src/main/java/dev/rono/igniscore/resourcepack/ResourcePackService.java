@@ -3,14 +3,21 @@ package dev.rono.igniscore.resourcepack;
 import com.google.inject.Inject;
 import dev.rono.igniscore.IgnisPluginContext;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ExtensionDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
+import dev.rono.igniscore.loader.BlockExtensionLoader;
+import dev.rono.igniscore.loader.ItemExtensionLoader;
+import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -18,52 +25,157 @@ public class ResourcePackService {
     private final IgnisPluginContext pluginContext;
     private final BlockManager blockManager;
     private final ItemManager itemManager;
+    private final BlockExtensionLoader blockExtensionLoader;
+    private final ItemExtensionLoader itemExtensionLoader;
     private final ResourcePackBuilder packBuilder;
     private final ResourcePackServer packServer;
     private final PlatformHooks platformHooks;
 
+    private final Object buildLock = new Object();
+    private volatile boolean buildInProgress;
+    private Runnable pendingOnSuccess;
+    private Consumer<IOException> pendingOnFailure;
     private String latestHash;
+    private String lastBuiltFingerprint;
 
     @Inject
     public ResourcePackService(IgnisPluginContext pluginContext,
                                BlockManager blockManager,
                                ItemManager itemManager,
+                               BlockExtensionLoader blockExtensionLoader,
+                               ItemExtensionLoader itemExtensionLoader,
                                ResourcePackBuilder packBuilder,
                                PlatformHooks platformHooks,
                                IgnisRuntimeHost runtimeHost) {
         this.pluginContext = pluginContext;
         this.blockManager = blockManager;
         this.itemManager = itemManager;
+        this.blockExtensionLoader = blockExtensionLoader;
+        this.itemExtensionLoader = itemExtensionLoader;
         this.packBuilder = packBuilder;
         this.platformHooks = platformHooks;
         this.packServer = new ResourcePackServer(runtimeHost);
     }
 
     public void buildAndRegister() throws IOException {
-        registerBuiltPack(packBuilder.buildPack(
-                blockManager.getBlockTypes(), itemManager.getItemTypes()));
+        Map<String, BlockDefinition> blocks = Map.copyOf(blockManager.getBlockTypes());
+        Map<String, ItemDefinition> items = Map.copyOf(itemManager.getItemTypes());
+        String fingerprint = computeFingerprint(blocks, items);
+        registerBuiltPack(packBuilder.buildPack(blocks, items));
+        lastBuiltFingerprint = fingerprint;
     }
 
     public void buildAndRegisterAsync(Runnable onSuccess, Consumer<IOException> onFailure) {
         Map<String, BlockDefinition> blocks = Map.copyOf(blockManager.getBlockTypes());
         Map<String, ItemDefinition> items = Map.copyOf(itemManager.getItemTypes());
-        var plugin = pluginContext.plugin();
+        String fingerprint = computeFingerprint(blocks, items);
 
+        synchronized (buildLock) {
+            if (fingerprint.equals(lastBuiltFingerprint) && latestHash != null) {
+                pluginContext.debug("Skipping resource pack rebuild; inputs unchanged.");
+                onSuccess.run();
+                return;
+            }
+            if (buildInProgress) {
+                pendingOnSuccess = onSuccess;
+                pendingOnFailure = onFailure;
+                return;
+            }
+            buildInProgress = true;
+        }
+
+        var plugin = pluginContext.plugin();
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 ResourcePackBuilder.PackResult result = packBuilder.buildPack(blocks, items);
-                plugin.getServer().getScheduler().runTask(plugin, () -> {
-                    try {
-                        registerBuiltPack(result);
-                        onSuccess.run();
-                    } catch (RuntimeException error) {
-                        onFailure.accept(new IOException(error.getMessage(), error));
-                    }
-                });
+                plugin.getServer().getScheduler().runTask(plugin, () -> finishAsyncBuild(fingerprint, result, onSuccess, onFailure));
             } catch (IOException error) {
-                plugin.getServer().getScheduler().runTask(plugin, () -> onFailure.accept(error));
+                plugin.getServer().getScheduler().runTask(plugin, () -> finishAsyncBuildFailure(onFailure, error));
             }
         });
+    }
+
+    private void finishAsyncBuild(String fingerprint,
+                                  ResourcePackBuilder.PackResult result,
+                                  Runnable onSuccess,
+                                  Consumer<IOException> onFailure) {
+        IOException failure = null;
+        try {
+            registerBuiltPack(result);
+            lastBuiltFingerprint = fingerprint;
+        } catch (RuntimeException error) {
+            failure = new IOException(error.getMessage(), error);
+        }
+
+        Runnable queuedSuccess = null;
+        Consumer<IOException> queuedFailure = null;
+        synchronized (buildLock) {
+            if (failure != null) {
+                onFailure.accept(failure);
+            } else {
+                onSuccess.run();
+            }
+
+            if (pendingOnSuccess != null) {
+                queuedSuccess = pendingOnSuccess;
+                queuedFailure = pendingOnFailure;
+                pendingOnSuccess = null;
+                pendingOnFailure = null;
+            }
+            buildInProgress = false;
+        }
+
+        if (queuedSuccess != null) {
+            buildAndRegisterAsync(queuedSuccess, queuedFailure);
+        }
+    }
+
+    private void finishAsyncBuildFailure(Consumer<IOException> onFailure, IOException error) {
+        Runnable queuedSuccess = null;
+        Consumer<IOException> queuedFailure = null;
+        synchronized (buildLock) {
+            onFailure.accept(error);
+            if (pendingOnSuccess != null) {
+                queuedSuccess = pendingOnSuccess;
+                queuedFailure = pendingOnFailure;
+                pendingOnSuccess = null;
+                pendingOnFailure = null;
+            }
+            buildInProgress = false;
+        }
+
+        if (queuedSuccess != null) {
+            buildAndRegisterAsync(queuedSuccess, queuedFailure);
+        }
+    }
+
+    private String computeFingerprint(Map<String, BlockDefinition> blocks, Map<String, ItemDefinition> items) {
+        List<String> parts = new ArrayList<>();
+        blocks.values().stream()
+                .sorted(Comparator.comparing(BlockDefinition::getId))
+                .forEach(definition -> parts.add("block:" + definition.getId()
+                        + ":" + definition.getCustomModelData()
+                        + ":" + definition.getBaseMaterial()
+                        + ":" + definition.getExtensionId()));
+        items.values().stream()
+                .sorted(Comparator.comparing(ItemDefinition::getId))
+                .forEach(definition -> parts.add("item:" + definition.getId()
+                        + ":" + definition.getCustomModelData()
+                        + ":" + definition.getBaseMaterial()
+                        + ":" + definition.getExtensionId()
+                        + ":" + definition.getIconTexture()));
+        extensionJarParts(blockExtensionLoader.getLoadedExtensions(), "block-jar").forEach(parts::add);
+        extensionJarParts(itemExtensionLoader.getLoadedExtensions(), "item-jar").forEach(parts::add);
+        return String.join("|", parts);
+    }
+
+    private static List<String> extensionJarParts(List<? extends LoadedExtension<? extends ExtensionDefinition>> extensions,
+                                                  String prefix) {
+        return extensions.stream()
+                .sorted(Comparator.comparing(extension -> extension.getManifest().getId()))
+                .map(extension -> prefix + ":" + extension.getManifest().getId()
+                        + ":" + extension.getJarFile().lastModified())
+                .toList();
     }
 
     private void registerBuiltPack(ResourcePackBuilder.PackResult result) {

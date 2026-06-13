@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -30,6 +31,7 @@ public class PlacedBlockPersistenceService {
     private final Path legacyYamlFile;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Map<String, Map<String, String>> worldIndexes = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, Map<String, String>>> chunkIndexes = new ConcurrentHashMap<>();
 
     @Inject
     public PlacedBlockPersistenceService(IgnisRuntimeHost host) {
@@ -45,49 +47,66 @@ public class PlacedBlockPersistenceService {
         String key = blockKey(blockLocation);
 
         worldIndexes.computeIfAbsent(worldName, ignored -> new ConcurrentHashMap<>()).put(key, typeId);
+        chunkIndexes
+                .computeIfAbsent(worldName, ignored -> new ConcurrentHashMap<>())
+                .computeIfAbsent(chunkKey(blockLocation), ignored -> new ConcurrentHashMap<>())
+                .put(key, typeId);
         saveIndex();
     }
 
     public void removePlacement(IgnisLocation location) {
         IgnisLocation blockLocation = Locations.toBlock(location);
         String worldName = blockLocation.worldName();
+        String key = blockKey(blockLocation);
         Map<String, String> worldIndex = worldIndexes.get(worldName);
         if (worldIndex == null) {
             return;
         }
 
-        if (worldIndex.remove(blockKey(blockLocation)) != null && worldIndex.isEmpty()) {
+        if (worldIndex.remove(key) != null && worldIndex.isEmpty()) {
             worldIndexes.remove(worldName);
+        }
+
+        Map<String, Map<String, String>> worldChunks = chunkIndexes.get(worldName);
+        if (worldChunks != null) {
+            Map<String, String> chunkIndex = worldChunks.get(chunkKey(blockLocation));
+            if (chunkIndex != null) {
+                chunkIndex.remove(key);
+                if (chunkIndex.isEmpty()) {
+                    worldChunks.remove(chunkKey(blockLocation));
+                }
+            }
+            if (worldChunks.isEmpty()) {
+                chunkIndexes.remove(worldName);
+            }
         }
         saveIndex();
     }
 
+    public Set<String> chunkKeysForWorld(String worldName) {
+        Map<String, Map<String, String>> worldChunks = chunkIndexes.get(worldName);
+        if (worldChunks == null || worldChunks.isEmpty()) {
+            return Set.of();
+        }
+        return Set.copyOf(worldChunks.keySet());
+    }
+
     public Map<String, String> entriesInChunk(String worldName, int chunkX, int chunkZ) {
-        Map<String, String> worldIndex = worldIndexes.get(worldName);
-        if (worldIndex == null || worldIndex.isEmpty()) {
+        Map<String, Map<String, String>> worldChunks = chunkIndexes.get(worldName);
+        if (worldChunks == null || worldChunks.isEmpty()) {
             return Map.of();
         }
 
-        int minX = chunkX << 4;
-        int maxX = minX + 15;
-        int minZ = chunkZ << 4;
-        int maxZ = minZ + 15;
-
-        Map<String, String> entries = new ConcurrentHashMap<>();
-        for (Map.Entry<String, String> entry : worldIndex.entrySet()) {
-            int[] coords = parseKey(entry.getKey());
-            if (coords == null) {
-                continue;
-            }
-            if (coords[0] >= minX && coords[0] <= maxX && coords[2] >= minZ && coords[2] <= maxZ) {
-                entries.put(entry.getKey(), entry.getValue());
-            }
+        Map<String, String> chunkEntries = worldChunks.get(chunkCoordinateKey(chunkX, chunkZ));
+        if (chunkEntries == null || chunkEntries.isEmpty()) {
+            return Map.of();
         }
-        return entries;
+        return Map.copyOf(chunkEntries);
     }
 
     private void loadIndex() {
         worldIndexes.clear();
+        chunkIndexes.clear();
         if (Files.isRegularFile(indexFile)) {
             loadJsonIndex();
             return;
@@ -146,10 +165,28 @@ public class PlacedBlockPersistenceService {
 
     private void mergeLoadedIndex(Map<String, Map<String, String>> loaded) {
         for (Map.Entry<String, Map<String, String>> worldEntry : loaded.entrySet()) {
-            if (worldEntry.getValue() != null && !worldEntry.getValue().isEmpty()) {
-                worldIndexes.put(worldEntry.getKey(), new ConcurrentHashMap<>(worldEntry.getValue()));
+            if (worldEntry.getValue() == null || worldEntry.getValue().isEmpty()) {
+                continue;
             }
+            String worldName = worldEntry.getKey();
+            Map<String, String> worldIndex = new ConcurrentHashMap<>(worldEntry.getValue());
+            worldIndexes.put(worldName, worldIndex);
+            rebuildChunkIndex(worldName, worldIndex);
         }
+    }
+
+    private void rebuildChunkIndex(String worldName, Map<String, String> worldIndex) {
+        Map<String, Map<String, String>> worldChunks = new ConcurrentHashMap<>();
+        for (Map.Entry<String, String> entry : worldIndex.entrySet()) {
+            int[] coords = parseKey(entry.getKey());
+            if (coords == null) {
+                continue;
+            }
+            String chunkKey = chunkCoordinateKey(coords[0] >> 4, coords[2] >> 4);
+            worldChunks.computeIfAbsent(chunkKey, ignored -> new ConcurrentHashMap<>())
+                    .put(entry.getKey(), entry.getValue());
+        }
+        chunkIndexes.put(worldName, worldChunks);
     }
 
     private void saveIndex() {
@@ -165,6 +202,14 @@ public class PlacedBlockPersistenceService {
 
     private static String blockKey(IgnisLocation location) {
         return (int) Math.floor(location.x()) + "," + (int) Math.floor(location.y()) + "," + (int) Math.floor(location.z());
+    }
+
+    private static String chunkKey(IgnisLocation location) {
+        return chunkCoordinateKey((int) Math.floor(location.x()) >> 4, (int) Math.floor(location.z()) >> 4);
+    }
+
+    private static String chunkCoordinateKey(int chunkX, int chunkZ) {
+        return chunkX + "," + chunkZ;
     }
 
     private static int[] parseKey(String key) {

@@ -39,6 +39,11 @@ public class RuntimeBlockService {
         }
     }
 
+    public void clearAll() {
+        activeInstances.clear();
+        locationToUuid.clear();
+    }
+
     public Collection<RuntimeBlockInstance> getActiveInstances() {
         return activeInstances.values();
     }

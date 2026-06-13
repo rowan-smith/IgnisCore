@@ -2,7 +2,7 @@ package dev.rono.igniscore.command;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.IgnisPluginContext;
-import dev.rono.igniscore.core.ExtensionBootstrap;
+import dev.rono.igniscore.core.ExtensionReloadScope;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.loader.LoadedExtension;
@@ -13,6 +13,7 @@ import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
 import dev.rono.igniscore.platform.PlatformHooks;
 import dev.rono.igniscore.service.BlockItemFactory;
+import dev.rono.igniscore.service.ExtensionReloadService;
 import dev.rono.igniscore.service.ItemFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -33,7 +34,7 @@ public class IgnisCommand implements PluginCommandHandler {
     private final BlockManager blockManager;
     private final ItemManager itemManager;
     private final ResourcePackService resourcePackService;
-    private final ExtensionBootstrap extensionBootstrap;
+    private final ExtensionReloadService extensionReloadService;
     private final BlockExtensionLoader blockExtensionLoader;
     private final ItemExtensionLoader itemExtensionLoader;
     private final BlockItemFactory blockItemFactory;
@@ -45,7 +46,7 @@ public class IgnisCommand implements PluginCommandHandler {
                         BlockManager blockManager,
                         ItemManager itemManager,
                         ResourcePackService resourcePackService,
-                        ExtensionBootstrap extensionBootstrap,
+                        ExtensionReloadService extensionReloadService,
                         BlockExtensionLoader blockExtensionLoader,
                         ItemExtensionLoader itemExtensionLoader,
                         BlockItemFactory blockItemFactory,
@@ -55,7 +56,7 @@ public class IgnisCommand implements PluginCommandHandler {
         this.blockManager = blockManager;
         this.itemManager = itemManager;
         this.resourcePackService = resourcePackService;
-        this.extensionBootstrap = extensionBootstrap;
+        this.extensionReloadService = extensionReloadService;
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
         this.blockItemFactory = blockItemFactory;
@@ -169,30 +170,33 @@ public class IgnisCommand implements PluginCommandHandler {
                 resourcePackService.reloadConfiguration();
                 send(sender, "<green>IgnisCore server configuration reloaded.");
             }
-            case "all" -> {
-                extensionBootstrap.reloadAll();
-                send(sender, "<yellow>Extensions reloaded. Rebuilding resource pack...");
-                resourcePackService.buildAndRegisterAsync(
-                        () -> {
-                            resourcePackService.reloadConfiguration();
-                            send(sender, "<green>IgnisCore fully reloaded.");
-                        },
-                        error -> send(sender, "<red>Reload failed: " + error.getMessage()));
-            }
-            case "blocks" -> {
-                extensionBootstrap.reloadBlocks();
-                send(sender, "<yellow>Block extensions reloaded. Rebuilding resource pack...");
-                resourcePackService.buildAndRegisterAsync(
-                        () -> send(sender, "<green>IgnisCore block extensions reloaded."),
-                        error -> send(sender, "<red>Reload failed: " + error.getMessage()));
-            }
-            case "items" -> {
-                extensionBootstrap.reloadItems();
-                send(sender, "<yellow>Item extensions reloaded. Rebuilding resource pack...");
-                resourcePackService.buildAndRegisterAsync(
-                        () -> send(sender, "<green>IgnisCore item extensions reloaded."),
-                        error -> send(sender, "<red>Reload failed: " + error.getMessage()));
-            }
+            case "all" -> extensionReloadService.reloadAsync(
+                    ExtensionReloadScope.ALL,
+                    sender,
+                    "<yellow>Reloading extensions...",
+                    "<yellow>Extensions reloaded. Rebuilding resource pack...",
+                    () -> resourcePackService.buildAndRegisterAsync(
+                            () -> {
+                                resourcePackService.reloadConfiguration();
+                                send(sender, "<green>IgnisCore fully reloaded.");
+                            },
+                            error -> send(sender, "<red>Reload failed: " + error.getMessage())));
+            case "blocks" -> extensionReloadService.reloadAsync(
+                    ExtensionReloadScope.BLOCKS,
+                    sender,
+                    "<yellow>Reloading block extensions...",
+                    "<yellow>Block extensions reloaded. Rebuilding resource pack...",
+                    () -> resourcePackService.buildAndRegisterAsync(
+                            () -> send(sender, "<green>IgnisCore block extensions reloaded."),
+                            error -> send(sender, "<red>Reload failed: " + error.getMessage())));
+            case "items" -> extensionReloadService.reloadAsync(
+                    ExtensionReloadScope.ITEMS,
+                    sender,
+                    "<yellow>Reloading item extensions...",
+                    "<yellow>Item extensions reloaded. Rebuilding resource pack...",
+                    () -> resourcePackService.buildAndRegisterAsync(
+                            () -> send(sender, "<green>IgnisCore item extensions reloaded."),
+                            error -> send(sender, "<red>Reload failed: " + error.getMessage())));
             default -> {
                 send(sender, "<red>Usage: /ignis reload <all|blocks|items|server>");
                 return true;
