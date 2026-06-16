@@ -8,6 +8,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.rono.igniscore.command.IgnisCommandBridge;
 import dev.rono.igniscore.command.IgnisCommands;
 import dev.rono.igniscore.command.IgnisCommandSupport;
+import dev.rono.igniscore.command.BukkitIgnisCommandSupport;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.command.CommandSender;
@@ -62,8 +63,8 @@ public final class IgnisBrigadierTree {
                                String label,
                                String... args) {
         CommandSender sender = context.getSource().getSender();
-        if (!IgnisCommandSupport.hasPermission(sender)) {
-            IgnisCommandSupport.sendPlain(sender, "You do not have permission to use this command.");
+        if (!BukkitIgnisCommandSupport.hasPermission(sender)) {
+            BukkitIgnisCommandSupport.sendPlain(sender, "You do not have permission to use this command.");
             return 0;
         }
         bridge.execute(sender, label, args);

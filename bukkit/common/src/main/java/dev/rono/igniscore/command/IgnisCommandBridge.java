@@ -17,14 +17,14 @@ public final class IgnisCommandBridge {
     }
 
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!IgnisCommandSupport.hasPermission(sender)) {
-            IgnisCommandSupport.sendPlain(sender, "You do not have permission to use this command.");
+        if (!BukkitIgnisCommandSupport.hasPermission(sender)) {
+            BukkitIgnisCommandSupport.sendPlain(sender, "You do not have permission to use this command.");
             return true;
         }
 
         PluginCommandHandler current = handler.get();
         if (current == null) {
-            IgnisCommandSupport.sendPlain(sender, "IgnisCore is still starting up. Try again in a moment.");
+            BukkitIgnisCommandSupport.sendPlain(sender, "IgnisCore is still starting up. Try again in a moment.");
             return true;
         }
         return current.onCommand(sender, noopCommand(label), label, args);
