@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -95,6 +96,29 @@ class ExtensionManifestTest {
                         "block-extension.yml"));
 
         assertEquals("block-extension.yml requires id", error.getMessage());
+    }
+
+    @Test
+    void resolvesIdFromConfigWhenManifestOmitsIt() {
+        ExtensionManifest manifest = ExtensionManifest.fromJarContents(
+                Map.of("name", "Detonator"),
+                Map.of("id", "detonator"),
+                "item-extension.yml",
+                "detonator");
+
+        assertEquals("detonator", manifest.getId());
+        assertEquals("dev.rono.igniscore.item.detonator.Strategy", manifest.getStrategyClass());
+    }
+
+    @Test
+    void resolvesIdFromJarNameWhenManifestAndConfigOmitIt() {
+        ExtensionManifest manifest = ExtensionManifest.fromJarContents(
+                Map.of("name", "Detonator"),
+                Map.of(),
+                "item-extension.yml",
+                "detonator");
+
+        assertEquals("detonator", manifest.getId());
     }
 
     @Test

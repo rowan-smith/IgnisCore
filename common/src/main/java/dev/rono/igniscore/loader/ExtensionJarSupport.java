@@ -1,6 +1,7 @@
 package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.config.YamlDefinitions;
+import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -53,6 +54,42 @@ final class ExtensionJarSupport {
 
             return new JarMetadata<>(manifest, config);
         }
+    }
+
+    static JarMetadata<ExtensionManifest> readExtensionMetadata(File jarFile, String manifestEntryName) throws Exception {
+        String jarFallbackId = extensionIdFromJarName(jarFile.getName());
+        try (JarFile jar = new JarFile(jarFile)) {
+            JarEntry manifestEntry = jar.getJarEntry(manifestEntryName);
+            if (manifestEntry == null) {
+                throw new IllegalStateException("Missing " + manifestEntryName + " in " + jarFile.getName());
+            }
+
+            Map<String, Object> manifestConfig;
+            try (InputStream manifestStream = jar.getInputStream(manifestEntry)) {
+                manifestConfig = YamlDefinitions.loadMap(manifestStream);
+            }
+
+            JarEntry configEntry = jar.getJarEntry("config.yml");
+            if (configEntry == null) {
+                throw new IllegalStateException("Missing config.yml in " + jarFile.getName());
+            }
+
+            Map<String, Object> config;
+            try (InputStream configStream = jar.getInputStream(configEntry)) {
+                config = YamlDefinitions.loadMap(configStream);
+            }
+
+            ExtensionManifest manifest = ExtensionManifest.fromJarContents(
+                    manifestConfig, config, manifestEntryName, jarFallbackId);
+            return new JarMetadata<>(manifest, config);
+        }
+    }
+
+    private static String extensionIdFromJarName(String jarFileName) {
+        if (jarFileName == null || jarFileName.isBlank()) {
+            return null;
+        }
+        return jarFileName.replaceFirst("(?i)\\.jar$", "");
     }
 
     static <T> T readManifest(File jarFile, String entryName, Function<InputStream, T> parser) throws Exception {

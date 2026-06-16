@@ -5,6 +5,7 @@ import dev.rono.igniscore.api.config.YamlDefinitions;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -32,6 +33,31 @@ public final class ExtensionManifest {
     public static ExtensionManifest fromMap(Map<String, Object> config, Path source) {
         String fileName = source != null ? source.getFileName().toString() : "extension.yml";
         return fromMap(config, fileName, source);
+    }
+
+    /**
+     * Resolves manifest metadata from the extension manifest and config.yml, falling back to the
+     * JAR file name when legacy or partially built extension packages omit {@code id} in the manifest.
+     */
+    public static ExtensionManifest fromJarContents(Map<String, Object> manifestConfig,
+                                                    Map<String, Object> definitionConfig,
+                                                    String manifestFileName,
+                                                    String jarFallbackId) {
+        Map<String, Object> merged = new HashMap<>();
+        if (manifestConfig != null) {
+            merged.putAll(manifestConfig);
+        }
+
+        String id = YamlDefinitions.string(merged, "id", null);
+        if (id == null || id.isBlank()) {
+            id = YamlDefinitions.string(definitionConfig, "id", jarFallbackId);
+        }
+        if (id == null || id.isBlank()) {
+            throw new NullPointerException(manifestFileName + " requires id");
+        }
+
+        merged.put("id", id);
+        return fromMap(merged, manifestFileName, null);
     }
 
     private static ExtensionManifest fromMap(Map<String, Object> config, String manifestFileName, Path source) {

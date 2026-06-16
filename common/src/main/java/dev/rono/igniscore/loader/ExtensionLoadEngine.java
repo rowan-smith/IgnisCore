@@ -103,10 +103,9 @@ public final class ExtensionLoadEngine {
 
     private <D extends ExtensionDefinition> LoadedExtension<D> loadJar(File jarFile, int modelData, ExtensionKind kind)
             throws Exception {
-        ExtensionJarSupport.JarMetadata<ExtensionManifest> metadata = ExtensionJarSupport.readMetadata(
+        ExtensionJarSupport.JarMetadata<ExtensionManifest> metadata = ExtensionJarSupport.readExtensionMetadata(
                 jarFile,
-                kind.manifestFileName(),
-                input -> ExtensionManifest.fromStream(input, kind.manifestFileName()));
+                kind.manifestFileName());
         ExtensionManifest manifest = metadata.manifest();
         Map<String, Object> config = metadata.config();
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
