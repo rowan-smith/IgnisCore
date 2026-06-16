@@ -38,27 +38,25 @@ public class SpongeIgnisCommand {
         return Command.builder()
                 .permission("igniscore.admin")
                 .executor(this::executeRoot)
-                .addChild(reloadCommand())
-                .addChild(blocksCommand())
-                .addChild(itemsCommand())
-                .addChild(giveCommand())
+                .addChild(reloadCommand(), "reload")
+                .addChild(blocksCommand(), "blocks")
+                .addChild(itemsCommand(), "items")
+                .addChild(giveCommand(), "give")
                 .build();
     }
 
     private Command.Parameterized reloadCommand() {
         return Command.builder()
-                .key("reload")
                 .permission("igniscore.admin")
                 .executor(this::executeReload)
-                .addChild(Command.builder().key("all").executor(ctx -> executeReloadTarget(ctx, "all")).build())
-                .addChild(Command.builder().key("blocks").executor(ctx -> executeReloadTarget(ctx, "blocks")).build())
-                .addChild(Command.builder().key("items").executor(ctx -> executeReloadTarget(ctx, "items")).build())
+                .addChild(Command.builder().executor(ctx -> executeReloadTarget(ctx, "all")).build(), "all")
+                .addChild(Command.builder().executor(ctx -> executeReloadTarget(ctx, "blocks")).build(), "blocks")
+                .addChild(Command.builder().executor(ctx -> executeReloadTarget(ctx, "items")).build(), "items")
                 .build();
     }
 
     private Command.Parameterized blocksCommand() {
         return Command.builder()
-                .key("blocks")
                 .permission("igniscore.admin")
                 .executor(this::handleBlocks)
                 .build();
@@ -66,7 +64,6 @@ public class SpongeIgnisCommand {
 
     private Command.Parameterized itemsCommand() {
         return Command.builder()
-                .key("items")
                 .permission("igniscore.admin")
                 .executor(this::handleItems)
                 .build();
@@ -74,7 +71,6 @@ public class SpongeIgnisCommand {
 
     private Command.Parameterized giveCommand() {
         return Command.builder()
-                .key("give")
                 .permission("igniscore.admin")
                 .executor(this::handleGive)
                 .build();

@@ -13,12 +13,17 @@ public final class SpongeCommandRegistrar {
 
     public static void register(CommandRegistrationSink sink,
                                 PluginContainer container,
-                                SpongeIgnisCommand command) {
-        Command.Parameterized built = command.build();
-        sink.register(container, built, IgnisCommands.IGNIS);
+                                Command.Parameterized command) {
+        sink.register(container, command, IgnisCommands.IGNIS);
         for (String alias : IgnisCommands.ALIASES) {
-            sink.register(container, built, alias);
+            sink.register(container, command, alias);
         }
+    }
+
+    public static void register(CommandRegistrationSink sink,
+                                PluginContainer container,
+                                SpongeIgnisCommand command) {
+        register(sink, container, command.build());
     }
 
     public static void register(org.spongepowered.api.event.lifecycle.RegisterCommandEvent<Command.Parameterized> event,
