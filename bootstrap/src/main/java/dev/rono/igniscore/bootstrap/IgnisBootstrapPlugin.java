@@ -6,23 +6,27 @@ import dev.rono.igniscore.IgnisCoreApplication;
 import dev.rono.igniscore.IgnisCoreModule;
 import dev.rono.igniscore.api.IgnisCoreAPI;
 import dev.rono.igniscore.api.port.PlatformAdapter;
-import dev.rono.igniscore.bootstrap.PlatformBootloaderLoader;
-import dev.rono.igniscore.paper.command.PaperCommandSupport;
+import dev.rono.igniscore.command.IgnisCommand;
+import dev.rono.igniscore.command.PluginCommandHandler;
+import dev.rono.igniscore.paper.command.PaperIgnisCommandHost;
+import dev.rono.igniscore.paper.command.PaperIgnisCommandRegistrar;
 import dev.rono.igniscore.spigot.boot.BukkitBootloaderSupport;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Unified plugin entrypoint that selects a version/platform bootloader at runtime.
  */
-public final class IgnisBootstrapPlugin extends JavaPlugin {
+public final class IgnisBootstrapPlugin extends JavaPlugin implements PaperIgnisCommandHost {
     private Injector injector;
     private IgnisCoreApplication application;
     private PlatformAdapter platformAdapter;
+    private PaperIgnisCommandRegistrar paperIgnisCommandRegistrar;
 
     @Override
     public void onEnable() {
         if (BukkitBootloaderSupport.isPaperRuntime()) {
-            PaperCommandSupport.installOnEnable(this);
+            paperIgnisCommandRegistrar = new PaperIgnisCommandRegistrar();
+            paperIgnisCommandRegistrar.install(this);
         }
 
         saveDefaultConfig();
@@ -40,6 +44,10 @@ public final class IgnisBootstrapPlugin extends JavaPlugin {
             error.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        if (paperIgnisCommandRegistrar != null) {
+            paperIgnisCommandRegistrar.bind(injector.getInstance(IgnisCommand.class));
         }
 
         IgnisCoreAPI.init(application);
@@ -60,6 +68,13 @@ public final class IgnisBootstrapPlugin extends JavaPlugin {
         }
         if (platformAdapter != null) {
             platformAdapter.shutdown();
+        }
+    }
+
+    @Override
+    public void bindPaperIgnisCommand(PluginCommandHandler command) {
+        if (paperIgnisCommandRegistrar != null) {
+            paperIgnisCommandRegistrar.bind(command);
         }
     }
 }

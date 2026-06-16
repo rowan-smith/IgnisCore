@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -20,12 +21,11 @@ class IgnisBootstrapPluginTest {
     }
 
     @Test
-    void paperPluginYamlRegistersBootstrapper() throws Exception {
-        try (InputStream input = getClass().getResourceAsStream("/paper-plugin.yml")) {
-            assertNotNull(input, "paper-plugin.yml should be bundled for Paper command bootstrap");
+    void pluginYamlDoesNotDeclareLegacyCommands() throws Exception {
+        try (InputStream input = getClass().getResourceAsStream("/plugin.yml")) {
+            assertNotNull(input, "plugin.yml should be on the test classpath");
             String yaml = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-            assertTrue(yaml.contains("dev.rono.igniscore.bootstrap.IgnisBootstrapPlugin"));
-            assertTrue(yaml.contains("dev.rono.igniscore.paper.boot.IgnisPaperBootstrap"));
+            assertFalse(yaml.contains("\ncommands:"), "Paper command registration is programmatic");
         }
     }
 
