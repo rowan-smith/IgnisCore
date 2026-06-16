@@ -1,4 +1,16 @@
 name: IgnisCore
 version: '${project.version}'
+main: dev.rono.igniscore.bootstrap.IgnisBootstrapPlugin
 bootstrapper: dev.rono.igniscore.paper.boot.IgnisPaperBootstrap
+author: Rono
+description: Multi-platform custom block and item system for Minecraft
 api-version: '1.21'
+
+dependencies:
+  server:
+    NBTAPI:
+      load: BEFORE
+      required: true
+    ProtocolLib:
+      load: BEFORE
+      required: false

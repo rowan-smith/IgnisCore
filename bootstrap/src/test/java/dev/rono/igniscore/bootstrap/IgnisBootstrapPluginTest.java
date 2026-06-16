@@ -24,6 +24,7 @@ class IgnisBootstrapPluginTest {
         try (InputStream input = getClass().getResourceAsStream("/paper-plugin.yml")) {
             assertNotNull(input, "paper-plugin.yml should be bundled for Paper command bootstrap");
             String yaml = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            assertTrue(yaml.contains("dev.rono.igniscore.bootstrap.IgnisBootstrapPlugin"));
             assertTrue(yaml.contains("dev.rono.igniscore.paper.boot.IgnisPaperBootstrap"));
         }
     }
