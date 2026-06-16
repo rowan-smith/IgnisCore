@@ -30,6 +30,7 @@ class BukkitCommandRegistrationTest extends MockBukkitTestBase {
         assertEquals(handler, command.getTabCompleter());
 
         CommandSender sender = server.addPlayer("tester");
+        sender.addAttachment(plugin, IgnisCommands.PERMISSION, true);
         assertTrue(command.execute(sender, IgnisCommands.IGNIS, new String[] {"blocks"}));
         assertTrue(handler.executed);
     }
