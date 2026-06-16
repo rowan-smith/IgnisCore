@@ -67,6 +67,18 @@ class IgnisCommandBridgeTest {
         }
 
         @Override
+        public void sendMessage(String... messages) {
+            if (messages.length > 0) {
+                lastMessage = messages[0];
+            }
+        }
+
+        @Override
+        public void sendMessage(java.util.UUID uuid, String message) {
+            lastMessage = message;
+        }
+
+        @Override
         public void sendMessage(java.util.UUID uuid, String... messages) {
             if (messages.length > 0) {
                 lastMessage = messages[0];
@@ -144,11 +156,6 @@ class IgnisCommandBridgeTest {
         @Override
         public void setOp(boolean value) {
             permission = value;
-        }
-
-        @Override
-        public net.kyori.adventure.text.Component name() {
-            return net.kyori.adventure.text.Component.text(getName());
         }
 
         @Override
