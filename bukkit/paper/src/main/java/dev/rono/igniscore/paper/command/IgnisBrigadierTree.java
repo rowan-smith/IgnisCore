@@ -80,6 +80,9 @@ public final class IgnisBrigadierTree {
         String remaining = builder.getRemaining();
         String input = rootArg + (remaining.isBlank() ? "" : " " + remaining);
         String[] args = IgnisCommandSupport.splitArgs(input);
-        return bridge.suggest(sender, label, args, builder);
+        for (String suggestion : bridge.suggest(sender, label, args)) {
+            builder.suggest(suggestion);
+        }
+        return builder.buildFuture();
     }
 }

@@ -3,7 +3,7 @@ package dev.rono.igniscore.command;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -30,18 +30,12 @@ public final class IgnisCommandBridge {
         return current.onCommand(sender, noopCommand(label), label, args);
     }
 
-    public CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggest(CommandSender sender,
-                                                                                String label,
-                                                                                String[] args,
-                                                                                com.mojang.brigadier.suggestion.SuggestionsBuilder builder) {
+    public List<String> suggest(CommandSender sender, String label, String[] args) {
         PluginCommandHandler current = handler.get();
         if (current == null) {
-            return builder.buildFuture();
+            return List.of();
         }
-        for (String suggestion : current.onTabComplete(sender, noopCommand(label), label, args)) {
-            builder.suggest(suggestion);
-        }
-        return builder.buildFuture();
+        return current.onTabComplete(sender, noopCommand(label), label, args);
     }
 
     private static Command noopCommand(String label) {
