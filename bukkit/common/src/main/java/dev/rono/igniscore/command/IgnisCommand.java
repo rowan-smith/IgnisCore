@@ -303,7 +303,13 @@ public class IgnisCommand implements PluginCommandHandler {
         } else if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
             Bukkit.getOnlinePlayers().forEach(player -> completions.add(player.getName()));
         } else if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
-            completions.addAll(GIVE_TYPE_SUBCOMMANDS);
+            if (args[2].equalsIgnoreCase("block")) {
+                completions.addAll(blockManager.getBlockTypes().keySet());
+            } else if (args[2].equalsIgnoreCase("item")) {
+                completions.addAll(itemManager.getItemTypes().keySet());
+            } else {
+                completions.addAll(GIVE_TYPE_SUBCOMMANDS);
+            }
         } else if (args.length == 4 && args[0].equalsIgnoreCase("give")) {
             if (args[2].equalsIgnoreCase("block")) {
                 completions.addAll(blockManager.getBlockTypes().keySet());

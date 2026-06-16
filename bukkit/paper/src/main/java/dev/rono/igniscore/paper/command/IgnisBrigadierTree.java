@@ -7,7 +7,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.rono.igniscore.command.IgnisCommandBridge;
 import dev.rono.igniscore.command.IgnisCommands;
-import dev.rono.igniscore.command.IgnisCommandSupport;
 import dev.rono.igniscore.command.BukkitIgnisCommandSupport;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -28,17 +27,19 @@ public final class IgnisBrigadierTree {
                 .executes(ctx -> execute(bridge, ctx, label))
                 .then(Commands.literal("give")
                         .then(Commands.argument("player", StringArgumentType.word())
-                                .suggests((ctx, builder) -> suggest(bridge, ctx, label, "give", builder))
+                                .suggests((ctx, builder) -> suggest(bridge, ctx, label, givePlayerArgs(builder), builder))
                                 .then(Commands.literal("block")
                                         .then(Commands.argument("id", StringArgumentType.word())
-                                                .suggests((ctx, builder) -> suggest(bridge, ctx, label, "give", builder))
+                                                .suggests((ctx, builder) -> suggest(bridge, ctx, label,
+                                                        giveIdArgs(StringArgumentType.getString(ctx, "player"), "block", builder), builder))
                                                 .executes(ctx -> execute(bridge, ctx, label, "give",
                                                         StringArgumentType.getString(ctx, "player"),
                                                         "block",
                                                         StringArgumentType.getString(ctx, "id")))))
                                 .then(Commands.literal("item")
                                         .then(Commands.argument("id", StringArgumentType.word())
-                                                .suggests((ctx, builder) -> suggest(bridge, ctx, label, "give", builder))
+                                                .suggests((ctx, builder) -> suggest(bridge, ctx, label,
+                                                        giveIdArgs(StringArgumentType.getString(ctx, "player"), "item", builder), builder))
                                                 .executes(ctx -> execute(bridge, ctx, label, "give",
                                                         StringArgumentType.getString(ctx, "player"),
                                                         "item",
@@ -74,15 +75,30 @@ public final class IgnisBrigadierTree {
     private static CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggest(IgnisCommandBridge bridge,
                                                                                           CommandContext<CommandSourceStack> context,
                                                                                           String label,
-                                                                                          String rootArg,
+                                                                                          String[] args,
                                                                                           SuggestionsBuilder builder) {
         CommandSender sender = context.getSource().getSender();
-        String remaining = builder.getRemaining();
-        String input = rootArg + (remaining.isBlank() ? "" : " " + remaining);
-        String[] args = IgnisCommandSupport.splitArgs(input);
         for (String suggestion : bridge.suggest(sender, label, args)) {
             builder.suggest(suggestion);
         }
         return builder.buildFuture();
+    }
+
+    static String[] givePlayerArgs(SuggestionsBuilder builder) {
+        return new String[]{"give", partialArg(builder)};
+    }
+
+    static String[] giveIdArgs(String player, String type, SuggestionsBuilder builder) {
+        return new String[]{
+                "give",
+                player,
+                type,
+                partialArg(builder)
+        };
+    }
+
+    private static String partialArg(SuggestionsBuilder builder) {
+        String remaining = builder.getRemaining();
+        return remaining == null ? "" : remaining;
     }
 }
