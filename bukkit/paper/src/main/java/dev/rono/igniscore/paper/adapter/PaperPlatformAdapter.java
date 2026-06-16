@@ -1,16 +1,18 @@
 package dev.rono.igniscore.paper.adapter;
 
-import dev.rono.igniscore.paper.command.PaperIgnisCommandHost;
 import dev.rono.igniscore.command.IgnisCommands;
 import dev.rono.igniscore.command.PluginCommandHandler;
+import dev.rono.igniscore.paper.command.PaperCommandRegistrar;
 import dev.rono.igniscore.platform.paper.PaperPlatformHooks;
 import dev.rono.igniscore.spigot.adapter.BukkitPlatformAdapter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PaperPlatformAdapter extends BukkitPlatformAdapter {
+    private final PaperCommandRegistrar commandRegistrar;
 
     public PaperPlatformAdapter(JavaPlugin plugin) {
         super(plugin, new PaperPlatformHooks());
+        this.commandRegistrar = new PaperCommandRegistrar(plugin);
     }
 
     @Override
@@ -18,8 +20,6 @@ public class PaperPlatformAdapter extends BukkitPlatformAdapter {
         if (!IgnisCommands.IGNIS.equals(name) || !(commandExecutor instanceof PluginCommandHandler handler)) {
             return;
         }
-        if (plugin() instanceof PaperIgnisCommandHost host) {
-            host.bindPaperIgnisCommand(handler);
-        }
+        commandRegistrar.bind(handler);
     }
 }

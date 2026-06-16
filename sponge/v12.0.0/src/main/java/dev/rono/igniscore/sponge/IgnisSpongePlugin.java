@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.IgnisCoreAPI;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.bootstrap.PlatformBootloaderLoader;
 import dev.rono.igniscore.core.IgnisCoreFacadeImpl;
+import dev.rono.igniscore.sponge.command.SpongeCommandRegistrar;
 import dev.rono.igniscore.sponge.command.SpongeIgnisCommand;
 import dev.rono.igniscore.sponge.support.SpongeRuntimeHolder;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +43,7 @@ public final class IgnisSpongePlugin implements SpongePluginHost {
         if (injector == null) {
             return;
         }
-        event.register(container, injector.getInstance(SpongeIgnisCommand.class).build(), "ignis");
+        SpongeCommandRegistrar.register(event, container, injector.getInstance(SpongeIgnisCommand.class));
     }
 
     @Listener
