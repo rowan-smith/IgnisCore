@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IgnisBrigadierTreeTest {
 
@@ -15,18 +14,18 @@ class IgnisBrigadierTreeTest {
         var node = IgnisBrigadierTree.build(new IgnisCommandBridge());
 
         assertEquals(IgnisCommands.IGNIS, node.getName());
-        assertTrue(node.getChildren().containsKey("give"));
-        assertTrue(node.getChildren().containsKey("pack"));
-        assertTrue(node.getChildren().containsKey("reload"));
-        assertTrue(node.getChildren().containsKey("debug"));
-        assertTrue(node.getChildren().containsKey("blocks"));
-        assertTrue(node.getChildren().containsKey("items"));
+        assertNotNull(node.getChild("give"));
+        assertNotNull(node.getChild("pack"));
+        assertNotNull(node.getChild("reload"));
+        assertNotNull(node.getChild("debug"));
+        assertNotNull(node.getChild("blocks"));
+        assertNotNull(node.getChild("items"));
 
-        var reload = node.getChildren().get("reload");
+        var reload = node.getChild("reload");
         assertNotNull(reload);
-        assertTrue(reload.getChildren().containsKey("all"));
-        assertTrue(reload.getChildren().containsKey("blocks"));
-        assertTrue(reload.getChildren().containsKey("items"));
-        assertTrue(reload.getChildren().containsKey("server"));
+        assertNotNull(reload.getChild("all"));
+        assertNotNull(reload.getChild("blocks"));
+        assertNotNull(reload.getChild("items"));
+        assertNotNull(reload.getChild("server"));
     }
 }
