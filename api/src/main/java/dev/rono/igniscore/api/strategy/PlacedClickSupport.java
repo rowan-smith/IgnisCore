@@ -8,17 +8,40 @@ import java.util.List;
 
 /**
  * Default placed-block click resolution from a {@link StrategyProfile}.
- * Extensions override {@link IgnisBlockStrategy#onPlacedClick} for custom behavior; use this helper
- * when delegating to profile defaults or composing profile rules with extension logic.
+ *
+ * <p>Extensions override {@link IgnisBlockStrategy#onPlacedClick} for custom behavior; use this helper
+ * when delegating to profile defaults or composing profile rules with extension logic.</p>
  */
 public final class PlacedClickSupport {
     private PlacedClickSupport() {
     }
 
+    /**
+     * Resolves the click action for a placed block using the held item's material key.
+     *
+     * @param profile strategy behavior profile
+     * @param interaction player interaction type
+     * @param heldItem item in the player's hand, or {@code null}
+     * @return action instructing the core how to handle the click
+     */
     public static CustomBlockAction resolve(StrategyProfile profile, IgnisInteraction interaction, IgnisItem heldItem) {
         return resolve(profile, interaction, materialKey(heldItem));
     }
 
+    /**
+     * Resolves the click action for a placed block using an explicit material key.
+     *
+     * <p>Left clicks return {@link StrategyProfile#getLeftClickAction()}. Right clicks return
+     * {@link CustomBlockAction#IGNITE} when the profile is combustible and the material is listed
+     * in {@link StrategyProfile#getIgnitionMaterials()}; otherwise
+     * {@link StrategyProfile#getRightClickAction()}. Other interaction types yield
+     * {@link CustomBlockAction#NONE}.</p>
+     *
+     * @param profile strategy behavior profile
+     * @param interaction player interaction type
+     * @param materialKey held item material key, or {@code AIR}
+     * @return action instructing the core how to handle the click
+     */
     public static CustomBlockAction resolve(StrategyProfile profile, IgnisInteraction interaction, String materialKey) {
         return switch (interaction) {
             case LEFT_CLICK_BLOCK -> profile.getLeftClickAction();
@@ -27,6 +50,13 @@ public final class PlacedClickSupport {
         };
     }
 
+    /**
+     * Returns whether the given material can ignite a combustible block per the profile.
+     *
+     * @param profile strategy behavior profile
+     * @param materialKey material key to test; {@code null}, blank, and {@code AIR} are never ignition materials
+     * @return {@code true} when {@code materialKey} matches an entry in {@link StrategyProfile#getIgnitionMaterials()}
+     */
     public static boolean isIgnitionMaterial(StrategyProfile profile, String materialKey) {
         if (materialKey == null || materialKey.isBlank() || "AIR".equalsIgnoreCase(materialKey)) {
             return false;

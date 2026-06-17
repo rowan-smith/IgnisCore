@@ -25,20 +25,26 @@ behavior:
   right_click_block: detonate
 ```
 
-Action tokens are interpreted by the item strategy (`throw`, `assign`, `detonate`, etc.).
+Action tokens are interpreted by the item strategy. Bundled items route clicks through `ItemBehaviorConfig.from(definition.getBehaviorConfig()).actionFor(action)` before calling behavior code.
+
+Common tokens: `throw`, `assign`, `detonate`, `use`, `none`.
 
 ## Strategy hook
 
-Items use a single hook — branch on `IgnisInteraction` in strategy code:
+Items use a single hook — branch on the resolved behavior action in strategy code:
 
 ```java
 @Override
 public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
                        IgnisInteraction action, IgnisBlock clickedBlock) {
-    switch (action) {
-        case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> throwItem(player, definition, item);
-        default -> { }
-    }
+    ItemBehaviorConfig behavior = ItemBehaviorConfig.from(definition.getBehaviorConfig());
+    behavior.actionFor(action).ifPresent(token -> {
+        if ("throw".equals(token)) {
+            throwItem(player, definition, item);
+        } else if ("detonate".equals(token)) {
+            detonate(player, definition, item);
+        }
+    });
 }
 ```
 
@@ -50,6 +56,8 @@ double speed = StrategySupport.customDouble(definition.getCustomData(), "throw_v
 ```
 
 Omit the `custom_data` section entirely when your strategy uses code defaults only.
+
+Link items may use remote-activation keys (`linkBlockType`, `remoteAction`, `linkRange`) or multi-link keys (`target_block`, `max_links`) — see [detonator](https://github.com/%%site.repo%%/tree/main/extensions/items/detonator) and [lamp-dimmer](https://github.com/%%site.repo%%/tree/main/extensions/items/lamp-dimmer).
 
 ## Related
 

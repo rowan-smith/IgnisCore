@@ -53,9 +53,11 @@ All platforms use `PlatformBootloaderLoader` (`common`) to identify server softw
 - Third-party extensions should not depend on `extensions/shared` — use the [cookbook](/developers/cookbook) patterns instead
 - Extensions must **not** shade IgnisCore or platform APIs into their JARs
 - Platform adapters live in `bukkit/` and `sponge/` — extensions never import them
+- Extension authors use **L2–L3** (`IgnisStrategyContext`); integrators use **L4** (`IgnisCoreAPI`) — see [API layers](/developers/api/layers)
 
 ## Related
 
 - [Developer overview](/developers) — quick start
+- [API layers](/developers/api/layers) — L1–L4 surfaces
 - [API Reference](/developers/api/) — public packages
 - [Requirements](/requirements) — supported platforms

@@ -8,20 +8,28 @@ slug: /developers/api
 
 | Surface | Maven artifact | Package | Status |
 |---------|----------------|---------|--------|
-| **Core API** | `dev.rono:api` | `dev.rono.igniscore.api.*` | Stable |
+| **Core API** | `dev.rono:api` | `dev.rono.igniscore.api.*` | Stable, fully Javadoc'd |
+| **Extension shared** | `dev.rono.extensions:shared` | `dev.rono.extensions.shared.*` | Internal — bundled extensions only |
+
+## Start here
+
+| Doc | Content |
+|-----|---------|
+| [API layers](/developers/api/layers) | L1–L4 model — extension vs integrator entry points |
+| [Core API](/developers/api/core-api) | Package map and `IgnisStrategyContext` |
+| [Extension profiles](/developers/extension-profiles) | Manifest `profiles` and `requires-integrations` |
+| [Extension config](/developers/extension-config) | `config.yml` sections and keys |
+| [Javadoc](/developers/reference) | Every public class and method |
 
 ## Which API should I use?
 
 | Task | Use |
 |------|-----|
-| Build a block or item extension | **Core API** — strategies, models, ports, `StrategySupport` |
-| Read extension tuning from YAML | **Core API** — `definition.getCustomData()` + `StrategySupport` |
-| Access runtime from another plugin | **Core API** — `IgnisCoreAPI` facade |
+| Build a block or item extension | **L2–L3** — strategies + `IgnisStrategyContext` |
+| Read extension tuning from YAML | **Core API** — `definition.getCustomData()` + `StrategySupport` or `ExtensionConfig` |
+| Access runtime from another plugin | **L4** — `IgnisCoreAPI` facade |
 
-## Sub-references
-
-- [Core API](/developers/api/core-api) — strategies, ports, models, config
-- [Extension config](/developers/extension-config) — `config.yml` sections and keys
+Third-party extension authors should not depend on `extensions/shared`. See [Extension shared (internal)](/developers/api/extension-shared).
 
 ## Sample extensions
 
@@ -35,5 +43,4 @@ slug: /developers/api
 ## Related docs
 
 - [Extension Cookbook](/developers/cookbook) — practical recipes
-- [Javadoc](/developers/reference) — full class reference
 - [Architecture](/developers/architecture) — module boundaries

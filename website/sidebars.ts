@@ -47,6 +47,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'developers/index',
         'developers/cookbook',
+        'developers/extension-profiles',
         'developers/extension-config',
         'developers/reference',
         {
@@ -55,6 +56,7 @@ const sidebars: SidebarsConfig = {
           collapsed: false,
           items: [
             'developers/api/index',
+            'developers/api/layers',
             'developers/api/core-api',
             'developers/api/extension-shared',
           ],

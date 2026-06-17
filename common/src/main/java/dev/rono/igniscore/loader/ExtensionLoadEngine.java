@@ -5,6 +5,8 @@ import com.google.inject.Singleton;
 import dev.rono.igniscore.api.IgnisApiVersion;
 import dev.rono.igniscore.api.config.DefinitionParser;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
+import dev.rono.igniscore.api.extension.ExtensionRequirements;
+import dev.rono.igniscore.api.extension.ExtensionRuntimeCapabilities;
 import dev.rono.igniscore.api.extension.ExtensionResources;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ExtensionDefinition;
@@ -120,6 +122,15 @@ public final class ExtensionLoadEngine {
                                                                D definition,
                                                                ExtensionKind kind) throws Exception {
         IgnisApiVersion.requireCompatible(manifest.getApiVersion(), manifest.getId());
+
+        if (strategyContext != null) {
+            ExtensionRuntimeCapabilities capabilities = new ExtensionRuntimeCapabilities(
+                    strategyContext.protocol().isEnabled(),
+                    strategyContext.nbt().isEnabled());
+            for (String warning : ExtensionRequirements.validate(manifest, capabilities, true)) {
+                host.getLogger().warning(warning);
+            }
+        }
 
         String strategyId = descriptor.getId();
 

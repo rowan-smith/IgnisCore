@@ -6,6 +6,16 @@ import dev.rono.igniscore.api.model.ItemDefinition;
 
 import java.util.Objects;
 
+/**
+ * Base class for extension strategies with descriptor binding and custom-config helpers.
+ *
+ * <p>Subclasses receive an {@link IgnisStrategyContext} for runtime services and may optionally
+ * be constructed with a pre-built {@link IgnisStrategyDescriptor}. The core binds the descriptor
+ * before invoking strategy callbacks when it was not supplied at construction time.</p>
+ *
+ * @see AbstractIgnisBlockStrategy
+ * @see AbstractIgnisItemStrategy
+ */
 public abstract class AbstractIgnisStrategy implements IgnisStrategy {
     private IgnisStrategyDescriptor descriptor;
     protected final IgnisStrategyContext context;
@@ -24,10 +34,23 @@ public abstract class AbstractIgnisStrategy implements IgnisStrategy {
         this.context = context;
     }
 
+    /**
+     * Associates this strategy instance with registry metadata.
+     *
+     * <p>Called by the core when a descriptor was not provided at construction time.</p>
+     *
+     * @param descriptor strategy identity and provenance
+     */
     public void bindDescriptor(IgnisStrategyDescriptor descriptor) {
         this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
     }
 
+    /**
+     * Returns the bound descriptor for this strategy.
+     *
+     * @return non-null descriptor previously set via constructor or {@link #bindDescriptor}
+     * @throws NullPointerException when no descriptor has been bound
+     */
     @Override
     public IgnisStrategyDescriptor descriptor() {
         return Objects.requireNonNull(descriptor, "Strategy descriptor has not been bound");

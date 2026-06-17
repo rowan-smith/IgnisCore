@@ -35,7 +35,13 @@ version: 1.0.0
 api-version: 1.0.0
 author: YourName
 strategy: dev.rono.igniscore.block.mytnt.Strategy
+profiles:
+  - fuse
+requires-integrations:
+  - protocol   # optional — only if you need ProtocolLib
 ```
+
+See [Extension profiles](/developers/extension-profiles) for all profile and integration tokens.
 
 ## Project layout
 
@@ -60,7 +66,8 @@ my-extension/
 |-------|---------|
 | [nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke) | Explosive fuse + documented `custom_data` |
 | [quarry-cache](https://github.com/%%site.repo%%/tree/main/extensions/blocks/quarry-cache) | Non-combustible GUI block |
-| [auto-sieve](https://github.com/%%site.repo%%/tree/main/extensions/blocks/auto-sieve) | Placed tick block, no `custom_data` |
+| [auto-sieve](https://github.com/%%site.repo%%/tree/main/extensions/blocks/auto-sieve) | Placed tick block (`tickPeriod`, `sieveParticles`) |
+| [signal-charge](https://github.com/%%site.repo%%/tree/main/extensions/blocks/signal-charge) | Remote-detonatable fuse block |
 | [socket-lamp](https://github.com/%%site.repo%%/tree/main/extensions/blocks/socket-lamp) | Linked remote-activation block |
 | [picnic-basket](https://github.com/%%site.repo%%/tree/main/extensions/blocks/picnic-basket) | Interact / storage GUI |
 
@@ -74,6 +81,8 @@ my-extension/
 ## Related
 
 - [Strategies](/concepts/strategies) — Java strategy contract
+- [Extension profiles](/developers/extension-profiles) — manifest profiles and integrations
 - [Extension config](/developers/extension-config) — `config.yml` sections and keys
+- [API layers](/developers/api/layers) — extension vs integrator surfaces
 - [Extension Cookbook](/developers/cookbook) — build your own
 - [Storage](/storage) — deploy paths and reload

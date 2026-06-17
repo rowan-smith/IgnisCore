@@ -13,7 +13,9 @@ Custom blocks exist as barrier blocks in the world with two distinct phases.
 | **Placed** | Barrier block exists in world | `onPlaced`, `onPlacedClick`, `onPlacedInteract`, `onPlacedBreak` |
 | **Active** | After ignition / fuse | `onPlace`, `onTick`, `onTrigger` |
 
-Surface click routing is declared in YAML `behavior`. Override `onPlacedClick` only for custom logic beyond standard actions.
+Surface click routing is declared in YAML `behavior`. Bundled blocks resolve tokens with `BlockBehaviorConfig.from(definition.getBehaviorConfig())` before calling strategy overrides.
+
+Override `onPlacedClick` only for custom logic beyond standard actions.
 
 ## Config sections
 
@@ -22,6 +24,9 @@ Surface click routing is declared in YAML `behavior`. Override `onPlacedClick` o
 | `display` | Title and description |
 | `block` | Placeable/breakable flags, base material, breaking tuning |
 | `textures` | Asset paths (top, side, bottom) |
+| `model` | Optional authoring metadata for pack tooling |
+| `interactions` | Optional per-face click overrides |
+| `block_display` | Optional display-entity tuning |
 | `behavior` | Surface clicks — left/right block and air actions |
 | `custom_data` | Optional — only keys your strategy reads (see [Extension config](/developers/extension-config)) |
 

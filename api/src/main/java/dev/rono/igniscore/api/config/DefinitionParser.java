@@ -11,10 +11,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Converts parsed YAML maps into API model types and strategy descriptors.
+ *
+ * <p>Prefer {@link YamlDefinitions} as the public entry point; this class holds the shared
+ * parsing logic used by the core loader and tests.</p>
+ */
 public final class DefinitionParser {
     private DefinitionParser() {
     }
 
+    /**
+     * Builds a {@link BlockDefinition} from a {@code config.yml} root map.
+     *
+     * @param config parsed YAML root
+     * @param fallbackId id used when the config omits {@code id}
+     * @param modelData custom model data assigned by the loader
+     * @param extensionId manifest strategy id for this extension
+     * @return fully populated block definition
+     */
     public static BlockDefinition parseBlock(Map<String, Object> config, String fallbackId, int modelData, String extensionId) {
         String id = YamlDefinitions.string(config, "id", fallbackId);
 
@@ -57,6 +72,12 @@ public final class DefinitionParser {
                 side1, side2, side3, side4);
     }
 
+    /**
+     * Builds a strategy registry descriptor from extension manifest metadata.
+     *
+     * @param manifest parsed {@code *-extension.yml}
+     * @return descriptor used to register the extension strategy
+     */
     public static IgnisStrategyDescriptor parseStrategyDescriptor(ExtensionManifest manifest) {
         return IgnisStrategyDescriptor.of(
                 manifest.getId(),
@@ -66,6 +87,15 @@ public final class DefinitionParser {
                 manifest.getId());
     }
 
+    /**
+     * Builds an {@link ItemDefinition} from a {@code config.yml} root map.
+     *
+     * @param config parsed YAML root
+     * @param fallbackId id used when the config omits {@code id}
+     * @param modelData custom model data assigned by the loader
+     * @param extensionId manifest strategy id for this extension
+     * @return fully populated item definition
+     */
     public static ItemDefinition parseItem(Map<String, Object> config, String fallbackId, int modelData, String extensionId) {
         String id = YamlDefinitions.string(config, "id", fallbackId);
 

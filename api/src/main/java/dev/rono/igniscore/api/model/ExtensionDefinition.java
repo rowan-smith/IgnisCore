@@ -1,16 +1,24 @@
 package dev.rono.igniscore.api.model;
 
 /**
- * Common surface for block and item extension definitions loaded from JARs.
+ * Common surface for block and item extension definitions loaded from JAR {@code config.yml}.
  *
- * @see dev.rono.igniscore.api.model.BlockDefinition
- * @see dev.rono.igniscore.api.model.ItemDefinition
+ * <p>The {@link #getId() config id} is the in-game type id used by commands and NBT.
+ * {@link #getExtensionId()} matches the manifest {@code id} that registers the strategy.</p>
+ *
+ * @see BlockDefinition
+ * @see ItemDefinition
  */
 public sealed interface ExtensionDefinition permits BlockDefinition, ItemDefinition {
 
-    /** In-game type id from {@code config.yml}. */
+    /**
+     * @return in-game type id from {@code config.yml}
+     */
     String getId();
 
-    /** Manifest strategy id used to register the extension's {@link dev.rono.igniscore.api.strategy.IgnisStrategy}. */
+    /**
+     * @return manifest strategy id used to register the extension's
+     *         {@link dev.rono.igniscore.api.strategy.IgnisStrategy}
+     */
     String getExtensionId();
 }
