@@ -10,7 +10,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        context.eventBus().subscribe(new EntityCameraListeners(context));
+        context.eventBus().subscribe(new EntityCameraOnBlockInteractListener(context));
     }
 
     @Override

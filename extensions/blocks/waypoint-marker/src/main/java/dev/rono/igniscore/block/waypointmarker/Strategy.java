@@ -10,7 +10,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        context.eventBus().subscribe(new WaypointMarkerListeners(context));
+        context.eventBus().subscribe(new WaypointMarkerOnBlockInteractListener(context));
     }
 
     @Override

@@ -1,7 +1,5 @@
 package dev.rono.igniscore.block.phasetnt;
 
-import dev.rono.igniscore.api.event.OnBlockTickListener;
-import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -11,9 +9,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        PhaseTntListeners listeners = new PhaseTntListeners(context);
-        context.eventBus().subscribe((OnBlockTickListener) listeners);
-        context.eventBus().subscribe((OnBlockTriggerListener) listeners);
+        context.eventBus().subscribe(new PhaseTntOnBlockTickListener(context));
+        context.eventBus().subscribe(new PhaseTntOnBlockTriggerListener(context));
     }
 
     @Override

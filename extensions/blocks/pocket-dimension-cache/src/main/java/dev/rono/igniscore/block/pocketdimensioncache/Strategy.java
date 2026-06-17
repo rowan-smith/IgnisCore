@@ -1,8 +1,5 @@
 package dev.rono.igniscore.block.pocketdimensioncache;
 
-import dev.rono.igniscore.api.event.OnBlockBreakListener;
-import dev.rono.igniscore.api.event.OnBlockInteractListener;
-import dev.rono.igniscore.api.event.OnBlockPlaceListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -13,10 +10,10 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        PocketDimensionCacheListeners listeners = new PocketDimensionCacheListeners(context);
-        context.eventBus().subscribe((OnBlockPlaceListener) listeners);
-        context.eventBus().subscribe((OnBlockBreakListener) listeners);
-        context.eventBus().subscribe((OnBlockInteractListener) listeners);
+        PocketDimensionCacheRuntime runtime = new PocketDimensionCacheRuntime(context);
+        context.eventBus().subscribe(new PocketDimensionCacheOnBlockPlaceListener(runtime));
+        context.eventBus().subscribe(new PocketDimensionCacheOnBlockBreakListener(runtime));
+        context.eventBus().subscribe(new PocketDimensionCacheOnBlockInteractListener(runtime));
     }
 
     @Override

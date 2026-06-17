@@ -24,7 +24,5 @@ model:
 
 
 behavior:
-  left_click_block: break
-  right_click_block: none
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME

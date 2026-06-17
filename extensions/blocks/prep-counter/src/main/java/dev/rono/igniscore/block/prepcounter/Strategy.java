@@ -1,8 +1,5 @@
 package dev.rono.igniscore.block.prepcounter;
 
-import dev.rono.igniscore.api.event.OnBlockBreakListener;
-import dev.rono.igniscore.api.event.OnBlockInteractListener;
-import dev.rono.igniscore.api.event.OnBlockPlaceListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -13,10 +10,10 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        PrepCounterListeners listeners = new PrepCounterListeners(context);
-        context.eventBus().subscribe((OnBlockPlaceListener) listeners);
-        context.eventBus().subscribe((OnBlockBreakListener) listeners);
-        context.eventBus().subscribe((OnBlockInteractListener) listeners);
+        PrepCounterRuntime runtime = new PrepCounterRuntime(context);
+        context.eventBus().subscribe(new PrepCounterOnBlockPlaceListener(runtime));
+        context.eventBus().subscribe(new PrepCounterOnBlockBreakListener(runtime));
+        context.eventBus().subscribe(new PrepCounterOnBlockInteractListener(runtime));
     }
 
     @Override

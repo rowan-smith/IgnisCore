@@ -1,7 +1,5 @@
 package dev.rono.igniscore.block.moodlantern;
 
-import dev.rono.igniscore.api.event.OnBlockBreakListener;
-import dev.rono.igniscore.api.event.OnBlockPlaceListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -11,9 +9,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        MoodLanternListeners listeners = new MoodLanternListeners(context);
-        context.eventBus().subscribe((OnBlockPlaceListener) listeners);
-        context.eventBus().subscribe((OnBlockBreakListener) listeners);
+        context.eventBus().subscribe(new MoodLanternOnBlockPlaceListener(context));
+        context.eventBus().subscribe(new MoodLanternOnBlockBreakListener());
     }
 
     @Override

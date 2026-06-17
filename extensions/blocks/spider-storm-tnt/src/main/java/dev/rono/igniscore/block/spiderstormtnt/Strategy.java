@@ -1,7 +1,5 @@
 package dev.rono.igniscore.block.spiderstormtnt;
 
-import dev.rono.igniscore.api.event.OnBlockPlaceListener;
-import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -11,9 +9,9 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        SpiderStormListeners listeners = new SpiderStormListeners(context);
-        context.eventBus().subscribe((OnBlockPlaceListener) listeners);
-        context.eventBus().subscribe((OnBlockTriggerListener) listeners);
+        SpiderStormRuntime runtime = new SpiderStormRuntime(context);
+        context.eventBus().subscribe(new SpiderStormOnBlockPlaceListener(runtime));
+        context.eventBus().subscribe(new SpiderStormOnBlockTriggerListener(runtime));
     }
 
     @Override

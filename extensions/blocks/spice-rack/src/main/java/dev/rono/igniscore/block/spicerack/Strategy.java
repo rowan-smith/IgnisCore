@@ -1,8 +1,5 @@
 package dev.rono.igniscore.block.spicerack;
 
-import dev.rono.igniscore.api.event.OnBlockBreakListener;
-import dev.rono.igniscore.api.event.OnBlockInteractListener;
-import dev.rono.igniscore.api.event.OnBlockPlaceListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -13,10 +10,10 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        SpiceRackListeners listeners = new SpiceRackListeners(context);
-        context.eventBus().subscribe((OnBlockPlaceListener) listeners);
-        context.eventBus().subscribe((OnBlockBreakListener) listeners);
-        context.eventBus().subscribe((OnBlockInteractListener) listeners);
+        SpiceRackRuntime runtime = new SpiceRackRuntime(context);
+        context.eventBus().subscribe(new SpiceRackOnBlockPlaceListener(runtime));
+        context.eventBus().subscribe(new SpiceRackOnBlockBreakListener(runtime));
+        context.eventBus().subscribe(new SpiceRackOnBlockInteractListener(runtime));
     }
 
     @Override

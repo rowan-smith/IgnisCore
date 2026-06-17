@@ -9,7 +9,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        context.eventBus().subscribe(new MimicListeners(context));
+        context.eventBus().subscribe(new MimicOnBlockActivateListener(context));
     }
 
     @Override

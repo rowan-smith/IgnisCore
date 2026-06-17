@@ -33,8 +33,6 @@ model:
 # combustible: false — no flint-and-steel ignition; detonator handles triggering
 behavior:
   combustible: false
-  left_click_block: none
-  right_click_block: none
   sounds:
     place: BLOCK_TNT_PLACE
 

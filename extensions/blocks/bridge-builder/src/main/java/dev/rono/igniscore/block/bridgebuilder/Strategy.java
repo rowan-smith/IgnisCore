@@ -1,7 +1,5 @@
 package dev.rono.igniscore.block.bridgebuilder;
 
-import dev.rono.igniscore.api.event.OnBlockTickListener;
-import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -11,9 +9,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        BridgeBuilderListeners listeners = new BridgeBuilderListeners(context);
-        context.eventBus().subscribe((OnBlockTickListener) listeners);
-        context.eventBus().subscribe((OnBlockTriggerListener) listeners);
+        context.eventBus().subscribe(new BridgeBuilderOnBlockTickListener(context));
+        context.eventBus().subscribe(new BridgeBuilderOnBlockTriggerListener(context));
     }
 
     @Override

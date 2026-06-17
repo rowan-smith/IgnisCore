@@ -1,7 +1,5 @@
 package dev.rono.igniscore.block.mobradar;
 
-import dev.rono.igniscore.api.event.OnBlockBreakListener;
-import dev.rono.igniscore.api.event.OnBlockPlaceListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -11,9 +9,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        MobRadarListeners listeners = new MobRadarListeners(context);
-        context.eventBus().subscribe((OnBlockPlaceListener) listeners);
-        context.eventBus().subscribe((OnBlockBreakListener) listeners);
+        context.eventBus().subscribe(new MobRadarOnBlockPlaceListener(context));
+        context.eventBus().subscribe(new MobRadarOnBlockBreakListener());
     }
 
     @Override

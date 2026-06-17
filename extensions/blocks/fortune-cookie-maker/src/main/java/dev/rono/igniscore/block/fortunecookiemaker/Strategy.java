@@ -1,8 +1,5 @@
 package dev.rono.igniscore.block.fortunecookiemaker;
 
-import dev.rono.igniscore.api.event.OnBlockBreakListener;
-import dev.rono.igniscore.api.event.OnBlockInteractListener;
-import dev.rono.igniscore.api.event.OnBlockPlaceListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -13,10 +10,10 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        FortuneCookieMakerListeners listeners = new FortuneCookieMakerListeners(context);
-        context.eventBus().subscribe((OnBlockPlaceListener) listeners);
-        context.eventBus().subscribe((OnBlockBreakListener) listeners);
-        context.eventBus().subscribe((OnBlockInteractListener) listeners);
+        FortuneCookieMakerRuntime runtime = new FortuneCookieMakerRuntime(context);
+        context.eventBus().subscribe(new FortuneCookieMakerOnBlockPlaceListener(runtime));
+        context.eventBus().subscribe(new FortuneCookieMakerOnBlockBreakListener(runtime));
+        context.eventBus().subscribe(new FortuneCookieMakerOnBlockInteractListener(runtime));
     }
 
     @Override

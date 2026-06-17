@@ -23,6 +23,6 @@ final class AutoSieveOnBlockPlaceListener implements OnBlockPlaceListener {
         long period = StrategySupport.customInt(block.definition(), "tickPeriod", 20);
         PlacedTickSupport.start(context, block.location(), period, () -> AutoSieveSupport.tick(context, block));
         IgnisLocation center = Locations.toCenter(block.location());
-        TheatricsSupport.chime(AutoSieveSupport.worldAt(context, center), center, 1.0f);
+        TheatricsSupport.chime(context.extensions().resolveWorld(center), center, 1.0f);
     }
 }
