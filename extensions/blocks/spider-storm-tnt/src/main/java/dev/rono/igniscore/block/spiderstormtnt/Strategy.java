@@ -1,8 +1,6 @@
 package dev.rono.igniscore.block.spiderstormtnt;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
-import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -23,12 +21,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlaced(location);
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object context) {
-        behavior.onTrigger(instance);
+    public void registerEvents() {
+        onBlockPlace(event -> behavior.onPlaced(event.location()));
+        onBlockTrigger(event -> behavior.onTrigger(event.instance()));
     }
 }

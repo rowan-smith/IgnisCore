@@ -9,7 +9,9 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.core.ExtensionBootstrap;
+import dev.rono.igniscore.api.event.IgnisEventBus;
 import dev.rono.igniscore.core.IgnisCoreFacadeImpl;
+import dev.rono.igniscore.event.IgnisEventBusImpl;
 import dev.rono.igniscore.core.IgnisRuntimeLifecycle;
 import dev.rono.igniscore.core.IgnisSchedulerProvider;
 import dev.rono.igniscore.core.IgnisStrategyContextProvider;
@@ -35,6 +37,8 @@ public class IgnisCommonModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(IgnisEventBus.class).to(IgnisEventBusImpl.class).in(Scopes.SINGLETON);
+        bind(IgnisEventBusImpl.class).in(Scopes.SINGLETON);
         bind(IgnisStrategyRegistry.class).to(IgnisStrategyRegistryImpl.class).in(Scopes.SINGLETON);
         bind(IgnisStrategyContext.class).toProvider(IgnisStrategyContextProvider.class).in(Scopes.SINGLETON);
         bind(IgnisScheduler.class).toProvider(IgnisSchedulerProvider.class).in(Scopes.SINGLETON);

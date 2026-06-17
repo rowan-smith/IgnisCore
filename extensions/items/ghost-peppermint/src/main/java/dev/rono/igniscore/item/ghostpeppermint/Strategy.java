@@ -1,11 +1,5 @@
 package dev.rono.igniscore.item.ghostpeppermint;
 
-import dev.rono.igniscore.api.config.ItemBehaviorConfig;
-import dev.rono.igniscore.api.model.ItemDefinition;
-import dev.rono.igniscore.api.port.IgnisBlock;
-import dev.rono.igniscore.api.port.IgnisInteraction;
-import dev.rono.igniscore.api.port.IgnisItem;
-import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.strategy.AbstractIgnisItemStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
@@ -18,13 +12,12 @@ public class Strategy extends AbstractIgnisItemStrategy {
     }
 
     @Override
-    public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
-                           IgnisInteraction action, IgnisBlock clickedBlock) {
-        ItemBehaviorConfig config = ItemBehaviorConfig.from(definition.getBehaviorConfig());
-        config.actionFor(action).ifPresent(token -> {
-            if ("use".equals(token)) {
-                behavior.onItemUse(player, definition, item, clickedBlock);
+    public void registerEvents() {
+        onItemClick(event -> {
+            if ("use".equals(event.actionToken())) {
+                behavior.onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
             }
         });
     }
 }
+

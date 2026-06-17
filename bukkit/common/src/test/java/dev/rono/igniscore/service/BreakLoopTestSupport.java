@@ -54,7 +54,7 @@ public final class BreakLoopTestSupport {
         ExtensionSupportService extensionSupport = new ExtensionSupportService(
                 CommonTestSupport.platformAdapter(behaviorContext.world(), tempDir));
         IgnisStrategyRegistryImpl strategyRegistry = new IgnisStrategyRegistryImpl(
-                new DefaultExplosionStrategy(behaviorContext.context().getExtensionSupport()));
+                new DefaultExplosionStrategy(behaviorContext.context().getExtensionSupport(), new dev.rono.igniscore.event.IgnisEventBusImpl()));
         strategyRegistry.register(
                 IgnisStrategyDescriptor.of("storage", "Storage", "1.0.0", "test"),
                 storageStrategy());
@@ -141,7 +141,7 @@ public final class BreakLoopTestSupport {
                                                      BehaviorTestSupport.TestContext behaviorContext,
                                                      BlockDefinition... definitions) {
         DefaultExplosionStrategy fallback = new DefaultExplosionStrategy(
-                behaviorContext.context().getExtensionSupport());
+                behaviorContext.context().getExtensionSupport(), new dev.rono.igniscore.event.IgnisEventBusImpl());
         for (BlockDefinition definition : definitions) {
             String extensionId = definition.getExtensionId();
             if (!strategyRegistry.isRegistered(extensionId)) {

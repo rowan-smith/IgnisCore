@@ -1,8 +1,6 @@
 package dev.rono.igniscore.block.nuke;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
-import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -24,22 +22,10 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlaced(location);
-    }
-
-    @Override
-    public void onPlace(RuntimeBlockInstance instance) {
-        behavior.onPlace(instance);
-    }
-
-    @Override
-    public void onTick(RuntimeBlockInstance instance) {
-        behavior.onTick(instance);
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object context) {
-        behavior.onTrigger(instance, instance.getDefinition());
+    public void registerEvents() {
+        onBlockPlace(event -> behavior.onPlaced(event.location()));
+        onBlockActivate(event -> behavior.onPlace(event.instance()));
+        onBlockTick(event -> behavior.onTick(event.instance()));
+        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.instance().getDefinition()));
     }
 }

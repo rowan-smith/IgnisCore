@@ -1,8 +1,7 @@
 package dev.rono.igniscore.listener;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.api.strategy.IgnisItemStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.service.ItemIdentifier;
@@ -19,15 +18,15 @@ import org.bukkit.inventory.ItemStack;
 public class ItemListener implements Listener {
     private final ItemManager itemManager;
     private final ItemIdentifier itemIdentifier;
-    private final IgnisStrategyRegistry strategyRegistry;
+    private final StrategyEventPublisher events;
 
     @Inject
     public ItemListener(ItemManager itemManager,
                         ItemIdentifier itemIdentifier,
-                        IgnisStrategyRegistry strategyRegistry) {
+                        StrategyEventPublisher events) {
         this.itemManager = itemManager;
         this.itemIdentifier = itemIdentifier;
-        this.strategyRegistry = strategyRegistry;
+        this.events = events;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
@@ -55,7 +54,7 @@ public class ItemListener implements Listener {
 
         event.setCancelled(true);
         Player player = event.getPlayer();
-        requireItemStrategy(definition).onItemUse(
+        events.fireItemClick(
                 BukkitBridge.wrap(player),
                 definition,
                 BukkitBridge.wrap(item),
@@ -69,9 +68,5 @@ public class ItemListener implements Listener {
                 player.getInventory().setItemInMainHand(null);
             }
         }
-    }
-
-    private IgnisItemStrategy requireItemStrategy(ItemDefinition definition) {
-        return strategyRegistry.requireItemStrategy(definition.getExtensionId(), definition.getId());
     }
 }

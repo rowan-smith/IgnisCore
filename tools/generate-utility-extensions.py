@@ -218,35 +218,19 @@ def block_strategy(package: str, class_name: str, ext: dict) -> str:
     ext_type = ext["type"]
     fuse = ext.get("fuse", 80)
     combustible = ext.get("combustible", ext_type == "fuse")
-    methods = []
-    imports_extra = ""
-    trigger_method = ""
+    register_lines = []
 
     if ext_type == "fuse":
-        methods.append("    @Override\n    public void onTick(RuntimeBlockInstance instance) {\n        behavior.onTick(instance);\n    }")
-        trigger_method = """
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        behavior.onTrigger(instance, triggerContext);
-    }"""
+        register_lines.append("        onBlockTick(event -> behavior.onTick(event.instance()));")
+        register_lines.append("        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));")
     if ext_type == "placed":
-        imports_extra = "\nimport dev.rono.igniscore.api.port.IgnisLocation;"
-        methods.append("    @Override\n    public void onPlaced(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlaced(definition, location);\n    }")
-        methods.append("    @Override\n    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlacedBreak(definition, location);\n    }")
+        register_lines.append("        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));")
+        register_lines.append("        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));")
     if ext_type == "interact":
-        imports_extra = "\nimport dev.rono.igniscore.api.CustomBlockAction;\nimport dev.rono.igniscore.api.port.IgnisItem;\nimport dev.rono.igniscore.api.port.IgnisLocation;\nimport dev.rono.igniscore.api.port.IgnisPlayer;"
-        methods.append("""    @Override
-    public void onPlacedInteract(BlockDefinition definition,
-                                 IgnisLocation location,
-                                 IgnisPlayer player,
-                                 dev.rono.igniscore.api.port.IgnisInteraction interaction,
-                                 IgnisItem heldItem,
-                                 CustomBlockAction action) {
-        behavior.onPlacedInteract(definition, location, player, interaction, heldItem, action);
-    }""")
+        register_lines.append("        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.location(), event.player(), event.interaction(), event.heldItem(), event.action()));")
         if ext.get("placed_hooks"):
-            methods.append("    @Override\n    public void onPlaced(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlaced(definition, location);\n    }")
-            methods.append("    @Override\n    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlacedBreak(definition, location);\n    }")
+            register_lines.append("        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));")
+            register_lines.append("        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));")
 
     if ext_type == "fuse":
         if combustible:
@@ -268,13 +252,14 @@ def block_strategy(package: str, class_name: str, ext: dict) -> str:
         return StrategyProfile.placed();
     }"""
 
+    register_block = "\n".join(register_lines)
+
     return f"""package dev.rono.igniscore.block.{package};
 
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;{imports_extra}
+import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {{
     private final {class_name}Behavior behavior;
@@ -286,8 +271,10 @@ public class Strategy extends AbstractIgnisBlockStrategy {{
 
 {profile_method}
 
-{chr(10).join(methods)}
-{trigger_method}
+    @Override
+    public void registerEvents() {{
+{register_block}
+    }}
 }}
 """
 
@@ -295,11 +282,6 @@ public class Strategy extends AbstractIgnisBlockStrategy {{
 def item_strategy(package: str, class_name: str) -> str:
     return f"""package dev.rono.igniscore.item.{package};
 
-import dev.rono.igniscore.api.model.ItemDefinition;
-import dev.rono.igniscore.api.port.IgnisBlock;
-import dev.rono.igniscore.api.port.IgnisInteraction;
-import dev.rono.igniscore.api.port.IgnisItem;
-import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.strategy.AbstractIgnisItemStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
@@ -312,11 +294,12 @@ public class Strategy extends AbstractIgnisItemStrategy {{
     }}
 
     @Override
-    public void onItemAction(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
-                             IgnisInteraction action, IgnisBlock clickedBlock, String actionToken) {{
-        if ("use".equals(actionToken)) {{
-            behavior.onItemUse(player, definition, item, clickedBlock);
-        }}
+    public void registerEvents() {{
+        onItemClick(event -> {{
+            if ("use".equals(event.actionToken())) {{
+                behavior.onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+            }}
+        }});
     }}
 }}
 """

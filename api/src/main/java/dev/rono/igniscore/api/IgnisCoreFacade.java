@@ -1,5 +1,6 @@
 package dev.rono.igniscore.api;
 
+import dev.rono.igniscore.api.event.IgnisEventBus;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.service.IgnisEffectService;
@@ -112,6 +113,13 @@ public interface IgnisCoreFacade {
      * @return effect service for particles, sounds, and fake explosions
      */
     IgnisEffectService getEffectService();
+
+    /**
+     * Returns the platform-neutral event bus for lifecycle hooks and observers.
+     *
+     * @return shared event bus instance
+     */
+    IgnisEventBus eventBus();
 
     /**
      * Reloads extension JARs and refreshes block/item definitions and strategies.

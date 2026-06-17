@@ -1,5 +1,6 @@
 package dev.rono.igniscore.api;
 
+import dev.rono.igniscore.api.event.IgnisEventBus;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.service.IgnisEffectService;
@@ -154,6 +155,13 @@ public final class IgnisCoreAPI {
      */
     public static IgnisEffectService getEffectService() {
         return requireFacade().getEffectService();
+    }
+
+    /**
+     * Returns the platform-neutral event bus for lifecycle hooks and observers.
+     */
+    public static IgnisEventBus eventBus() {
+        return requireFacade().eventBus();
     }
 
     /**

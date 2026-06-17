@@ -1,20 +1,22 @@
 package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.api.config.ExtensionConfig;
+import dev.rono.igniscore.api.event.OnBlockActivateListener;
+import dev.rono.igniscore.api.event.OnBlockBreakListener;
+import dev.rono.igniscore.api.event.OnBlockClickListener;
+import dev.rono.igniscore.api.event.OnBlockInteractListener;
+import dev.rono.igniscore.api.event.OnBlockPlaceListener;
+import dev.rono.igniscore.api.event.OnBlockTickListener;
+import dev.rono.igniscore.api.event.OnBlockTriggerListener;
+import dev.rono.igniscore.api.event.OnItemClickListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 
 import java.util.Objects;
 
 /**
- * Base class for extension strategies with descriptor binding and custom-config helpers.
- *
- * <p>Subclasses receive an {@link IgnisStrategyContext} for runtime services and may optionally
- * be constructed with a pre-built {@link IgnisStrategyDescriptor}. The core binds the descriptor
- * before invoking strategy callbacks when it was not supplied at construction time.</p>
- *
- * @see AbstractIgnisBlockStrategy
- * @see AbstractIgnisItemStrategy
+ * Base class for extension strategies with descriptor binding, custom-config helpers, and
+ * scoped event bus subscriptions.
  */
 public abstract class AbstractIgnisStrategy implements IgnisStrategy {
     private IgnisStrategyDescriptor descriptor;
@@ -34,26 +36,49 @@ public abstract class AbstractIgnisStrategy implements IgnisStrategy {
         this.context = context;
     }
 
-    /**
-     * Associates this strategy instance with registry metadata.
-     *
-     * <p>Called by the core when a descriptor was not provided at construction time.</p>
-     *
-     * @param descriptor strategy identity and provenance
-     */
     public void bindDescriptor(IgnisStrategyDescriptor descriptor) {
         this.descriptor = Objects.requireNonNull(descriptor, "descriptor");
     }
 
-    /**
-     * Returns the bound descriptor for this strategy.
-     *
-     * @return non-null descriptor previously set via constructor or {@link #bindDescriptor}
-     * @throws NullPointerException when no descriptor has been bound
-     */
     @Override
     public IgnisStrategyDescriptor descriptor() {
         return Objects.requireNonNull(descriptor, "Strategy descriptor has not been bound");
+    }
+
+    protected final void onBlockPlace(OnBlockPlaceListener listener) {
+        requireContext().eventBus().subscribe(descriptor().id(), listener);
+    }
+
+    protected final void onBlockClick(OnBlockClickListener listener) {
+        requireContext().eventBus().subscribe(descriptor().id(), listener);
+    }
+
+    protected final void onBlockInteract(OnBlockInteractListener listener) {
+        requireContext().eventBus().subscribe(descriptor().id(), listener);
+    }
+
+    protected final void onBlockBreak(OnBlockBreakListener listener) {
+        requireContext().eventBus().subscribe(descriptor().id(), listener);
+    }
+
+    protected final void onBlockActivate(OnBlockActivateListener listener) {
+        requireContext().eventBus().subscribe(descriptor().id(), listener);
+    }
+
+    protected final void onBlockTick(OnBlockTickListener listener) {
+        requireContext().eventBus().subscribe(descriptor().id(), listener);
+    }
+
+    protected final void onBlockTrigger(OnBlockTriggerListener listener) {
+        requireContext().eventBus().subscribe(descriptor().id(), listener);
+    }
+
+    protected final void onItemClick(OnItemClickListener listener) {
+        requireContext().eventBus().subscribe(descriptor().id(), listener);
+    }
+
+    private IgnisStrategyContext requireContext() {
+        return Objects.requireNonNull(context, "IgnisStrategyContext is required for event subscriptions");
     }
 
     protected ExtensionConfig customConfig(BlockDefinition definition) {

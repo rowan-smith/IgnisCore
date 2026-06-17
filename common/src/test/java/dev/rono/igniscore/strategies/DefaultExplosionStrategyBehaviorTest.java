@@ -1,8 +1,11 @@
 package dev.rono.igniscore.strategies;
 
+import dev.rono.igniscore.api.event.BlockTriggerEvent;
+import dev.rono.igniscore.api.event.IgnisEventBus;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.testsupport.BehaviorTestSupport;
+import dev.rono.igniscore.testsupport.TestEventBus;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.Test;
 
@@ -16,11 +19,13 @@ class DefaultExplosionStrategyBehaviorTest {
 
     @Test
     void triggerStoresBlastPowerAndExplodes() {
-        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport());
+        TestEventBus eventBus = new TestEventBus();
+        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext(eventBus);
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus);
+        strategy.registerEvents();
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(sampleDefinition());
 
-        strategy.onTrigger(instance, null);
+        eventBus.fireBlockTrigger(new BlockTriggerEvent(instance, null), "default");
 
         assertEquals(4.0, instance.getData().getDouble("ignis:blast_power"));
         assertFalse(ctx.world().explosions().isEmpty());
@@ -29,8 +34,10 @@ class DefaultExplosionStrategyBehaviorTest {
 
     @Test
     void triggerUsesCustomPowerFromDefinition() {
-        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport());
+        IgnisEventBus eventBus = new TestEventBus();
+        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext(eventBus);
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus);
+        strategy.registerEvents();
         BlockDefinition powered = new BlockDefinition(
                 "powered",
                 "paper",
@@ -53,7 +60,7 @@ class DefaultExplosionStrategyBehaviorTest {
                 "powered");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(powered);
 
-        strategy.onTrigger(instance, null);
+        ((TestEventBus) eventBus).fireBlockTrigger(new BlockTriggerEvent(instance, null), "default");
 
         assertEquals(9.0, instance.getData().getDouble("ignis:blast_power"));
     }

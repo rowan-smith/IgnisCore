@@ -20,11 +20,15 @@ public final class BehaviorTestSupport {
     }
 
     public static TestContext createContext() {
+        return createContext(NoopEventBus.INSTANCE);
+    }
+
+    public static TestContext createContext(dev.rono.igniscore.api.event.IgnisEventBus eventBus) {
         RecordingIgnisWorld world = new RecordingIgnisWorld();
         RecordingEffectService effects = new RecordingEffectService();
         WorldReturningExtensionSupport extensionSupport = new WorldReturningExtensionSupport(world);
         IgnisStrategyContext context = new IgnisStrategyContext(
-                new NoopIgnisScheduler(), new NoopIgnisNbtService(), null, effects, extensionSupport);
+                new NoopIgnisScheduler(), new NoopIgnisNbtService(), null, effects, extensionSupport, eventBus);
         return new TestContext(context, world, effects);
     }
 

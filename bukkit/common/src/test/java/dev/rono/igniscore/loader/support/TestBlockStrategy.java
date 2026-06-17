@@ -1,7 +1,6 @@
 package dev.rono.igniscore.loader.support;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -21,6 +20,7 @@ public class TestBlockStrategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object context) {
+    public void registerEvents() {
+        onBlockTrigger(event -> { });
     }
 }

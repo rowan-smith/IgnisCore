@@ -1,6 +1,5 @@
 package dev.rono.igniscore.block.signalcharge;
 
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
@@ -13,12 +12,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onPlace(RuntimeBlockInstance instance) {
-        instance.setTicksLeft(0);
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object context) {
-        behavior.onTrigger(instance);
+    public void registerEvents() {
+        onBlockTrigger(event -> behavior.onTrigger(event.instance()));
     }
 }

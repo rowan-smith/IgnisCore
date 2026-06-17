@@ -3,9 +3,8 @@ package dev.rono.igniscore.service;
 import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.util.Locations;
+import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -36,7 +35,7 @@ public class CustomBlockBreakService {
     private final BlockManager blockManager;
     private final BlockItemFactory blockItemFactory;
     private final ConfiguredEffectService effectService;
-    private final IgnisStrategyRegistry strategyRegistry;
+    private final StrategyEventPublisher events;
     private final StrategyProfileResolver profileResolver;
     private final Map<UUID, MiningSession> miningSessions = new ConcurrentHashMap<>();
 
@@ -45,13 +44,13 @@ public class CustomBlockBreakService {
                                    BlockManager blockManager,
                                    BlockItemFactory blockItemFactory,
                                    ConfiguredEffectService effectService,
-                                   IgnisStrategyRegistry strategyRegistry,
+                                   StrategyEventPublisher events,
                                    StrategyProfileResolver profileResolver) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.blockItemFactory = blockItemFactory;
         this.effectService = effectService;
-        this.strategyRegistry = strategyRegistry;
+        this.events = events;
         this.profileResolver = profileResolver;
     }
 
@@ -118,7 +117,7 @@ public class CustomBlockBreakService {
                 Particle.BLOCK, 24, 0.35, 0.35, 0.35, 0.01);
 
         ItemStack droppedItem = dropItem ? blockItemFactory.createBlockItem(definition.getId()) : null;
-        requireBlockStrategy(definition).onPlacedBreak(
+        events.fireBlockBreak(
                 definition,
                 BukkitBridge.toIgnis(block.getLocation()),
                 droppedItem != null ? BukkitBridge.wrap(droppedItem) : null);
@@ -184,10 +183,6 @@ public class CustomBlockBreakService {
 
     private boolean isInstantBreakBlock(BlockDefinition definition) {
         return profileResolver.resolve(definition).isCombustible();
-    }
-
-    private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
-        return strategyRegistry.requireBlockStrategy(definition.getExtensionId(), definition.getId());
     }
 
     private void sendBlockDamage(Location location, float progress, int sourceEntityId) {

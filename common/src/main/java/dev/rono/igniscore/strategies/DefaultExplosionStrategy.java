@@ -1,8 +1,9 @@
 package dev.rono.igniscore.strategies;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.event.BlockTriggerEvent;
+import dev.rono.igniscore.api.event.IgnisEventBus;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
@@ -15,11 +16,13 @@ public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
     private static final double DEFAULT_POWER = 4.0;
 
     private final ExtensionSupport extensionSupport;
+    private final IgnisEventBus eventBus;
 
     @Inject
-    public DefaultExplosionStrategy(ExtensionSupport extensionSupport) {
+    public DefaultExplosionStrategy(ExtensionSupport extensionSupport, IgnisEventBus eventBus) {
         super(IgnisStrategyDescriptor.of("default", "Default Explosion", "1.0.0", "IgnisCore"));
         this.extensionSupport = extensionSupport;
+        this.eventBus = eventBus;
     }
 
     public StrategyProfile profile(BlockDefinition definition) {
@@ -27,12 +30,16 @@ public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object context) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = instance.getLocation();
+    public void registerEvents() {
+        eventBus.subscribe(descriptor().id(), this::onBlockTrigger);
+    }
+
+    private void onBlockTrigger(BlockTriggerEvent event) {
+        BlockDefinition def = event.instance().getDefinition();
+        IgnisLocation loc = event.instance().getLocation();
         float power = resolvePower(def);
 
-        instance.getData().setDouble("ignis:blast_power", power);
+        event.instance().getData().setDouble("ignis:blast_power", power);
 
         IgnisWorld world = extensionSupport.resolveWorld(loc);
         world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);

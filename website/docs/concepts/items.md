@@ -4,7 +4,7 @@ description: Custom items — throwables, consumables, link tools, and click-dri
 slug: /concepts/items
 ---
 
-Custom items are standard inventory items tagged with IgnisCore NBT. Behavior is driven by YAML `behavior` and strategy code — from throwable explosives and utility tools to consumables with cooldowns and link items that remote-control blocks.
+Custom items are standard inventory items tagged with IgnisCore NBT. Behavior is driven by YAML `behavior` and event bus subscriptions in strategy code — from throwable explosives and utility tools to consumables with cooldowns and link items that remote-control blocks.
 
 ## Config sections
 
@@ -25,27 +25,32 @@ behavior:
   right_click_block: detonate
 ```
 
-Action tokens are interpreted by the item strategy. When `behavior` is configured in YAML, `IgnisItemStrategy` routes resolved tokens to **`onItemAction`** — override that hook instead of re-parsing `ItemBehaviorConfig` in most strategies.
+The core resolves YAML tokens and fires **`onItemClick`** on the event bus. Subscribe in `registerEvents()` and branch on `event.actionToken()`.
 
 Common tokens: `throw`, `assign`, `detonate`, `use`, `none`.
 
 ## Strategy hook
 
-Items use a single hook — branch on the resolved behavior action token:
-
 ```java
 @Override
-public void onItemAction(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
-                         IgnisInteraction action, IgnisBlock clickedBlock, String actionToken) {
-    if ("throw".equals(actionToken)) {
-        throwItem(player, definition, item);
-    } else if ("detonate".equals(actionToken)) {
-        detonate(player, definition, item);
-    }
+public void registerEvents() {
+    onItemClick(event -> {
+        if ("throw".equals(event.actionToken())) {
+            throwItem(event.player(), event.definition(), event.item());
+        } else if ("detonate".equals(event.actionToken())) {
+            detonate(event.player(), event.definition(), event.item());
+        }
+    });
 }
 ```
 
-Use `IgnisStrategies.items().actionFor(definition, action)` when you need the token outside the default routing.
+Integrators can observe the same events globally:
+
+```java
+IgnisCoreAPI.eventBus().subscribe(event -> {
+    // observe all item clicks
+});
+```
 
 ## Read custom_data in strategy code
 
@@ -56,13 +61,9 @@ double speed = IgnisStrategies.data().customDouble(definition, "throw_velocity",
 
 Or use `ExtensionShared.config().throwable(definition)` for the standard throwable shape — see [Extension shared](/developers/api/extension-shared).
 
-Omit the `custom_data` section entirely when your strategy uses code defaults only.
-
-Link items may use remote-activation keys (`linkBlockType`, `remoteAction`, `linkRange`) or multi-link keys (`target_block`, `max_links`) — see [detonator](https://github.com/%%site.repo%%/tree/main/extensions/items/detonator) and [lamp-dimmer](https://github.com/%%site.repo%%/tree/main/extensions/items/lamp-dimmer).
-
 ## Related
 
 - [Extensions](/concepts/extensions) — deploy and manifest
 - [Extension config](/developers/extension-config) — config.yml reference
 - [Extension Cookbook](/developers/cookbook) — throwable and consumable recipes
-- [API Reference](/developers/api/core-api) — `IgnisItemStrategy`
+- [API Reference](/developers/api/core-api) — event bus and strategies
