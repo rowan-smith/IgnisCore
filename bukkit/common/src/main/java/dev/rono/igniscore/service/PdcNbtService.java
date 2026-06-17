@@ -1,16 +1,17 @@
-package dev.rono.igniscore.support;
+package dev.rono.igniscore.service;
 
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-public final class PdcBackedNbtService implements IgnisNbtService {
+/**
+ * Bukkit PersistentDataContainer fallback for item data when NBT-API is unavailable.
+ */
+public final class PdcNbtService implements IgnisNbtService {
     private static final NamespacedKey NAMESPACE = NamespacedKey.fromString("ignis:nbt");
 
     @Override
@@ -20,7 +21,7 @@ public final class PdcBackedNbtService implements IgnisNbtService {
 
     @Override
     public String providerName() {
-        return "pdc";
+        return "PDC";
     }
 
     @Override
@@ -62,12 +63,11 @@ public final class PdcBackedNbtService implements IgnisNbtService {
 
     @Override
     public void setEntityString(Object nativeEntity, String key, String value) {
-        throw new UnsupportedOperationException("Entity NBT is not supported in PdcBackedNbtService");
     }
 
     @Override
     public String getEntityString(Object nativeEntity, String key) {
-        throw new UnsupportedOperationException("Entity NBT is not supported in PdcBackedNbtService");
+        return null;
     }
 
     private static NamespacedKey toKey(String nbtKey) {
@@ -87,7 +87,7 @@ public final class PdcBackedNbtService implements IgnisNbtService {
         item.setItemMeta(meta);
     }
 
-    private static void setInteger(ItemStack item, String key, Integer value) {
+    private static void setInteger(ItemStack item, String key, int value) {
         if (item == null || item.getType().isAir()) {
             return;
         }

@@ -54,7 +54,8 @@ class ItemExtensionLoaderTest {
             public void debug(String message) {
             }
         };
-        var engine = new ExtensionLoadEngine(host, TestIgnisCore.newStrategyRegistry(), null);
+        var engine = new ExtensionLoadEngine(host, TestIgnisCore.newStrategyRegistry(),
+                TestIgnisCore.noopStrategyContext(), TestIgnisCore.permissiveIntegrationRegistry());
         loader = new ItemExtensionLoader(engine, new ExtensionResourceProvider());
     }
 

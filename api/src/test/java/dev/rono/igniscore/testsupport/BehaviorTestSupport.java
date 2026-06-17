@@ -7,7 +7,12 @@ import dev.rono.igniscore.api.port.IgnisTask;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.integration.IgnisIntegrationRegistry;
 import dev.rono.igniscore.api.service.IgnisEffectService;
+import dev.rono.igniscore.api.service.IgnisHologramService;
+import dev.rono.igniscore.api.service.IgnisNpcService;
+import dev.rono.igniscore.api.service.IgnisProtocolService;
+import dev.rono.igniscore.api.service.IgnisRegionService;
 import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
@@ -27,8 +32,39 @@ public final class BehaviorTestSupport {
         RecordingIgnisWorld world = new RecordingIgnisWorld();
         RecordingEffectService effects = new RecordingEffectService();
         WorldReturningExtensionSupport extensionSupport = new WorldReturningExtensionSupport(world);
+        IgnisRegionService regionService = new NoopIgnisRegionService();
+        IgnisIntegrationRegistry integrationRegistry = new IgnisIntegrationRegistry() {
+            @Override
+            public boolean isEnabled(String integrationId) {
+                return "region".equals(integrationId) || "nbt".equals(integrationId)
+                        || "nbt-entity".equals(integrationId);
+            }
+
+            @Override
+            public String providerName(String integrationId) {
+                return "test";
+            }
+
+            @Override
+            public java.util.Set<String> enabledIntegrationIds() {
+                return java.util.Set.of("region", "nbt", "nbt-entity");
+            }
+
+            @Override
+            public void requireEnabled(String integrationId) {
+            }
+        };
         IgnisStrategyContext context = new IgnisStrategyContext(
-                new NoopIgnisScheduler(), new NoopIgnisNbtService(), null, effects, extensionSupport, eventBus);
+                new NoopIgnisScheduler(),
+                new NoopIgnisNbtService(),
+                new NoopIgnisProtocolService(),
+                effects,
+                regionService,
+                new NoopIgnisHologramService(),
+                new NoopIgnisNpcService(),
+                integrationRegistry,
+                extensionSupport,
+                eventBus);
         return new TestContext(context, world, effects);
     }
 
@@ -278,6 +314,21 @@ public final class BehaviorTestSupport {
 
     public static final class NoopIgnisNbtService implements dev.rono.igniscore.api.service.IgnisNbtService {
         @Override
+        public boolean isEnabled() {
+            return true;
+        }
+
+        @Override
+        public String providerName() {
+            return "test";
+        }
+
+        @Override
+        public boolean supportsEntityData() {
+            return true;
+        }
+
+        @Override
         public void setItemString(IgnisItem item, String key, String value) {
         }
 
@@ -311,6 +362,125 @@ public final class BehaviorTestSupport {
         @Override
         public String getEntityString(Object nativeEntity, String key) {
             return null;
+        }
+    }
+
+    public static final class NoopIgnisRegionService implements IgnisRegionService {
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+
+        @Override
+        public String providerName() {
+            return "test";
+        }
+
+        @Override
+        public boolean isWorldEditBacked() {
+            return false;
+        }
+
+        @Override
+        public void breakHollowSphere(IgnisWorld world, IgnisLocation center, int outerRadius, int shellThickness,
+                                       boolean staggered, int batchSize, int batchDelayTicks,
+                                       dev.rono.igniscore.api.port.IgnisScheduler scheduler) {
+        }
+
+        @Override
+        public void breakTorus(IgnisWorld world, IgnisLocation center, int majorRadius, int minorRadius,
+                                boolean staggered, int batchSize, int batchDelayTicks,
+                                dev.rono.igniscore.api.port.IgnisScheduler scheduler) {
+        }
+
+        @Override
+        public void breakCylinderDown(IgnisWorld world, IgnisLocation center, int radius, int depth,
+                                       boolean staggered, int batchSize, int batchDelayTicks,
+                                       dev.rono.igniscore.api.port.IgnisScheduler scheduler) {
+        }
+
+        @Override
+        public void breakUnderwater(IgnisWorld world, IgnisLocation center, int radius,
+                                     boolean staggered, int batchSize, int batchDelayTicks,
+                                     dev.rono.igniscore.api.port.IgnisScheduler scheduler) {
+        }
+
+        @Override
+        public void breakWithPredicate(IgnisWorld world, IgnisLocation center, int radius,
+                                        java.util.function.Predicate<IgnisLocation> predicate, boolean staggered,
+                                        int batchSize, int batchDelayTicks,
+                                        dev.rono.igniscore.api.port.IgnisScheduler scheduler,
+                                        String primaryParticle, String secondaryParticle) {
+        }
+    }
+
+    public static final class NoopIgnisProtocolService implements IgnisProtocolService {
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public String providerName() {
+            return "test";
+        }
+
+        @Override
+        public void sendFakeExplosion(IgnisLocation location, float power, java.util.Collection<IgnisPlayer> players) {
+        }
+    }
+
+    public static final class NoopIgnisHologramService implements IgnisHologramService {
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public String providerName() {
+            return "test";
+        }
+
+        @Override
+        public Object createTextHologram(IgnisLocation location, java.util.List<String> lines) {
+            return null;
+        }
+
+        @Override
+        public void updateText(Object hologramHandle, java.util.List<String> lines) {
+        }
+
+        @Override
+        public void delete(Object hologramHandle) {
+        }
+
+        @Override
+        public void teleport(Object hologramHandle, IgnisLocation location) {
+        }
+    }
+
+    public static final class NoopIgnisNpcService implements IgnisNpcService {
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public String providerName() {
+            return "test";
+        }
+
+        @Override
+        public Object spawnNpc(IgnisLocation location, String displayName) {
+            return null;
+        }
+
+        @Override
+        public void setTarget(Object npcHandle, IgnisPlayer target) {
+        }
+
+        @Override
+        public void remove(Object npcHandle) {
         }
     }
 }

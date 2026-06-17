@@ -8,10 +8,14 @@ import dev.rono.igniscore.api.port.IgnisPlatformIntegration;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.api.port.ResourcePackHost;
 import dev.rono.igniscore.api.service.IgnisEffectService;
+import dev.rono.igniscore.api.service.IgnisHologramService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.service.IgnisNpcService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
+import dev.rono.igniscore.api.service.IgnisRegionService;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.module.IgnisCommonModule;
+import dev.rono.igniscore.region.IgnisWorldRegionService;
 import dev.rono.igniscore.sponge.adapter.SpongePlatformAdapter;
 import dev.rono.igniscore.sponge.command.SpongeIgnisCommand;
 import dev.rono.igniscore.sponge.listener.SpongeBlockListener;
@@ -24,6 +28,8 @@ import dev.rono.igniscore.sponge.service.SpongeItemFactory;
 import dev.rono.igniscore.sponge.service.SpongeItemIdentifier;
 import dev.rono.igniscore.sponge.service.SpongeNbtService;
 import dev.rono.igniscore.sponge.service.SpongeNoopEffectService;
+import dev.rono.igniscore.sponge.service.SpongeNoopHologramService;
+import dev.rono.igniscore.sponge.service.SpongeNoopNpcService;
 import dev.rono.igniscore.sponge.service.SpongeNoopProtocolService;
 import dev.rono.igniscore.sponge.service.SpongeResourcePackHost;
 
@@ -63,6 +69,11 @@ public class SpongeIgnisModule extends AbstractModule {
 
         bind(SpongeNbtService.class).in(Scopes.SINGLETON);
         bind(IgnisNbtService.class).to(SpongeNbtService.class).in(Scopes.SINGLETON);
+        bind(IgnisRegionService.class).to(IgnisWorldRegionService.class).in(Scopes.SINGLETON);
+        bind(SpongeNoopHologramService.class).in(Scopes.SINGLETON);
+        bind(IgnisHologramService.class).to(SpongeNoopHologramService.class).in(Scopes.SINGLETON);
+        bind(SpongeNoopNpcService.class).in(Scopes.SINGLETON);
+        bind(IgnisNpcService.class).to(SpongeNoopNpcService.class).in(Scopes.SINGLETON);
         bind(SpongeNoopProtocolService.class).in(Scopes.SINGLETON);
         bind(IgnisProtocolService.class).to(SpongeNoopProtocolService.class).in(Scopes.SINGLETON);
         bind(SpongeNoopEffectService.class).in(Scopes.SINGLETON);

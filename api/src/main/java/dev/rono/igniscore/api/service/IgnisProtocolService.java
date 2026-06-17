@@ -1,6 +1,7 @@
 package dev.rono.igniscore.api.service;
 
-import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.integration.IgnisIntegration;
+import dev.rono.igniscore.api.integration.IgnisIntegrations;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 
@@ -13,7 +14,12 @@ import java.util.Collection;
  * visible only to selected players. When {@link #isEnabled()} is false,
  * callers should use higher-level services or vanilla fallbacks.</p>
  */
-public interface IgnisProtocolService {
+public interface IgnisProtocolService extends IgnisIntegration {
+
+    @Override
+    default String integrationId() {
+        return IgnisIntegrations.PROTOCOL;
+    }
 
     /**
      * @return whether protocol packet injection is available on this platform

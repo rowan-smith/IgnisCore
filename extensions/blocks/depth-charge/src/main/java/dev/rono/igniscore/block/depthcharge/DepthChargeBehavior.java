@@ -41,8 +41,8 @@ final class DepthChargeBehavior {
         world.spawnParticle(loc, "SPLASH", 40, radius * 0.4, 0.5, radius * 0.4, 0.1);
         world.spawnParticle(loc, "BUBBLE", 60, radius * 0.5, radius * 0.5, radius * 0.5, 0.05);
 
-        BlockBlastSupport.breakUnderwater(world, loc, radius, staggered,
-                batchSize, batchDelayTicks, context.getScheduler());
+        BlockBlastSupport.breakUnderwater(context.getRegionService(), world, loc, radius,
+                staggered, batchSize, batchDelayTicks, context.getScheduler());
         world.createExplosion(loc, 0.5f, false, false);
     }
 

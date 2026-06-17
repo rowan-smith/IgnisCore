@@ -49,6 +49,11 @@ public class ProtocolService implements IgnisProtocolService {
     }
 
     @Override
+    public String providerName() {
+        return "ProtocolLib";
+    }
+
+    @Override
     public boolean isEnabled() {
         return enabled && protocolManager != null;
     }

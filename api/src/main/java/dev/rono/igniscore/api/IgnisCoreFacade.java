@@ -1,11 +1,15 @@
 package dev.rono.igniscore.api;
 
 import dev.rono.igniscore.api.event.IgnisEventBus;
+import dev.rono.igniscore.api.integration.IgnisIntegrationRegistry;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.service.IgnisEffectService;
+import dev.rono.igniscore.api.service.IgnisHologramService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.service.IgnisNpcService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
+import dev.rono.igniscore.api.service.IgnisRegionService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -113,6 +117,26 @@ public interface IgnisCoreFacade {
      * @return effect service for particles, sounds, and fake explosions
      */
     IgnisEffectService getEffectService();
+
+    /**
+     * Returns the region editing service (WorldEdit when available, ignis-world fallback).
+     */
+    IgnisRegionService getRegionService();
+
+    /**
+     * Returns the hologram integration service.
+     */
+    IgnisHologramService getHologramService();
+
+    /**
+     * Returns the NPC integration service.
+     */
+    IgnisNpcService getNpcService();
+
+    /**
+     * Returns the integration availability registry for extension manifests.
+     */
+    IgnisIntegrationRegistry getIntegrationRegistry();
 
     /**
      * Returns the platform-neutral event bus for lifecycle hooks and observers.

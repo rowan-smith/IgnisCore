@@ -61,7 +61,8 @@ class BlockExtensionLoaderTest {
         };
         var strategyRegistry = TestIgnisCore.newStrategyRegistry();
         var behaviorContext = BehaviorTestSupport.createContext();
-        var engine = new ExtensionLoadEngine(host, strategyRegistry, behaviorContext.context());
+        var engine = new ExtensionLoadEngine(host, strategyRegistry, behaviorContext.context(),
+                TestIgnisCore.permissiveIntegrationRegistry());
         resourceProvider = new ExtensionResourceProvider();
         loader = new BlockExtensionLoader(engine, resourceProvider);
     }

@@ -1,11 +1,15 @@
 package dev.rono.igniscore.api;
 
 import dev.rono.igniscore.api.event.IgnisEventBus;
+import dev.rono.igniscore.api.integration.IgnisIntegrationRegistry;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.service.IgnisEffectService;
+import dev.rono.igniscore.api.service.IgnisHologramService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.service.IgnisNpcService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
+import dev.rono.igniscore.api.service.IgnisRegionService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -155,6 +159,34 @@ public final class IgnisCoreAPI {
      */
     public static IgnisEffectService getEffectService() {
         return requireFacade().getEffectService();
+    }
+
+    /**
+     * Returns the region editing service (WorldEdit when available, ignis-world fallback).
+     */
+    public static IgnisRegionService getRegionService() {
+        return requireFacade().getRegionService();
+    }
+
+    /**
+     * Returns the hologram integration service.
+     */
+    public static IgnisHologramService getHologramService() {
+        return requireFacade().getHologramService();
+    }
+
+    /**
+     * Returns the NPC integration service.
+     */
+    public static IgnisNpcService getNpcService() {
+        return requireFacade().getNpcService();
+    }
+
+    /**
+     * Returns the integration availability registry for extension manifests.
+     */
+    public static IgnisIntegrationRegistry getIntegrationRegistry() {
+        return requireFacade().getIntegrationRegistry();
     }
 
     /**
