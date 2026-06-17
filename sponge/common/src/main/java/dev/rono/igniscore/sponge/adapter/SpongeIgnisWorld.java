@@ -5,14 +5,14 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.sponge.support.SpongeRegistrySupport;
 import org.spongepowered.api.ResourceKey;
-import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.world.BlockChangeFlags;
 import org.spongepowered.api.world.explosion.Explosion;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.api.world.server.ServerWorld;
+import org.spongepowered.math.vector.Vector3d;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,6 +59,19 @@ public final class SpongeIgnisWorld implements IgnisWorld {
     @Override
     public void spawnParticle(IgnisLocation location, String particleKey, int count,
                               double offsetX, double offsetY, double offsetZ, double speed) {
+        var particleType = SpongeRegistrySupport.findParticleType(ResourceKey.resolve(particleKey.toLowerCase()));
+        if (particleType.isEmpty()) {
+            return;
+        }
+        ParticleEffect effect = ParticleEffect.builder()
+                .type(particleType.get())
+                .quantity(Math.max(1, count))
+                .offset(Vector3d.from(offsetX, offsetY, offsetZ))
+                .velocity(Vector3d.from(speed, speed, speed))
+                .build();
+        for (var player : handle.players()) {
+            player.spawnParticles(effect, location.x(), location.y(), location.z());
+        }
     }
 
     @Override
