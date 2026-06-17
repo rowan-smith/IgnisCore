@@ -1,0 +1,8 @@
+id: ghost-peppermint
+name: Ghost Peppermint
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.ghostpeppermint.Strategy
+requires-integrations:
+  - nbt-entity

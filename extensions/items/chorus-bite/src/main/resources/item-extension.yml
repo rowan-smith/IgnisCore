@@ -1,0 +1,6 @@
+id: chorus-bite
+name: Chorus Bite
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.chorusbite.Strategy

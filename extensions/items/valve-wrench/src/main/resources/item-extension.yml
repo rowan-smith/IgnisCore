@@ -1,0 +1,8 @@
+id: valve-wrench
+name: Valve Wrench
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.valvewrench.Strategy
+requires-integrations:
+  - nbt-entity

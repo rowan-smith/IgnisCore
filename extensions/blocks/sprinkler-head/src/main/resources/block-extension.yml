@@ -1,0 +1,8 @@
+id: sprinkler-head
+name: Sprinkler Head
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.sprinklerhead.Strategy
+profiles:
+  - placed

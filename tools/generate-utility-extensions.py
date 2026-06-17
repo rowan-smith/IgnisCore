@@ -81,6 +81,13 @@ BLOCKS = [
     {"id": "fortune-cookie-maker", "name": "Fortune Cookie Maker", "kind": "fortune_cookie", "type": "interact", "placed_hooks": True},
     {"id": "mood-lantern", "name": "Mood Lantern", "kind": "mood_lantern", "type": "placed"},
     {"id": "lost-and-found-bin", "name": "Lost & Found Bin", "kind": "lost_and_found", "type": "interact", "placed_hooks": True},
+    {"id": "socket-lamp", "name": "Socket Lamp", "kind": "socket_lamp", "type": "placed", "profiles": ["placed"]},
+    {"id": "keyed-hatch", "name": "Keyed Hatch", "kind": "keyed_hatch", "type": "placed", "profiles": ["placed"]},
+    {"id": "sprinkler-head", "name": "Sprinkler Head", "kind": "sprinkler_head", "type": "placed", "profiles": ["placed"]},
+    {"id": "barn-bell", "name": "Barn Bell", "kind": "barn_bell", "type": "placed", "profiles": ["placed"]},
+    {"id": "pipe-valve", "name": "Pipe Valve", "kind": "pipe_valve", "type": "placed", "profiles": ["placed"]},
+    {"id": "picnic-basket", "name": "Picnic Basket", "kind": "picnic_basket", "type": "interact", "placed_hooks": True, "profiles": ["interact", "processing-gui"]},
+    {"id": "keg-tap", "name": "Keg Tap", "kind": "keg_tap", "type": "interact", "placed_hooks": True, "profiles": ["interact", "processing-gui"]},
 ]
 
 ITEMS = [
@@ -101,6 +108,35 @@ ITEMS = [
     {"id": "mulch-spreader", "name": "Mulch Spreader", "kind": "mulch_spreader"},
     {"id": "gravity-marble", "name": "Gravity Marble", "kind": "gravity_marble"},
     {"id": "quantum-coin", "name": "Quantum Coin", "kind": "quantum_coin", "integrations": ["nbt-entity"]},
+    {"id": "lamp-dimmer", "name": "Lamp Dimmer", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "socket-lamp", "remoteAction": "cycle", "linkRange": 64}},
+    {"id": "gate-clicker", "name": "Gate Clicker", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "keyed-hatch", "remoteAction": "toggle", "linkRange": 64}},
+    {"id": "sprinkler-timer", "name": "Sprinkler Timer", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "sprinkler-head", "remoteAction": "arm", "linkRange": 48}},
+    {"id": "farm-call", "name": "Farm Call", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "barn-bell", "remoteAction": "call", "linkRange": 64}},
+    {"id": "valve-wrench", "name": "Valve Wrench", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "pipe-valve", "remoteAction": "toggle", "linkRange": 48}},
+    {"id": "glow-orb", "name": "Glow Orb", "kind": "glow_orb"},
+    {"id": "seed-bomb", "name": "Seed Bomb", "kind": "seed_bomb"},
+    {"id": "smoke-can", "name": "Smoke Can", "kind": "smoke_can"},
+    {"id": "vine-shears", "name": "Vine Shears", "kind": "vine_shears"},
+    {"id": "cable-ties", "name": "Cable Ties", "kind": "cable_ties", "integrations": ["nbt-entity"]},
+    {"id": "miners-lunch", "name": "Miner's Lunch", "kind": "consumable_item", "integrations": ["nbt-entity"],
+     "custom_data": {"cooldownTicks": 12000}},
+    {"id": "farmers-tea", "name": "Farmer's Tea", "kind": "consumable_item"},
+    {"id": "divers-salt", "name": "Diver's Salt", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "cartographers-espresso", "name": "Cartographer's Espresso", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "ghost-peppermint", "name": "Ghost Peppermint", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "heavy-coat-tonic", "name": "Heavy Coat Tonic", "kind": "consumable_item"},
+    {"id": "honey-throat-coat", "name": "Honey Throat Coat", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "chorus-bite", "name": "Chorus Bite", "kind": "consumable_item"},
+    {"id": "glow-berry-shot", "name": "Glow Berry Shot", "kind": "consumable_item"},
+    {"id": "bricklayers-broth", "name": "Bricklayer's Broth", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "luck-dust", "name": "Luck Dust", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "antidote-swab", "name": "Antidote Swab", "kind": "consumable_item"},
+    {"id": "unlabeled-potion", "name": "Unlabeled Potion", "kind": "consumable_item", "integrations": ["nbt-entity"]},
 ]
 
 
@@ -125,6 +161,27 @@ def integration_yaml(integrations: list[str] | None) -> str:
     for i in integrations:
         lines.append(f"  - {i}")
     return "\n".join(lines) + "\n"
+
+
+def profiles_yaml(profiles: list[str] | None) -> str:
+    if not profiles:
+        return ""
+    lines = ["profiles:"]
+    for profile in profiles:
+        lines.append(f"  - {profile}")
+    return "\n".join(lines) + "\n"
+
+
+def custom_data_yaml(data: dict | None) -> str:
+    if not data:
+        return "  radius: 8.0"
+    lines = []
+    for key, value in data.items():
+        if isinstance(value, str):
+            lines.append(f'  {key}: "{value}"')
+        else:
+            lines.append(f"  {key}: {value}")
+    return "\n".join(lines)
 
 
 def block_pom(artifact: str) -> str:
@@ -243,7 +300,7 @@ behavior:
   right_click_block: use
 
 custom_data:
-  radius: 8.0
+{custom_data_yaml(ext.get('custom_data'))}
 """
 
 
@@ -417,7 +474,7 @@ version: @project.version@
 api-version: @ignis.api.version@
 author: IgnisCore
 strategy: dev.rono.igniscore.block.{package}.Strategy
-{integration_yaml(ext.get('integrations'))}""")
+{integration_yaml(ext.get('integrations'))}{profiles_yaml(ext.get('profiles'))}""")
     write(base / "src/main/resources/config.yml", block_config(ext))
     write(base / f"src/main/java/dev/rono/igniscore/block/{package}/Strategy.java", block_strategy(package, class_name, ext))
     write(base / f"src/main/java/dev/rono/igniscore/block/{package}/{class_name}Behavior.java", load_behavior(ext["kind"], class_name, package, False))
@@ -435,7 +492,7 @@ version: @project.version@
 api-version: @ignis.api.version@
 author: IgnisCore
 strategy: dev.rono.igniscore.item.{package}.Strategy
-{integration_yaml(ext.get('integrations'))}""")
+{integration_yaml(ext.get('integrations'))}{profiles_yaml(ext.get('profiles'))}""")
     write(base / "src/main/resources/config.yml", item_config(ext))
     write(base / f"src/main/java/dev/rono/igniscore/item/{package}/Strategy.java", item_strategy(package, class_name))
     write(base / f"src/main/java/dev/rono/igniscore/item/{package}/{class_name}Behavior.java", load_behavior(ext["kind"], class_name, package, True))

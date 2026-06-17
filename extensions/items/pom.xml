@@ -37,6 +37,29 @@
     <module>mulch-spreader</module>
     <module>gravity-marble</module>
     <module>quantum-coin</module>
+    <module>lamp-dimmer</module>
+    <module>gate-clicker</module>
+    <module>sprinkler-timer</module>
+    <module>farm-call</module>
+    <module>valve-wrench</module>
+    <module>glow-orb</module>
+    <module>seed-bomb</module>
+    <module>smoke-can</module>
+    <module>vine-shears</module>
+    <module>cable-ties</module>
+    <module>miners-lunch</module>
+    <module>farmers-tea</module>
+    <module>divers-salt</module>
+    <module>cartographers-espresso</module>
+    <module>ghost-peppermint</module>
+    <module>heavy-coat-tonic</module>
+    <module>honey-throat-coat</module>
+    <module>chorus-bite</module>
+    <module>glow-berry-shot</module>
+    <module>bricklayers-broth</module>
+    <module>luck-dust</module>
+    <module>antidote-swab</module>
+    <module>unlabeled-potion</module>
   </modules>
 
   <dependencyManagement>

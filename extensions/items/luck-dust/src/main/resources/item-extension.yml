@@ -1,0 +1,8 @@
+id: luck-dust
+name: Luck Dust
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.luckdust.Strategy
+requires-integrations:
+  - nbt-entity
