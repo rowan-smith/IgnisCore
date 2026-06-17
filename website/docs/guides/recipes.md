@@ -8,7 +8,7 @@ slug: /guides/recipes
 
 1. Install **Java 25** and your server software (Spigot, Paper, or SpongeVanilla)
 2. On Bukkit-family servers, install **NBTAPI**
-3. Download `igniscore-%%site.version%%.jar` from [Releases](https://github.com/%%site.repo%%/releases)
+3. Download `%%site.jarName%%` from [Releases](https://github.com/%%site.repo%%/releases)
 4. Place the jar in `plugins/` and start the server
 5. Verify with `/ignis` — bundled extensions extract automatically
 

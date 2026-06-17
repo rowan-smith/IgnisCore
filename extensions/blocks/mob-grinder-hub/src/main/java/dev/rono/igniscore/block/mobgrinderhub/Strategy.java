@@ -1,11 +1,9 @@
 package dev.rono.igniscore.block.mobgrinderhub;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.api.port.IgnisLocation;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
     private final MobGrinderHubBehavior behavior;
@@ -21,12 +19,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlaced(definition, location);
+    public void registerEvents() {
+        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
+        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
     }
-    @Override
-    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlacedBreak(definition, location);
-    }
-
 }

@@ -61,6 +61,9 @@ class ExtensionReloadServiceTest extends MockBukkitTestBase {
 
         assertEquals(1, bootstrap.prepareCount);
         assertTrue(hooks.messages.stream().anyMatch(message -> message.contains("already in progress")));
+
+        runAsyncTasks();
+        runSyncTasks();
     }
 
     @Test

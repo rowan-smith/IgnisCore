@@ -2,6 +2,7 @@ package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.testsupport.NoopExtensionSupport;
+import dev.rono.igniscore.testsupport.NoopEventBus;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +37,7 @@ class AbstractIgnisItemStrategyTest {
 
     private static final class TestStrategy extends AbstractIgnisItemStrategy {
         private TestStrategy() {
-            super(new IgnisStrategyContext(null, null, null, null, NoopExtensionSupport.INSTANCE));
+            super(new IgnisStrategyContext(null, null, null, null, NoopExtensionSupport.INSTANCE, NoopEventBus.INSTANCE));
         }
 
         double readDouble(ItemDefinition definition, String key, double defaultValue) {

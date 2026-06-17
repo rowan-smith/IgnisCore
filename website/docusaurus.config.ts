@@ -10,7 +10,7 @@ const JAVADOC_VERSIONS = [
 
 const config: Config = {
   title: 'IgnisCore',
-  tagline: 'Multi-platform framework for custom explosive blocks and throwable items.',
+  tagline: 'Multi-platform framework for custom blocks, items, and server extensions.',
   favicon: 'img/favicon.ico',
 
   url: siteVars.siteUrl,
@@ -75,7 +75,7 @@ const config: Config = {
       {
         name: 'description',
         content:
-          'IgnisCore — custom explosive blocks and throwable items for Spigot, Paper, and Sponge.',
+          'IgnisCore — custom blocks, items, and extensions for Spigot, Paper, and Sponge. 120+ bundled extensions, layered plugin API, and auto-built resource packs.',
       },
     ],
     navbar: {

@@ -1,14 +1,10 @@
 package dev.rono.igniscore.block.coffeebrewer;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.CustomBlockAction;
-import dev.rono.igniscore.api.port.IgnisItem;
-import dev.rono.igniscore.api.port.IgnisLocation;
-import dev.rono.igniscore.api.port.IgnisPlayer;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
     private final CoffeeBrewerBehavior behavior;
@@ -24,21 +20,9 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onPlacedInteract(BlockDefinition definition,
-                                 IgnisLocation location,
-                                 IgnisPlayer player,
-                                 dev.rono.igniscore.api.port.IgnisInteraction interaction,
-                                 IgnisItem heldItem,
-                                 CustomBlockAction action) {
-        behavior.onPlacedInteract(definition, location, player, interaction, heldItem, action);
+    public void registerEvents() {
+        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
+        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
+        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.location(), event.player(), event.interaction(), event.heldItem(), event.action()));
     }
-    @Override
-    public void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlaced(definition, location);
-    }
-    @Override
-    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlacedBreak(definition, location);
-    }
-
 }

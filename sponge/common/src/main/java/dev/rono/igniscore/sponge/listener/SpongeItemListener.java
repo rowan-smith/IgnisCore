@@ -2,11 +2,10 @@ package dev.rono.igniscore.sponge.listener;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.model.ItemDefinition;
-import dev.rono.igniscore.api.strategy.IgnisItemStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.event.StrategyEventPublisher;
+import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
 import dev.rono.igniscore.sponge.service.SpongeItemIdentifier;
-import dev.rono.igniscore.manager.ItemManager;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -17,15 +16,15 @@ import org.spongepowered.api.item.inventory.ItemStack;
 public class SpongeItemListener {
     private final ItemManager itemManager;
     private final SpongeItemIdentifier itemIdentifier;
-    private final IgnisStrategyRegistry strategyRegistry;
+    private final StrategyEventPublisher events;
 
     @Inject
     public SpongeItemListener(ItemManager itemManager,
                               SpongeItemIdentifier itemIdentifier,
-                              IgnisStrategyRegistry strategyRegistry) {
+                              StrategyEventPublisher events) {
         this.itemManager = itemManager;
         this.itemIdentifier = itemIdentifier;
-        this.strategyRegistry = strategyRegistry;
+        this.events = events;
     }
 
     @Listener(order = Order.LATE)
@@ -45,17 +44,11 @@ public class SpongeItemListener {
             cancellable.setCancelled(true);
         }
 
-        requireItemStrategy(definition).onItemUse(
+        events.fireItemClick(
                 SpongeBridge.wrap(player),
                 definition,
                 SpongeBridge.wrap(itemStack),
                 SpongeBridge.toIgnisInteraction(event),
                 null);
-    }
-
-    private IgnisItemStrategy requireItemStrategy(ItemDefinition definition) {
-        IgnisItemStrategy itemStrategy = strategyRegistry.requireItemStrategy(
-                definition.getExtensionId(), definition.getId());
-        return itemStrategy;
     }
 }

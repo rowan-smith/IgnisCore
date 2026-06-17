@@ -1,7 +1,9 @@
 package dev.rono.igniscore.strategies;
 
 import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.api.event.BlockTriggerEvent;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.event.IgnisEventBusImpl;
 import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.support.NoopExtensionSupport;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -18,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DefaultExplosionStrategyTest {
     @Test
     void exposesDefaultDescriptor() {
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(NoopExtensionSupport.INSTANCE);
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(
+                NoopExtensionSupport.INSTANCE, new IgnisEventBusImpl());
 
         assertEquals("default", strategy.descriptor().getId());
         assertEquals("Default Explosion", strategy.descriptor().getName());
@@ -27,7 +30,8 @@ class DefaultExplosionStrategyTest {
 
     @Test
     void usesExplosiveProfileDefaults() {
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(NoopExtensionSupport.INSTANCE);
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(
+                NoopExtensionSupport.INSTANCE, new IgnisEventBusImpl());
         StrategyProfile profile = strategy.profile(sampleDefinition());
 
         assertTrue(profile.isCombustible());
@@ -40,11 +44,14 @@ class DefaultExplosionStrategyTest {
 
     @Test
     void triggerStoresBlastPowerAndExplodes() {
-        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport());
+        IgnisEventBusImpl eventBus = new IgnisEventBusImpl();
+        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext(eventBus);
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus);
+        strategy.registerEvents();
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(sampleDefinition());
 
-        strategy.onTrigger(instance, null);
+        eventBus.dispatch("default", dev.rono.igniscore.api.event.OnBlockTriggerListener.class,
+                listener -> listener.onBlockTrigger(new BlockTriggerEvent(instance, null)));
 
         assertEquals(4.0, instance.getData().getDouble("ignis:blast_power"));
         org.junit.jupiter.api.Assertions.assertFalse(ctx.world().explosions().isEmpty());

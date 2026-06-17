@@ -16,7 +16,7 @@ slug: /developers/contributing
 mvn clean package
 ```
 
-Output: `bootstrap/target/igniscore-%%site.version%%.jar`
+Output: `bootstrap/target/%%site.jarName%%`
 
 ## Run tests
 
@@ -48,7 +48,7 @@ npm run build
 2. Add doc ID to `website/sidebars.ts`
 3. Optionally add to navbar in `website/docusaurus.config.ts`
 4. Cross-link from related pages
-5. Use `%%site.version%%` / `%%site.repo%%` for versioned content
+5. Use `%%site.version%%`, `%%site.jarName%%`, and `%%site.repo%%` for versioned content
 6. Run `npm run build` — broken links fail the build
 
 ## Pull requests

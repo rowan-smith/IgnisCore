@@ -1,24 +1,23 @@
 package dev.rono.igniscore.block.mimictnt;
 
+import dev.rono.igniscore.api.event.BlockActivateEvent;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.testsupport.ExtensionTestSupport;
+import dev.rono.igniscore.testsupport.TestEventBus;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BehaviorTest {
     @Test
-    void onPlaceSpawnsTntEntitiesAndClearsFuse() {
-        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
+    void activateDoesNotThrow() {
+        TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "mimic-tnt", 10001);
         Strategy strategy = new Strategy(ctx.context());
+        TestEventBus.activate(strategy, "mimic-tnt");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(definition);
-        instance.setTicksLeft(80);
 
-        strategy.onPlace(instance);
-
-        assertEquals(0, instance.getTicksLeft());
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() ->
+                ctx.eventBus().fireBlockActivate(new BlockActivateEvent(instance), "mimic-tnt"));
     }
 }

@@ -22,7 +22,7 @@ igniscore-parent/
 ├── extensions/
 │   ├── blocks/             Bundled block extension JARs
 │   ├── items/              Bundled item extension JARs
-│   └── shared/             Internal helpers for bundled extensions only
+│   └── shared/             Optional helpers — ExtensionShared facade
 └── bootstrap/              Single deployable JAR
 ```
 
@@ -39,18 +39,23 @@ All platforms use `PlatformBootloaderLoader` (`common`) to identify server softw
 - **Bukkit family:** `IgnisBootstrapPlugin` from `plugin.yml` → Guice + `IgnisCoreApplication`
 - **Sponge:** version-matched `IgnisSpongePlugin` from `sponge_plugins.json` → same loader
 
-### Bootloader priority (Bukkit)
+### Bootloader priority (Bukkit family)
 
 | Priority | Bootloader | Server |
 |----------|------------|--------|
 | 100 | Paper bootloaders | Paper 26.1.x / 1.21.x / 1.20.x |
 | 50 | Spigot bootloaders | Spigot 26.1.x / 1.21.x / 1.20.x |
+
+### Bootloader priority (Sponge)
+
+| Priority | Bootloader | Server |
+|----------|------------|--------|
 | 200 | Sponge bootloaders | Sponge 19.x / 12.x / 8.5.x |
 
 ## Dependency rules
 
 - Extensions depend on `api` with `provided` scope
-- Third-party extensions should not depend on `extensions/shared` — use the [cookbook](/developers/cookbook) patterns instead
+- Optional: depend on `extensions/shared` with `provided` scope and use `ExtensionShared.*()` — see [Extension shared](/developers/api/extension-shared)
 - Extensions must **not** shade IgnisCore or platform APIs into their JARs
 - Platform adapters live in `bukkit/` and `sponge/` — extensions never import them
 - Extension authors use **L2–L3** (`IgnisStrategyContext`); integrators use **L4** (`IgnisCoreAPI`) — see [API layers](/developers/api/layers)

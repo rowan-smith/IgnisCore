@@ -21,6 +21,7 @@ public class IgnisStrategyRegistryImpl implements IgnisStrategyRegistry {
     @Inject
     public IgnisStrategyRegistryImpl(DefaultExplosionStrategy fallbackStrategy) {
         this.fallbackStrategy = fallbackStrategy;
+        fallbackStrategy.registerEvents();
         register(fallbackStrategy);
     }
 

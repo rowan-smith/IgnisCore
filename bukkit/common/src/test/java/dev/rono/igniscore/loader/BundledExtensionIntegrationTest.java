@@ -1,6 +1,7 @@
 package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.config.DefinitionParser;
+import dev.rono.igniscore.event.IgnisEventBusImpl;
 import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -59,7 +60,7 @@ class BundledExtensionIntegrationTest {
                     classLoader,
                     manifest.getStrategyClass(),
                     new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null,
-                            dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE),
+                            dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE, new IgnisEventBusImpl()),
                     registry,
                     descriptor,
                     ExtensionKind.BLOCK
@@ -89,7 +90,7 @@ class BundledExtensionIntegrationTest {
                     classLoader,
                     manifest.getStrategyClass(),
                     new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null,
-                            dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE),
+                            dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE, new IgnisEventBusImpl()),
                     registry,
                     descriptor,
                     ExtensionKind.ITEM

@@ -10,7 +10,7 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 
 1. Copy an existing extension under `extensions/blocks/` or `extensions/items/`
 2. Add Maven dependency on `api` (`provided` scope)
-3. Implement a strategy class extending `AbstractIgnisBlockStrategy` or `AbstractIgnisItemStrategy`
+3. Implement a strategy class extending `AbstractIgnisBlockStrategy` or `AbstractIgnisItemStrategy`, override `profile()` when needed, and subscribe to lifecycle events in `registerEvents()`
 4. Ship `block-extension.yml` / `item-extension.yml`, `config.yml`, and textures
 5. Build with `mvn package` and deploy to the plugin data folder
 
@@ -39,9 +39,10 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 
 | Library | Maven artifact | When |
 |---------|----------------|------|
-| **Core API** | `dev.rono:api` | Always — strategies, ports, models, `StrategySupport` |
+| **Core API** | `dev.rono:api` | Always — strategies, ports, models, `IgnisStrategies` |
+| **Extension shared** | `dev.rono.extensions:shared` | Optional — explosions, throwables, link items via `ExtensionShared` |
 
-The bootstrap plugin supplies the API at runtime (`provided` scope). Bundled extensions in this repo may depend on additional internal modules; the [cookbook](/developers/cookbook) shows patterns using the core API only.
+The bootstrap plugin supplies the API at runtime (`provided` scope). See [Extension shared](/developers/api/extension-shared) for optional helpers.
 
 ## Next steps
 

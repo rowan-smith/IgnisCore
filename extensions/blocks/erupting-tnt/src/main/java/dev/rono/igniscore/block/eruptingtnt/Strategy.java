@@ -1,7 +1,6 @@
 package dev.rono.igniscore.block.eruptingtnt;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -22,12 +21,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onTick(RuntimeBlockInstance instance) {
-        behavior.onTick(instance, instance.getDefinition());
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object context) {
-        behavior.onTrigger(instance);
+    public void registerEvents() {
+        onBlockTick(event -> behavior.onTick(event.instance(), event.instance().getDefinition()));
+        onBlockTrigger(event -> behavior.onTrigger(event.instance()));
     }
 }

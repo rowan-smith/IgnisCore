@@ -138,6 +138,7 @@ final class ExtensionJarSupport {
             abstractStrategy.bindDescriptor(descriptor);
         }
 
+        strategy.registerEvents();
         strategyRegistry.register(descriptor, strategy);
         return strategy;
     }

@@ -3,6 +3,7 @@ package dev.rono.igniscore.core;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.rono.igniscore.api.IgnisCoreFacade;
+import dev.rono.igniscore.api.event.IgnisEventBus;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
@@ -15,6 +16,7 @@ import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.event.IgnisEventBusImpl;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.manager.BlockManager;
@@ -37,6 +39,7 @@ public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
     private final ExtensionBootstrap extensionBootstrap;
     private final ResourcePackHost resourcePackHost;
     private final PlatformAdapter platformAdapter;
+    private final IgnisEventBusImpl eventBus;
     private final Logger logger;
 
     @Inject
@@ -49,7 +52,8 @@ public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
                                IgnisEffectService effectService,
                                ExtensionBootstrap extensionBootstrap,
                                ResourcePackHost resourcePackHost,
-                               PlatformAdapter platformAdapter) {
+                               PlatformAdapter platformAdapter,
+                               IgnisEventBusImpl eventBus) {
         this.blockManager = blockManager;
         this.itemManager = itemManager;
         this.itemFactory = itemFactory;
@@ -60,6 +64,7 @@ public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
         this.extensionBootstrap = extensionBootstrap;
         this.resourcePackHost = resourcePackHost;
         this.platformAdapter = platformAdapter;
+        this.eventBus = eventBus;
         this.logger = platformAdapter.getLogger();
     }
 
@@ -128,6 +133,11 @@ public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
     @Override
     public IgnisEffectService getEffectService() {
         return effectService;
+    }
+
+    @Override
+    public IgnisEventBus eventBus() {
+        return eventBus;
     }
 
     @Override

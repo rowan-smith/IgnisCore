@@ -36,13 +36,59 @@ class StrategyProfileResolverTest {
 
         StrategyProfile profile = resolver.resolve(definition);
 
+        assertTrue(profile.hasFuseLifecycle());
         assertEquals(90, profile.getDefaultFuse());
+        assertTrue(profile.hasExplosionRadius());
         assertEquals(12.0, profile.getDefaultRadius());
         assertEquals(1.5, profile.getDisplayScale());
         assertTrue(profile.isPlaceable());
         assertTrue(profile.isBreakable());
         assertEquals(CustomBlockAction.NONE, profile.getLeftClickAction());
         assertFalse(profile.isCombustible());
+    }
+
+    @Test
+    void ignoresFuseWhenCustomDataDoesNotDeclareIt() {
+        BlockDefinition definition = definitionWithoutFuse(Map.of("scale", 1.5), true, true);
+
+        StrategyProfile profile = resolver.resolve(definition);
+
+        assertFalse(profile.hasFuseLifecycle());
+        assertFalse(profile.hasExplosionRadius());
+        assertEquals(0, profile.getDefaultFuse());
+        assertEquals(0.0, profile.getDefaultRadius());
+    }
+
+    @Test
+    void appliesFuseFromCustomDataForRemoteDetonationBlocks() {
+        BlockDefinition definition = new BlockDefinition(
+                "test",
+                "paper",
+                "carrot_on_a_stick",
+                Component.text("Test"),
+                List.of(Component.text("Description")),
+                true,
+                true,
+                "top.png",
+                "side.png",
+                "bottom.png",
+                Map.of("fuse", 0, "radius", 6.0),
+                Map.of(),
+                Map.of(),
+                Map.of(),
+                10001,
+                false,
+                false,
+                false,
+                "custom"
+        );
+
+        StrategyProfile profile = resolver.resolve(definition);
+
+        assertTrue(profile.hasFuseLifecycle());
+        assertEquals(0, profile.getDefaultFuse());
+        assertTrue(profile.hasExplosionRadius());
+        assertEquals(6.0, profile.getDefaultRadius());
     }
 
     @Test
@@ -102,6 +148,32 @@ class StrategyProfileResolverTest {
                 false,
                 false,
                 extensionId
+        );
+    }
+
+    private BlockDefinition definitionWithoutFuse(Map<String, Object> displaySettings,
+                                                  boolean placeable,
+                                                  boolean breakable) {
+        return new BlockDefinition(
+                "test",
+                "paper",
+                "carrot_on_a_stick",
+                Component.text("Test"),
+                List.of(Component.text("Description")),
+                placeable,
+                breakable,
+                "top.png",
+                "side.png",
+                "bottom.png",
+                Map.of(),
+                Map.of(),
+                Map.of(),
+                displaySettings,
+                10001,
+                false,
+                false,
+                false,
+                "custom"
         );
     }
 

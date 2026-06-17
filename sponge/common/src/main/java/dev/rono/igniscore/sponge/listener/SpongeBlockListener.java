@@ -4,8 +4,7 @@ import com.google.inject.Inject;
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.port.IgnisInteraction;
-import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
@@ -17,13 +16,13 @@ import org.spongepowered.api.event.filter.cause.First;
 
 public class SpongeBlockListener {
     private final BlockManager blockManager;
-    private final IgnisStrategyRegistry strategyRegistry;
+    private final StrategyEventPublisher events;
 
     @Inject
     public SpongeBlockListener(BlockManager blockManager,
-                               IgnisStrategyRegistry strategyRegistry) {
+                               StrategyEventPublisher events) {
         this.blockManager = blockManager;
-        this.strategyRegistry = strategyRegistry;
+        this.events = events;
     }
 
     @Listener(order = Order.LATE)
@@ -42,8 +41,7 @@ public class SpongeBlockListener {
             return;
         }
 
-        IgnisBlockStrategy strategy = requireBlockStrategy(definition);
-        CustomBlockAction action = strategy.onPlacedClick(
+        CustomBlockAction action = events.fireBlockClick(
                 definition,
                 SpongeBridge.toIgnis(event.block().location().orElseThrow()),
                 SpongeBridge.wrap(player),
@@ -58,7 +56,7 @@ public class SpongeBlockListener {
         }
 
         if (action == CustomBlockAction.OPEN) {
-            strategy.onPlacedInteract(
+            events.fireBlockInteract(
                     definition,
                     SpongeBridge.toIgnis(event.block().location().orElseThrow()),
                     SpongeBridge.wrap(player),
@@ -66,10 +64,6 @@ public class SpongeBlockListener {
                     null,
                     action);
         }
-    }
-
-    private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
-        return strategyRegistry.requireBlockStrategy(definition.getExtensionId(), definition.getId());
     }
 
     private BlockDefinition getPlacedDefinition(org.spongepowered.api.block.BlockSnapshot block) {

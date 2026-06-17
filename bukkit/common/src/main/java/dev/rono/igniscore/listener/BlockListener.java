@@ -2,15 +2,14 @@ package dev.rono.igniscore.listener;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.manager.BlockManager;
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.port.IgnisInteraction;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.service.CustomBlockBreakService;
 import dev.rono.igniscore.service.CustomBlockIgnitionService;
 import dev.rono.igniscore.service.CustomBlockPlacementService;
-import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
-import dev.rono.igniscore.api.port.IgnisInteraction;
-import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.service.ItemIdentifier;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import org.bukkit.Material;
@@ -34,7 +33,7 @@ public class BlockListener implements Listener {
     private final CustomBlockBreakService breakService;
     private final CustomBlockIgnitionService ignitionService;
     private final ItemIdentifier itemIdentifier;
-    private final IgnisStrategyRegistry strategyRegistry;
+    private final StrategyEventPublisher events;
 
     @Inject
     public BlockListener(BlockManager blockManager,
@@ -42,13 +41,13 @@ public class BlockListener implements Listener {
                          CustomBlockBreakService breakService,
                          CustomBlockIgnitionService ignitionService,
                          ItemIdentifier itemIdentifier,
-                         IgnisStrategyRegistry strategyRegistry) {
+                         StrategyEventPublisher events) {
         this.blockManager = blockManager;
         this.placementService = placementService;
         this.breakService = breakService;
         this.ignitionService = ignitionService;
         this.itemIdentifier = itemIdentifier;
-        this.strategyRegistry = strategyRegistry;
+        this.events = events;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -199,8 +198,7 @@ public class BlockListener implements Listener {
         IgnisItem ignisHeldItem = heldItem != null && !heldItem.getType().isAir()
                 ? BukkitBridge.wrap(heldItem)
                 : null;
-        IgnisBlockStrategy strategy = requireBlockStrategy(definition);
-        CustomBlockAction action = strategy.onPlacedClick(
+        CustomBlockAction action = events.fireBlockClick(
                 definition,
                 BukkitBridge.toIgnis(clickedBlock.getLocation()),
                 BukkitBridge.wrap(event.getPlayer()),
@@ -216,7 +214,7 @@ public class BlockListener implements Listener {
         } else if (action == CustomBlockAction.BREAK) {
             breakService.start(event.getPlayer(), clickedBlock, definition);
         } else if (action == CustomBlockAction.OPEN) {
-            strategy.onPlacedInteract(
+            events.fireBlockInteract(
                     definition,
                     BukkitBridge.toIgnis(clickedBlock.getLocation()),
                     BukkitBridge.wrap(event.getPlayer()),
@@ -225,10 +223,6 @@ public class BlockListener implements Listener {
                     action);
         }
         return true;
-    }
-
-    private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
-        return strategyRegistry.requireBlockStrategy(definition.getExtensionId(), definition.getId());
     }
 
     private BlockDefinition getPlacedDefinition(Block block) {

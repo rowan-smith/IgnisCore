@@ -1,14 +1,14 @@
 package dev.rono.igniscore.item.grenade;
 
+import dev.rono.igniscore.api.event.ItemClickEvent;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
-import dev.rono.igniscore.api.port.IgnisTask;
 import dev.rono.igniscore.api.port.IgnisWorld;
-import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.testsupport.ExtensionTestSupport;
+import dev.rono.igniscore.testsupport.TestEventBus;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -18,13 +18,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BehaviorTest {
     @Test
     void itemUseConsumesStack() {
-        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
+        TestEventBus.TestContext ctx = TestEventBus.createContext();
         ItemDefinition definition = ExtensionTestSupport.loadItemDefinition(BehaviorTest.class, "grenade", 20001);
         Strategy strategy = new Strategy(ctx.context());
+        TestEventBus.activate(strategy, "grenade");
         TestPlayer player = new TestPlayer(ctx.world());
         TestItem item = new TestItem(1);
 
-        strategy.onItemUse(player, definition, item, IgnisInteraction.RIGHT_CLICK_AIR, null);
+        ctx.eventBus().fireItemClick(
+                new ItemClickEvent(player, definition, item, IgnisInteraction.RIGHT_CLICK_AIR, null, "throw"),
+                "grenade");
 
         assertEquals(0, item.getAmount());
     }

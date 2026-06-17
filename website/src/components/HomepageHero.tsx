@@ -9,15 +9,16 @@ export default function HomepageHero(): JSX.Element {
       <div className={styles.grid} aria-hidden="true" />
       <div className={styles.inner}>
         <span className={styles.badge}>
-          v{siteVars.version} · Custom blocks &amp; items
+          v{siteVars.version} · 120+ bundled extensions
         </span>
         <h1 className={styles.title}>
-          Explosive blocks and throwable items, <em>one framework</em>
+          Custom blocks and items, <em>one framework</em>
         </h1>
         <p className={styles.subtitle}>
-          IgnisCore is a multi-platform framework for custom TNT-style blocks and throwable
-          items. Platform-neutral core, runtime extension loading, and resource packs — one jar
-          for Spigot, Paper, and Sponge.
+          IgnisCore is a multi-platform framework for custom blocks, items, and runtime
+          extensions — fuse explosives, utility blocks, link tools, consumables, throwables,
+          and more. Platform-neutral core, layered plugin API, runtime JAR loading, and
+          auto-built resource packs in one bootstrap jar for Spigot, Paper, and Sponge.
         </p>
         <div className={styles.actions}>
           <Link

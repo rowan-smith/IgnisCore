@@ -1,7 +1,6 @@
 package dev.rono.igniscore.block.tunnelingtnt;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -22,7 +21,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     }
 
     @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object context) {
-        behavior.onTrigger(instance, context);
+    public void registerEvents() {
+        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));
     }
 }

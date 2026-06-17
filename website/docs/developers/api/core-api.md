@@ -26,7 +26,7 @@ See [API layers](/developers/api/layers) for the L1–L4 model. Extension author
 | Package | Layer | Purpose |
 |---------|-------|---------|
 | `dev.rono.igniscore.api` | L4 | `IgnisCoreAPI`, `IgnisCoreFacade`, versioning |
-| `dev.rono.igniscore.api.strategy` | L2–L3 | Strategies, `IgnisStrategyContext`, `ExtensionSupport` |
+| `dev.rono.igniscore.api.strategy` | L2–L3 | Strategies, `IgnisStrategyContext`, `IgnisStrategies`, `ExtensionSupport` |
 | `dev.rono.igniscore.api.model` | L2 | `BlockDefinition`, `ItemDefinition`, runtime instances |
 | `dev.rono.igniscore.api.port` | L1 | `IgnisPlayer`, `IgnisWorld`, `IgnisItem`, scheduler |
 | `dev.rono.igniscore.api.config` | L2 | YAML parsers, `BlockBehaviorConfig`, `ExtensionConfig` |
@@ -34,18 +34,52 @@ See [API layers](/developers/api/layers) for the L1–L4 model. Extension author
 | `dev.rono.igniscore.api.extension` | L2 | `ExtensionManifest`, profiles, integration requirements |
 | `dev.rono.igniscore.api.inventory` | L3 | `IgnisCustomInventory` for extension GUIs |
 | `dev.rono.igniscore.api.collection` | L3 | `IgnisDropCollector` for auto-collect blocks |
-| `dev.rono.igniscore.api.util` | L1 | `Locations`, placement metadata helpers |
+| `dev.rono.igniscore.api.event` | L2–L3 | `IgnisEventBus`, lifecycle events and listeners |
 
 ## Key entry points
 
 | Class | Audience | Purpose |
 |-------|----------|---------|
-| [IgnisStrategyContext](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/IgnisStrategyContext.html) | Extensions | `scheduler()`, `nbt()`, `effects()`, `protocol()`, `extensions()` |
+| [IgnisStrategyContext](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/IgnisStrategyContext.html) | Extensions | `scheduler()`, `nbt()`, `effects()`, `protocol()`, `extensions()`, `eventBus()` |
+| [IgnisEventBus](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/event/IgnisEventBus.html) | Extensions / integrators | Subscribe to `onBlockPlace`, `onBlockClick`, `onItemClick`, … |
 | [AbstractIgnisBlockStrategy](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/AbstractIgnisBlockStrategy.html) | Extensions | Base class for block JARs |
 | [AbstractIgnisItemStrategy](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/AbstractIgnisItemStrategy.html) | Extensions | Base class for item JARs |
-| [StrategySupport](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/StrategySupport.html) | Extensions | Read typed values from `custom_data` maps |
+| [IgnisStrategies](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/IgnisStrategies.html) | Extensions | Grouped strategy helpers — `blocks()`, `items()`, `data()` |
+| [StrategySupport](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/StrategySupport.html) | Extensions | Read typed values from `custom_data` maps (also via `IgnisStrategies.data()`) |
 | [IgnisCoreAPI](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/IgnisCoreAPI.html) | Integrators | Runtime facade for other plugins |
 | [ExtensionManifest](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/extension/ExtensionManifest.html) | Extensions | Parsed `*-extension.yml` metadata |
+
+## Event bus
+
+Extension strategies subscribe in `registerEvents()`:
+
+```java
+@Override
+public void registerEvents() {
+    onBlockPlace(event -> behavior.onPlaced(event.location()));
+    onBlockClick(event -> event.setResult(CustomBlockAction.OPEN));
+    onItemClick(event -> {
+        if ("throw".equals(event.actionToken())) {
+            behavior.onItemUse(event.player(), event.definition(), event.item());
+        }
+    });
+}
+```
+
+Integrators observe globally via `IgnisCoreAPI.eventBus().subscribe(...)` — the same bus instance is exposed on [`IgnisCoreFacade`](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/IgnisCoreFacade.html#eventBus()) when bound at startup.
+
+Legacy strategy override methods were removed in 1.0.0; extensions must use `registerEvents()` and the helpers above.
+
+| Event | When |
+|-------|------|
+| `BlockPlaceEvent` | Custom block placed |
+| `BlockClickEvent` | Player clicks placed block |
+| `BlockInteractEvent` | Follow-up for `OPEN` |
+| `BlockBreakEvent` | Placed block removed |
+| `BlockActivateEvent` | Active fuse instance created |
+| `BlockTickEvent` | Fuse tick |
+| `BlockTriggerEvent` | Fuse elapsed / trigger |
+| `ItemClickEvent` | Player uses custom item |
 
 ## IgnisStrategyContext accessors
 

@@ -124,9 +124,9 @@ public final class ExtensionLoadEngine {
         IgnisApiVersion.requireCompatible(manifest.getApiVersion(), manifest.getId());
 
         if (strategyContext != null) {
-            ExtensionRuntimeCapabilities capabilities = new ExtensionRuntimeCapabilities(
-                    strategyContext.protocol().isEnabled(),
-                    strategyContext.nbt().isEnabled());
+            boolean protocolEnabled = strategyContext.protocol() != null && strategyContext.protocol().isEnabled();
+            boolean nbtEnabled = strategyContext.nbt() != null && strategyContext.nbt().isEnabled();
+            ExtensionRuntimeCapabilities capabilities = new ExtensionRuntimeCapabilities(protocolEnabled, nbtEnabled);
             for (String warning : ExtensionRequirements.validate(manifest, capabilities, true)) {
                 host.getLogger().warning(warning);
             }

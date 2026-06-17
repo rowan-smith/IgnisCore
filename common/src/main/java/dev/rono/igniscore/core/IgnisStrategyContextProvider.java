@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
+import dev.rono.igniscore.api.event.IgnisEventBus;
 import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
@@ -15,18 +16,21 @@ public class IgnisStrategyContextProvider implements Provider<IgnisStrategyConte
     private final IgnisProtocolService protocolService;
     private final IgnisEffectService effectService;
     private final ExtensionSupport extensionSupport;
+    private final IgnisEventBus eventBus;
 
     @Inject
     public IgnisStrategyContextProvider(PlatformAdapter platformAdapter,
                                          IgnisNbtService nbtService,
                                          IgnisProtocolService protocolService,
                                          IgnisEffectService effectService,
-                                         ExtensionSupport extensionSupport) {
+                                         ExtensionSupport extensionSupport,
+                                         IgnisEventBus eventBus) {
         this.platformAdapter = platformAdapter;
         this.nbtService = nbtService;
         this.protocolService = protocolService;
         this.effectService = effectService;
         this.extensionSupport = extensionSupport;
+        this.eventBus = eventBus;
     }
 
     @Override
@@ -36,6 +40,7 @@ public class IgnisStrategyContextProvider implements Provider<IgnisStrategyConte
                 nbtService,
                 protocolService,
                 effectService,
-                extensionSupport);
+                extensionSupport,
+                eventBus);
     }
 }

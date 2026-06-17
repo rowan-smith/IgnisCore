@@ -56,8 +56,8 @@ function renderChangelogMarkdown(releases) {
     'slug: /changelog',
     '---',
     '',
-    'Release notes for IgnisCore. Full details and downloads on [GitHub Releases]',
-    `(https://github.com/${siteVars.repo}/releases).`,
+    'Release notes for IgnisCore. Full details and downloads on [GitHub Releases](https://github.com/' +
+      `${siteVars.repo}/releases).`,
     '',
     'import ChangelogList from "@site/src/components/ChangelogList";',
     '',

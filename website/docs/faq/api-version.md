@@ -16,6 +16,12 @@ Extension manifests declare an `api-version` field — the **Ignis API** version
 
 Current API version: **`1.0.0`** (`IgnisApiVersion.CURRENT`).
 
+## Breaking changes in 1.0.0
+
+Strategy lifecycle hooks moved to the **event bus**. Extensions must implement `registerEvents()` and subscribe with helpers such as `onBlockPlace`, `onBlockTrigger`, and `onItemClick`. Legacy override methods (`onPlaced`, `onTrigger`, `onItemUse`, `onPlacedClick`, …) are not supported — there is no runtime compatibility shim.
+
+See [Strategies](/concepts/strategies) and [Core API — Event bus](/developers/api/core-api#event-bus).
+
 ## Manifest example
 
 ```yaml

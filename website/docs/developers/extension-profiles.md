@@ -10,15 +10,15 @@ Extension manifests (`block-extension.yml` / `item-extension.yml`) can declare *
 
 ## Profiles
 
-Profiles describe which strategy callbacks and services an extension uses. They do not change runtime dispatch — they help authors, reviewers, and tooling pick the right template.
+Profiles describe which event bus hooks and services an extension uses. They do not change runtime dispatch — dispatch always goes through the event bus. Profiles help authors, reviewers, and tooling pick the right template.
 
-| YAML token | Enum | Typical callbacks / services |
-|------------|------|----------------------------|
-| `fuse` | `FUSE` | `onTick`, `onTrigger`, `StrategyProfile` combustibility |
-| `placed` | `PLACED` | `onPlaced`, `onPlacedBreak`, repeating scheduler |
-| `interact` | `INTERACT` | `onPlacedInteract`, `CustomBlockAction.OPEN` |
-| `placed-hooks` | `PLACED_HOOKS` | `onPlaced` + `onPlacedBreak` on interact blocks (GUI registration) |
-| `item-use` | `ITEM_USE` | `onItemUse` |
+| YAML token | Enum | Typical events / services |
+|------------|------|---------------------------|
+| `fuse` | `FUSE` | `onBlockTick`, `onBlockTrigger`, `StrategyProfile` combustibility |
+| `placed` | `PLACED` | `onBlockPlace`, `onBlockBreak`, repeating scheduler |
+| `interact` | `INTERACT` | `onBlockInteract`, `CustomBlockAction.OPEN` |
+| `placed-hooks` | `PLACED_HOOKS` | `onBlockPlace` + `onBlockBreak` on interact blocks (GUI registration) |
+| `item-use` | `ITEM_USE` | `onItemClick` |
 | `processing-gui` | `PROCESSING_GUI` | `ExtensionSupport` inventories, tick-based recipes |
 | `drop-collector` | `DROP_COLLECTOR` | `registerDropCollector` |
 
@@ -73,7 +73,7 @@ requires-integrations:
 flowchart TD
     A[Block or item?] -->|Block| B[Fuse / placed / interact?]
     A -->|Item| I[item-use profile]
-    B -->|Fuse| F[fuse profile + onTrigger]
+    B -->|Fuse| F[fuse profile + onBlockTrigger]
     B -->|Passive tick| P[placed profile]
     B -->|Right-click GUI| G[interact + placed-hooks]
     G --> H{Processing recipes?}

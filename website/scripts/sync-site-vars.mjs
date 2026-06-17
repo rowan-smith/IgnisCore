@@ -61,7 +61,7 @@ const vars = {
   repo: existing.repo || DEFAULTS.repo,
   siteUrl: existing.siteUrl || DEFAULTS.siteUrl,
   baseUrl: existing.baseUrl || DEFAULTS.baseUrl,
-  jarName: `igniscore-${version}.jar`,
+  jarName: `IgnisCore-${version}.jar`,
 };
 
 fs.writeFileSync(VARS_PATH, `${JSON.stringify(vars, null, 2)}\n`);

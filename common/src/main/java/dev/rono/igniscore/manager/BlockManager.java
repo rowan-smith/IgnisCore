@@ -9,11 +9,10 @@ import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.service.IgnisEffectService;
-import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
-import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.util.Locations;
 import dev.rono.igniscore.config.PerformanceSettings;
+import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
 import dev.rono.igniscore.service.RuntimeBlockService;
@@ -30,12 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     private final RuntimeBlockService runtimeBlockService;
-    private final IgnisStrategyRegistry strategyRegistry;
     private final IgnisEffectService effectService;
     private final StrategyProfileResolver profileResolver;
     private final PlacedBlockPersistenceService placedBlockPersistence;
     private final IgnisScheduler scheduler;
     private final BlockVisualRenderer visualRenderer;
+    private final StrategyEventPublisher events;
     private final int visualRefreshBatchSize;
     private final Map<String, BlockDefinition> blockTypes = new HashMap<>();
     private final Map<IgnisLocation, String> placedBlocks = new ConcurrentHashMap<>();
@@ -43,20 +42,20 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
 
     @Inject
     public BlockManager(RuntimeBlockService runtimeBlockService,
-                        IgnisStrategyRegistry strategyRegistry,
                         IgnisEffectService effectService,
                         StrategyProfileResolver profileResolver,
                         PlacedBlockPersistenceService placedBlockPersistence,
                         IgnisScheduler scheduler,
                         BlockVisualRenderer visualRenderer,
+                        StrategyEventPublisher events,
                         PerformanceSettings performanceSettings) {
         this.runtimeBlockService = runtimeBlockService;
-        this.strategyRegistry = strategyRegistry;
         this.effectService = effectService;
         this.profileResolver = profileResolver;
         this.placedBlockPersistence = placedBlockPersistence;
         this.scheduler = scheduler;
         this.visualRenderer = visualRenderer;
+        this.events = events;
         this.visualRefreshBatchSize = performanceSettings.visualRefreshBlocksPerTick();
     }
 
@@ -100,7 +99,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
 
         Object display = visualRenderer.spawnStaticDisplay(blockLocation, type);
         blockVisuals.put(blockLocation, display);
-        requireBlockStrategy(type).onPlaced(type, blockLocation, null);
+        events.fireBlockPlace(type, blockLocation, null);
     }
 
     private void playPlacementEffects(IgnisLocation location, BlockDefinition type, IgnisItem placedFrom) {
@@ -111,7 +110,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
             effectService.playSound(center, profile.getPlacementSound(), 1.6f, 0.7f);
         }
 
-        requireBlockStrategy(type).onPlaced(type, location, placedFrom);
+        events.fireBlockPlace(type, location, placedFrom);
     }
 
     public void unregisterPlacedBlock(IgnisLocation location) {
@@ -138,13 +137,12 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
         StrategyProfile profile = profileResolver.resolve(type);
         instance.setTicksLeft(profile.getDefaultFuse());
         visualRenderer.spawnAnimatedDisplay(instance);
-        IgnisBlockStrategy strategy = requireBlockStrategy(type);
-        strategy.onPlace(instance);
+        events.fireBlockActivate(instance);
 
         instance.setTask(scheduler.runRepeating(instance.getLocation(), () -> {
             instance.tick();
             visualRenderer.updateAnimation(instance);
-            strategy.onTick(instance);
+            events.fireBlockTick(instance);
 
             if (instance.getTicksLeft() <= 0) {
                 executeBehavior(instance, context);
@@ -160,11 +158,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
         }
         runtimeBlockService.removeInstance(instance.getUuid());
         visualRenderer.removeDisplay(instance);
-        requireBlockStrategy(instance.getDefinition()).onTrigger(instance, context);
-    }
-
-    private IgnisBlockStrategy requireBlockStrategy(BlockDefinition definition) {
-        return strategyRegistry.requireBlockStrategy(definition.getExtensionId(), definition.getId());
+        events.fireBlockTrigger(instance, context);
     }
 
     public Map<String, BlockDefinition> getBlockTypes() {

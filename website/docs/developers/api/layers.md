@@ -14,10 +14,11 @@ IgnisCore exposes one Maven artifact (`dev.rono:api`) with four intentional laye
 │      Other plugins on the server                        │
 ├─────────────────────────────────────────────────────────┤
 │  L3  Extension runtime       IgnisStrategyContext       │
-│      ExtensionSupport, IgnisScheduler, services          │
+│      ExtensionSupport, IgnisEventBus, services          │
 ├─────────────────────────────────────────────────────────┤
 │  L2  Extension contract      IgnisBlockStrategy         │
 │                              IgnisItemStrategy          │
+│      Event bus                 registerEvents()       │
 │      Models + YAML             BlockDefinition, config  │
 ├─────────────────────────────────────────────────────────┤
 │  L1  Platform ports          IgnisWorld, IgnisPlayer…   │
@@ -31,27 +32,29 @@ IgnisCore exposes one Maven artifact (`dev.rono:api`) with four intentional laye
 
 | Audience | Entry point | Packages |
 |----------|-------------|----------|
-| **Extension author** | `IgnisStrategyContext` | `strategy`, `model`, `config`, `port`, `service`, `inventory`, `collection` |
+| **Extension author** | `IgnisStrategyContext` | `strategy`, `model`, `config`, `port`, `service`, `event`, `inventory`, `collection` |
 | **Integrator** | `IgnisCoreAPI` | Same ports/services for handles returned by the facade |
 | **Core contributor** | Guice modules, loaders | `common/`, `bukkit/`, `sponge/` — not in the API jar |
 
 ## Extension author rules
 
 1. Implement a strategy class with constructor `(IgnisStrategyContext context)`.
-2. Use `context.scheduler()`, `context.nbt()`, `context.effects()`, `context.protocol()`, and `context.extensions()` — not `IgnisCoreAPI`.
-3. Use port types (`IgnisPlayer`, `IgnisWorld`) in method signatures; never import platform classes.
-4. Declare `requires-integrations` and `profiles` in your manifest — see [Extension profiles](/developers/extension-profiles).
+2. Override `registerEvents()` and subscribe with `onBlockPlace`, `onBlockClick`, `onItemClick`, and the other helpers on `AbstractIgnisStrategy`.
+3. Use `context.scheduler()`, `context.nbt()`, `context.effects()`, `context.protocol()`, `context.extensions()`, and `context.eventBus()` — not `IgnisCoreAPI`.
+4. Use port types (`IgnisPlayer`, `IgnisWorld`) in method signatures; never import platform classes.
+5. Declare `requires-integrations` and `profiles` in your manifest — see [Extension profiles](/developers/extension-profiles).
 
 ## Integrator rules
 
 1. Depend on `api` with `provided` scope.
 2. Call `IgnisCoreAPI` after IgnisCore has enabled (same classloader as the plugin).
-3. Use `IgnisCoreAPI` after IgnisCore has enabled (same classloader as the plugin).
-4. Common facade methods: `createItem`, `createBlockItem`, `triggerBlock`, `ignitePlacedBlock`, `getPlacedBlockType`, `getActiveBlocks`, `getBlockTypes`, `getItemTypes`, `getStrategyRegistry`, `getNbtService`, `getProtocolService`, `getEffectService`, `reloadExtensions`.
+3. Common facade methods: `createItem`, `createBlockItem`, `triggerBlock`, `ignitePlacedBlock`, `getPlacedBlockType`, `getActiveBlocks`, `getBlockTypes`, `getItemTypes`, `getStrategyRegistry`, `getNbtService`, `getProtocolService`, `getEffectService`, `eventBus`, `reloadExtensions`.
 
 ## Optional helpers
 
-`dev.rono.extensions:shared` provides typed config and behavior helpers used by bundled extensions. It is **not** required for third-party JARs — copy patterns from the [cookbook](/developers/cookbook) or implement directly against the core API.
+`dev.rono.extensions:shared` provides optional behavior helpers for extension authors. Prefer grouped accessors on **`ExtensionShared`** (`explosion()`, `config()`, `link()`, …) over importing `*Support` classes directly. See [Extension shared](/developers/api/extension-shared).
+
+For core strategy helpers, use **`IgnisStrategies`** (`blocks()`, `items()`, `data()`) in the `api` module — see [Core API](/developers/api/core-api).
 
 ## Related
 
