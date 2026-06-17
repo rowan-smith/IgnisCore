@@ -70,6 +70,40 @@ class ExtensionSupportListenerBehaviorTest extends MockBukkitTestBase {
     }
 
     @Test
+    void creativeBreakLeavesVanillaDropHandlingUntouched() {
+        PlayerMock player = server.addPlayer("builder");
+        player.setGameMode(GameMode.CREATIVE);
+        Block block = world.getBlockAt(22, 64, 22);
+        block.setType(Material.STONE);
+        ((BlockMock) block).setDrops(List.of(new ItemStack(Material.COBBLESTONE)));
+        AtomicBoolean collected = new AtomicBoolean(false);
+        ctx.extensionSupport().registerDropCollector(BukkitBridge.toIgnis(block.getLocation()), (location, drops) -> {
+            collected.set(true);
+            return false;
+        });
+
+        BlockBreakEvent event = new BlockBreakEvent(block, player);
+        ctx.extensionSupportListener().onBlockBreak(event);
+
+        assertFalse(collected.get());
+        assertTrue(event.isDropItems());
+    }
+
+    @Test
+    void survivalBreakWithoutCollectorsDoesNotRehandleDrops() {
+        PlayerMock player = server.addPlayer("miner");
+        player.setGameMode(GameMode.SURVIVAL);
+        Block block = world.getBlockAt(23, 64, 23);
+        block.setType(Material.STONE);
+        ((BlockMock) block).setDrops(List.of(new ItemStack(Material.COBBLESTONE)));
+
+        BlockBreakEvent event = new BlockBreakEvent(block, player);
+        ctx.extensionSupportListener().onBlockBreak(event);
+
+        assertTrue(event.isDropItems());
+    }
+
+    @Test
     void itemSpawnIsCancelledWhenCollectorAbsorbsDrop() {
         IgnisLocation location = new IgnisLocation("world", 21, 64, 21);
         ctx.extensionSupport().registerDropCollector(location, (anchor, drops) -> {

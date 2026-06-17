@@ -60,7 +60,7 @@ class BlockStrategyProfileIntegrationTest {
             assertTrue(strategy instanceof IgnisBlockStrategy);
             StrategyProfile profile = ((IgnisBlockStrategy) strategy).profile(definition);
             assertNotNull(profile);
-            assertTrue(profile.getDefaultFuse() > 0);
+            assertTrue(profile.getDefaultFuse() >= 0);
             assertTrue(profile.getDefaultRadius() >= 0.0);
         }
     }

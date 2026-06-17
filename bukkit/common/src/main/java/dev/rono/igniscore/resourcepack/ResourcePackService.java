@@ -1,50 +1,190 @@
 package dev.rono.igniscore.resourcepack;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.Main;
+import dev.rono.igniscore.config.PerformanceSettings;
+import dev.rono.igniscore.IgnisPluginContext;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.resourcepack.ResourcePackFingerprint;
+import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
+import dev.rono.igniscore.loader.BlockExtensionLoader;
+import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.platform.PlatformHooks;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 
 public class ResourcePackService {
-    private final Main plugin;
+    private final IgnisPluginContext pluginContext;
     private final BlockManager blockManager;
     private final ItemManager itemManager;
+    private final BlockExtensionLoader blockExtensionLoader;
+    private final ItemExtensionLoader itemExtensionLoader;
     private final ResourcePackBuilder packBuilder;
     private final ResourcePackServer packServer;
     private final PlatformHooks platformHooks;
+    private final int resourcePackRetainCount;
 
+    private final Object buildLock = new Object();
+    private volatile boolean buildInProgress;
+    private Runnable pendingOnSuccess;
+    private Consumer<IOException> pendingOnFailure;
     private String latestHash;
+    private String lastBuiltFingerprint;
 
     @Inject
-    public ResourcePackService(Main plugin,
+    public ResourcePackService(IgnisPluginContext pluginContext,
                                BlockManager blockManager,
                                ItemManager itemManager,
+                               BlockExtensionLoader blockExtensionLoader,
+                               ItemExtensionLoader itemExtensionLoader,
                                ResourcePackBuilder packBuilder,
                                PlatformHooks platformHooks,
-                               IgnisRuntimeHost runtimeHost) {
-        this.plugin = plugin;
+                               IgnisRuntimeHost runtimeHost,
+                               PerformanceSettings performanceSettings) {
+        this.pluginContext = pluginContext;
         this.blockManager = blockManager;
         this.itemManager = itemManager;
+        this.blockExtensionLoader = blockExtensionLoader;
+        this.itemExtensionLoader = itemExtensionLoader;
         this.packBuilder = packBuilder;
         this.platformHooks = platformHooks;
         this.packServer = new ResourcePackServer(runtimeHost);
+        this.resourcePackRetainCount = performanceSettings.resourcePackRetainCount();
     }
 
     public void buildAndRegister() throws IOException {
-        ResourcePackBuilder.PackResult result = packBuilder.buildPack(
-                blockManager.getBlockTypes(), itemManager.getItemTypes());
+        Map<String, BlockDefinition> blocks = Map.copyOf(blockManager.getBlockTypes());
+        Map<String, ItemDefinition> items = Map.copyOf(itemManager.getItemTypes());
+        String fingerprint = ResourcePackFingerprint.compute(
+                blocks, items,
+                blockExtensionLoader.getLoadedExtensions(),
+                itemExtensionLoader.getLoadedExtensions());
+        registerBuiltPack(packBuilder.buildPack(blocks, items));
+        lastBuiltFingerprint = fingerprint;
+    }
+
+    public void buildAndRegisterAsync(Runnable onSuccess, Consumer<IOException> onFailure) {
+        Map<String, BlockDefinition> blocks = Map.copyOf(blockManager.getBlockTypes());
+        Map<String, ItemDefinition> items = Map.copyOf(itemManager.getItemTypes());
+        String fingerprint = ResourcePackFingerprint.compute(
+                blocks, items,
+                blockExtensionLoader.getLoadedExtensions(),
+                itemExtensionLoader.getLoadedExtensions());
+
+        synchronized (buildLock) {
+            if (fingerprint.equals(lastBuiltFingerprint) && latestHash != null) {
+                pluginContext.debug("Skipping resource pack rebuild; inputs unchanged.");
+                onSuccess.run();
+                return;
+            }
+            if (buildInProgress) {
+                pendingOnSuccess = onSuccess;
+                pendingOnFailure = onFailure;
+                return;
+            }
+            buildInProgress = true;
+        }
+
+        var plugin = pluginContext.plugin();
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                ResourcePackBuilder.PackResult result = packBuilder.buildPack(blocks, items);
+                plugin.getServer().getScheduler().runTask(plugin, () -> finishAsyncBuild(fingerprint, result, onSuccess, onFailure));
+            } catch (IOException error) {
+                plugin.getServer().getScheduler().runTask(plugin, () -> finishAsyncBuildFailure(onFailure, error));
+            }
+        });
+    }
+
+    private void finishAsyncBuild(String fingerprint,
+                                  ResourcePackBuilder.PackResult result,
+                                  Runnable onSuccess,
+                                  Consumer<IOException> onFailure) {
+        IOException failure = null;
+        try {
+            registerBuiltPack(result);
+            lastBuiltFingerprint = fingerprint;
+        } catch (RuntimeException error) {
+            failure = new IOException(error.getMessage(), error);
+        }
+
+        Runnable queuedSuccess = null;
+        Consumer<IOException> queuedFailure = null;
+        synchronized (buildLock) {
+            if (failure != null) {
+                onFailure.accept(failure);
+            } else {
+                onSuccess.run();
+            }
+
+            if (pendingOnSuccess != null) {
+                queuedSuccess = pendingOnSuccess;
+                queuedFailure = pendingOnFailure;
+                pendingOnSuccess = null;
+                pendingOnFailure = null;
+            }
+            buildInProgress = false;
+        }
+
+        if (queuedSuccess != null) {
+            buildAndRegisterAsync(queuedSuccess, queuedFailure);
+        }
+    }
+
+    private void finishAsyncBuildFailure(Consumer<IOException> onFailure, IOException error) {
+        Runnable queuedSuccess = null;
+        Consumer<IOException> queuedFailure = null;
+        synchronized (buildLock) {
+            onFailure.accept(error);
+            if (pendingOnSuccess != null) {
+                queuedSuccess = pendingOnSuccess;
+                queuedFailure = pendingOnFailure;
+                pendingOnSuccess = null;
+                pendingOnFailure = null;
+            }
+            buildInProgress = false;
+        }
+
+        if (queuedSuccess != null) {
+            buildAndRegisterAsync(queuedSuccess, queuedFailure);
+        }
+    }
+
+    private void registerBuiltPack(ResourcePackBuilder.PackResult result) {
         latestHash = result.getHash();
         packServer.registerPack(latestHash, result.getFile());
-        plugin.debug("Resource pack generated successfully! Hash: " + latestHash);
+        cleanupOldPacks(result.getFile().toPath().getParent());
+        pluginContext.debug("Resource pack generated successfully! Hash: " + latestHash);
+    }
+
+    private void cleanupOldPacks(Path packsDirectory) {
+        if (packsDirectory == null) {
+            return;
+        }
+
+        try {
+            Set<String> retainedHashes = ResourcePackStorage.determineRetainedHashes(
+                    packsDirectory, latestHash, resourcePackRetainCount);
+            packServer.retainOnly(latestHash, retainedHashes);
+            int deleted = ResourcePackStorage.deleteUnretainedPacks(packsDirectory, retainedHashes);
+            if (deleted > 0) {
+                pluginContext.debug("Cleaned up " + deleted + " old resource pack file(s).");
+            }
+        } catch (IOException error) {
+            pluginContext.plugin().getLogger().warning(
+                    "Failed to clean up old resource packs: " + error.getMessage());
+        }
     }
 
     public void reloadConfiguration() {
-        plugin.reloadConfig();
+        pluginContext.plugin().reloadConfig();
         restartServer();
     }
 
@@ -54,8 +194,8 @@ public class ResourcePackService {
     }
 
     public void startServer() {
-        String host = plugin.getConfig().getString("resource-pack.host", "0.0.0.0");
-        int port = plugin.getConfig().getInt("resource-pack.port", 8080);
+        String host = pluginContext.plugin().getConfig().getString("resource-pack.host", "0.0.0.0");
+        int port = pluginContext.plugin().getConfig().getInt("resource-pack.port", 8080);
         packServer.start(host, port);
     }
 
@@ -64,9 +204,9 @@ public class ResourcePackService {
     }
 
     public void requestPack(Player player) {
-        String url = plugin.getConfig().getString("resource-pack.public-url");
+        String url = pluginContext.plugin().getConfig().getString("resource-pack.public-url");
         if (url == null || url.isEmpty()) {
-            platformHooks.sendMessage(player, plugin.message("<red>Resource pack URL not configured in config.yml"));
+            platformHooks.sendMessage(player, pluginContext.message("<red>Resource pack URL not configured in config.yml"));
             return;
         }
 
@@ -75,7 +215,7 @@ public class ResourcePackService {
         } else {
             platformHooks.sendResourcePack(player, url, null, false);
         }
-        platformHooks.sendMessage(player, plugin.message("<green>Resource pack requested."));
+        platformHooks.sendMessage(player, pluginContext.message("<green>Resource pack requested."));
     }
 
     public String getLatestHash() {

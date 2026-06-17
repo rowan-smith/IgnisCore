@@ -1,23 +1,17 @@
 package dev.rono.igniscore.command;
 
 import com.google.inject.Inject;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.Objects;
+import dev.rono.igniscore.api.port.PlatformAdapter;
 
 public class CommandRegistrar {
-    private final JavaPlugin plugin;
+    private final PlatformAdapter platformAdapter;
 
     @Inject
-    public CommandRegistrar(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public CommandRegistrar(PlatformAdapter platformAdapter) {
+        this.platformAdapter = platformAdapter;
     }
 
     public void register(String name, PluginCommandHandler handler) {
-        PluginCommand command = Objects.requireNonNull(plugin.getCommand(name),
-                "Command missing from plugin.yml: " + name);
-        command.setExecutor(handler);
-        command.setTabCompleter(handler);
+        platformAdapter.registerCommand(IgnisCommands.IGNIS, handler);
     }
 }

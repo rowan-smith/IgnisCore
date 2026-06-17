@@ -1,6 +1,7 @@
 package dev.rono.igniscore.block.quarrycache;
 
 import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.api.config.BlockBehaviorConfig;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -20,10 +21,11 @@ class StrategyTest {
     }
 
     @Test
-    void strategyExposesOpenProfile() {
+    void configDeclaresOpenSurfaceBehavior() {
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(StrategyTest.class, "quarry-cache", 10001);
         Strategy strategy = new Strategy(ExtensionTestSupport.noopContext());
-        StrategyProfile profile = strategy.profile(definition);
+        StrategyProfile profile = BlockBehaviorConfig.from(definition.getBehaviorConfig())
+                .merge(strategy.profile(definition));
 
         assertNotNull(profile);
         assertFalse(profile.isCombustible());

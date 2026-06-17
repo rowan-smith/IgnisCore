@@ -1,5 +1,6 @@
 package dev.rono.igniscore.api.strategy;
 
+import dev.rono.igniscore.api.config.BlockBehaviorConfig;
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
@@ -59,7 +60,20 @@ public interface IgnisBlockStrategy extends IgnisStrategy {
                                             IgnisPlayer player,
                                             IgnisInteraction interaction,
                                             IgnisItem heldItem) {
-        return PlacedClickSupport.resolve(profile(definition), interaction, heldItem);
+        BlockBehaviorConfig behavior = BlockBehaviorConfig.from(definition.getBehaviorConfig());
+        StrategyProfile profile = behavior.merge(profile(definition));
+        if (!behavior.isEmpty()) {
+            return behavior.resolve(interaction, profile, materialKey(heldItem));
+        }
+        return PlacedClickSupport.resolve(profile, interaction, heldItem);
+    }
+
+    private static String materialKey(IgnisItem heldItem) {
+        if (heldItem == null || heldItem.isAir()) {
+            return "AIR";
+        }
+        String materialKey = heldItem.getMaterialKey();
+        return materialKey == null || materialKey.isBlank() ? "AIR" : materialKey;
     }
 
     default void onPlacedInteract(BlockDefinition definition,

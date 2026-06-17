@@ -1,12 +1,13 @@
-package dev.rono.igniscore.api.config;
+package dev.rono.extensions.shared.config;
 
+import dev.rono.igniscore.api.config.ExtensionConfig;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.ExplosionSupport;
 
 import java.util.Map;
 
 /**
- * Typed view of common explosive block settings from {@code custom_data} / {@code explosion} YAML.
+ * Typed view of common explosive block settings from {@code custom_data} YAML.
  */
 public record ExplosionConfig(
         int fuse,
@@ -37,7 +38,7 @@ public record ExplosionConfig(
     }
 
     public float resolvedPower() {
-        return StrategySupport.resolvePower(asMap(), DEFAULT_POWER);
+        return ExplosionSupport.resolvePower(asMap(), DEFAULT_POWER);
     }
 
     public Map<String, Object> asMap() {

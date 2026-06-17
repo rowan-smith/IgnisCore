@@ -14,9 +14,25 @@ public final class BundledExtensionJarFactory {
     private BundledExtensionJarFactory() {
     }
 
+    public static Path extensionsRoot() throws IOException {
+        Path current = Path.of("").toAbsolutePath().normalize();
+        while (current != null) {
+            Path extensions = current.resolve("extensions");
+            if (Files.isDirectory(extensions)) {
+                return extensions;
+            }
+            current = current.getParent();
+        }
+        throw new IOException("Could not locate extensions directory from working directory "
+                + Path.of("").toAbsolutePath());
+    }
+
+    public static Path moduleDirectory(String category, String moduleName) throws IOException {
+        return extensionsRoot().resolve(category).resolve(moduleName);
+    }
+
     public static File buildFromModule(Path outputDirectory, String category, String moduleName) throws IOException {
-        Path modulePath = Path.of("..", "..", "..", "extensions", category, moduleName);
-        Path classesDirectory = modulePath.resolve("target/classes");
+        Path classesDirectory = moduleDirectory(category, moduleName).resolve("target/classes");
 
         if (!Files.isDirectory(classesDirectory)) {
             throw new IOException("Missing compiled classes for " + moduleName + " at " + classesDirectory);

@@ -23,6 +23,11 @@ public final class TestExtensionJarBuilder {
                 TestItemStrategy.class.getName());
     }
 
+    public static File writeItemJarWithoutManifestId(File directory, String jarName) throws IOException {
+        return writeJar(directory, jarName, "item-extension.yml", legacyItemManifest(), legacyItemConfig(),
+                TestItemStrategy.class.getName());
+    }
+
     private static File writeJar(File directory,
                                  String jarName,
                                  String manifestName,
@@ -97,6 +102,25 @@ public final class TestExtensionJarBuilder {
                   title: "&cTest Item"
                 item:
                   base_material: snowball
+                """;
+    }
+
+    private static String legacyItemManifest() {
+        return """
+                name: Detonator
+                version: 1.0.0
+                api-version: 1.0.0
+                author: Tests
+                """;
+    }
+
+    private static String legacyItemConfig() {
+        return """
+                id: detonator
+                display:
+                  title: "&6Detonator"
+                item:
+                  base_material: blaze_rod
                 """;
     }
 

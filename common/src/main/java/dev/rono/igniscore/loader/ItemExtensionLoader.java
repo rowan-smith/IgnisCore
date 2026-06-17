@@ -21,9 +21,19 @@ public class ItemExtensionLoader {
 
     public List<LoadedExtension<ItemDefinition>> loadAll() {
         unloadAll();
-        loadedExtensions.addAll(engine.loadItems());
+        List<LoadedExtension<ItemDefinition>> fresh = loadFresh();
+        commitLoaded(fresh);
+        return getLoadedExtensions();
+    }
+
+    public List<LoadedExtension<ItemDefinition>> loadFresh() {
+        return List.copyOf(engine.loadItems());
+    }
+
+    public void commitLoaded(List<LoadedExtension<ItemDefinition>> extensions) {
+        loadedExtensions.clear();
+        loadedExtensions.addAll(extensions);
         resourceProvider.setItemExtensions(loadedExtensions);
-        return List.copyOf(loadedExtensions);
     }
 
     public void unloadAll() {

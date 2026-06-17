@@ -1,7 +1,7 @@
 package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.Main;
+import dev.rono.igniscore.IgnisPluginContext;
 import dev.rono.igniscore.platform.PlatformHooks;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import dev.rono.igniscore.api.port.IgnisLocation;
@@ -25,16 +25,19 @@ import static dev.rono.igniscore.util.ConfigValueReader.getString;
 public class ConfiguredEffectService {
     private final Plugin plugin;
     private final PlatformHooks platformHooks;
+    private final IgnisPluginContext pluginContext;
 
     @Inject
-    public ConfiguredEffectService(Main plugin, PlatformHooks platformHooks) {
-        this.plugin = plugin;
+    public ConfiguredEffectService(IgnisPluginContext pluginContext, PlatformHooks platformHooks) {
+        this.plugin = pluginContext.plugin();
         this.platformHooks = platformHooks;
+        this.pluginContext = pluginContext;
     }
 
     ConfiguredEffectService(Plugin plugin, PlatformHooks platformHooks) {
         this.plugin = plugin;
         this.platformHooks = platformHooks;
+        this.pluginContext = null;
     }
 
     public void playSound(IgnisLocation location, String soundName, float volume, float pitch) {
@@ -116,8 +119,8 @@ public class ConfiguredEffectService {
     }
 
     private void debug(String message) {
-        if (plugin instanceof Main main) {
-            main.debug(message);
+        if (pluginContext != null) {
+            pluginContext.debug(message);
         }
     }
 

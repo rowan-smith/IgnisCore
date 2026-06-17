@@ -22,12 +22,23 @@ public final class PlatformBootloaderLoader {
     }
 
     private static PlatformBootloader select(Object host) {
-        return ServiceLoader.load(PlatformBootloader.class).stream()
+        return ServiceLoader.load(PlatformBootloader.class, classLoaderFor(host)).stream()
                 .map(ServiceLoader.Provider::get)
                 .filter(bootloader -> bootloader.canBoot(host))
                 .max(Comparator.comparingInt(PlatformBootloader::priority)
                         .thenComparing(PlatformBootloader::id))
                 .orElseThrow(() -> new IllegalStateException(
                         "No PlatformBootloader found for host " + host.getClass().getName()));
+    }
+
+    private static ClassLoader classLoaderFor(Object host) {
+        if (host != null) {
+            ClassLoader hostLoader = host.getClass().getClassLoader();
+            if (hostLoader != null) {
+                return hostLoader;
+            }
+        }
+        ClassLoader interfaceLoader = PlatformBootloader.class.getClassLoader();
+        return interfaceLoader != null ? interfaceLoader : ClassLoader.getSystemClassLoader();
     }
 }

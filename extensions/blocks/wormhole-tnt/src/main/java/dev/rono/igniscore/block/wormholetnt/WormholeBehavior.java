@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.ExplosionSupport;
 import dev.rono.igniscore.api.util.Locations;
 
 final class WormholeBehavior {
@@ -29,7 +30,7 @@ final class WormholeBehavior {
             ripBlocks(world, loc, ripRadius, ripChance);
         }
 
-        double radius = 8.0 + (StrategySupport.fuse(def, 100) - ticksLeft) * 0.1;
+        double radius = 8.0 + (ExplosionSupport.fuse(def, 100) - ticksLeft) * 0.1;
         Object displayEntity = instance.getDisplayEntity();
 
         for (Object entity : world.getNearbyEntities(loc, radius)) {
@@ -57,7 +58,7 @@ final class WormholeBehavior {
         world.spawnParticle(loc, "PORTAL", 15, 0.3, 0.3, 0.3, 0.2);
         if (ticksLeft % 5 == 0) {
             world.playSound(loc, "BLOCK_BEACON_AMBIENT", 1.0f,
-                    0.5f + (float) (StrategySupport.fuse(def, 100) - ticksLeft) / 80.0f);
+                    0.5f + (float) (ExplosionSupport.fuse(def, 100) - ticksLeft) / 80.0f);
         }
     }
 
@@ -66,7 +67,7 @@ final class WormholeBehavior {
         IgnisWorld world = worldAt(loc);
         BlockDefinition def = instance.getDefinition();
 
-        StrategySupport.createExplosion(world, loc, def, 10.0, false);
+        ExplosionSupport.createExplosion(world, loc, def, 10.0, false);
         world.spawnParticle(loc, "EXPLOSION_EMITTER", 5, 2, 2, 2, 0);
         world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 2.0f, 0.5f);
     }

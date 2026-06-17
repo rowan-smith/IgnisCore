@@ -26,6 +26,7 @@ public final class BlockDefinition implements ExtensionDefinition {
 
     private final Map<String, Object> customData;
     private final Map<String, Object> breakSettings;
+    private final Map<String, Object> behaviorSettings;
     private final Map<String, Object> interactionSettings;
     private final Map<String, Object> displaySettings;
 
@@ -43,7 +44,19 @@ public final class BlockDefinition implements ExtensionDefinition {
                            Map<String, Object> breakSettings, Map<String, Object> interactionSettings,
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse) {
         this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
-                bottomTexture, customData, breakSettings, interactionSettings, displaySettings,
+                bottomTexture, customData, breakSettings, Map.of(), interactionSettings, displaySettings,
+                customModelData, rotate, floatBob, pulse);
+    }
+
+    public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description,
+                           boolean placeable, boolean breakable,
+                           String topTexture, String sideTexture, String bottomTexture,
+                           Map<String, Object> customData,
+                           Map<String, Object> breakSettings, Map<String, Object> behaviorSettings,
+                           Map<String, Object> interactionSettings,
+                           Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse) {
+        this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
+                bottomTexture, customData, breakSettings, behaviorSettings, interactionSettings, displaySettings,
                 customModelData, rotate, floatBob, pulse, "builtin", null, null, null, null);
     }
 
@@ -55,7 +68,20 @@ public final class BlockDefinition implements ExtensionDefinition {
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
                            String extensionId) {
         this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
-                bottomTexture, customData, breakSettings, interactionSettings, displaySettings,
+                bottomTexture, customData, breakSettings, Map.of(), interactionSettings, displaySettings,
+                customModelData, rotate, floatBob, pulse, extensionId);
+    }
+
+    public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description,
+                           boolean placeable, boolean breakable,
+                           String topTexture, String sideTexture, String bottomTexture,
+                           Map<String, Object> customData,
+                           Map<String, Object> breakSettings, Map<String, Object> behaviorSettings,
+                           Map<String, Object> interactionSettings,
+                           Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
+                           String extensionId) {
+        this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
+                bottomTexture, customData, breakSettings, behaviorSettings, interactionSettings, displaySettings,
                 customModelData, rotate, floatBob, pulse, extensionId, null, null, null, null);
     }
 
@@ -64,6 +90,19 @@ public final class BlockDefinition implements ExtensionDefinition {
                            String topTexture, String sideTexture, String bottomTexture,
                            Map<String, Object> customData,
                            Map<String, Object> breakSettings, Map<String, Object> interactionSettings,
+                           Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
+                           String extensionId, String side1Texture, String side2Texture, String side3Texture, String side4Texture) {
+        this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
+                bottomTexture, customData, breakSettings, Map.of(), interactionSettings, displaySettings,
+                customModelData, rotate, floatBob, pulse, extensionId, side1Texture, side2Texture, side3Texture, side4Texture);
+    }
+
+    public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description,
+                           boolean placeable, boolean breakable,
+                           String topTexture, String sideTexture, String bottomTexture,
+                           Map<String, Object> customData,
+                           Map<String, Object> breakSettings, Map<String, Object> behaviorSettings,
+                           Map<String, Object> interactionSettings,
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
                            String extensionId, String side1Texture, String side2Texture, String side3Texture, String side4Texture) {
         this.id = id;
@@ -82,6 +121,7 @@ public final class BlockDefinition implements ExtensionDefinition {
         this.side4Texture = side4Texture;
         this.customData = customData == null ? Map.of() : Map.copyOf(customData);
         this.breakSettings = breakSettings == null ? Map.of() : Map.copyOf(breakSettings);
+        this.behaviorSettings = behaviorSettings == null ? Map.of() : Map.copyOf(behaviorSettings);
         this.interactionSettings = interactionSettings == null ? Map.of() : Map.copyOf(interactionSettings);
         this.displaySettings = displaySettings == null ? Map.of() : Map.copyOf(displaySettings);
         this.customModelData = customModelData;
@@ -94,7 +134,8 @@ public final class BlockDefinition implements ExtensionDefinition {
     private BlockDefinition(Builder builder) {
         this(builder.id, builder.baseMaterial, builder.renderMaterial, builder.title, builder.description,
                 builder.placeable, builder.breakable, builder.topTexture, builder.sideTexture, builder.bottomTexture,
-                builder.customData, builder.breakSettings, builder.interactionSettings, builder.displaySettings,
+                builder.customData, builder.breakSettings, builder.behaviorSettings, builder.interactionSettings,
+                builder.displaySettings,
                 builder.customModelData, builder.rotate, builder.floatBob, builder.pulse, builder.extensionId,
                 builder.side1Texture, builder.side2Texture, builder.side3Texture, builder.side4Texture);
     }
@@ -135,6 +176,7 @@ public final class BlockDefinition implements ExtensionDefinition {
 
     public Map<String, Object> getCustomData() { return customData; }
     public Map<String, Object> getBreakSettings() { return breakSettings; }
+    public Map<String, Object> getBehaviorSettings() { return behaviorSettings; }
     public Map<String, Object> getInteractionSettings() { return interactionSettings; }
     public Map<String, Object> getDisplaySettings() { return displaySettings; }
 
@@ -146,6 +188,11 @@ public final class BlockDefinition implements ExtensionDefinition {
     /** Typed view of {@link #getBreakSettings()}. */
     public ExtensionConfig getBreakConfig() {
         return ExtensionConfig.of(breakSettings);
+    }
+
+    /** Typed view of {@link #getBehaviorSettings()}. */
+    public ExtensionConfig getBehaviorConfig() {
+        return ExtensionConfig.of(behaviorSettings);
     }
 
     /** Typed view of {@link #getInteractionSettings()}. */
@@ -176,6 +223,7 @@ public final class BlockDefinition implements ExtensionDefinition {
         private String side4Texture;
         private Map<String, Object> customData = Map.of();
         private Map<String, Object> breakSettings = Map.of();
+        private Map<String, Object> behaviorSettings = Map.of();
         private Map<String, Object> interactionSettings = Map.of();
         private Map<String, Object> displaySettings = Map.of();
         private int customModelData = 10001;
@@ -244,6 +292,11 @@ public final class BlockDefinition implements ExtensionDefinition {
 
         public Builder breakSettings(Map<String, Object> breakSettings) {
             this.breakSettings = breakSettings;
+            return this;
+        }
+
+        public Builder behaviorSettings(Map<String, Object> behaviorSettings) {
+            this.behaviorSettings = behaviorSettings;
             return this;
         }
 

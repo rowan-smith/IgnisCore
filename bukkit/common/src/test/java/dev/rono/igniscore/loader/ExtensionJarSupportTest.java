@@ -143,6 +143,17 @@ class ExtensionJarSupportTest {
     }
 
     @Test
+    void resolvesManifestIdFromConfigWhenJarMetadataMissingId() throws Exception {
+        File jarFile = TestExtensionJarBuilder.writeItemJarWithoutManifestId(tempDir.toFile(), "detonator.jar");
+
+        ExtensionJarSupport.JarMetadata<ExtensionManifest> metadata =
+                ExtensionJarSupport.readExtensionMetadata(jarFile, "item-extension.yml");
+
+        assertEquals("detonator", metadata.manifest().getId());
+        assertEquals("detonator", metadata.config().get("id"));
+    }
+
+    @Test
     void failsWhenConfigYamlMissing() throws Exception {
         File jarFile = new File(tempDir.toFile(), "no-config.jar");
         try (var jar = new java.util.jar.JarOutputStream(new java.io.FileOutputStream(jarFile))) {

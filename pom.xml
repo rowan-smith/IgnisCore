@@ -124,6 +124,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>dev.rono.extensions</groupId>
+        <artifactId>shared</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>dev.rono.bukkit</groupId>
         <artifactId>common</artifactId>
         <version>${project.version}</version>

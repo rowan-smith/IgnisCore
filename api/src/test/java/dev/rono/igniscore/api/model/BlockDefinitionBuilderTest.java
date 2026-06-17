@@ -24,7 +24,11 @@ class BlockDefinitionBuilderTest {
                 .textures("top.png", "side.png", "bottom.png")
                 .customData(Map.of("capacity", 64))
                 .breakSettings(Map.of("ticks", 10))
-                .interactionSettings(Map.of("right_click", Map.of("action", "open")))
+                .behaviorSettings(Map.of(
+                        "combustible", false,
+                        "left_click_block", "break",
+                        "right_click_block", "open"))
+                .interactionSettings(Map.of())
                 .customModelData(10042)
                 .extensionId("quarry-cache")
                 .animations(false, false, false)
@@ -35,7 +39,7 @@ class BlockDefinitionBuilderTest {
         assertFalse(built.isBreakable());
         assertEquals(64, built.getCustomConfig().getInt("capacity", 0));
         assertEquals(10, built.getBreakConfig().getInt("ticks", 0));
-        assertEquals("open", built.getInteractionConfig().section("right_click").getString("action", ""));
+        assertEquals("open", built.getBehaviorConfig().getString("right_click_block", ""));
         assertFalse(built.isRotate());
     }
 }

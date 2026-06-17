@@ -18,7 +18,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
         return StrategyProfile.builder()
-                .placementSound("ENTITY_SPIDER_AMBIENT")
+                .defaultFuse(80)
                 .build();
     }
 

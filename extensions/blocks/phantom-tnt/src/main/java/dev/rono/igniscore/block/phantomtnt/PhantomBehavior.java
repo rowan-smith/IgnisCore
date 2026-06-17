@@ -4,7 +4,7 @@ import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.ExplosionSupport;
 import dev.rono.igniscore.api.util.Locations;
 
 final class PhantomBehavior {
@@ -15,7 +15,7 @@ final class PhantomBehavior {
     }
 
     void onTick(RuntimeBlockInstance instance) {
-        if (instance.getTicksLeft() == StrategySupport.fuse(instance.getDefinition(), 160) - 20) {
+        if (instance.getTicksLeft() == ExplosionSupport.fuse(instance.getDefinition(), 160) - 20) {
             IgnisWorld world = worldAt(instance.getLocation());
             if (instance.getDisplayEntity() != null) {
                 world.removeEntity(instance.getDisplayEntity());
@@ -29,7 +29,7 @@ final class PhantomBehavior {
 
     void onTrigger(RuntimeBlockInstance instance) {
         IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        StrategySupport.createExplosion(worldAt(loc), loc, instance.getDefinition(), 4.0, false);
+        ExplosionSupport.createExplosion(worldAt(loc), loc, instance.getDefinition(), 4.0, false);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {

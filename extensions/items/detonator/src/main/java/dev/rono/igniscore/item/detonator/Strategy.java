@@ -1,5 +1,6 @@
 package dev.rono.igniscore.item.detonator;
 
+import dev.rono.igniscore.api.config.ItemBehaviorConfig;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.port.IgnisBlock;
 import dev.rono.igniscore.api.port.IgnisInteraction;
@@ -19,11 +20,13 @@ public class Strategy extends AbstractIgnisItemStrategy {
     @Override
     public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
                            IgnisInteraction action, IgnisBlock clickedBlock) {
-        switch (action) {
-            case LEFT_CLICK_BLOCK -> behavior.assignBomb(player, definition, item, clickedBlock);
-            case RIGHT_CLICK_AIR, RIGHT_CLICK_BLOCK -> behavior.detonateLinkedBombs(player, definition, item);
-            default -> {
+        ItemBehaviorConfig config = ItemBehaviorConfig.from(definition.getBehaviorConfig());
+        config.actionFor(action).ifPresent(token -> {
+            switch (token) {
+                case "assign" -> behavior.assignBomb(player, definition, item, clickedBlock);
+                case "detonate" -> behavior.detonateLinkedBombs(player, definition, item);
+                default -> { }
             }
-        }
+        });
     }
 }

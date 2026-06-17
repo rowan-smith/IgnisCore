@@ -2,6 +2,8 @@ package dev.rono.igniscore;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.google.inject.util.Modules;
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.api.port.BlockVisualRenderer;
 import dev.rono.igniscore.api.port.IgnisCustomItemFactory;
 import dev.rono.igniscore.api.port.IgnisPlatformIntegration;
@@ -22,6 +24,7 @@ import dev.rono.igniscore.listener.PlacedBlockRestoreListener;
 import dev.rono.igniscore.listener.ResourcePackStatusListener;
 import dev.rono.igniscore.module.IgnisCommonModule;
 import dev.rono.igniscore.resourcepack.ResourcePackService;
+import dev.rono.igniscore.service.ExtensionReloadService;
 import dev.rono.igniscore.service.BlockItemFactory;
 import dev.rono.igniscore.service.BlockItemIdentifier;
 import dev.rono.igniscore.service.ConfiguredEffectService;
@@ -48,6 +51,7 @@ public class IgnisCoreModule extends AbstractModule {
     private final JavaPlugin plugin;
     private final PlatformAdapter platformAdapter;
     private final PlatformHooks platformHooks;
+    private final IgnisPluginContext pluginContext;
     private final IgnisRuntimeHost runtimeHost;
 
     public IgnisCoreModule(JavaPlugin plugin, PlatformAdapter platformAdapter) {
@@ -57,7 +61,8 @@ public class IgnisCoreModule extends AbstractModule {
             throw new IllegalArgumentException("Bukkit-family hosts require BukkitPlatformAdapter");
         }
         this.platformHooks = bukkitAdapter.legacyHooks();
-        this.runtimeHost = new SpigotRuntimeHost(plugin);
+        this.pluginContext = new IgnisPluginContext(plugin);
+        this.runtimeHost = new SpigotRuntimeHost(plugin, pluginContext);
     }
 
     public IgnisCoreModule(Main plugin, PlatformHooks platformHooks) {
@@ -66,10 +71,16 @@ public class IgnisCoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        install(new IgnisCommonModule());
+        install(Modules.override(new IgnisCommonModule()).with(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(PerformanceSettings.class).toInstance(readPerformanceSettings());
+            }
+        }));
 
         bind(JavaPlugin.class).toInstance(plugin);
         bind(Plugin.class).toInstance(plugin);
+        bind(IgnisPluginContext.class).toInstance(pluginContext);
         if (plugin instanceof Main main) {
             bind(Main.class).toInstance(main);
         }
@@ -97,6 +108,7 @@ public class IgnisCoreModule extends AbstractModule {
         bind(IgnisEffectService.class).to(IgnisEffectServiceImpl.class).in(Scopes.SINGLETON);
         bind(VisualEffectService.class).in(Scopes.SINGLETON);
         bind(ResourcePackService.class).in(Scopes.SINGLETON);
+        bind(ExtensionReloadService.class).in(Scopes.SINGLETON);
         bind(BlockItemFactory.class).in(Scopes.SINGLETON);
         bind(ItemFactory.class).in(Scopes.SINGLETON);
         bind(BlockItemIdentifier.class).in(Scopes.SINGLETON);
@@ -105,5 +117,19 @@ public class IgnisCoreModule extends AbstractModule {
         bind(CustomBlockPlacementService.class).in(Scopes.SINGLETON);
         bind(CustomBlockBreakService.class).in(Scopes.SINGLETON);
         bind(CustomBlockIgnitionService.class).in(Scopes.SINGLETON);
+    }
+
+    private PerformanceSettings readPerformanceSettings() {
+        var section = plugin.getConfig().getConfigurationSection("performance");
+        if (section == null) {
+            return PerformanceSettings.defaults();
+        }
+        return PerformanceSettings.fromValues(
+                section.getInt("chunk-restore-blocks-per-tick",
+                        PerformanceSettings.DEFAULT_CHUNK_RESTORE_BLOCKS_PER_TICK),
+                section.getInt("visual-refresh-blocks-per-tick",
+                        PerformanceSettings.DEFAULT_VISUAL_REFRESH_BLOCKS_PER_TICK),
+                section.getInt("resource-pack-retain-count",
+                        PerformanceSettings.DEFAULT_RESOURCE_PACK_RETAIN_COUNT));
     }
 }

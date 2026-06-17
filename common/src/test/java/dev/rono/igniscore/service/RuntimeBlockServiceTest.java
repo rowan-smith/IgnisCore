@@ -32,7 +32,7 @@ class RuntimeBlockServiceTest {
         assertSame(instance, service.getInstance(instance.getUuid()));
         assertSame(instance, service.getInstanceAt(location));
         assertEquals(1, service.getActiveInstances().size());
-        assertEquals(80, instance.getTicksLeft());
+        assertEquals(0, instance.getTicksLeft());
     }
 
     @Test

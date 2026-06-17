@@ -1,3 +1,14 @@
+# =============================================================================
+# Grenade — throwable explosive item
+# =============================================================================
+#
+# Sections:
+#   display     — name and lore on the item
+#   item        — vanilla base material for the item stack
+#   textures    — icon for resource pack / model
+#   behavior    — which clicks invoke the item strategy (action tokens)
+#   custom_data — throw and explosion tuning
+
 id: grenade
 
 display:
@@ -5,14 +16,27 @@ display:
   description:
     - "&7Right-click to throw"
 
+# item.base_material — vanilla material id (e.g. snowball, paper)
 item:
   base_material: snowball
 
 textures:
   icon: icon.png
 
+# Item behavior action tokens (interpreted by grenade Strategy):
+#   left_click_block / right_click_block / left_click_air / right_click_air
+#   use none to ignore that interaction
+#   throw — launch projectile and explode after fuse_ticks
+behavior:
+  right_click_air: throw
+  right_click_block: throw
+
+# throw_velocity — initial speed of the thrown projectile
+# fuse_ticks       — ticks before airburst
+# power            — explosion strength
+# fire             — whether the explosion sets fire
 custom_data:
-    power: 4.0
-    fuse_ticks: 40
-    throw_velocity: 1.2
-    fire: false
+  power: 4.0
+  fuse_ticks: 40
+  throw_velocity: 1.2
+  fire: false

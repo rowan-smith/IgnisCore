@@ -1,6 +1,7 @@
 package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.config.BlockBehaviorConfig;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
@@ -19,6 +20,7 @@ public class StrategyProfileResolver {
         IgnisBlockStrategy blockStrategy = strategyRegistry.requireBlockStrategy(
                 definition.getExtensionId(), definition.getId());
         StrategyProfile profile = blockStrategy.profile(definition);
+        profile = BlockBehaviorConfig.from(definition.getBehaviorConfig()).merge(profile);
 
         StrategyProfile.Builder builder = profile.toBuilder()
                 .placeable(definition.isPlaceable())

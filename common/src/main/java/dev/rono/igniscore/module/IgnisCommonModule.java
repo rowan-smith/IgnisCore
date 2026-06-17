@@ -3,12 +3,15 @@ package dev.rono.igniscore.module;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import dev.rono.igniscore.api.IgnisCoreFacade;
+import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.core.ExtensionBootstrap;
 import dev.rono.igniscore.core.IgnisCoreFacadeImpl;
 import dev.rono.igniscore.core.IgnisRuntimeLifecycle;
+import dev.rono.igniscore.core.IgnisSchedulerProvider;
 import dev.rono.igniscore.core.IgnisStrategyContextProvider;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
@@ -34,6 +37,7 @@ public class IgnisCommonModule extends AbstractModule {
     protected void configure() {
         bind(IgnisStrategyRegistry.class).to(IgnisStrategyRegistryImpl.class).in(Scopes.SINGLETON);
         bind(IgnisStrategyContext.class).toProvider(IgnisStrategyContextProvider.class).in(Scopes.SINGLETON);
+        bind(IgnisScheduler.class).toProvider(IgnisSchedulerProvider.class).in(Scopes.SINGLETON);
 
         bind(DefaultExplosionStrategy.class).in(Scopes.SINGLETON);
         bind(RuntimeBlockService.class).in(Scopes.SINGLETON);
@@ -59,5 +63,6 @@ public class IgnisCommonModule extends AbstractModule {
         bind(ExtensionBootstrap.class).in(Scopes.SINGLETON);
 
         bind(ResourcePackBuilder.class).in(Scopes.SINGLETON);
+        bind(PerformanceSettings.class).toInstance(PerformanceSettings.defaults());
     }
 }

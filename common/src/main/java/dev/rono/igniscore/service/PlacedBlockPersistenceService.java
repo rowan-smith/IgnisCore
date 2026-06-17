@@ -18,11 +18,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 @Singleton
-public class PlacedBlockPersistenceService {
+public class PlacedBlockPersistenceService implements AutoCloseable {
     private static final Type INDEX_TYPE = new TypeToken<Map<String, Map<String, String>>>() {}.getType();
 
     private final IgnisRuntimeHost host;
@@ -30,6 +35,14 @@ public class PlacedBlockPersistenceService {
     private final Path legacyYamlFile;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Map<String, Map<String, String>> worldIndexes = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, Map<String, String>>> chunkIndexes = new ConcurrentHashMap<>();
+    private final ExecutorService saveExecutor = Executors.newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "igniscore-placed-block-save");
+        thread.setDaemon(true);
+        return thread;
+    });
+    private final AtomicBoolean saveDirty = new AtomicBoolean();
+    private volatile boolean closed;
 
     @Inject
     public PlacedBlockPersistenceService(IgnisRuntimeHost host) {
@@ -45,49 +58,97 @@ public class PlacedBlockPersistenceService {
         String key = blockKey(blockLocation);
 
         worldIndexes.computeIfAbsent(worldName, ignored -> new ConcurrentHashMap<>()).put(key, typeId);
-        saveIndex();
+        chunkIndexes
+                .computeIfAbsent(worldName, ignored -> new ConcurrentHashMap<>())
+                .computeIfAbsent(chunkKey(blockLocation), ignored -> new ConcurrentHashMap<>())
+                .put(key, typeId);
+        saveIndexAsync();
     }
 
     public void removePlacement(IgnisLocation location) {
         IgnisLocation blockLocation = Locations.toBlock(location);
         String worldName = blockLocation.worldName();
+        String key = blockKey(blockLocation);
         Map<String, String> worldIndex = worldIndexes.get(worldName);
         if (worldIndex == null) {
             return;
         }
 
-        if (worldIndex.remove(blockKey(blockLocation)) != null && worldIndex.isEmpty()) {
+        if (worldIndex.remove(key) != null && worldIndex.isEmpty()) {
             worldIndexes.remove(worldName);
         }
-        saveIndex();
+
+        Map<String, Map<String, String>> worldChunks = chunkIndexes.get(worldName);
+        if (worldChunks != null) {
+            Map<String, String> chunkIndex = worldChunks.get(chunkKey(blockLocation));
+            if (chunkIndex != null) {
+                chunkIndex.remove(key);
+                if (chunkIndex.isEmpty()) {
+                    worldChunks.remove(chunkKey(blockLocation));
+                }
+            }
+            if (worldChunks.isEmpty()) {
+                chunkIndexes.remove(worldName);
+            }
+        }
+        saveIndexAsync();
+    }
+
+    public Set<String> chunkKeysForWorld(String worldName) {
+        Map<String, Map<String, String>> worldChunks = chunkIndexes.get(worldName);
+        if (worldChunks == null || worldChunks.isEmpty()) {
+            return Set.of();
+        }
+        return Set.copyOf(worldChunks.keySet());
     }
 
     public Map<String, String> entriesInChunk(String worldName, int chunkX, int chunkZ) {
-        Map<String, String> worldIndex = worldIndexes.get(worldName);
-        if (worldIndex == null || worldIndex.isEmpty()) {
+        Map<String, Map<String, String>> worldChunks = chunkIndexes.get(worldName);
+        if (worldChunks == null || worldChunks.isEmpty()) {
             return Map.of();
         }
 
-        int minX = chunkX << 4;
-        int maxX = minX + 15;
-        int minZ = chunkZ << 4;
-        int maxZ = minZ + 15;
-
-        Map<String, String> entries = new ConcurrentHashMap<>();
-        for (Map.Entry<String, String> entry : worldIndex.entrySet()) {
-            int[] coords = parseKey(entry.getKey());
-            if (coords == null) {
-                continue;
-            }
-            if (coords[0] >= minX && coords[0] <= maxX && coords[2] >= minZ && coords[2] <= maxZ) {
-                entries.put(entry.getKey(), entry.getValue());
-            }
+        Map<String, String> chunkEntries = worldChunks.get(chunkCoordinateKey(chunkX, chunkZ));
+        if (chunkEntries == null || chunkEntries.isEmpty()) {
+            return Map.of();
         }
-        return entries;
+        return Map.copyOf(chunkEntries);
+    }
+
+    public void flush() {
+        saveDirty.set(true);
+        try {
+            saveExecutor.submit(this::drainSaves).get();
+        } catch (Exception error) {
+            host.getLogger().log(Level.WARNING, "Failed to flush placed block index", error);
+        }
+    }
+
+    public void shutdown() {
+        if (closed) {
+            return;
+        }
+        closed = true;
+        flush();
+        saveExecutor.shutdown();
+        try {
+            if (!saveExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                saveExecutor.shutdownNow();
+            }
+        } catch (InterruptedException error) {
+            saveExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    @Override
+    public void close() {
+        shutdown();
     }
 
     private void loadIndex() {
         worldIndexes.clear();
+        chunkIndexes.clear();
         if (Files.isRegularFile(indexFile)) {
             loadJsonIndex();
             return;
@@ -146,9 +207,67 @@ public class PlacedBlockPersistenceService {
 
     private void mergeLoadedIndex(Map<String, Map<String, String>> loaded) {
         for (Map.Entry<String, Map<String, String>> worldEntry : loaded.entrySet()) {
-            if (worldEntry.getValue() != null && !worldEntry.getValue().isEmpty()) {
-                worldIndexes.put(worldEntry.getKey(), new ConcurrentHashMap<>(worldEntry.getValue()));
+            if (worldEntry.getValue() == null || worldEntry.getValue().isEmpty()) {
+                continue;
             }
+            String worldName = worldEntry.getKey();
+            Map<String, String> worldIndex = new ConcurrentHashMap<>(worldEntry.getValue());
+            worldIndexes.put(worldName, worldIndex);
+            rebuildChunkIndex(worldName, worldIndex);
+        }
+    }
+
+    private void rebuildChunkIndex(String worldName, Map<String, String> worldIndex) {
+        Map<String, Map<String, String>> worldChunks = new ConcurrentHashMap<>();
+        for (Map.Entry<String, String> entry : worldIndex.entrySet()) {
+            int[] coords = parseKey(entry.getKey());
+            if (coords == null) {
+                continue;
+            }
+            String chunkKey = chunkCoordinateKey(coords[0] >> 4, coords[2] >> 4);
+            worldChunks.computeIfAbsent(chunkKey, ignored -> new ConcurrentHashMap<>())
+                    .put(entry.getKey(), entry.getValue());
+        }
+        chunkIndexes.put(worldName, worldChunks);
+    }
+
+    private void saveIndexAsync() {
+        if (closed) {
+            return;
+        }
+        saveDirty.set(true);
+        saveExecutor.execute(this::drainSaves);
+    }
+
+    private void drainSaves() {
+        if (closed) {
+            return;
+        }
+        while (saveDirty.getAndSet(false)) {
+            if (closed) {
+                return;
+            }
+            writeSnapshot(snapshotWorldIndexes());
+        }
+    }
+
+    private Map<String, Map<String, String>> snapshotWorldIndexes() {
+        Map<String, Map<String, String>> snapshot = new HashMap<>();
+        for (Map.Entry<String, Map<String, String>> worldEntry : worldIndexes.entrySet()) {
+            snapshot.put(worldEntry.getKey(), Map.copyOf(worldEntry.getValue()));
+        }
+        return snapshot;
+    }
+
+    private void writeSnapshot(Map<String, Map<String, String>> snapshot) {
+        try {
+            Files.createDirectories(indexFile.getParent());
+            try (Writer writer = Files.newBufferedWriter(indexFile)) {
+                gson.toJson(snapshot, INDEX_TYPE, writer);
+            }
+        } catch (IOException error) {
+            host.getLogger().log(Level.WARNING, "Failed to save placed block index", error);
+            saveDirty.set(true);
         }
     }
 
@@ -165,6 +284,14 @@ public class PlacedBlockPersistenceService {
 
     private static String blockKey(IgnisLocation location) {
         return (int) Math.floor(location.x()) + "," + (int) Math.floor(location.y()) + "," + (int) Math.floor(location.z());
+    }
+
+    private static String chunkKey(IgnisLocation location) {
+        return chunkCoordinateKey((int) Math.floor(location.x()) >> 4, (int) Math.floor(location.z()) >> 4);
+    }
+
+    private static String chunkCoordinateKey(int chunkX, int chunkZ) {
+        return chunkX + "," + chunkZ;
     }
 
     private static int[] parseKey(String key) {

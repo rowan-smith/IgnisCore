@@ -1,5 +1,6 @@
-package dev.rono.igniscore.api.config;
+package dev.rono.extensions.shared.config;
 
+import dev.rono.igniscore.api.config.ExtensionConfig;
 import dev.rono.igniscore.api.model.ItemDefinition;
 
 /**

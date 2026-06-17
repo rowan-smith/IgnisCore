@@ -16,7 +16,9 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder().build();
+        return StrategyProfile.builder()
+                .defaultFuse(160)
+                .build();
     }
 
     @Override

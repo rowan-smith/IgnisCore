@@ -20,7 +20,6 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         return StrategyProfile.builder()
                 .defaultFuse(160)
                 .defaultRadius(30.0)
-                .placementSound("BLOCK_BEACON_ACTIVATE")
                 .build();
     }
 

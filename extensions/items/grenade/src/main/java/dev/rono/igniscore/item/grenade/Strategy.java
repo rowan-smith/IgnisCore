@@ -1,5 +1,6 @@
 package dev.rono.igniscore.item.grenade;
 
+import dev.rono.igniscore.api.config.ItemBehaviorConfig;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.port.IgnisBlock;
 import dev.rono.igniscore.api.port.IgnisInteraction;
@@ -17,16 +18,13 @@ public class Strategy extends AbstractIgnisItemStrategy {
     }
 
     @Override
-    public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisInteraction action) {
-        if (action != IgnisInteraction.RIGHT_CLICK_AIR && action != IgnisInteraction.RIGHT_CLICK_BLOCK) {
-            return;
-        }
-        behavior.onItemUse(player, definition, item);
-    }
-
-    @Override
     public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
                            IgnisInteraction action, IgnisBlock clickedBlock) {
-        onItemUse(player, definition, item, action);
+        ItemBehaviorConfig config = ItemBehaviorConfig.from(definition.getBehaviorConfig());
+        config.actionFor(action).ifPresent(token -> {
+            if ("throw".equals(token)) {
+                behavior.onItemUse(player, definition, item);
+            }
+        });
     }
 }

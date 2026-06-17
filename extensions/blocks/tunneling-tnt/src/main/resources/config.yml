@@ -1,11 +1,9 @@
-# Tunneling TNT
+# =============================================================================
+# Tunneling TNT — chained explosions in a straight line
+# =============================================================================
 #
-# A directional excavation explosive designed for terrain carving.
-#
-# Rather than a single blast, it detonates repeatedly in a straight
-# line over a fixed distance, clearing blocks along its path.
-# This creates a clean tunnel or corridor through terrain, making
-# it useful for rapid mining or traversal.
+# Detonation direction follows the igniting player's look vector. Explosions
+# step forward along that line instead of a single centered blast.
 
 id: tunneling-tnt
 
@@ -32,11 +30,25 @@ model:
   type: "block_display"
   mode: "auto"
 
+behavior:
+  combustible: true
+  left_click_block: break
+  right_click_block: ignite
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+    - FLINT
+  sounds:
+    place: BLOCK_BEACON_ACTIVATE
+    ignite: ITEM_FLINTANDSTEEL_USE
+
+# tunnelLength — number of explosions along the tunnel
+# tunnelGap    — blocks between each explosion step
 custom_data:
-    fuse: 60
-    radius: 4.0
-    power: 4.0
-    fire: false
-    blockDamage: true
-    tunnelLength: 16
-    tunnelGap: 2.0
+  fuse: 60
+  radius: 4.0
+  power: 4.0
+  fire: false
+  blockDamage: true
+  tunnelLength: 16
+  tunnelGap: 2.0

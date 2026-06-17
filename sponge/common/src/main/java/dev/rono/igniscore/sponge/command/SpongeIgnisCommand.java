@@ -37,55 +37,79 @@ public class SpongeIgnisCommand {
     public Command.Parameterized build() {
         return Command.builder()
                 .permission("igniscore.admin")
-                .executor(this::execute)
+                .executor(this::executeRoot)
+                .addChild(reloadCommand(), "reload")
+                .addChild(blocksCommand(), "blocks")
+                .addChild(itemsCommand(), "items")
+                .addChild(giveCommand(), "give")
                 .build();
     }
 
-    private CommandResult execute(CommandContext context) {
-        Subject subject = context.subject();
-        if (!subject.hasPermission("igniscore.admin")) {
-            send(subject, "<red>You do not have permission to use this command.");
-            return CommandResult.success();
-        }
-
-        String input = context.cause().context().get(org.spongepowered.api.event.EventContextKeys.COMMAND)
-                .orElse("")
-                .replaceFirst("^ignis\\s*", "")
-                .trim();
-        if (input.isEmpty()) {
-            sendHelp(subject);
-            return CommandResult.success();
-        }
-
-        String[] args = input.split("\\s+");
-        return switch (args[0].toLowerCase()) {
-            case "reload" -> handleReload(subject, args);
-            case "blocks" -> handleBlocks(subject);
-            case "items" -> handleItems(subject);
-            case "give" -> handleGive(subject, args);
-            default -> {
-                sendHelp(subject);
-                yield CommandResult.success();
-            }
-        };
+    private Command.Parameterized reloadCommand() {
+        return Command.builder()
+                .permission("igniscore.admin")
+                .executor(this::executeReload)
+                .addChild(Command.builder().executor(ctx -> executeReloadTarget(ctx, "all")).build(), "all")
+                .addChild(Command.builder().executor(ctx -> executeReloadTarget(ctx, "blocks")).build(), "blocks")
+                .addChild(Command.builder().executor(ctx -> executeReloadTarget(ctx, "items")).build(), "items")
+                .build();
     }
 
-    private CommandResult handleReload(Subject subject, String[] args) {
-        String target = args.length > 1 ? args[1].toLowerCase() : "all";
+    private Command.Parameterized blocksCommand() {
+        return Command.builder()
+                .permission("igniscore.admin")
+                .executor(this::handleBlocks)
+                .build();
+    }
+
+    private Command.Parameterized itemsCommand() {
+        return Command.builder()
+                .permission("igniscore.admin")
+                .executor(this::handleItems)
+                .build();
+    }
+
+    private Command.Parameterized giveCommand() {
+        return Command.builder()
+                .permission("igniscore.admin")
+                .executor(this::handleGive)
+                .build();
+    }
+
+    private CommandResult executeRoot(CommandContext context) {
+        if (!checkPermission(context)) {
+            return CommandResult.success();
+        }
+        sendHelp(context.subject());
+        return CommandResult.success();
+    }
+
+    private CommandResult executeReload(CommandContext context) {
+        return executeReloadTarget(context, "all");
+    }
+
+    private CommandResult executeReloadTarget(CommandContext context, String target) {
+        if (!checkPermission(context)) {
+            return CommandResult.success();
+        }
         switch (target) {
             case "all" -> extensionBootstrap.reloadAll();
             case "blocks" -> extensionBootstrap.reloadBlocks();
             case "items" -> extensionBootstrap.reloadItems();
             default -> {
-                send(subject, "<red>Usage: /ignis reload <all|blocks|items>");
+                send(context.subject(), "<red>Usage: /ignis reload <all|blocks|items>");
                 return CommandResult.success();
             }
         }
-        send(subject, "<green>IgnisCore reloaded (" + target + ").");
+        send(context.subject(), "<green>IgnisCore reloaded (" + target + ").");
         return CommandResult.success();
     }
 
-    private CommandResult handleBlocks(Subject subject) {
+    private CommandResult handleBlocks(CommandContext context) {
+        if (!checkPermission(context)) {
+            return CommandResult.success();
+        }
+        Subject subject = context.subject();
         send(subject, "<gold>Loaded Block Extensions:");
         if (blockExtensionLoader.getLoadedExtensions().isEmpty()) {
             send(subject, "<gray>None");
@@ -98,7 +122,11 @@ public class SpongeIgnisCommand {
         return CommandResult.success();
     }
 
-    private CommandResult handleItems(Subject subject) {
+    private CommandResult handleItems(CommandContext context) {
+        if (!checkPermission(context)) {
+            return CommandResult.success();
+        }
+        Subject subject = context.subject();
         send(subject, "<gold>Loaded Item Extensions:");
         if (itemExtensionLoader.getLoadedExtensions().isEmpty()) {
             send(subject, "<gray>None");
@@ -111,33 +139,50 @@ public class SpongeIgnisCommand {
         return CommandResult.success();
     }
 
-    private CommandResult handleGive(Subject subject, String[] args) {
-        if (args.length < 4) {
-            send(subject, "<red>Usage: /ignis give <player> item <id>");
+    private CommandResult handleGive(CommandContext context) {
+        if (!checkPermission(context)) {
+            return CommandResult.success();
+        }
+        String input = context.cause().context().get(org.spongepowered.api.event.EventContextKeys.COMMAND)
+                .orElse("")
+                .replaceFirst("^ignis\\s+", "")
+                .trim();
+        String[] args = input.isBlank() ? new String[0] : input.split("\\s+");
+        if (args.length < 4 || !"give".equalsIgnoreCase(args[0])) {
+            send(context.subject(), "<red>Usage: /ignis give <player> item <id>");
             return CommandResult.success();
         }
 
         var server = org.spongepowered.api.Sponge.server();
         var target = server.player(args[1]).orElse(null);
         if (target == null) {
-            send(subject, "<red>Player not found.");
+            send(context.subject(), "<red>Player not found.");
             return CommandResult.success();
         }
 
         if (!"item".equalsIgnoreCase(args[2])) {
-            send(subject, "<red>Usage: /ignis give <player> item <id>");
+            send(context.subject(), "<red>Usage: /ignis give <player> item <id>");
             return CommandResult.success();
         }
 
         String typeId = args[3];
         if (!itemManager.getItemTypes().containsKey(typeId)) {
-            send(subject, "<red>Unknown item type: " + typeId);
+            send(context.subject(), "<red>Unknown item type: " + typeId);
             return CommandResult.success();
         }
 
         target.inventory().offer(itemFactory.createItem(typeId));
-        send(subject, "<green>Gave item " + typeId + " to " + target.name());
+        send(context.subject(), "<green>Gave item " + typeId + " to " + target.name());
         return CommandResult.success();
+    }
+
+    private boolean checkPermission(CommandContext context) {
+        Subject subject = context.subject();
+        if (!subject.hasPermission("igniscore.admin")) {
+            send(subject, "<red>You do not have permission to use this command.");
+            return false;
+        }
+        return true;
     }
 
     private void sendHelp(Subject subject) {

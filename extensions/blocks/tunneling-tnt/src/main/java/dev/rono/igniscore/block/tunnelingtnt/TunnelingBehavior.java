@@ -8,6 +8,7 @@ import dev.rono.igniscore.api.port.IgnisTask;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.ExplosionSupport;
 import dev.rono.igniscore.api.util.Locations;
 
 final class TunnelingBehavior {
@@ -55,7 +56,7 @@ final class TunnelingBehavior {
             current[0] += directionX * tunnelGap;
             current[2] += directionZ * tunnelGap;
             IgnisLocation currentLoc = new IgnisLocation(loc.worldId(), loc.worldName(), current[0], current[1], current[2], 0f, 0f);
-            StrategySupport.createExplosion(world, currentLoc, 4.0f, false, true);
+            ExplosionSupport.createExplosion(world, currentLoc, 4.0f, false, true);
             world.spawnParticle(currentLoc, "SMOKE", 20, 0.5, 0.5, 0.5, 0.05);
         }, 0L, 4L);
     }

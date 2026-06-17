@@ -13,11 +13,13 @@ import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.util.Locations;
+import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
 import dev.rono.igniscore.service.RuntimeBlockService;
 import dev.rono.igniscore.service.StrategyProfileResolver;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     private final PlacedBlockPersistenceService placedBlockPersistence;
     private final IgnisScheduler scheduler;
     private final BlockVisualRenderer visualRenderer;
+    private final int visualRefreshBatchSize;
     private final Map<String, BlockDefinition> blockTypes = new HashMap<>();
     private final Map<IgnisLocation, String> placedBlocks = new ConcurrentHashMap<>();
     private final Map<IgnisLocation, Object> blockVisuals = new ConcurrentHashMap<>();
@@ -45,7 +48,8 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
                         StrategyProfileResolver profileResolver,
                         PlacedBlockPersistenceService placedBlockPersistence,
                         IgnisScheduler scheduler,
-                        BlockVisualRenderer visualRenderer) {
+                        BlockVisualRenderer visualRenderer,
+                        PerformanceSettings performanceSettings) {
         this.runtimeBlockService = runtimeBlockService;
         this.strategyRegistry = strategyRegistry;
         this.effectService = effectService;
@@ -53,6 +57,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
         this.placedBlockPersistence = placedBlockPersistence;
         this.scheduler = scheduler;
         this.visualRenderer = visualRenderer;
+        this.visualRefreshBatchSize = performanceSettings.visualRefreshBlocksPerTick();
     }
 
     @Override
@@ -130,6 +135,8 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
         }
 
         RuntimeBlockInstance instance = runtimeBlockService.createInstance(type, location);
+        StrategyProfile profile = profileResolver.resolve(type);
+        instance.setTicksLeft(profile.getDefaultFuse());
         visualRenderer.spawnAnimatedDisplay(instance);
         IgnisBlockStrategy strategy = requireBlockStrategy(type);
         strategy.onPlace(instance);
@@ -169,18 +176,57 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     }
 
     public void cleanup() {
+        stopActiveBlocks();
+        for (Object display : blockVisuals.values()) {
+            visualRenderer.removeStaticDisplay(display);
+        }
+        blockVisuals.clear();
+        placedBlocks.clear();
+    }
+
+    public void stopActiveBlocks() {
         for (RuntimeBlockInstance instance : runtimeBlockService.getActiveInstances()) {
             if (instance.getTask() != null) {
                 instance.getTask().cancel();
             }
             visualRenderer.removeDisplay(instance);
         }
+        runtimeBlockService.clearAll();
+    }
 
-        for (Object display : blockVisuals.values()) {
-            visualRenderer.removeStaticDisplay(display);
+    public void refreshPlacedBlockVisuals() {
+        List<Map.Entry<IgnisLocation, String>> entries = new ArrayList<>(Map.copyOf(placedBlocks).entrySet());
+        if (entries.isEmpty()) {
+            return;
         }
-        blockVisuals.clear();
-        placedBlocks.clear();
+        refreshPlacedBlockVisuals(entries, 0);
+    }
+
+    private void refreshPlacedBlockVisuals(List<Map.Entry<IgnisLocation, String>> entries, int startIndex) {
+        int endIndex = Math.min(startIndex + visualRefreshBatchSize, entries.size());
+        for (int index = startIndex; index < endIndex; index++) {
+            refreshPlacedBlockVisual(entries.get(index));
+        }
+
+        if (endIndex < entries.size()) {
+            scheduler.runGlobalLater(() -> refreshPlacedBlockVisuals(entries, endIndex), 1L);
+        }
+    }
+
+    private void refreshPlacedBlockVisual(Map.Entry<IgnisLocation, String> entry) {
+        IgnisLocation location = entry.getKey();
+        Object existing = blockVisuals.remove(location);
+        if (existing != null) {
+            visualRenderer.removeStaticDisplay(existing);
+        }
+
+        BlockDefinition type = blockTypes.get(entry.getValue());
+        if (type == null) {
+            return;
+        }
+
+        Object display = visualRenderer.spawnStaticDisplay(location, type);
+        blockVisuals.put(location, display);
     }
 
     private static IgnisLocation blockKey(IgnisLocation location) {

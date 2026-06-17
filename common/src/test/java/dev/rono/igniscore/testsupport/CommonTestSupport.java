@@ -284,4 +284,54 @@ public final class CommonTestSupport {
             };
         }
     }
+
+    public static final class DeferredIgnisScheduler implements dev.rono.igniscore.api.port.IgnisScheduler {
+        private final java.util.ArrayDeque<Runnable> pending = new java.util.ArrayDeque<>();
+
+        @Override
+        public dev.rono.igniscore.api.port.IgnisTask runLater(
+                dev.rono.igniscore.api.port.IgnisLocation location, Runnable task, long delayTicks) {
+            pending.add(task);
+            return cancelledTask();
+        }
+
+        @Override
+        public dev.rono.igniscore.api.port.IgnisTask runRepeating(
+                dev.rono.igniscore.api.port.IgnisLocation location, Runnable task, long delayTicks, long periodTicks) {
+            pending.add(task);
+            return cancelledTask();
+        }
+
+        @Override
+        public void runGlobal(Runnable task) {
+            task.run();
+        }
+
+        @Override
+        public void runGlobalLater(Runnable task, long delayTicks) {
+            pending.add(task);
+        }
+
+        public void runPending() {
+            while (!pending.isEmpty()) {
+                pending.poll().run();
+            }
+        }
+
+        private static dev.rono.igniscore.api.port.IgnisTask cancelledTask() {
+            return new dev.rono.igniscore.api.port.IgnisTask() {
+                private boolean cancelled;
+
+                @Override
+                public void cancel() {
+                    cancelled = true;
+                }
+
+                @Override
+                public boolean isCancelled() {
+                    return cancelled;
+                }
+            };
+        }
+    }
 }

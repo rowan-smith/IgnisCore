@@ -26,6 +26,10 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
+      <groupId>dev.rono.extensions</groupId>
+      <artifactId>shared</artifactId>
+    </dependency>
+    <dependency>
       <groupId>dev.rono.bukkit</groupId>
       <artifactId>common</artifactId>
     </dependency>
@@ -56,6 +60,10 @@
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-platform-bukkit</artifactId>
     </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
@@ -90,6 +98,19 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.5.3</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

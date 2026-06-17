@@ -86,6 +86,10 @@ public class ExtensionSupportService implements ExtensionSupport {
         return customInventories.get(nativeInventory);
     }
 
+    public boolean hasDropCollectors() {
+        return !collectors.isEmpty();
+    }
+
     public boolean tryCollect(IgnisLocation breakLocation, Collection<IgnisItem> drops) {
         IgnisLocation ignisLocation = Locations.toBlock(breakLocation);
         List<IgnisItem> ignisDrops = new ArrayList<>(drops);

@@ -1,10 +1,9 @@
-# Phantom TNT
+# =============================================================================
+# Phantom TNT — becomes invisible shortly before detonation
+# =============================================================================
 #
-# A stealth-based explosive that becomes invisible after ignition.
-#
-# Once primed, the TNT disappears from view like a phantom but continues
-# its fuse timer normally. It detonates as a standard explosion while
-# remaining hidden, making it difficult for players to locate or avoid.
+# Standard combustible TNT with a long fuse. The display entity is removed
+# near the end of the countdown so the explosion appears to come from nowhere.
 
 id: phantom-tnt
 
@@ -31,9 +30,21 @@ model:
   type: "block_display"
   mode: "auto"
 
+behavior:
+  combustible: true
+  left_click_block: break
+  right_click_block: ignite
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+    - FLINT
+  sounds:
+    place: BLOCK_BEACON_ACTIVATE
+    ignite: ITEM_FLINTANDSTEEL_USE
+
 custom_data:
-    fuse: 160
-    radius: 6.0
-    power: 4.0
-    fire: false
-    blockDamage: true
+  fuse: 160
+  radius: 6.0
+  power: 4.0
+  fire: false
+  blockDamage: true

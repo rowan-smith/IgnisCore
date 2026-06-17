@@ -2,6 +2,7 @@ package dev.rono.igniscore.spigot.platform;
 
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.port.IgnisPlatformIntegration;
+import dev.rono.igniscore.command.IgnisCommands;
 import dev.rono.igniscore.command.CommandRegistrar;
 import dev.rono.igniscore.command.IgnisCommand;
 import dev.rono.igniscore.listener.BlockListener;
@@ -39,12 +40,16 @@ public class SpigotPlatformIntegration implements IgnisPlatformIntegration {
     }
 
     @Override
+    public void registerCommands() {
+        commandRegistrar.register(IgnisCommands.IGNIS, ignisCommand);
+    }
+
+    @Override
     public void onRuntimeEnable() {
         for (Listener listener : listeners) {
             plugin.getServer().getPluginManager().registerEvents(listener, plugin);
         }
-        placedBlockRestoreListener.restoreLoadedChunks();
-        commandRegistrar.register("ignis", ignisCommand);
+        plugin.getServer().getScheduler().runTask(plugin, placedBlockRestoreListener::restoreLoadedChunks);
     }
 
     @Override

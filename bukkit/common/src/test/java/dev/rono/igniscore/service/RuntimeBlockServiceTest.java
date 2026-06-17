@@ -31,7 +31,7 @@ class RuntimeBlockServiceTest extends MockBukkitTestBase {
         assertSame(instance, service.getInstance(instance.getUuid()));
         assertSame(instance, service.getInstanceAt(BukkitBridge.toIgnis(location)));
         assertEquals(1, service.getActiveInstances().size());
-        assertEquals(80, instance.getTicksLeft());
+        assertEquals(0, instance.getTicksLeft());
     }
 
     @Test

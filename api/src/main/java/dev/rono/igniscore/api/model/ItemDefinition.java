@@ -12,6 +12,7 @@ public final class ItemDefinition implements ExtensionDefinition {
     private final Component title;
     private final List<Component> description;
     private final Map<String, Object> customData;
+    private final Map<String, Object> behaviorSettings;
     private final Map<String, Object> interactionSettings;
     private final int customModelData;
     private final String extensionId;
@@ -19,6 +20,7 @@ public final class ItemDefinition implements ExtensionDefinition {
 
     public ItemDefinition(String id, String baseMaterial, Component title, List<Component> description,
                           Map<String, Object> customData,
+                          Map<String, Object> behaviorSettings,
                           Map<String, Object> interactionSettings, int customModelData, String extensionId,
                           String iconTexture) {
         this.id = id;
@@ -26,15 +28,25 @@ public final class ItemDefinition implements ExtensionDefinition {
         this.title = title;
         this.description = List.copyOf(description);
         this.customData = customData == null ? Map.of() : Map.copyOf(customData);
+        this.behaviorSettings = behaviorSettings == null ? Map.of() : Map.copyOf(behaviorSettings);
         this.interactionSettings = interactionSettings == null ? Map.of() : Map.copyOf(interactionSettings);
         this.customModelData = customModelData;
         this.extensionId = extensionId;
         this.iconTexture = iconTexture;
     }
 
+    public ItemDefinition(String id, String baseMaterial, Component title, List<Component> description,
+                          Map<String, Object> customData,
+                          Map<String, Object> interactionSettings, int customModelData, String extensionId,
+                          String iconTexture) {
+        this(id, baseMaterial, title, description, customData, Map.of(), interactionSettings,
+                customModelData, extensionId, iconTexture);
+    }
+
     private ItemDefinition(Builder builder) {
         this(builder.id, builder.baseMaterial, builder.title, builder.description, builder.customData,
-                builder.interactionSettings, builder.customModelData, builder.extensionId, builder.iconTexture);
+                builder.behaviorSettings, builder.interactionSettings, builder.customModelData, builder.extensionId,
+                builder.iconTexture);
     }
 
     public static Builder builder(String id) {
@@ -61,6 +73,10 @@ public final class ItemDefinition implements ExtensionDefinition {
         return customData;
     }
 
+    public Map<String, Object> getBehaviorSettings() {
+        return behaviorSettings;
+    }
+
     public Map<String, Object> getInteractionSettings() {
         return interactionSettings;
     }
@@ -68,6 +84,11 @@ public final class ItemDefinition implements ExtensionDefinition {
     /** Typed view of {@link #getCustomData()}. */
     public ExtensionConfig getCustomConfig() {
         return ExtensionConfig.of(customData);
+    }
+
+    /** Typed view of {@link #getBehaviorSettings()}. */
+    public ExtensionConfig getBehaviorConfig() {
+        return ExtensionConfig.of(behaviorSettings);
     }
 
     /** Typed view of {@link #getInteractionSettings()}. */
@@ -93,6 +114,7 @@ public final class ItemDefinition implements ExtensionDefinition {
         private Component title;
         private List<Component> description = List.of();
         private Map<String, Object> customData = Map.of();
+        private Map<String, Object> behaviorSettings = Map.of();
         private Map<String, Object> interactionSettings = Map.of();
         private int customModelData = 20001;
         private String extensionId;
@@ -121,6 +143,11 @@ public final class ItemDefinition implements ExtensionDefinition {
 
         public Builder customData(Map<String, Object> customData) {
             this.customData = customData;
+            return this;
+        }
+
+        public Builder behaviorSettings(Map<String, Object> behaviorSettings) {
+            this.behaviorSettings = behaviorSettings;
             return this;
         }
 

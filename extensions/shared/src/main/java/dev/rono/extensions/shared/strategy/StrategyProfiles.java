@@ -1,6 +1,7 @@
-package dev.rono.igniscore.api.strategy;
+package dev.rono.extensions.shared.strategy;
 
 import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public final class StrategyProfiles {
     private StrategyProfiles() {

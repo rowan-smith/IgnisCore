@@ -1,6 +1,8 @@
-package dev.rono.igniscore.api.config;
+package dev.rono.extensions.shared.config;
 
 import dev.rono.igniscore.api.IgnisApiVersion;
+import dev.rono.igniscore.api.config.DefinitionParser;
+import dev.rono.igniscore.api.config.YamlDefinitions;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -60,7 +62,7 @@ class AllExtensionConfigsParsingTest {
     }
 
     private static Stream<Path> extensionConfigs(String category) throws IOException {
-        Path root = Path.of("..", "extensions", category);
+        Path root = Path.of("..", category);
         if (!Files.isDirectory(root)) {
             return Stream.empty();
         }
@@ -76,7 +78,7 @@ class AllExtensionConfigsParsingTest {
 
     private static ExtensionManifest manifestFor(String extensionId, String fileName) throws IOException {
         String category = fileName.startsWith("block") ? "blocks" : "items";
-        Path manifestPath = Path.of("..", "extensions", category, extensionId, "src/main/resources", fileName);
+        Path manifestPath = Path.of("..", category, extensionId, "src/main/resources", fileName);
         String manifest = Files.readString(manifestPath, StandardCharsets.UTF_8)
                 .replace("@project.version@", IgnisApiVersion.CURRENT)
                 .replace("@ignis.api.version@", IgnisApiVersion.CURRENT);

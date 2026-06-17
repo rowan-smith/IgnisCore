@@ -1,8 +1,9 @@
-# Signal Charge
+# =============================================================================
+# Signal Charge — remote-detonated charge (pair with detonator item)
+# =============================================================================
 #
-# A charge that can only be detonated with a paired detonator item.
-# Left-click the charge with a detonator to link it, then right-click
-# with the detonator to set it off.
+# Not ignited with flint and steel. Linked via detonator left-click, detonated
+# via detonator right-click. Surface clicks on the placed block are disabled.
 
 id: signal-charge
 
@@ -29,9 +30,18 @@ model:
   type: "block_display"
   mode: "auto"
 
+# combustible: false — no flint-and-steel ignition; detonator handles triggering
+behavior:
+  combustible: false
+  left_click_block: none
+  right_click_block: none
+  sounds:
+    place: BLOCK_TNT_PLACE
+
+# fuse: 0 — instant trigger when detonated (no visible countdown on the charge itself)
 custom_data:
-    fuse: 0
-    radius: 6.0
-    power: 6.0
-    fire: false
-    blockDamage: true
+  fuse: 0
+  radius: 6.0
+  power: 6.0
+  fire: false
+  blockDamage: true

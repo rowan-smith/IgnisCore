@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.ExplosionSupport;
 import dev.rono.igniscore.api.util.Locations;
 
 final class MimicBehavior {
@@ -33,7 +34,7 @@ final class MimicBehavior {
 
         for (int i = 0; i < totalCount; i++) {
             Object tnt = world.spawnEntity("TNT", loc);
-            int fuse = StrategySupport.fuse(def, 80) + (int) (Math.random() * 40 - 20);
+            int fuse = ExplosionSupport.fuse(def, 80) + (int) (Math.random() * 40 - 20);
             boolean real = i == realIndex;
             world.configurePrimedTnt(
                     tnt,

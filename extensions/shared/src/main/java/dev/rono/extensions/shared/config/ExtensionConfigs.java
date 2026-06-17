@@ -1,4 +1,4 @@
-package dev.rono.igniscore.api.config;
+package dev.rono.extensions.shared.config;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;

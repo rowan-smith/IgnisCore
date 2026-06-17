@@ -37,9 +37,7 @@ public final class PlacedClickSupport {
                 return true;
             }
         }
-        return "FLINT_AND_STEEL".equalsIgnoreCase(materialKey)
-                || "FIRE_CHARGE".equalsIgnoreCase(materialKey)
-                || "FLINT".equalsIgnoreCase(materialKey);
+        return false;
     }
 
     private static CustomBlockAction resolveRightClick(StrategyProfile profile, String materialKey) {

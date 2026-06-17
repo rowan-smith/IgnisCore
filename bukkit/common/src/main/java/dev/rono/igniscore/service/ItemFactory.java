@@ -3,7 +3,6 @@ package dev.rono.igniscore.service;
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.service.IgnisNbtService;
-import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.platform.PlatformHooks;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;

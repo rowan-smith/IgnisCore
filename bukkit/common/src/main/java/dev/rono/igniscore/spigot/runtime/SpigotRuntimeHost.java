@@ -1,6 +1,6 @@
 package dev.rono.igniscore.spigot.runtime;
 
-import dev.rono.igniscore.Main;
+import dev.rono.igniscore.IgnisPluginContext;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,13 +11,11 @@ import java.util.logging.Logger;
 
 public final class SpigotRuntimeHost implements IgnisRuntimeHost {
     private final JavaPlugin plugin;
+    private final IgnisPluginContext pluginContext;
 
-    public SpigotRuntimeHost(JavaPlugin plugin) {
+    public SpigotRuntimeHost(JavaPlugin plugin, IgnisPluginContext pluginContext) {
         this.plugin = plugin;
-    }
-
-    public SpigotRuntimeHost(Main plugin) {
-        this((JavaPlugin) plugin);
+        this.pluginContext = pluginContext;
     }
 
     @Override
@@ -51,10 +49,6 @@ public final class SpigotRuntimeHost implements IgnisRuntimeHost {
 
     @Override
     public void debug(String message) {
-        if (plugin instanceof Main main) {
-            main.debug(message);
-        } else {
-            getLogger().info("[DEBUG] " + message);
-        }
+        pluginContext.debug(message);
     }
 }

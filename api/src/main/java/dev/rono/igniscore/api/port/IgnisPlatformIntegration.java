@@ -5,6 +5,9 @@ package dev.rono.igniscore.api.port;
  */
 public interface IgnisPlatformIntegration {
 
+    default void registerCommands() {
+    }
+
     void onRuntimeEnable();
 
     void onRuntimeDisable();

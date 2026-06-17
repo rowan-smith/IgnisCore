@@ -25,6 +25,7 @@ public class ResourcePackBuilder {
     private final ExtensionResourceProvider resourceProvider;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private Map<String, BlockDefinition> activeBlockDefinitions = Map.of();
+    private Map<String, ItemDefinition> activeItemDefinitions = Map.of();
 
     public static class PackResult {
         private final File file;
@@ -49,6 +50,7 @@ public class ResourcePackBuilder {
     public PackResult buildPack(Map<String, BlockDefinition> blockDefinitions,
                                 Map<String, ItemDefinition> itemDefinitions) throws IOException {
         this.activeBlockDefinitions = blockDefinitions;
+        this.activeItemDefinitions = itemDefinitions;
         List<CompiledBlockAsset> compiledBlockAssets = compileBlocks(blockDefinitions);
         List<CompiledItemAsset> compiledItemAssets = compileItems(itemDefinitions);
         return packageAssets(compiledBlockAssets, compiledItemAssets);
@@ -449,7 +451,7 @@ public class ResourcePackBuilder {
     }
 
     private void copyItemTexture(CompiledItemAsset asset, Path texturePath) throws IOException {
-        ItemDefinition definition = itemManager.getItemTypes().get(asset.getId());
+        ItemDefinition definition = activeItemDefinitions.get(asset.getId());
         if (definition == null) {
             throw new IOException("Unknown item definition for texture copy: " + asset.getId());
         }

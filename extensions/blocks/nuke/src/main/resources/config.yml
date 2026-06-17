@@ -1,11 +1,30 @@
+# =============================================================================
+# Nuke — large-radius nuclear detonation
+# =============================================================================
+#
+# Sections:
+#   display     — name and lore on the block item
+#   block       — placement, mining, break sounds
+#   textures    — face images (paths relative to src/main/resources/textures/)
+#   model       — authoring metadata only (not parsed by core)
+#   behavior    — surface click actions (see options below)
+#   custom_data — explosion tuning for this extension
+
+# In-game type id (should match block-extension.yml manifest id)
 id: nuke
 
+# display.title       — Adventure legacy color codes (&a, &c, …)
+# display.description — lore lines on the item
 display:
   title: "&aNuclear Detonation"
   description:
     - "&4Complete"
     - "&4Destruction"
 
+# block.placeable — allow placing this custom block
+# block.breakable — allow survival mining to remove it
+# block.breaking.ticks — mining progress ticks (0 = instant break)
+# block.breaking.hit_sound / break_sound — Bukkit sound names while mining
 block:
   placeable: true
   breakable: true
@@ -14,20 +33,51 @@ block:
     break_sound: BLOCK_GRAVEL_BREAK
     hit_sound: BLOCK_GRAVEL_HIT
 
+# textures.top / side / bottom — cube faces (side-1 … side-4 optional for per-face textures)
 textures:
   top: top.png
   side: side.png
   bottom: bottom.png
 
+# Authoring note for pack tooling; core reads textures directly
 model:
   type: "block_display"
   mode: "auto"
 
+# Surface behavior (merged into strategy profile at runtime):
+#   combustible          — true = ignition items can start the fuse
+#   left_click_block     — none | break | ignite | open | handled
+#   right_click_block    — same (ignite also applies when combustible + ignition item held)
+#   left_click_air       — optional; default none
+#   right_click_air      — optional; default none
+#   ignition_materials   — items that trigger ignite on right-click block (Bukkit material names)
+#   sounds.place         — played when the block is placed
+#   sounds.ignite        — played when the fuse is lit
+behavior:
+  combustible: true
+  left_click_block: break
+  right_click_block: ignite
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+    - FLINT
+  sounds:
+    place: BLOCK_BEACON_ACTIVATE
+    ignite: ITEM_FLINTANDSTEEL_USE
+
+# Extension-specific explosion tuning:
+#   fuse         — ticks until detonation after ignite (strategy fallback if omitted)
+#   radius       — blast radius; used with multiplier for resolved power
+#   power        — blast power when radius is not used
+#   multiplier   — scales effective explosion power
+#   fire         — sets fire on detonation
+#   blockDamage  — whether blocks are destroyed
+#   screenShake  — extra explosion feedback for nearby players (nuke only)
 custom_data:
-    fuse: 160
-    radius: 30.0
-    power: 30.0
-    multiplier: 5.0
-    fire: true
-    blockDamage: true
-    screenShake: true
+  fuse: 160
+  radius: 30.0
+  power: 30.0
+  multiplier: 5.0
+  fire: true
+  blockDamage: true
+  screenShake: true
