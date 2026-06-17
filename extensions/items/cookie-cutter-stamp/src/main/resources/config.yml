@@ -1,0 +1,16 @@
+id: cookie-cutter-stamp
+
+display:
+  title: "&bCookie Cutter Stamp"
+  description:
+    - "&7Cycles cookie stamp shapes."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

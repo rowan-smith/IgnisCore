@@ -1,0 +1,30 @@
+id: checkpoint-obelisk
+
+display:
+  title: "&bCheckpoint Obelisk"
+  description:
+    - "&7Records player checkpoint on interact."
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+    break_sound: BLOCK_GRAVEL_BREAK
+    hit_sound: BLOCK_GRAVEL_HIT
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+
+behavior:
+  left_click_block: break
+  right_click_block: open
+  sounds:
+    place: BLOCK_METAL_PLACE

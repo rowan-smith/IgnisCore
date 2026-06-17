@@ -1,0 +1,19 @@
+id: ore-xray-goggles
+
+display:
+  title: "&bOre X-Ray Goggles"
+  description:
+    - "&7Pings nearest ore in range."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  xrayRadius: 14

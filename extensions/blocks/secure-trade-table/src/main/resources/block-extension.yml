@@ -1,0 +1,6 @@
+id: secure-trade-table
+name: Secure Trade Table
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.securetradetable.Strategy

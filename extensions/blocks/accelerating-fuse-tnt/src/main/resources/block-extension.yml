@@ -1,0 +1,6 @@
+id: accelerating-fuse-tnt
+name: Accelerating Fuse TNT
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.acceleratingfusetnt.Strategy

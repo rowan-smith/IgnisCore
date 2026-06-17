@@ -43,6 +43,7 @@ See [API layers](/developers/api/layers) for the L1–L4 model. Extension author
 | [IgnisStrategyContext](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/IgnisStrategyContext.html) | Extensions | `scheduler()`, `nbt()`, `effects()`, `protocol()`, `extensions()` |
 | [AbstractIgnisBlockStrategy](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/AbstractIgnisBlockStrategy.html) | Extensions | Base class for block JARs |
 | [AbstractIgnisItemStrategy](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/AbstractIgnisItemStrategy.html) | Extensions | Base class for item JARs |
+| [StrategySupport](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/StrategySupport.html) | Extensions | Read typed values from `custom_data` maps |
 | [IgnisCoreAPI](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/IgnisCoreAPI.html) | Integrators | Runtime facade for other plugins |
 | [ExtensionManifest](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/extension/ExtensionManifest.html) | Extensions | Parsed `*-extension.yml` metadata |
 
@@ -79,5 +80,6 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
 - [API layers](/developers/api/layers)
 - [Extension profiles](/developers/extension-profiles)
+- [Extension config](/developers/extension-config) — `config.yml` reference
 - [Extension Cookbook](/developers/cookbook)
 - [Javadoc](/developers/reference)

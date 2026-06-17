@@ -44,7 +44,9 @@ Set `public-url` to your server's public address (or a reverse proxy) so clients
 
 ## Extension config
 
-Block and item extensions ship their own `config.yml` inside each extension JAR. These are separate from the server `config.yml` — see [Extensions](/concepts/extensions) and the [Extension Cookbook](/developers/cookbook).
+Block and item extensions ship their own `config.yml` inside each extension JAR. These are separate from the server `config.yml`.
+
+See [Extension config](/developers/extension-config) for which sections and keys belong in extension configs, and the [Extension Cookbook](/developers/cookbook) for how strategies read them.
 
 ## Related
 

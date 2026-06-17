@@ -1,0 +1,6 @@
+id: fish-smoker-rack
+name: Fish Smoker Rack
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.fishsmokerrack.Strategy

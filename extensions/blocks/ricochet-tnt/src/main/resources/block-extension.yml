@@ -1,0 +1,6 @@
+id: ricochet-tnt
+name: Ricochet TNT
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.ricochettnt.Strategy

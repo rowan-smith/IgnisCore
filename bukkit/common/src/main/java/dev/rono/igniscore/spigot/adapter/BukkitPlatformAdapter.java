@@ -19,6 +19,8 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -219,6 +221,27 @@ public class BukkitPlatformAdapter implements PlatformAdapter {
         if (block.getType() != org.bukkit.Material.AIR) {
             block.setType(org.bukkit.Material.AIR);
         }
+    }
+
+    @Override
+    public void spectateEntity(IgnisPlayer player, Object platformEntity, int durationTicks) {
+        if (!(player instanceof BukkitIgnisPlayer ignisPlayer)) {
+            return;
+        }
+        Player handle = ignisPlayer.getHandle();
+        if (!(platformEntity instanceof Entity entity) || !entity.isValid()) {
+            return;
+        }
+        GameMode previous = handle.getGameMode();
+        handle.setGameMode(GameMode.SPECTATOR);
+        handle.setSpectatorTarget(entity);
+        scheduler.runLater(BukkitBridge.toIgnis(handle.getLocation()), () -> {
+            if (!handle.isOnline()) {
+                return;
+            }
+            handle.setSpectatorTarget(null);
+            handle.setGameMode(previous);
+        }, Math.max(1, durationTicks));
     }
 
     @Override

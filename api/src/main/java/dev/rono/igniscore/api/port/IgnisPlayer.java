@@ -43,6 +43,27 @@ public interface IgnisPlayer {
     void sendMessage(String miniMessage);
 
     /**
+     * Sends an action bar message formatted with MiniMessage.
+     *
+     * <p>Default implementation delegates to {@link #sendMessage(String)}.</p>
+     *
+     * @param miniMessage MiniMessage-formatted text
+     */
+    default void sendActionBar(String miniMessage) {
+        sendMessage(miniMessage);
+    }
+
+    /**
+     * Applies a potion-like effect using platform-native effect types (e.g. SLOWNESS, GLOWING).
+     *
+     * @param effectKey platform effect id (for example {@code SLOWNESS})
+     * @param durationTicks effect duration in ticks
+     * @param amplifier effect amplifier (0 = level I)
+     */
+    default void applyPotionEffect(String effectKey, int durationTicks, int amplifier) {
+    }
+
+    /**
      * Opens a native inventory UI for this player.
      *
      * @param nativeInventory opaque platform inventory (for example Bukkit {@code Inventory})

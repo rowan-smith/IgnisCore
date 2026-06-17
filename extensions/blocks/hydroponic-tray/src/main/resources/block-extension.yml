@@ -1,0 +1,6 @@
+id: hydroponic-tray
+name: Hydroponic Tray
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.hydroponictray.Strategy

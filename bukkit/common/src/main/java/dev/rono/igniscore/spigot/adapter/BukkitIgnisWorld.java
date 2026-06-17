@@ -1,5 +1,6 @@
 package dev.rono.igniscore.spigot.adapter;
 
+import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
@@ -181,5 +182,19 @@ public final class BukkitIgnisWorld implements IgnisWorld {
         if (platformEntity instanceof Entity entity) {
             entity.remove();
         }
+    }
+
+    @Override
+    public IgnisItem getDroppedItem(Object platformEntity) {
+        if (platformEntity instanceof org.bukkit.entity.Item item) {
+            return BukkitBridge.wrap(item.getItemStack());
+        }
+        return null;
+    }
+
+    @Override
+    public void setChunkForceLoaded(IgnisLocation location, boolean forceLoaded) {
+        Location bukkit = BukkitBridge.toBukkit(location, handle);
+        handle.setChunkForceLoaded(bukkit.getChunk().getX(), bukkit.getChunk().getZ(), forceLoaded);
     }
 }

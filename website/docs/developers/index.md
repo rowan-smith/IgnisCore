@@ -29,23 +29,24 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 |-------|----------------|
 | **[API layers](/developers/api/layers)** | L1–L4 model — extension vs integrator surfaces |
 | **[Extension profiles](/developers/extension-profiles)** | Manifest profiles and integration requirements |
-| **[Extension Cookbook](/developers/cookbook/)** | Practical recipes — explosions, throwables, GUI blocks |
+| **[Extension config](/developers/extension-config/)** | What belongs in `config.yml` |
+| **[Extension Cookbook](/developers/cookbook/)** | Practical recipes — explosions, throwables, link items, consumables |
 | **[API Reference](/developers/api/)** | Core API package map and entry points |
 | **[Architecture](/developers/architecture/)** | Module stack, boot flow, dependency rules |
 | **[Javadoc](/developers/reference/)** | Full class and method reference (100% public API coverage) |
 
-## Two libraries
+## Libraries
 
 | Library | Maven artifact | When |
 |---------|----------------|------|
-| **Core API** | `dev.rono:api` | Always — strategies, ports, models |
-| **Extension shared** | `dev.rono.extensions:shared` | Optional — typed config helpers (`ExplosionConfig`, `ThrowableItemConfig`) |
+| **Core API** | `dev.rono:api` | Always — strategies, ports, models, `StrategySupport` |
 
-Both use `provided` scope — the bootstrap plugin supplies them at runtime.
+The bootstrap plugin supplies the API at runtime (`provided` scope). Bundled extensions in this repo may depend on additional internal modules; the [cookbook](/developers/cookbook) shows patterns using the core API only.
 
 ## Next steps
 
-- [Extension Cookbook](/developers/cookbook/) — copy-paste recipes
+- [Extension Cookbook](/developers/cookbook/) — copy-paste recipes (core API)
+- [Extension config](/developers/extension-config/) — `config.yml` reference
 - [API Reference](/developers/api/) — surface overview
 - [Architecture](/developers/architecture/) — module layout
 - [Javadoc](/developers/reference/) — browse all classes

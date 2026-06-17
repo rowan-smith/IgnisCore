@@ -1,0 +1,6 @@
+id: smoker-stack
+name: Smoker Stack
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.smokerstack.Strategy

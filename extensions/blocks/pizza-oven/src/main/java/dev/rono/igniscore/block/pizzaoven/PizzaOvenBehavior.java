@@ -1,0 +1,80 @@
+package dev.rono.igniscore.block.pizzaoven;
+
+import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.gui.BlockStorageRegistry;
+import dev.rono.extensions.shared.strategy.PlacedTickSupport;
+import dev.rono.extensions.shared.strategy.ProcessingGuiSupport;
+import dev.rono.extensions.shared.strategy.TheatricsSupport;
+import dev.rono.igniscore.api.util.Locations;
+import net.kyori.adventure.text.Component;
+
+final class PizzaOvenBehavior {
+    private static final int BREAD_SLOT = 10;
+    private static final int TOMATO_SLOT = 12;
+    private static final int CHEESE_SLOT = 14;
+    private static final int OUTPUT_SLOT = 16;
+
+    private final IgnisStrategyContext context;
+    private final BlockStorageRegistry registry;
+
+    PizzaOvenBehavior(IgnisStrategyContext context) {
+        this.context = context;
+        this.registry = new BlockStorageRegistry(context, "pizza-oven");
+    }
+
+    void onPlaced(BlockDefinition definition, IgnisLocation location) {
+        registry.registerBlock(location, title(definition), 3);
+        PlacedTickSupport.start(context, location, StrategySupport.customInt(definition, "tickPeriod", 50),
+                () -> tick(definition, location));
+    }
+
+    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
+        PlacedTickSupport.stop(location);
+        registry.unregister(location);
+    }
+
+    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
+                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
+                          CustomBlockAction action) {
+        if (action == CustomBlockAction.OPEN) {
+            registry.openBlock(player, location);
+        }
+    }
+
+    private void tick(BlockDefinition definition, IgnisLocation location) {
+        var gui = registry.blockGui(location);
+        if (gui == null) {
+            return;
+        }
+        var inventory = gui.inventory();
+        if (!ProcessingGuiSupport.matches(inventory.getItem(BREAD_SLOT), "bread")
+                || !ProcessingGuiSupport.matches(inventory.getItem(TOMATO_SLOT), "beetroot")
+                || !ProcessingGuiSupport.matches(inventory.getItem(CHEESE_SLOT), "milk_bucket")) {
+            return;
+        }
+        ProcessingGuiSupport.consumeOne(inventory, BREAD_SLOT);
+        ProcessingGuiSupport.consumeOne(inventory, TOMATO_SLOT);
+        ProcessingGuiSupport.consumeOne(inventory, CHEESE_SLOT);
+        ProcessingGuiSupport.setOutput(context.getExtensionSupport(), inventory, OUTPUT_SLOT, "cake", 1);
+        IgnisWorld world = worldAt(location);
+        IgnisLocation center = Locations.toCenter(location);
+        world.spawnParticle(center, "FLAME", 6, 0.3, 0.2, 0.3, 0.02);
+        world.playSound(center, "BLOCK_SMOKER_SMOKE", 0.6f, 1.0f);
+        TheatricsSupport.sparkle(world, center, "LAVA", 4);
+    }
+
+    private Component title(BlockDefinition definition) {
+        return definition.getTitle() == null ? Component.text("Pizza Oven") : definition.getTitle();
+    }
+
+    private IgnisWorld worldAt(IgnisLocation location) {
+        return context.getExtensionSupport().resolveWorld(location);
+    }
+}

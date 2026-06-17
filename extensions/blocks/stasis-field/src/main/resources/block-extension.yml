@@ -1,0 +1,6 @@
+id: stasis-field
+name: Stasis Field
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.stasisfield.Strategy

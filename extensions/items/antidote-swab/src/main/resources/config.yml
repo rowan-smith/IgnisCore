@@ -1,0 +1,18 @@
+id: antidote-swab
+
+display:
+  title: "&bAntidote Swab"
+  description:
+    - "&7Clears one negative effect."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  cooldownTicks: 0

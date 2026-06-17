@@ -1,0 +1,8 @@
+id: keyed-hatch
+name: Keyed Hatch
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.keyedhatch.Strategy
+profiles:
+  - placed

@@ -1,0 +1,18 @@
+id: trait-badge
+
+display:
+  title: "&bTrait Badge"
+  description:
+    - "&7Rolls and stores a random trait."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  randomTrait: true

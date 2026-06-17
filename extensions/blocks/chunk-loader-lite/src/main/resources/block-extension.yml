@@ -1,0 +1,6 @@
+id: chunk-loader-lite
+name: Chunk Loader Lite
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.chunkloaderlite.Strategy

@@ -1,0 +1,9 @@
+id: keg-tap
+name: Keg Tap
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.kegtap.Strategy
+profiles:
+  - interact
+  - processing-gui

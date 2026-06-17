@@ -1,0 +1,6 @@
+id: pollinator-block
+name: Pollinator Block
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.pollinatorblock.Strategy

@@ -1,0 +1,16 @@
+id: player-chronicle-book
+
+display:
+  title: "&bPlayer Chronicle Book"
+  description:
+    - "&7Writes location chronicle pages."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

@@ -1,0 +1,8 @@
+id: pipe-valve
+name: Pipe Valve
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.pipevalve.Strategy
+profiles:
+  - placed

@@ -200,4 +200,7 @@ public interface PlatformAdapter {
      * Releases adapter resources during plugin or mod shutdown.
      */
     void shutdown();
+
+    default void spectateEntity(IgnisPlayer player, Object platformEntity, int durationTicks) {
+    }
 }

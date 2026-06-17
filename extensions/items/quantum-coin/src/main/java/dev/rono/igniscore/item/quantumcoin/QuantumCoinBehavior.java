@@ -1,0 +1,32 @@
+package dev.rono.igniscore.item.quantumcoin;
+
+import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.port.IgnisBlock;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisPlayer;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.extensions.shared.strategy.TheatricsSupport;
+
+final class QuantumCoinBehavior {
+    private final IgnisStrategyContext context;
+    private final IgnisNbtService nbtService;
+
+    QuantumCoinBehavior(IgnisStrategyContext context) {
+        this.context = context;
+        this.nbtService = context.getNbtService();
+    }
+
+    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
+        boolean heads = Math.random() < 0.5;
+        String result = heads ? "heads" : "tails";
+        if (nbtService != null) {
+            nbtService.setItemString(item, "ignis:coin_flip", result);
+        }
+        IgnisWorld world = player.getWorld();
+        TheatricsSupport.sparkle(world, player.getLocation(), heads ? "VILLAGER_HAPPY" : "SMOKE", 6);
+        world.playSound(player.getLocation(), "ENTITY_EXPERIENCE_ORB_PICKUP", 0.8f, heads ? 1.4f : 0.8f);
+        player.sendMessage("<gold>Coin flip:</gold> <white>" + result + "</white>");
+    }
+}

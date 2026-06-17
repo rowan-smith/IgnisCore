@@ -1,0 +1,6 @@
+id: milking-station
+name: Milking Station
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.milkingstation.Strategy

@@ -1,0 +1,16 @@
+id: structure-compass
+
+display:
+  title: "&bStructure Compass"
+  description:
+    - "&7Shows stored compass bearing."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

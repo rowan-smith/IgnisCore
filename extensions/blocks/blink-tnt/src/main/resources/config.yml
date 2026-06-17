@@ -1,0 +1,42 @@
+id: blink-tnt
+
+display:
+  title: "&bBlink TNT"
+  description:
+    - "&7Random teleports during fuse, then explodes."
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+    break_sound: BLOCK_GRAVEL_BREAK
+    hit_sound: BLOCK_GRAVEL_HIT
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+
+behavior:
+  combustible: true
+  left_click_block: break
+  right_click_block: ignite
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+  sounds:
+    place: BLOCK_TNT_PLACE
+    ignite: ITEM_FLINTANDSTEEL_USE
+custom_data:
+  blinkInterval: 14
+  blinkRadius: 5.0
+  blinkRange: 1.5
+  fuse: 60
+  power: 3.5
+  tickInterval: 5

@@ -1,0 +1,9 @@
+id: picnic-basket
+name: Picnic Basket
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.picnicbasket.Strategy
+profiles:
+  - interact
+  - processing-gui

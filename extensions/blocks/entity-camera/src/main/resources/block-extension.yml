@@ -1,0 +1,8 @@
+id: entity-camera
+name: Entity Camera
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.entitycamera.Strategy
+requires-integrations:
+  - protocol

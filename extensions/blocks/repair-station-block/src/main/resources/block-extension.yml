@@ -1,0 +1,6 @@
+id: repair-station-block
+name: Repair Station
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.repairstationblock.Strategy

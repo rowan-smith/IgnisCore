@@ -31,4 +31,10 @@ public interface IgnisProtocolService {
      * @param players recipients of the packet
      */
     void sendFakeExplosion(IgnisLocation location, float power, Collection<IgnisPlayer> players);
+
+    /**
+     * Attach the viewer's camera to {@code platformEntity} for {@code durationTicks}.
+     */
+    default void attachEntityCamera(IgnisPlayer viewer, Object platformEntity, int durationTicks) {
+    }
 }

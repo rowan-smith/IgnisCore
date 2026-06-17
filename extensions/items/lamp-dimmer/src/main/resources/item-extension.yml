@@ -1,0 +1,8 @@
+id: lamp-dimmer
+name: Lamp Dimmer
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.lampdimmer.Strategy
+requires-integrations:
+  - nbt-entity

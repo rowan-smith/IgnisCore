@@ -1,0 +1,8 @@
+id: barn-bell
+name: Barn Bell
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.barnbell.Strategy
+profiles:
+  - placed

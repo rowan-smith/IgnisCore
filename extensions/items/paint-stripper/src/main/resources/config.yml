@@ -1,0 +1,16 @@
+id: paint-stripper
+
+display:
+  title: "&bPaint Stripper"
+  description:
+    - "&7Strips banners or dye from blocks."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

@@ -1,0 +1,16 @@
+id: stencil-plate
+
+display:
+  title: "&bStencil Plate"
+  description:
+    - "&7Applies glow stencil to concrete powder."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

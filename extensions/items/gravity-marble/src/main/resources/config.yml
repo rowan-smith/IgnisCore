@@ -1,0 +1,19 @@
+id: gravity-marble
+
+display:
+  title: "&bGravity Marble"
+  description:
+    - "&7Fast throwable marble with sparkle trail."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  marbleSpeed: 1.2

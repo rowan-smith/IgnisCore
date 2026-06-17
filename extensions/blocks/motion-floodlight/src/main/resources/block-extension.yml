@@ -1,0 +1,6 @@
+id: motion-floodlight
+name: Motion Floodlight
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.motionfloodlight.Strategy

@@ -1,0 +1,16 @@
+id: mulch-spreader
+
+display:
+  title: "&bMulch Spreader"
+  description:
+    - "&7Mossifies paths or spreads moss near water."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

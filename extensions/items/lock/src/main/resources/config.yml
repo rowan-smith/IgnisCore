@@ -1,0 +1,16 @@
+id: lock
+
+display:
+  title: "&bLock"
+  description:
+    - "&7Toggles engaged/disengaged lock state."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

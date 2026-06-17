@@ -101,4 +101,10 @@ public interface ExtensionSupport {
      * @return path suitable for extension persistence
      */
     Path getDataDirectory();
+
+    /**
+     * Puts the player into spectator mode viewing {@code platformEntity} for {@code durationTicks}.
+     */
+    default void spectateEntity(IgnisPlayer player, Object platformEntity, int durationTicks) {
+    }
 }

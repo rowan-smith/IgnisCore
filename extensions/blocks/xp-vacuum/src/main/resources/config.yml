@@ -1,0 +1,34 @@
+id: xp-vacuum
+
+display:
+  title: "&bXP Vacuum"
+  description:
+    - "&7Pulls experience orbs toward the block."
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+    break_sound: BLOCK_GRAVEL_BREAK
+    hit_sound: BLOCK_GRAVEL_HIT
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+
+behavior:
+  left_click_block: break
+  right_click_block: none
+  sounds:
+    place: BLOCK_AMETHYST_BLOCK_CHIME
+custom_data:
+  tickPeriod: 20
+  vacuumRadius: 6.0
+  vacuumStrength: 0.35

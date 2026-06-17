@@ -1,0 +1,16 @@
+id: atlas-imprinter
+
+display:
+  title: "&bAtlas Imprinter"
+  description:
+    - "&7Stamps coordinates into atlas imprints."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

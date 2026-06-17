@@ -1,48 +1,28 @@
 ---
-title: Extension Shared
-description: dev.rono.extensions.shared — typed config helpers for common extension patterns.
+title: Extension Shared (internal)
+description: Optional helpers used by bundled extensions — not part of the public authoring contract.
 slug: /developers/api/extension-shared
 ---
 
-`extensions/shared` provides typed config accessors for common block and item patterns. Optional but recommended for explosive blocks and throwables.
+Bundled extensions in this repository may depend on `dev.rono.extensions:shared` for shared behavior helpers (explosion utilities, GUI registries, link-item support, and similar). **Extension authors should use the core API only** — see the [Extension Cookbook](/developers/cookbook) for raw patterns.
 
-## Maven
+## For extension authors
 
-```xml
-<dependency>
-  <groupId>dev.rono.extensions</groupId>
-  <artifactId>shared</artifactId>
-  <version>%%site.version%%</version>
-  <scope>provided</scope>
-</dependency>
-```
+| Task | Use instead |
+|------|-------------|
+| Read YAML tuning | `StrategySupport` + `definition.getCustomData()` |
+| Explosion on detonate | `IgnisWorld.createExplosion(...)` |
+| Item NBT | `IgnisNbtService` via `IgnisStrategyContext` |
+| Repeating placed-block ticks | `IgnisScheduler` via `IgnisStrategyContext` |
 
-## ExtensionConfigs
+See [Extension config](/developers/extension-config) for which `config.yml` keys to declare.
 
-| Method | Returns | Use case |
-|--------|---------|----------|
-| `ExtensionConfigs.explosion(definition)` | `ExplosionConfig` | Fuse, power, radius, fire |
-| `ExtensionConfigs.throwable(definition)` | `ThrowableItemConfig` | Throw velocity, fuse ticks |
+## Bundled module
 
-## Example
-
-```java
-import dev.rono.extensions.shared.config.ExtensionConfigs;
-import dev.rono.extensions.shared.config.ExplosionConfig;
-
-ExplosionConfig explosion = ExtensionConfigs.explosion(definition);
-int fuse = explosion.fuse();
-float power = explosion.resolvedPower();
-```
-
-Raw maps remain available via `definition.getCustomConfig()` when you need custom keys.
-
-## Samples
-
-- [extensions/blocks/nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke) — `ExplosionConfig`
-- [extensions/items/grenade](https://github.com/%%site.repo%%/tree/main/extensions/items/grenade) — `ThrowableItemConfig`
+The `extensions/shared` Maven module exists for code reuse across first-party extensions shipped in the bootstrap JAR. It is not a supported public SDK surface for third-party extensions.
 
 ## Related
 
-- [Core API](/developers/api/core-api) — required base dependency
-- [Extension Cookbook](/developers/cookbook) — recipes using these helpers
+- [Extension Cookbook](/developers/cookbook) — core API recipes
+- [Core API](/developers/api/core-api) — required dependency
+- [Architecture](/developers/architecture) — module layout

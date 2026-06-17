@@ -1,0 +1,16 @@
+id: quantum-coin
+
+display:
+  title: "&bQuantum Coin"
+  description:
+    - "&7Flips heads or tails."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

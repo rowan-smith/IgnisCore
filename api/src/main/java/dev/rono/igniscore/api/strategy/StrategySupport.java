@@ -52,6 +52,18 @@ public final class StrategySupport {
     }
 
     /**
+     * Reads a string from a block definition's custom config section.
+     *
+     * @param definition block definition carrying custom data
+     * @param key config key
+     * @param defaultValue value when the key is absent or not a string
+     * @return parsed string or {@code defaultValue}
+     */
+    public static String customString(BlockDefinition definition, String key, String defaultValue) {
+        return customString(definition.getCustomData(), key, defaultValue);
+    }
+
+    /**
      * Reads a double from a raw custom-data map.
      *
      * @param customData map of extension-specific config values
@@ -85,5 +97,17 @@ public final class StrategySupport {
      */
     public static boolean customBoolean(Map<String, Object> customData, String key, boolean defaultValue) {
         return ExtensionConfig.of(customData).getBoolean(key, defaultValue);
+    }
+
+    /**
+     * Reads a string from a raw custom-data map.
+     *
+     * @param customData map of extension-specific config values
+     * @param key config key
+     * @param defaultValue value when the key is absent or not a string
+     * @return parsed string or {@code defaultValue}
+     */
+    public static String customString(Map<String, Object> customData, String key, String defaultValue) {
+        return ExtensionConfig.of(customData).getString(key, defaultValue);
     }
 }

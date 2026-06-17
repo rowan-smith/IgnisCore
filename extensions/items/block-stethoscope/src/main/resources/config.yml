@@ -1,0 +1,16 @@
+id: block-stethoscope
+
+display:
+  title: "&bBlock Stethoscope"
+  description:
+    - "&7Reveals targeted block material."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use

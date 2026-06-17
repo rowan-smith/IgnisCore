@@ -1,0 +1,8 @@
+id: miners-lunch
+name: Miner's Lunch
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.minerslunch.Strategy
+requires-integrations:
+  - nbt-entity

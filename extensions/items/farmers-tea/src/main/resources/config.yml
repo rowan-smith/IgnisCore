@@ -1,0 +1,19 @@
+id: farmers-tea
+
+display:
+  title: "&bFarmer's Tea"
+  description:
+    - "&7Instant bonemeal on nearby crops."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  cooldownTicks: 0
+  cropRadius: 5

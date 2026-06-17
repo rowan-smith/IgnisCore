@@ -1,0 +1,18 @@
+id: chorus-bite
+
+display:
+  title: "&bChorus Bite"
+  description:
+    - "&7Random 8-block sideways warp."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  cooldownTicks: 0

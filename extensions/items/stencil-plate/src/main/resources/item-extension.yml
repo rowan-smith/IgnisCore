@@ -1,0 +1,6 @@
+id: stencil-plate
+name: Stencil Plate
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.stencilplate.Strategy

@@ -1,0 +1,8 @@
+id: honey-throat-coat
+name: Honey Throat Coat
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.honeythroatcoat.Strategy
+requires-integrations:
+  - nbt-entity

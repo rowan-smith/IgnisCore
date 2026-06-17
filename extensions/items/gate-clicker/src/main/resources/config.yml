@@ -1,0 +1,21 @@
+id: gate-clicker
+
+display:
+  title: "&bGate Clicker"
+  description:
+    - "&7Link to keyed hatch; toggle from 64 blocks."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  linkBlockType: "keyed-hatch"
+  remoteAction: "toggle"
+  linkRange: 64

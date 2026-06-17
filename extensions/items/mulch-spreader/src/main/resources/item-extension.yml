@@ -1,0 +1,6 @@
+id: mulch-spreader
+name: Mulch Spreader
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.mulchspreader.Strategy

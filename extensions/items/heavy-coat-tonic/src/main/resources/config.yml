@@ -1,0 +1,18 @@
+id: heavy-coat-tonic
+
+display:
+  title: "&bHeavy Coat Tonic"
+  description:
+    - "&7Slowness I + Resistance II for 45s."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  cooldownTicks: 0

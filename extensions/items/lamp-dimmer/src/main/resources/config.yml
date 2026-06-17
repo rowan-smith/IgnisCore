@@ -1,0 +1,21 @@
+id: lamp-dimmer
+
+display:
+  title: "&bLamp Dimmer"
+  description:
+    - "&7Link to socket lamp; cycle brightness remotely."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  linkBlockType: "socket-lamp"
+  remoteAction: "cycle"
+  linkRange: 64

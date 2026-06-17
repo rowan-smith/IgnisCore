@@ -1,0 +1,19 @@
+id: rivet-gun
+
+display:
+  title: "&bRivet Gun"
+  description:
+    - "&7Reinforces clicked block to obsidian."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  reinforcedMaterial: "obsidian"

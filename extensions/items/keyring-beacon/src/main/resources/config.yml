@@ -1,0 +1,19 @@
+id: keyring-beacon
+
+display:
+  title: "&bKeyring Beacon"
+  description:
+    - "&7Cycles beacon slots saving coordinates."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  beaconSlots: 3

@@ -1,0 +1,21 @@
+id: valve-wrench
+
+display:
+  title: "&bValve Wrench"
+  description:
+    - "&7Link to pipe valve; toggle flow remotely."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  linkBlockType: "pipe-valve"
+  remoteAction: "toggle"
+  linkRange: 48

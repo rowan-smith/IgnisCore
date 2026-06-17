@@ -18,6 +18,7 @@ slug: /developers/api
 | [API layers](/developers/api/layers) | L1–L4 model — extension vs integrator entry points |
 | [Core API](/developers/api/core-api) | Package map and `IgnisStrategyContext` |
 | [Extension profiles](/developers/extension-profiles) | Manifest `profiles` and `requires-integrations` |
+| [Extension config](/developers/extension-config) | `config.yml` sections and keys |
 | [Javadoc](/developers/reference) | Every public class and method |
 
 ## Which API should I use?
@@ -25,6 +26,7 @@ slug: /developers/api
 | Task | Use |
 |------|-----|
 | Build a block or item extension | **L2–L3** — strategies + `IgnisStrategyContext` |
+| Read extension tuning from YAML | **Core API** — `definition.getCustomData()` + `StrategySupport` |
 | Parse explosion / throwable config | **Extension shared** (optional) or `ExtensionConfig` in core API |
 | Access runtime from another plugin | **L4** — `IgnisCoreAPI` facade |
 
@@ -35,6 +37,7 @@ slug: /developers/api
 | nuke (block) | [extensions/blocks/nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke) |
 | grenade (item) | [extensions/items/grenade](https://github.com/%%site.repo%%/tree/main/extensions/items/grenade) |
 | quarry-cache (block) | [extensions/blocks/quarry-cache](https://github.com/%%site.repo%%/tree/main/extensions/blocks/quarry-cache) |
+| lamp-dimmer (item) | [extensions/items/lamp-dimmer](https://github.com/%%site.repo%%/tree/main/extensions/items/lamp-dimmer) |
 
 ## Related docs
 

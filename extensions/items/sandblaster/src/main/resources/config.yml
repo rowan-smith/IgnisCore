@@ -1,0 +1,19 @@
+id: sandblaster
+
+display:
+  title: "&bSandblaster"
+  description:
+    - "&7Etches smooth stone into chiseled bricks."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  etchRadius: 1
