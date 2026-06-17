@@ -37,13 +37,21 @@ public class ExtensionSupportListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        if (!extensionSupport.hasDropCollectors()) {
+            return;
+        }
+
         Block block = event.getBlock();
         if (blockManager.getPlacedBlockType(BukkitBridge.toIgnis(block.getLocation())) != null) {
             return;
         }
 
         Player player = event.getPlayer();
-        ItemStack tool = player.getGameMode() == GameMode.CREATIVE ? null : player.getInventory().getItemInMainHand();
+        if (player.getGameMode() == GameMode.CREATIVE || !event.isDropItems()) {
+            return;
+        }
+
+        ItemStack tool = player.getInventory().getItemInMainHand();
         Collection<ItemStack> nativeDrops = new ArrayList<>(block.getDrops(tool, player));
         if (nativeDrops.isEmpty()) {
             return;
@@ -71,6 +79,10 @@ public class ExtensionSupportListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemSpawn(ItemSpawnEvent event) {
+        if (!extensionSupport.hasDropCollectors()) {
+            return;
+        }
+
         ItemStack stack = event.getEntity().getItemStack();
         List<IgnisItem> drops = new ArrayList<>();
         drops.add(BukkitBridge.wrap(stack.clone()));
