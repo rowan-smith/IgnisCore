@@ -1,0 +1,65 @@
+---
+title: Getting Started
+description: Install IgnisCore and deploy custom block and item extensions on your Minecraft server.
+slug: /
+---
+
+import HomepageHero from '@site/src/components/HomepageHero';
+import VersionCards from '@site/src/components/VersionCards';
+
+<HomepageHero />
+
+## Quick links
+
+<VersionCards type="home" />
+
+## Install in 4 steps
+
+1. Download **`igniscore-%%site.version%%.jar`** from [GitHub Releases](https://github.com/%%site.repo%%/releases).
+2. Install **NBTAPI** on Bukkit-family servers (required dependency).
+3. Copy the jar into `plugins/` and restart the server.
+4. Run `/ignis` in-game — you should see the help menu.
+
+See [Requirements](/requirements) for Java, platform, and dependency details.
+
+## Your first extension
+
+Bundled block and item extensions extract on first boot. To give yourself a block or item:
+
+```text
+/ignis give <player> block nuke
+/ignis give <player> item grenade
+```
+
+Reload after dropping new extension JARs into the plugin data folder:
+
+```text
+/ignis reload all
+```
+
+## Core ideas
+
+| Concept | Summary | Learn more |
+|---------|---------|------------|
+| **Extensions** | Platform-agnostic JARs loaded at runtime | [Extensions](/concepts/extensions) |
+| **Blocks** | Placed barrier blocks with fuse and explosion phases | [Block lifecycle](/concepts/blocks) |
+| **Items** | Throwable or clickable custom items | [Item lifecycle](/concepts/items) |
+| **Resource packs** | Auto-built models and textures for clients | [Resource packs](/concepts/resource-pack) |
+| **Strategies** | Java classes that implement extension behavior | [Strategies](/concepts/strategies) |
+
+## Documentation map
+
+| I want to… | Go to |
+|------------|-------|
+| Set up a server with extensions | [Common Setups](/guides/recipes) |
+| Learn every command | [Commands](/commands) |
+| Edit server config | [Configuration](/configuration) · [Storage](/storage) |
+| Fix something broken | [Troubleshooting](/guides/troubleshooting) |
+| Build a custom extension | [Extension Cookbook](/developers/cookbook) |
+| Browse API classes | [Javadoc](/developers/reference) |
+
+## Get help
+
+- [GitHub Issues](https://github.com/%%site.repo%%/issues) — bug reports and questions
+- `/ignis debug on` — enable debug logging
+- [API versioning FAQ](/faq/api-version) — extension compatibility

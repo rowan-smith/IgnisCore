@@ -1,0 +1,42 @@
+---
+title: Javadoc
+description: Javadoc API reference for IgnisCore.
+slug: /developers/reference
+---
+
+import VersionCards from '@site/src/components/VersionCards';
+
+Browse generated API documentation. Method signatures, parameters, and return types are documented here — the [Extension Cookbook](/developers/cookbook/) shows how to use them.
+
+<VersionCards type="javadoc" />
+
+## Key packages (%%site.version%%)
+
+| Area | Package | Entry point |
+|------|---------|-------------|
+| **Facade** | `dev.rono.igniscore.api` | [IgnisCoreAPI](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/IgnisCoreAPI.html) |
+| **Strategies** | `dev.rono.igniscore.api.strategy` | [IgnisBlockStrategy](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/IgnisBlockStrategy.html) |
+| **Models** | `dev.rono.igniscore.api.model` | [BlockDefinition](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/model/BlockDefinition.html) |
+| **Ports** | `dev.rono.igniscore.api.port` | [IgnisPlayer](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/port/IgnisPlayer.html) |
+| **Config** | `dev.rono.igniscore.api.config` | [BlockBehaviorConfig](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/config/BlockBehaviorConfig.html) |
+
+## Generate locally
+
+```bash
+mvn -pl api javadoc:javadoc -am -Ddoclint=none
+```
+
+Or build all published versions:
+
+```bash
+website/scripts/build-all-javadoc.sh
+```
+
+## Maven coordinates
+
+```xml
+<groupId>dev.rono</groupId>
+<artifactId>api</artifactId>
+<version>%%site.version%%</version>
+<scope>provided</scope>
+```
