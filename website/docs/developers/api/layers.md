@@ -50,7 +50,9 @@ IgnisCore exposes one Maven artifact (`dev.rono:api`) with four intentional laye
 
 ## Optional helpers
 
-`dev.rono.extensions:shared` provides typed config and behavior helpers used by bundled extensions. It is **not** required for third-party JARs — copy patterns from the [cookbook](/developers/cookbook) or implement directly against the core API.
+`dev.rono.extensions:shared` provides optional behavior helpers for extension authors. Prefer grouped accessors on **`ExtensionShared`** (`explosion()`, `config()`, `link()`, …) over importing `*Support` classes directly. See [Extension shared](/developers/api/extension-shared).
+
+For core strategy helpers, use **`IgnisStrategies`** (`blocks()`, `items()`, `data()`) in the `api` module — see [Core API](/developers/api/core-api).
 
 ## Related
 

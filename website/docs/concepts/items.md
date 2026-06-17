@@ -25,35 +25,36 @@ behavior:
   right_click_block: detonate
 ```
 
-Action tokens are interpreted by the item strategy. Bundled items route clicks through `ItemBehaviorConfig.from(definition.getBehaviorConfig()).actionFor(action)` before calling behavior code.
+Action tokens are interpreted by the item strategy. When `behavior` is configured in YAML, `IgnisItemStrategy` routes resolved tokens to **`onItemAction`** — override that hook instead of re-parsing `ItemBehaviorConfig` in most strategies.
 
 Common tokens: `throw`, `assign`, `detonate`, `use`, `none`.
 
 ## Strategy hook
 
-Items use a single hook — branch on the resolved behavior action in strategy code:
+Items use a single hook — branch on the resolved behavior action token:
 
 ```java
 @Override
-public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
-                       IgnisInteraction action, IgnisBlock clickedBlock) {
-    ItemBehaviorConfig behavior = ItemBehaviorConfig.from(definition.getBehaviorConfig());
-    behavior.actionFor(action).ifPresent(token -> {
-        if ("throw".equals(token)) {
-            throwItem(player, definition, item);
-        } else if ("detonate".equals(token)) {
-            detonate(player, definition, item);
-        }
-    });
+public void onItemAction(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
+                         IgnisInteraction action, IgnisBlock clickedBlock, String actionToken) {
+    if ("throw".equals(actionToken)) {
+        throwItem(player, definition, item);
+    } else if ("detonate".equals(actionToken)) {
+        detonate(player, definition, item);
+    }
 }
 ```
+
+Use `IgnisStrategies.items().actionFor(definition, action)` when you need the token outside the default routing.
 
 ## Read custom_data in strategy code
 
 ```java
-int fuseTicks = StrategySupport.customInt(definition.getCustomData(), "fuse_ticks", 40);
-double speed = StrategySupport.customDouble(definition.getCustomData(), "throw_velocity", 1.2);
+int fuseTicks = IgnisStrategies.data().customInt(definition, "fuse_ticks", 40);
+double speed = IgnisStrategies.data().customDouble(definition, "throw_velocity", 1.2);
 ```
+
+Or use `ExtensionShared.config().throwable(definition)` for the standard throwable shape — see [Extension shared](/developers/api/extension-shared).
 
 Omit the `custom_data` section entirely when your strategy uses code defaults only.
 

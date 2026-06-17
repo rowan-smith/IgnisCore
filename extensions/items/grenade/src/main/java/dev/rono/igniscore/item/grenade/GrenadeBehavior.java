@@ -1,5 +1,6 @@
 package dev.rono.igniscore.item.grenade;
 
+import dev.rono.extensions.shared.ExtensionShared;
 import dev.rono.extensions.shared.config.ThrowableItemConfig;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.port.IgnisItem;
@@ -8,7 +9,6 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisTask;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.extensions.shared.strategy.ExplosionSupport;
 
 final class GrenadeBehavior {
     private final IgnisStrategyContext context;
@@ -18,7 +18,7 @@ final class GrenadeBehavior {
     }
 
     void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item) {
-        ThrowableItemConfig throwable = ThrowableItemConfig.from(definition);
+        ThrowableItemConfig throwable = ExtensionShared.config().throwable(definition);
         double velocity = throwable.throwVelocity();
         int fuseTicks = throwable.fuseTicks();
 
@@ -46,7 +46,7 @@ final class GrenadeBehavior {
                     world.removeEntity(projectile);
                 }
                 world.playSound(impact, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
-                ExplosionSupport.createExplosion(world, impact, definition, throwable.power(), throwable.fire());
+                ExtensionShared.explosion().create(world, impact, definition, throwable.power(), throwable.fire());
                 if (taskRef[0] != null) {
                     taskRef[0].cancel();
                 }

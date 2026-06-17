@@ -1,28 +1,71 @@
 ---
-title: Extension Shared (internal)
-description: Optional helpers used by bundled extensions — not part of the public authoring contract.
+title: Extension Shared
+description: Optional helpers for extension authors — use ExtensionShared grouped accessors.
 slug: /developers/api/extension-shared
 ---
 
-Bundled extensions in this repository may depend on `dev.rono.extensions:shared` for shared behavior helpers (explosion utilities, GUI registries, link-item support, and similar). **Extension authors should use the core API only** — see the [Extension Cookbook](/developers/cookbook) for raw patterns.
+The `extensions/shared` Maven module ships optional helpers used by bundled extensions. Use the **`ExtensionShared`** facade for grouped, API-style access — do not import `*Support` classes directly.
 
-## For extension authors
+## Maven
 
-| Task | Use instead |
-|------|-------------|
-| Read YAML tuning | `StrategySupport` + `definition.getCustomData()` |
-| Explosion on detonate | `IgnisWorld.createExplosion(...)` |
+```xml
+<dependency>
+  <groupId>dev.rono.extensions</groupId>
+  <artifactId>shared</artifactId>
+  <version>%%site.version%%</version>
+  <scope>provided</scope>
+</dependency>
+```
+
+The bootstrap plugin supplies this module at runtime. Do **not** shade it into extension JARs.
+
+## Entry point
+
+| Accessor | Purpose |
+|----------|---------|
+| `ExtensionShared.explosion()` | Fuse, power, and detonation helpers |
+| `ExtensionShared.config()` | Typed views of common `custom_data` shapes |
+| `ExtensionShared.theatrics()` | Particles, sounds, scan visuals |
+| `ExtensionShared.ticks()` | Repeating tasks for placed blocks |
+| `ExtensionShared.scan()` | Ore/crop/copper world scans |
+| `ExtensionShared.link()` | Item ↔ block NBT linking |
+| `ExtensionShared.remote()` | Remote activation registry |
+| `ExtensionShared.consumable()` | Cooldowns and consume-one |
+| `ExtensionShared.entities()` | Entity queries and radius effects |
+| `ExtensionShared.processing()` | Processing GUI inventory helpers |
+| `ExtensionShared.variants()` | Specialized blast patterns |
+| `ExtensionShared.profiles()` | Preset `StrategyProfile` factories |
+| `ExtensionShared.gui()` | Block storage and trade registries |
+
+## Examples
+
+```java
+// Typed throwable config from custom_data
+var throwable = ExtensionShared.config().throwable(definition);
+double velocity = throwable.throwVelocity();
+int fuseTicks = throwable.fuseTicks();
+
+// Detonation with YAML overrides
+ExtensionShared.explosion().create(world, location, definition, 4.0, false);
+
+// Preset explosive profile
+StrategyProfile profile = ExtensionShared.profiles().explosive();
+```
+
+## When to use core API instead
+
+| Task | Prefer |
+|------|--------|
+| Read arbitrary YAML keys | `IgnisStrategies.data()` or `StrategySupport` |
+| Simple world explosion | `IgnisWorld.createExplosion(...)` |
 | Item NBT | `IgnisNbtService` via `IgnisStrategyContext` |
 | Repeating placed-block ticks | `IgnisScheduler` via `IgnisStrategyContext` |
 
 See [Extension config](/developers/extension-config) for which `config.yml` keys to declare.
 
-## Bundled module
-
-The `extensions/shared` Maven module exists for code reuse across first-party extensions shipped in the bootstrap JAR. It is not a supported public SDK surface for third-party extensions.
-
 ## Related
 
-- [Extension Cookbook](/developers/cookbook) — core API recipes
+- [IgnisStrategies](/developers/api/core-api) — core strategy facade (`blocks()`, `items()`, `data()`)
+- [Extension Cookbook](/developers/cookbook) — recipes with and without shared helpers
 - [Core API](/developers/api/core-api) — required dependency
 - [Architecture](/developers/architecture) — module layout

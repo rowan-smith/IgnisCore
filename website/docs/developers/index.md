@@ -39,9 +39,10 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 
 | Library | Maven artifact | When |
 |---------|----------------|------|
-| **Core API** | `dev.rono:api` | Always — strategies, ports, models, `StrategySupport` |
+| **Core API** | `dev.rono:api` | Always — strategies, ports, models, `IgnisStrategies` |
+| **Extension shared** | `dev.rono.extensions:shared` | Optional — explosions, throwables, link items via `ExtensionShared` |
 
-The bootstrap plugin supplies the API at runtime (`provided` scope). Bundled extensions in this repo may depend on additional internal modules; the [cookbook](/developers/cookbook) shows patterns using the core API only.
+The bootstrap plugin supplies the API at runtime (`provided` scope). See [Extension shared](/developers/api/extension-shared) for optional helpers.
 
 ## Next steps
 

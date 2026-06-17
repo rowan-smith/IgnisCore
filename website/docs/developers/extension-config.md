@@ -77,15 +77,15 @@ behavior:
 
 ## `custom_data` — only what you use
 
-`custom_data` is a free-form map merged into `BlockDefinition.getCustomData()` / `ItemDefinition.getCustomData()`. Read values in strategy code with `StrategySupport`:
+`custom_data` is a free-form map merged into `BlockDefinition.getCustomData()` / `ItemDefinition.getCustomData()`. Read values in strategy code with `IgnisStrategies.data()`:
 
 ```java
-int tickPeriod = StrategySupport.customInt(definition, "tickPeriod", 20);
-double range = StrategySupport.customDouble(definition, "linkRange", 64.0);
-String label = StrategySupport.customString(definition, "remoteAction", "toggle");
+int tickPeriod = IgnisStrategies.data().customInt(definition, "tickPeriod", 20);
+double range = IgnisStrategies.data().customDouble(definition, "linkRange", 64.0);
+String label = IgnisStrategies.data().customString(definition, "remoteAction", "toggle");
 ```
 
-Alternatively, use `definition.getCustomConfig()` for chained reads via `ExtensionConfig`.
+Alternatively, use `definition.getCustomConfig()` for chained reads via `ExtensionConfig`, or `ExtensionShared.config()` for common typed shapes.
 
 **Do not copy unrelated keys.** A placed crop block does not need `fuse`, `power`, or `radius`. An explosive block does not need `linkBlockType`.
 

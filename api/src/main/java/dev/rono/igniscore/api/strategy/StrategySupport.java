@@ -2,6 +2,7 @@ package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.api.config.ExtensionConfig;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.ItemDefinition;
 
 import java.util.Map;
 
@@ -60,6 +61,22 @@ public final class StrategySupport {
      * @return parsed string or {@code defaultValue}
      */
     public static String customString(BlockDefinition definition, String key, String defaultValue) {
+        return customString(definition.getCustomData(), key, defaultValue);
+    }
+
+    public static double customDouble(ItemDefinition definition, String key, double defaultValue) {
+        return customDouble(definition.getCustomData(), key, defaultValue);
+    }
+
+    public static boolean customBoolean(ItemDefinition definition, String key, boolean defaultValue) {
+        return customBoolean(definition.getCustomData(), key, defaultValue);
+    }
+
+    public static int customInt(ItemDefinition definition, String key, int defaultValue) {
+        return customInt(definition.getCustomData(), key, defaultValue);
+    }
+
+    public static String customString(ItemDefinition definition, String key, String defaultValue) {
         return customString(definition.getCustomData(), key, defaultValue);
     }
 

@@ -4,7 +4,7 @@ description: Copy-paste recipes for IgnisCore block and item extensions using th
 slug: /developers/cookbook
 ---
 
-Short, task-oriented recipes using **`dev.rono:api` only**. Link to Javadoc for full signatures. Bundled samples under `extensions/` may use internal helpers (`extensions/shared`); the patterns below show the raw core API approach.
+Short, task-oriented recipes for IgnisCore block and item extensions. Prefer **`IgnisStrategies`** for core strategy helpers and **`ExtensionShared`** for optional shared helpers. Raw `StrategySupport` and port calls are shown where they clarify the underlying behavior.
 
 ---
 
@@ -18,7 +18,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.placed();
+        return IgnisStrategies.blocks().placed();
     }
 }
 ```
@@ -33,12 +33,12 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
 ```java
 Map<String, Object> data = definition.getCustomData();
-int fuse = StrategySupport.customInt(definition, "fuse", 0);
-float power = (float) StrategySupport.customDouble(definition, "power", 4.0);
-boolean fire = StrategySupport.customBoolean(definition, "fire", false);
+int fuse = IgnisStrategies.data().customInt(definition, "fuse", 0);
+float power = (float) IgnisStrategies.data().customDouble(definition, "power", 4.0);
+boolean fire = IgnisStrategies.data().customBoolean(definition, "fire", false);
 ```
 
-`StrategySupport` also accepts a raw `Map` if you already called `getCustomData()`. Fuse and radius are **opt-in** on `StrategyProfile` — use `StrategyProfile.placed()` for utility blocks, `StrategyProfile.fuse(ticks)` for fuse lifecycle blocks, or `StrategyProfile.combustible(fuse, radius)` for ignitable explosives.
+`IgnisStrategies.data()` also accepts a raw `Map` if you already called `getCustomData()`. Fuse and radius are **opt-in** on `StrategyProfile` — use `IgnisStrategies.blocks().placed()` for utility blocks, `IgnisStrategies.blocks().fuse(ticks)` for fuse lifecycle blocks, or `IgnisStrategies.blocks().combustible(fuse, radius)` for ignitable explosives.
 
 Block example `config.yml`:
 
@@ -51,7 +51,7 @@ custom_data:
 
 Only declare keys your strategy reads — see [Extension config](/developers/extension-config).
 
-**Javadoc:** [StrategySupport](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/StrategySupport.html)
+**Javadoc:** [IgnisStrategies](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/IgnisStrategies.html)
 
 **Sample:** [extensions/blocks/nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke)
 
@@ -101,40 +101,23 @@ public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
 
 ---
 
-## Throwable item (raw)
+## Throwable item
+
+Override `onItemAction` and use `ExtensionShared` for typed config and detonation:
 
 ```java
 @Override
-public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
-                       IgnisInteraction action, IgnisBlock clickedBlock) {
-    Map<String, Object> data = definition.getCustomData();
-    double speed = StrategySupport.customDouble(data, "throw_velocity", 1.2);
-    int fuseTicks = StrategySupport.customInt(data, "fuse_ticks", 40);
-
-    IgnisLocation eye = player.getEyeLocation();
-    double yawRad = Math.toRadians(eye.yaw());
-    double pitchRad = Math.toRadians(eye.pitch());
-    double vx = -Math.sin(yawRad) * Math.cos(pitchRad) * speed;
-    double vy = -Math.sin(pitchRad) * speed;
-    double vz = Math.cos(yawRad) * Math.cos(pitchRad) * speed;
-    Object projectile = player.getWorld().spawnProjectile("snowball", eye, player, vx, vy, vz);
-    item.setAmount(item.getAmount() - 1);
-
-    int[] ticks = {0};
-    IgnisTask[] task = {null};
-    task[0] = context.scheduler().runRepeating(eye, () -> {
-        ticks[0]++;
-        if (!player.getWorld().isEntityValid(projectile) || ticks[0] >= fuseTicks) {
-            IgnisLocation impact = player.getWorld().getEntityLocation(projectile);
-            float power = (float) StrategySupport.customDouble(data, "power", 4.0);
-            player.getWorld().createExplosion(impact, power, false, true);
-            if (player.getWorld().isEntityValid(projectile)) {
-                player.getWorld().removeEntity(projectile);
-            }
-            task[0].cancel();
-        }
-    }, 1L, 1L);
+public void onItemAction(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
+                         IgnisInteraction action, IgnisBlock clickedBlock, String actionToken) {
+    if ("throw".equals(actionToken)) {
+        behavior.onItemUse(player, definition, item);
+    }
 }
+
+// In behavior code:
+var throwable = ExtensionShared.config().throwable(definition);
+// ... spawn projectile, then:
+ExtensionShared.explosion().create(world, impact, definition, throwable.power(), throwable.fire());
 ```
 
 **Sample:** [extensions/items/grenade](https://github.com/%%site.repo%%/tree/main/extensions/items/grenade)
