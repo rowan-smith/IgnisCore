@@ -24,25 +24,21 @@ final class CookieCutterStampListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        if (nbtService == null) {
-            player.sendMessage("<red>NBT integration required for cookie shapes.</red>");
-            return;
-        }
-        int index = nbtService.getItemInt(item, "ignis:shape_index", 0) % SHAPES.length;
-        String shape = SHAPES[index];
-        nbtService.setItemString(item, "ignis:cookie_shape", shape);
-        nbtService.setItemInt(item, "ignis:shape_index", index + 1);
-        player.sendMessage("<light_purple>Stamped cookie shape: <white>" + shape + "</white></light_purple>");
-        IgnisWorld world = player.getWorld();
-        TheatricsSupport.sparkle(world, player.getLocation(), "HEART", 6);
-        world.playSound(player.getLocation(), "BLOCK_WOOL_PLACE", 0.8f, 1.4f);
-    }
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                if (nbtService == null) {
+                    event.player().sendMessage("<red>NBT integration required for cookie shapes.</red>");
+                    return;
+                }
+                int index = nbtService.getItemInt(event.item(), "ignis:shape_index", 0) % SHAPES.length;
+                String shape = SHAPES[index];
+                nbtService.setItemString(event.item(), "ignis:cookie_shape", shape);
+                nbtService.setItemInt(event.item(), "ignis:shape_index", index + 1);
+                event.player().sendMessage("<light_purple>Stamped cookie shape: <white>" + shape + "</white></light_purple>");
+                IgnisWorld world = event.player().getWorld();
+                TheatricsSupport.sparkle(world, event.player().getLocation(), "HEART", 6);
+                world.playSound(event.player().getLocation(), "BLOCK_WOOL_PLACE", 0.8f, 1.4f);
             }
     }
 }

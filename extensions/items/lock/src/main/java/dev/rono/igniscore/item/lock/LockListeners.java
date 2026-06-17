@@ -24,21 +24,16 @@ final class LockListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation loc = player.getEyeLocation();
-        boolean locked = nbtService.getItemBoolean(item, "ignis:locked", false);
-        nbtService.setItemBoolean(item, "ignis:locked", !locked);
-        player.sendMessage(locked ? "<green>Lock disengaged.</green>" : "<red>Lock engaged.</red>");
-        TheatricsSupport.sparkle(world, loc, locked ? "WAX_OFF" : "WAX_ON", 8);
-        world.playSound(loc, "BLOCK_IRON_TRAPDOOR_CLOSE", 0.8f, locked ? 1.2f : 0.8f);
-    }
-
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation loc = event.player().getEyeLocation();
+                boolean locked = nbtService.getItemBoolean(event.item(), "ignis:locked", false);
+                nbtService.setItemBoolean(event.item(), "ignis:locked", !locked);
+                event.player().sendMessage(locked ? "<green>Lock disengaged.</green>" : "<red>Lock engaged.</red>");
+                TheatricsSupport.sparkle(world, loc, locked ? "WAX_OFF" : "WAX_ON", 8);
+                world.playSound(loc, "BLOCK_IRON_TRAPDOOR_CLOSE", 0.8f, locked ? 1.2f : 0.8f);
             }
     }
 }

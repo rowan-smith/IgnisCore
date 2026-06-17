@@ -20,62 +20,6 @@ final class WormholeListeners implements OnBlockTickListener, OnBlockTriggerList
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int ticksLeft = instance.getTicksLeft();
-        BlockDefinition def = instance.getDefinition();
-
-        int ripRadius = StrategySupport.customInt(def, "wormholeRipRadius", 3);
-        int ripStartTicks = StrategySupport.customInt(def, "wormholeRipStartTicks", 60);
-        double ripChance = StrategySupport.customDouble(def, "wormholeRipChance", 0.02);
-
-        if (ticksLeft < ripStartTicks) {
-            ripBlocks(world, loc, ripRadius, ripChance);
-        }
-
-        double radius = 8.0 + (ExplosionSupport.fuse(def, 100) - ticksLeft) * 0.1;
-        Object displayEntity = instance.getDisplayEntity();
-
-        for (Object entity : world.getNearbyEntities(loc, radius)) {
-            if (displayEntity != null && entity.equals(displayEntity)) {
-                continue;
-            }
-            IgnisLocation entityLoc = world.getEntityLocation(entity);
-            if (entityLoc == null) {
-                continue;
-            }
-            double dx = loc.x() - entityLoc.x();
-            double dy = loc.y() - entityLoc.y();
-            double dz = loc.z() - entityLoc.z();
-            double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (dist > 0.1) {
-                double pull = 0.15 * (1.0 - dist / radius);
-                world.setEntityVelocity(
-                        entity,
-                        dx / dist * pull,
-                        dy / dist * pull,
-                        dz / dist * pull);
-            }
-        }
-
-        world.spawnParticle(loc, "PORTAL", 15, 0.3, 0.3, 0.3, 0.2);
-        if (ticksLeft % 5 == 0) {
-            world.playSound(loc, "BLOCK_BEACON_AMBIENT", 1.0f,
-                    0.5f + (float) (ExplosionSupport.fuse(def, 100) - ticksLeft) / 80.0f);
-        }
-    }
-
-    void onTrigger(RuntimeBlockInstance instance) {
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        BlockDefinition def = instance.getDefinition();
-
-        ExplosionSupport.createExplosion(world, loc, def, 10.0, false);
-        world.spawnParticle(loc, "EXPLOSION_EMITTER", 5, 2, 2, 2, 0);
-        world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 2.0f, 0.5f);
-    }
-
     private void ripBlocks(IgnisWorld world, IgnisLocation center, int radius, double chance) {
         for (int x = -radius; x <= radius; x++) {
             for (int y = -radius; y <= radius; y++) {
@@ -105,11 +49,59 @@ final class WormholeListeners implements OnBlockTickListener, OnBlockTriggerList
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int ticksLeft = event.instance().getTicksLeft();
+                BlockDefinition def = event.instance().getDefinition();
+
+                int ripRadius = StrategySupport.customInt(def, "wormholeRipRadius", 3);
+                int ripStartTicks = StrategySupport.customInt(def, "wormholeRipStartTicks", 60);
+                double ripChance = StrategySupport.customDouble(def, "wormholeRipChance", 0.02);
+
+                if (ticksLeft < ripStartTicks) {
+                    ripBlocks(world, loc, ripRadius, ripChance);
+                }
+
+                double radius = 8.0 + (ExplosionSupport.fuse(def, 100) - ticksLeft) * 0.1;
+                Object displayEntity = event.instance().getDisplayEntity();
+
+                for (Object entity : world.getNearbyEntities(loc, radius)) {
+                    if (displayEntity != null && entity.equals(displayEntity)) {
+                        continue;
+                    }
+                    IgnisLocation entityLoc = world.getEntityLocation(entity);
+                    if (entityLoc == null) {
+                        continue;
+                    }
+                    double dx = loc.x() - entityLoc.x();
+                    double dy = loc.y() - entityLoc.y();
+                    double dz = loc.z() - entityLoc.z();
+                    double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    if (dist > 0.1) {
+                        double pull = 0.15 * (1.0 - dist / radius);
+                        world.setEntityVelocity(
+                                entity,
+                                dx / dist * pull,
+                                dy / dist * pull,
+                                dz / dist * pull);
+                    }
+                }
+
+                world.spawnParticle(loc, "PORTAL", 15, 0.3, 0.3, 0.3, 0.2);
+                if (ticksLeft % 5 == 0) {
+                    world.playSound(loc, "BLOCK_BEACON_AMBIENT", 1.0f,
+                            0.5f + (float) (ExplosionSupport.fuse(def, 100) - ticksLeft) / 80.0f);
+                }
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance());
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                BlockDefinition def = event.instance().getDefinition();
+
+                ExplosionSupport.createExplosion(world, loc, def, 10.0, false);
+                world.spawnParticle(loc, "EXPLOSION_EMITTER", 5, 2, 2, 2, 0);
+                world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 2.0f, 0.5f);
     }
 }

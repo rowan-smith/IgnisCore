@@ -29,30 +29,6 @@ final class ChunkLoaderLiteListeners implements OnBlockPlaceListener, OnBlockBre
         this.registry = new BlockStorageRegistry(context, "chunk-loader-lite");
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        IgnisWorld world = worldAt(location);
-        world.setChunkForceLoaded(location, true);
-        registry.registerBlock(location, title(definition), 1);
-        long period = StrategySupport.customInt(definition, "tickPeriod", 40);
-        PlacedTickSupport.start(context, location, period, () -> tick(definition, location));
-        TheatricsSupport.chime(world, Locations.toCenter(location), 1.0f);
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.stop(location);
-        IgnisWorld world = worldAt(location);
-        world.setChunkForceLoaded(location, false);
-        registry.unregister(location);
-    }
-
-    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action == CustomBlockAction.OPEN) {
-            registry.openBlock(player, location);
-        }
-    }
-
     private void tick(BlockDefinition definition, IgnisLocation location) {
         IgnisWorld world = worldAt(location);
         IgnisLocation center = Locations.toCenter(location);
@@ -88,16 +64,26 @@ final class ChunkLoaderLiteListeners implements OnBlockPlaceListener, OnBlockBre
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                IgnisWorld world = worldAt(event.block().location());
+                world.setChunkForceLoaded(event.block().location(), true);
+                registry.registerBlock(event.block().location(), title(event.block().definition()), 1);
+                long period = StrategySupport.customInt(event.block().definition(), "tickPeriod", 40);
+                PlacedTickSupport.start(context, event.block().location(), period, () -> tick(event.block().definition(), event.block().location()));
+                TheatricsSupport.chime(world, Locations.toCenter(event.block().location()), 1.0f);
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                PlacedTickSupport.stop(event.block().location());
+                IgnisWorld world = worldAt(event.block().location());
+                world.setChunkForceLoaded(event.block().location(), false);
+                registry.unregister(event.block().location());
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() == CustomBlockAction.OPEN) {
+                    registry.openBlock(event.player(), event.block().location());
+                }
     }
 }

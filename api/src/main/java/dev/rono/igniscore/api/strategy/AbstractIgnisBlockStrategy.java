@@ -19,8 +19,4 @@ public abstract class AbstractIgnisBlockStrategy extends AbstractIgnisStrategy i
     protected AbstractIgnisBlockStrategy(IgnisStrategyDescriptor descriptor) {
         super(descriptor);
     }
-
-    protected AbstractIgnisBlockStrategy(IgnisStrategyDescriptor descriptor, IgnisStrategyContext context) {
-        super(descriptor, context);
-    }
 }

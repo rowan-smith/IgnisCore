@@ -24,41 +24,33 @@ final class SplitterChargeListeners implements OnBlockTickListener, OnBlockTrigg
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        double spread = StrategySupport.customDouble(def, "splitOffset", 2.5);
-        TheatricsSupport.pulseRing(world, loc, spread * 0.5, "SMOKE");
-        TheatricsSupport.chime(world, loc, 0.8f + elapsed / (float) fuse);
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        float power = ExplosionSupport.resolvePower(def, 4.0);
-        double offset = StrategySupport.customDouble(def, "splitOffset", 2.5);
-        ExplosionVariantsSupport.cardinalSplit(world, loc, power, offset);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                double spread = StrategySupport.customDouble(def, "splitOffset", 2.5);
+                TheatricsSupport.pulseRing(world, loc, spread * 0.5, "SMOKE");
+                TheatricsSupport.chime(world, loc, 0.8f + elapsed / (float) fuse);
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                float power = ExplosionSupport.resolvePower(def, 4.0);
+                double offset = StrategySupport.customDouble(def, "splitOffset", 2.5);
+                ExplosionVariantsSupport.cardinalSplit(world, loc, power, offset);
     }
 }

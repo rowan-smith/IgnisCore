@@ -22,33 +22,24 @@ final class RepairStationBlockListeners implements OnBlockInteractListener {
         this.context = context;
     }
 
-    void onPlacedInteract(BlockDefinition definition,
-                          IgnisLocation location,
-                          IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction,
-                          IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        IgnisWorld world = worldAt(location);
-        IgnisLocation center = Locations.toCenter(location);
-        if (heldItem == null || heldItem.isAir()) {
-                player.sendMessage("<yellow>Hold a damaged item to repair.</yellow>");
-                return;
-            }
-            int repairAmount = StrategySupport.customInt(definition, "repairAmount", 25);
-            player.sendMessage("<green>Repair station restored <white>" + repairAmount + "</white> durability.</green>");
-            TheatricsSupport.sparkle(world, center, "ENCHANT", 16);
-            world.playSound(center, "BLOCK_ANVIL_USE", 0.8f, 1.0f);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                IgnisWorld world = worldAt(event.block().location());
+                IgnisLocation center = Locations.toCenter(event.block().location());
+                if (event.heldItem() == null || event.heldItem().isAir()) {
+                        event.player().sendMessage("<yellow>Hold a damaged item to repair.</yellow>");
+                        return;
+                    }
+                    int repairAmount = StrategySupport.customInt(event.block().definition(), "repairAmount", 25);
+                    event.player().sendMessage("<green>Repair station restored <white>" + repairAmount + "</white> durability.</green>");
+                    TheatricsSupport.sparkle(world, center, "ENCHANT", 16);
+                    world.playSound(center, "BLOCK_ANVIL_USE", 0.8f, 1.0f);
     }
 }

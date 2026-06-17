@@ -24,44 +24,36 @@ final class PauseTntListeners implements OnBlockTickListener, OnBlockTriggerList
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        int pauseAt = StrategySupport.customInt(def, "pauseAtElapsed", fuse / 2);
-        if (elapsed == pauseAt) {
-            TheatricsSupport.sparkle(world, loc, "END_ROD", 16);
-            world.playSound(loc, "BLOCK_NOTE_BLOCK_BELL", 1.0f, 1.2f);
-        } else if (elapsed > pauseAt && elapsed < pauseAt + StrategySupport.customInt(def, "pauseDuration", 20)) {
-            TheatricsSupport.pulseRing(world, loc, 1.2, "REVERSE_PORTAL");
-        }
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.2f, 0.9f);
-        ExplosionSupport.createExplosion(world, loc, def, 4.5, false);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                int pauseAt = StrategySupport.customInt(def, "pauseAtElapsed", fuse / 2);
+                if (elapsed == pauseAt) {
+                    TheatricsSupport.sparkle(world, loc, "END_ROD", 16);
+                    world.playSound(loc, "BLOCK_NOTE_BLOCK_BELL", 1.0f, 1.2f);
+                } else if (elapsed > pauseAt && elapsed < pauseAt + StrategySupport.customInt(def, "pauseDuration", 20)) {
+                    TheatricsSupport.pulseRing(world, loc, 1.2, "REVERSE_PORTAL");
+                }
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.2f, 0.9f);
+                ExplosionSupport.createExplosion(world, loc, def, 4.5, false);
     }
 }

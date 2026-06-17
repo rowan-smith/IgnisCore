@@ -1,7 +1,6 @@
 package dev.rono.igniscore.api.event;
 
 import dev.rono.igniscore.api.CustomBlockAction;
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.PlacedBlock;
 import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.port.IgnisItem;
@@ -16,15 +15,6 @@ public final class BlockInteractEvent implements PlayerBlockEvent {
     private final IgnisInteraction interaction;
     private final IgnisItem heldItem;
     private final CustomBlockAction action;
-
-    public BlockInteractEvent(BlockDefinition definition,
-                              dev.rono.igniscore.api.port.IgnisLocation location,
-                              IgnisPlayer player,
-                              IgnisInteraction interaction,
-                              IgnisItem heldItem,
-                              CustomBlockAction action) {
-        this(PlacedBlock.of(definition, location), player, interaction, heldItem, action);
-    }
 
     public BlockInteractEvent(PlacedBlock block,
                               IgnisPlayer player,
@@ -41,14 +31,6 @@ public final class BlockInteractEvent implements PlayerBlockEvent {
     @Override
     public PlacedBlock block() {
         return block;
-    }
-
-    /**
-     * @deprecated use {@link #block()}{@code .location()}
-     */
-    @Deprecated
-    public dev.rono.igniscore.api.port.IgnisLocation location() {
-        return block.location();
     }
 
     @Override

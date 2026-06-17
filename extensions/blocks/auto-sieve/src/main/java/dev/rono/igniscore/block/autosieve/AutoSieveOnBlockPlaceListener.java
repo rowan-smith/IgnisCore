@@ -4,6 +4,7 @@ import dev.rono.igniscore.api.event.BlockPlaceEvent;
 import dev.rono.igniscore.api.event.OnBlockPlaceListener;
 import dev.rono.igniscore.api.model.PlacedBlock;
 import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.extensions.shared.strategy.PlacedTickSupport;
 import dev.rono.extensions.shared.strategy.TheatricsSupport;
@@ -19,7 +20,7 @@ final class AutoSieveOnBlockPlaceListener implements OnBlockPlaceListener {
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
         PlacedBlock block = event.block();
-        long period = context.config.getInt(block.definition(), "tickPeriod", 20);
+        long period = StrategySupport.customInt(block.definition(), "tickPeriod", 20);
         PlacedTickSupport.start(context, block.location(), period, () -> AutoSieveSupport.tick(context, block));
         IgnisLocation center = Locations.toCenter(block.location());
         TheatricsSupport.chime(AutoSieveSupport.worldAt(context, center), center, 1.0f);

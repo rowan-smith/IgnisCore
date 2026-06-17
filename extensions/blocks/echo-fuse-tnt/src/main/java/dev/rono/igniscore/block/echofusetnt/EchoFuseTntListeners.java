@@ -24,52 +24,44 @@ final class EchoFuseTntListeners implements OnBlockTickListener, OnBlockTriggerL
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        if (elapsed % 12 == 0) {
-            TheatricsSupport.chime(world, loc, 0.7f + (elapsed % 24) * 0.02f);
-            world.spawnParticle(loc, "NOTE", 2, 0.2, 0.3, 0.2, 0.01);
-        }
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        float power = ExplosionSupport.resolvePower(def, 4.0);
-        int echoes = StrategySupport.customInt(def, "echoBursts", 3);
-        int delay = StrategySupport.customInt(def, "echoDelay", 10);
-        world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
-        ExplosionSupport.createExplosion(world, loc, def, power, false);
-        for (int i = 1; i <= echoes; i++) {
-            final int echo = i;
-            context.scheduler().runLater(loc, () -> {
-                world.playSound(loc, "ENTITY_FIREWORK_ROCKET_BLAST", 0.9f, 0.8f + echo * 0.1f);
-                world.spawnParticle(loc, "CLOUD", 12, 1.0, 0.5, 1.0, 0.04);
-                ExplosionSupport.createExplosion(world, loc, power * 0.45f, false, false);
-            }, delay * (long) echo);
-        }
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                if (elapsed % 12 == 0) {
+                    TheatricsSupport.chime(world, loc, 0.7f + (elapsed % 24) * 0.02f);
+                    world.spawnParticle(loc, "NOTE", 2, 0.2, 0.3, 0.2, 0.01);
+                }
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                float power = ExplosionSupport.resolvePower(def, 4.0);
+                int echoes = StrategySupport.customInt(def, "echoBursts", 3);
+                int delay = StrategySupport.customInt(def, "echoDelay", 10);
+                world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
+                ExplosionSupport.createExplosion(world, loc, def, power, false);
+                for (int i = 1; i <= echoes; i++) {
+                    final int echo = i;
+                    context.scheduler().runLater(loc, () -> {
+                        world.playSound(loc, "ENTITY_FIREWORK_ROCKET_BLAST", 0.9f, 0.8f + echo * 0.1f);
+                        world.spawnParticle(loc, "CLOUD", 12, 1.0, 0.5, 1.0, 0.04);
+                        ExplosionSupport.createExplosion(world, loc, power * 0.45f, false, false);
+                    }, delay * (long) echo);
+                }
     }
 }

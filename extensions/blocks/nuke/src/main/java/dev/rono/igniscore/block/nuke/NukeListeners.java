@@ -24,44 +24,6 @@ final class NukeListeners implements OnBlockPlaceListener, OnBlockActivateListen
         this.context = context;
     }
 
-    void onPlaced(IgnisLocation location) {
-        IgnisLocation center = Locations.toCenter(location);
-        IgnisWorld world = worldAt(center);
-        world.spawnParticle(center, "FLAME", 16, 0.35, 0.35, 0.35, 0.02);
-        world.spawnParticle(center, "SMOKE", 10, 0.3, 0.3, 0.3, 0.01);
-    }
-
-    void onPlace(RuntimeBlockInstance instance) {
-        IgnisLocation center = Locations.toCenter(instance.getLocation());
-        context.effects().playSound(center, "BLOCK_BEACON_ACTIVATE", 2.0f, 0.6f);
-    }
-
-    void onTick(RuntimeBlockInstance instance) {
-        playCountdown(instance);
-        spawnFuseParticles(instance);
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, BlockDefinition def) {
-        ExplosionConfig explosion = ExplosionConfig.from(def);
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        float finalPower = explosion.resolvedPower();
-        IgnisWorld world = worldAt(loc);
-
-        instance.getData().setDouble("ignis:nuke_power", finalPower);
-        instance.getData().setDouble("ignis:radiation_radius", finalPower * 2.0);
-
-        spawnDetonationParticles(world, loc, finalPower);
-        world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 8.0f, 0.45f);
-        world.playSound(loc, "ENTITY_LIGHTNING_BOLT_THUNDER", 8.0f, 0.55f);
-        ExplosionSupport.createExplosion(world, loc, def, explosion.power(), explosion.fire());
-
-        if (explosion.screenShake()) {
-            for (var player : world.getPlayersNear(loc, finalPower * 2)) {
-                player.getWorld().playSound(player.getLocation(), "ENTITY_GENERIC_EXPLODE", 2.0f, 0.5f);
-            }
-        }
-    }
-
     private void playCountdown(RuntimeBlockInstance instance) {
         int ticksLeft = instance.getTicksLeft();
         int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 160);
@@ -112,21 +74,43 @@ final class NukeListeners implements OnBlockPlaceListener, OnBlockActivateListen
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().location());
+                IgnisLocation center = Locations.toCenter(event.block().location());
+                IgnisWorld world = worldAt(center);
+                world.spawnParticle(center, "FLAME", 16, 0.35, 0.35, 0.35, 0.02);
+                world.spawnParticle(center, "SMOKE", 10, 0.3, 0.3, 0.3, 0.01);
     }
 
     @Override
     public void onBlockActivate(BlockActivateEvent event) {
-        onPlace(event.instance());
+                IgnisLocation center = Locations.toCenter(event.instance().getLocation());
+                context.effects().playSound(center, "BLOCK_BEACON_ACTIVATE", 2.0f, 0.6f);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                playCountdown(event.instance());
+                spawnFuseParticles(event.instance());
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.definition());
+                ExplosionConfig explosion = ExplosionConfig.from(event.definition());
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                float finalPower = explosion.resolvedPower();
+                IgnisWorld world = worldAt(loc);
+
+                event.instance().getData().setDouble("ignis:nuke_power", finalPower);
+                event.instance().getData().setDouble("ignis:radiation_radius", finalPower * 2.0);
+
+                spawnDetonationParticles(world, loc, finalPower);
+                world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 8.0f, 0.45f);
+                world.playSound(loc, "ENTITY_LIGHTNING_BOLT_THUNDER", 8.0f, 0.55f);
+                ExplosionSupport.createExplosion(world, loc, event.definition(), explosion.power(), explosion.fire());
+
+                if (explosion.screenShake()) {
+                    for (var player : world.getPlayersNear(loc, finalPower * 2)) {
+                        player.getWorld().playSound(player.getLocation(), "ENTITY_GENERIC_EXPLODE", 2.0f, 0.5f);
+                    }
+                }
     }
 }

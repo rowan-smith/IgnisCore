@@ -27,32 +27,6 @@ final class SecureTradeTableListeners implements OnBlockPlaceListener, OnBlockBr
         this.registry = new SecureTradeRegistry(context);
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        registry.register(location, title(definition));
-        TheatricsSupport.sparkle(worldAt(location), Locations.toCenter(location), "HAPPY_VILLAGER", 6);
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        registry.unregister(location);
-    }
-
-    void onPlacedInteract(BlockDefinition definition,
-                          IgnisLocation location,
-                          IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction,
-                          IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        registry.open(player, location);
-        IgnisWorld world = worldAt(location);
-        IgnisLocation center = Locations.toCenter(location);
-        TheatricsSupport.sparkle(world, center, "HAPPY_VILLAGER", 8);
-        world.playSound(center, "ENTITY_VILLAGER_TRADE", 0.9f, 1.0f);
-        player.sendMessage("<gray>Place offers and confirm with <lime>lime dye</lime>.</gray>");
-    }
-
     private Component title(BlockDefinition definition) {
         return definition.getTitle() == null ? Component.text("Secure Trade") : definition.getTitle();
     }
@@ -63,16 +37,25 @@ final class SecureTradeTableListeners implements OnBlockPlaceListener, OnBlockBr
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                registry.register(event.block().location(), title(event.block().definition()));
+                TheatricsSupport.sparkle(worldAt(event.block().location()), Locations.toCenter(event.block().location()), "HAPPY_VILLAGER", 6);
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                registry.unregister(event.block().location());
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                registry.open(event.player(), event.block().location());
+                IgnisWorld world = worldAt(event.block().location());
+                IgnisLocation center = Locations.toCenter(event.block().location());
+                TheatricsSupport.sparkle(world, center, "HAPPY_VILLAGER", 8);
+                world.playSound(center, "ENTITY_VILLAGER_TRADE", 0.9f, 1.0f);
+                event.player().sendMessage("<gray>Place offers and confirm with <lime>lime dye</lime>.</gray>");
     }
 }

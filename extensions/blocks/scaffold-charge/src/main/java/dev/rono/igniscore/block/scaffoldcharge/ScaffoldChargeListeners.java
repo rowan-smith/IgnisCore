@@ -24,45 +24,37 @@ final class ScaffoldChargeListeners implements OnBlockTickListener, OnBlockTrigg
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        if (elapsed % 10 == 0) {
-            int height = StrategySupport.customInt(def, "scaffoldHeight", 4);
-            for (int y = 0; y < height; y++) {
-                IgnisLocation pillar = Locations.toBlock(instance.getLocation()).add(0, y, 0);
-                world.setBlockMaterialKey(pillar, "scaffolding");
-                world.spawnParticle(pillar.add(0.5, 0.5, 0.5), "CRIT", 1, 0, 0, 0, 0);
-            }
-        }
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        world.playSound(loc, "BLOCK_SCAFFOLDING_BREAK", 1.2f, 0.8f);
-        ExplosionSupport.createExplosion(world, loc, def, 3.0, false);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                if (elapsed % 10 == 0) {
+                    int height = StrategySupport.customInt(def, "scaffoldHeight", 4);
+                    for (int y = 0; y < height; y++) {
+                        IgnisLocation pillar = Locations.toBlock(event.instance().getLocation()).add(0, y, 0);
+                        world.setBlockMaterialKey(pillar, "scaffolding");
+                        world.spawnParticle(pillar.add(0.5, 0.5, 0.5), "CRIT", 1, 0, 0, 0, 0);
+                    }
+                }
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                world.playSound(loc, "BLOCK_SCAFFOLDING_BREAK", 1.2f, 0.8f);
+                ExplosionSupport.createExplosion(world, loc, def, 3.0, false);
     }
 }

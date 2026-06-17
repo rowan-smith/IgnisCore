@@ -28,33 +28,6 @@ final class PocketDimensionCacheListeners implements OnBlockPlaceListener, OnBlo
         this.registry = new BlockStorageRegistry(context, "pocket-dimension-cache");
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        registry.registerPerPlayer(location, title(definition), rows(definition));
-        IgnisLocation center = Locations.toCenter(location);
-        TheatricsSupport.chime(worldAt(center), center, 1.0f);
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        registry.unregister(location);
-    }
-
-    void onPlacedInteract(BlockDefinition definition,
-                          IgnisLocation location,
-                          IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction,
-                          IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        registry.openPerPlayer(player, location, title(definition), rows(definition));
-        IgnisWorld world = worldAt(location);
-        IgnisLocation center = Locations.toCenter(location);
-        TheatricsSupport.sparkle(world, center, "PORTAL", 10);
-        world.playSound(center, "BLOCK_ENDER_CHEST_OPEN", 0.7f, 1.1f);
-        player.sendMessage("<light_purple>Opened your pocket dimension cache.</light_purple>");
-    }
-
     private Component title(BlockDefinition definition) {
         return definition.getTitle() == null ? Component.text("Pocket Cache") : definition.getTitle();
     }
@@ -69,16 +42,26 @@ final class PocketDimensionCacheListeners implements OnBlockPlaceListener, OnBlo
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                registry.registerPerPlayer(event.block().location(), title(event.block().definition()), rows(event.block().definition()));
+                IgnisLocation center = Locations.toCenter(event.block().location());
+                TheatricsSupport.chime(worldAt(center), center, 1.0f);
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                registry.unregister(event.block().location());
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                registry.openPerPlayer(event.player(), event.block().location(), title(event.block().definition()), rows(event.block().definition()));
+                IgnisWorld world = worldAt(event.block().location());
+                IgnisLocation center = Locations.toCenter(event.block().location());
+                TheatricsSupport.sparkle(world, center, "PORTAL", 10);
+                world.playSound(center, "BLOCK_ENDER_CHEST_OPEN", 0.7f, 1.1f);
+                event.player().sendMessage("<light_purple>Opened your pocket dimension cache.</light_purple>");
     }
 }

@@ -17,20 +17,16 @@ final class SignalChargeListeners implements OnBlockTriggerListener {
         this.context = context;
     }
 
-    void onTrigger(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 0.9f);
-        ExplosionSupport.createExplosion(world, loc, def, 4.0, false);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 0.9f);
+                ExplosionSupport.createExplosion(world, loc, def, 4.0, false);
     }
 }

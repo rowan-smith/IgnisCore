@@ -20,22 +20,18 @@ final class QuantumCoinListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        boolean heads = Math.random() < 0.5;
-        String result = heads ? "heads" : "tails";
-        if (nbtService != null) {
-            nbtService.setItemString(item, "ignis:coin_flip", result);
-        }
-        IgnisWorld world = player.getWorld();
-        TheatricsSupport.sparkle(world, player.getLocation(), heads ? "VILLAGER_HAPPY" : "SMOKE", 6);
-        world.playSound(player.getLocation(), "ENTITY_EXPERIENCE_ORB_PICKUP", 0.8f, heads ? 1.4f : 0.8f);
-        player.sendMessage("<gold>Coin flip:</gold> <white>" + result + "</white>");
-    }
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                boolean heads = Math.random() < 0.5;
+                String result = heads ? "heads" : "tails";
+                if (nbtService != null) {
+                    nbtService.setItemString(event.item(), "ignis:coin_flip", result);
+                }
+                IgnisWorld world = event.player().getWorld();
+                TheatricsSupport.sparkle(world, event.player().getLocation(), heads ? "VILLAGER_HAPPY" : "SMOKE", 6);
+                world.playSound(event.player().getLocation(), "ENTITY_EXPERIENCE_ORB_PICKUP", 0.8f, heads ? 1.4f : 0.8f);
+                event.player().sendMessage("<gold>Coin flip:</gold> <white>" + result + "</white>");
             }
     }
 }

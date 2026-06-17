@@ -24,45 +24,37 @@ final class BlinkTntListeners implements OnBlockTickListener, OnBlockTriggerList
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        if (elapsed % StrategySupport.customInt(def, "blinkInterval", 14) == 0) {
-            double range = StrategySupport.customDouble(def, "blinkRange", 1.5);
-            double angle = Math.random() * Math.PI * 2;
-            IgnisLocation blink = loc.add(Math.cos(angle) * range, 0, Math.sin(angle) * range);
-            world.spawnParticle(loc, "PORTAL", 8, 0.2, 0.4, 0.2, 0.05);
-            world.spawnParticle(blink, "REVERSE_PORTAL", 8, 0.2, 0.4, 0.2, 0.05);
-            world.playSound(loc, "ENTITY_ENDERMAN_TELEPORT", 0.5f, 1.4f);
-        }
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        EntityUtilSupport.teleportRandomHorizontal(world, loc, StrategySupport.customDouble(def, "blinkRadius", 5.0), 2.5);
-        ExplosionSupport.createExplosion(world, loc, def, 3.5, false);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                if (elapsed % StrategySupport.customInt(def, "blinkInterval", 14) == 0) {
+                    double range = StrategySupport.customDouble(def, "blinkRange", 1.5);
+                    double angle = Math.random() * Math.PI * 2;
+                    IgnisLocation blink = loc.add(Math.cos(angle) * range, 0, Math.sin(angle) * range);
+                    world.spawnParticle(loc, "PORTAL", 8, 0.2, 0.4, 0.2, 0.05);
+                    world.spawnParticle(blink, "REVERSE_PORTAL", 8, 0.2, 0.4, 0.2, 0.05);
+                    world.playSound(loc, "ENTITY_ENDERMAN_TELEPORT", 0.5f, 1.4f);
+                }
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                EntityUtilSupport.teleportRandomHorizontal(world, loc, StrategySupport.customDouble(def, "blinkRadius", 5.0), 2.5);
+                ExplosionSupport.createExplosion(world, loc, def, 3.5, false);
     }
 }

@@ -19,6 +19,6 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
+        return StrategyProfile.placed();
     }
 }

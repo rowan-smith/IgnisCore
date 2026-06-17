@@ -20,7 +20,6 @@ public final class IgnisStrategyContext {
     private final IgnisEffectService effectService;
     private final ExtensionSupport extensionSupport;
     private final IgnisEventBus eventBus;
-    public final ExtensionConfigAccess config = new ExtensionConfigAccess();
 
     public IgnisStrategyContext(IgnisScheduler scheduler,
                                 IgnisNbtService nbtService,

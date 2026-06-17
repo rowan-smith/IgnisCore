@@ -16,8 +16,4 @@ public abstract class AbstractIgnisItemStrategy extends AbstractIgnisStrategy im
     protected AbstractIgnisItemStrategy(IgnisStrategyDescriptor descriptor) {
         super(descriptor);
     }
-
-    protected AbstractIgnisItemStrategy(IgnisStrategyDescriptor descriptor, IgnisStrategyContext context) {
-        super(descriptor, context);
-    }
 }

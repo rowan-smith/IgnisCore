@@ -22,23 +22,6 @@ final class CheckpointObeliskListeners implements OnBlockInteractListener {
         this.context = context;
     }
 
-    void onPlacedInteract(BlockDefinition definition,
-                          IgnisLocation location,
-                          IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction,
-                          IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        IgnisWorld world = worldAt(location);
-        IgnisLocation center = Locations.toCenter(location);
-        nbtCheckpoint(player, center);
-         player.sendMessage("<gold>Checkpoint recorded.</gold>");
-         TheatricsSupport.pulseRing(world, center, 2.0, "TOTEM_OF_UNDYING");
-         world.playSound(center, "UI_TOAST_CHALLENGE_COMPLETE", 0.7f, 1.0f);
-    }
-
     private void nbtCheckpoint(IgnisPlayer player, IgnisLocation center) {
         player.sendActionBar("<gray>" + (int) center.x() + " " + (int) center.y() + " " + (int) center.z() + "</gray>");
     }
@@ -49,6 +32,14 @@ final class CheckpointObeliskListeners implements OnBlockInteractListener {
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                IgnisWorld world = worldAt(event.block().location());
+                IgnisLocation center = Locations.toCenter(event.block().location());
+                nbtCheckpoint(event.player(), center);
+                 event.player().sendMessage("<gold>Checkpoint recorded.</gold>");
+                 TheatricsSupport.pulseRing(world, center, 2.0, "TOTEM_OF_UNDYING");
+                 world.playSound(center, "UI_TOAST_CHALLENGE_COMPLETE", 0.7f, 1.0f);
     }
 }

@@ -4,10 +4,7 @@ import dev.rono.igniscore.api.IgnisCoreAPI;
 import dev.rono.igniscore.api.event.ItemClickEvent;
 import dev.rono.igniscore.api.event.OnItemClickListener;
 import dev.rono.igniscore.api.model.ItemDefinition;
-import dev.rono.igniscore.api.port.IgnisBlock;
-import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
-import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.util.Locations;
 import java.util.Iterator;
@@ -19,84 +16,6 @@ final class DetonatorListeners implements OnItemClickListener {
 
     DetonatorListeners(DetonatorLinkStorage linkStorage) {
         this.linkStorage = linkStorage;
-    }
-
-    void assignBomb(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        if (clickedBlock == null) {
-            return;
-        }
-
-        IgnisLocation location = clickedBlock.getLocation();
-        String blockType = IgnisCoreAPI.getPlacedBlockType(Locations.toBlock(location));
-        if (!isTargetBlock(definition, blockType)) {
-            player.getWorld().playSound(player.getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.5f);
-            player.sendMessage("§cThat block cannot be linked to this detonator.");
-            return;
-        }
-
-        String encoded = encodeLocation(location);
-        List<String> linkedBombs = linkStorage.readLinkedBombs(item);
-        if (linkedBombs.contains(encoded)) {
-            player.getWorld().playSound(player.getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.8f);
-            player.sendMessage("§eThis signal charge is already linked.");
-            return;
-        }
-
-        int maxLinks = StrategySupport.customInt(definition.getCustomData(), "max_links", 16);
-        if (linkedBombs.size() >= maxLinks) {
-            player.getWorld().playSound(player.getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.4f);
-            player.sendMessage("§cThis detonator is full. Detonate or clear links first.");
-            return;
-        }
-
-        linkedBombs.add(encoded);
-        linkStorage.writeLinkedBombs(item, linkedBombs);
-
-        IgnisLocation center = Locations.toCenter(location);
-        player.getWorld().playSound(center, "BLOCK_BEACON_POWER_SELECT", 1.0f, 1.6f);
-        player.getWorld().spawnParticle(center, "HAPPY_VILLAGER", 8, 0.25, 0.25, 0.25, 0.0);
-        player.sendMessage("§aSignal charge linked. §7(" + linkedBombs.size() + "/" + maxLinks + ")");
-    }
-
-    void detonateLinkedBombs(IgnisPlayer player, ItemDefinition definition, IgnisItem item) {
-        List<String> linkedBombs = linkStorage.readLinkedBombs(item);
-        if (linkedBombs.isEmpty()) {
-            player.getWorld().playSound(player.getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.5f);
-            player.sendMessage("§cNo linked charges. Left-click a signal charge to assign one.");
-            return;
-        }
-
-        int triggered = 0;
-        Iterator<String> iterator = linkedBombs.iterator();
-        while (iterator.hasNext()) {
-            String encoded = iterator.next();
-            IgnisLocation location = decodeLocation(encoded);
-            if (location == null) {
-                iterator.remove();
-                continue;
-            }
-
-            String blockType = IgnisCoreAPI.getPlacedBlockType(Locations.toBlock(location));
-            if (!isTargetBlock(definition, blockType)) {
-                iterator.remove();
-                continue;
-            }
-
-            IgnisCoreAPI.ignitePlacedBlock(Locations.toBlock(location), player);
-            iterator.remove();
-            triggered++;
-        }
-
-        linkStorage.writeLinkedBombs(item, linkedBombs);
-
-        if (triggered > 0) {
-            player.getWorld().playSound(player.getLocation(), "BLOCK_BEACON_ACTIVATE", 1.0f, 1.2f);
-            player.sendMessage("§cDetonating §f" + triggered + "§c linked charge" + (triggered == 1 ? "" : "s") + ".");
-            return;
-        }
-
-        player.getWorld().playSound(player.getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.5f);
-        player.sendMessage("§cNo linked charges remain in range.");
     }
 
     private boolean isTargetBlock(ItemDefinition definition, String blockType) {
@@ -157,9 +76,72 @@ final class DetonatorListeners implements OnItemClickListener {
     @Override
     public void onItemClick(ItemClickEvent event) {
         switch (event.actionToken()) {
-                case "assign" -> assignBomb(event.player(), event.definition(), event.item(), event.clickedBlock());
-                case "detonate" -> detonateLinkedBombs(event.player(), event.definition(), event.item());
-                default -> { }
+            case "assign" -> {
+                if (event.clickedBlock() == null) {
+                    return;
+                }
+                IgnisLocation location = event.clickedBlock().getLocation();
+                String blockType = IgnisCoreAPI.getPlacedBlockType(Locations.toBlock(location));
+                if (!isTargetBlock(event.definition(), blockType)) {
+                    event.player().getWorld().playSound(event.player().getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.5f);
+                    event.player().sendMessage("§cThat block cannot be linked to this detonator.");
+                    return;
+                }
+                String encoded = encodeLocation(location);
+                List<String> linkedBombs = linkStorage.readLinkedBombs(event.item());
+                if (linkedBombs.contains(encoded)) {
+                    event.player().getWorld().playSound(event.player().getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.8f);
+                    event.player().sendMessage("§eThis signal charge is already linked.");
+                    return;
+                }
+                int maxLinks = StrategySupport.customInt(event.definition().getCustomData(), "max_links", 16);
+                if (linkedBombs.size() >= maxLinks) {
+                    event.player().getWorld().playSound(event.player().getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.4f);
+                    event.player().sendMessage("§cThis detonator is full. Detonate or clear links first.");
+                    return;
+                }
+                linkedBombs.add(encoded);
+                linkStorage.writeLinkedBombs(event.item(), linkedBombs);
+                IgnisLocation center = Locations.toCenter(location);
+                event.player().getWorld().playSound(center, "BLOCK_BEACON_POWER_SELECT", 1.0f, 1.6f);
+                event.player().getWorld().spawnParticle(center, "HAPPY_VILLAGER", 8, 0.25, 0.25, 0.25, 0.0);
+                event.player().sendMessage("§aSignal charge linked. §7(" + linkedBombs.size() + "/" + maxLinks + ")");
             }
+            case "detonate" -> {
+                List<String> linkedBombs = linkStorage.readLinkedBombs(event.item());
+                if (linkedBombs.isEmpty()) {
+                    event.player().getWorld().playSound(event.player().getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.5f);
+                    event.player().sendMessage("§cNo linked charges. Left-click a signal charge to assign one.");
+                    return;
+                }
+                int triggered = 0;
+                Iterator<String> iterator = linkedBombs.iterator();
+                while (iterator.hasNext()) {
+                    String encoded = iterator.next();
+                    IgnisLocation bombLocation = decodeLocation(encoded);
+                    if (bombLocation == null) {
+                        iterator.remove();
+                        continue;
+                    }
+                    String bombType = IgnisCoreAPI.getPlacedBlockType(Locations.toBlock(bombLocation));
+                    if (!isTargetBlock(event.definition(), bombType)) {
+                        iterator.remove();
+                        continue;
+                    }
+                    IgnisCoreAPI.ignitePlacedBlock(Locations.toBlock(bombLocation), event.player());
+                    iterator.remove();
+                    triggered++;
+                }
+                linkStorage.writeLinkedBombs(event.item(), linkedBombs);
+                if (triggered > 0) {
+                    event.player().getWorld().playSound(event.player().getLocation(), "BLOCK_BEACON_ACTIVATE", 1.0f, 1.2f);
+                    event.player().sendMessage("§cDetonating §f" + triggered + "§c linked charge" + (triggered == 1 ? "" : "s") + ".");
+                    return;
+                }
+                event.player().getWorld().playSound(event.player().getLocation(), "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.5f);
+                event.player().sendMessage("§cNo linked charges remain in range.");
+            }
+            default -> { }
+        }
     }
 }

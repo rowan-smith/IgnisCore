@@ -25,28 +25,6 @@ final class PipeValveListeners implements OnBlockPlaceListener, OnBlockBreakList
         this.context = context;
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        String key = LinkedBlockRegistry.key(location);
-        OPEN.put(key, false);
-        LinkedBlockRegistry.register(location, (player, action) -> {
-            if ("toggle".equals(action)) {
-                boolean open = OPEN.merge(key, false, (a, b) -> !a);
-                IgnisWorld world = worldAt(location);
-                IgnisLocation center = Locations.toCenter(location);
-                world.playSound(center, "BLOCK_IRON_DOOR_CLOSE", 0.7f, 0.9f);
-                TheatricsSupport.sparkle(world, center, open ? "DRIPPING_WATER" : "LAVA", 8);
-                player.sendMessage(open ? "<aqua>Valve open — flow enabled.</aqua>" : "<gray>Valve closed.</gray>");
-            }
-        });
-        PlacedTickSupport.start(context, location, 20L, () -> tick(location));
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.stop(location);
-        LinkedBlockRegistry.unregister(location);
-        OPEN.remove(LinkedBlockRegistry.key(location));
-    }
-
     private void tick(IgnisLocation location) {
         if (!OPEN.getOrDefault(LinkedBlockRegistry.key(location), false)) {
             return;
@@ -62,11 +40,25 @@ final class PipeValveListeners implements OnBlockPlaceListener, OnBlockBreakList
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                String key = LinkedBlockRegistry.key(event.block().location());
+                OPEN.put(key, false);
+                LinkedBlockRegistry.register(event.block().location(), (player, action) -> {
+                    if ("toggle".equals(action)) {
+                        boolean open = OPEN.merge(key, false, (a, b) -> !a);
+                        IgnisWorld world = worldAt(event.block().location());
+                        IgnisLocation center = Locations.toCenter(event.block().location());
+                        world.playSound(center, "BLOCK_IRON_DOOR_CLOSE", 0.7f, 0.9f);
+                        TheatricsSupport.sparkle(world, center, open ? "DRIPPING_WATER" : "LAVA", 8);
+                        player.sendMessage(open ? "<aqua>Valve open — flow enabled.</aqua>" : "<gray>Valve closed.</gray>");
+                    }
+                });
+                PlacedTickSupport.start(context, event.block().location(), 20L, () -> tick(event.block().location()));
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                PlacedTickSupport.stop(event.block().location());
+                LinkedBlockRegistry.unregister(event.block().location());
+                OPEN.remove(LinkedBlockRegistry.key(event.block().location()));
     }
 }

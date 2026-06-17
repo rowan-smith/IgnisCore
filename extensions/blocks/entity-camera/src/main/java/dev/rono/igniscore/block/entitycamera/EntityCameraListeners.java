@@ -21,33 +21,6 @@ final class EntityCameraListeners implements OnBlockInteractListener {
         this.context = context;
     }
 
-    void onPlacedInteract(BlockDefinition definition,
-                          IgnisLocation location,
-                          IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction,
-                          IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        IgnisWorld world = worldAt(location);
-        IgnisLocation center = Locations.toCenter(location);
-        double radius = StrategySupport.customDouble(definition, "cameraRadius", 12.0);
-        int duration = StrategySupport.customInt(definition, "cameraDurationTicks", 100);
-        Object target = findNearestPassive(world, center, radius);
-        if (target == null) {
-            player.sendMessage("<red>No passive mob in range for camera link.</red>");
-            return;
-        }
-        context.extensions().spectateEntity(player, target, duration);
-        IgnisLocation entityLoc = world.getEntityLocation(target);
-        if (entityLoc != null) {
-            TheatricsSupport.scanBeam(world, center, entityLoc, "END_ROD");
-        }
-        world.playSound(center, "BLOCK_BEACON_POWER_SELECT", 0.7f, 1.4f);
-        player.sendMessage("<light_purple>Entity camera linked for " + (duration / 20) + "s.</light_purple>");
-    }
-
     private Object findNearestPassive(IgnisWorld world, IgnisLocation center, double radius) {
         Object nearest = null;
         double best = Double.MAX_VALUE;
@@ -77,6 +50,24 @@ final class EntityCameraListeners implements OnBlockInteractListener {
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                IgnisWorld world = worldAt(event.block().location());
+                IgnisLocation center = Locations.toCenter(event.block().location());
+                double radius = StrategySupport.customDouble(event.block().definition(), "cameraRadius", 12.0);
+                int duration = StrategySupport.customInt(event.block().definition(), "cameraDurationTicks", 100);
+                Object target = findNearestPassive(world, center, radius);
+                if (target == null) {
+                    event.player().sendMessage("<red>No passive mob in range for camera link.</red>");
+                    return;
+                }
+                context.extensions().spectateEntity(event.player(), target, duration);
+                IgnisLocation entityLoc = world.getEntityLocation(target);
+                if (entityLoc != null) {
+                    TheatricsSupport.scanBeam(world, center, entityLoc, "END_ROD");
+                }
+                world.playSound(center, "BLOCK_BEACON_POWER_SELECT", 0.7f, 1.4f);
+                event.player().sendMessage("<light_purple>Entity camera linked for " + (duration / 20) + "s.</light_purple>");
     }
 }

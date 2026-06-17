@@ -31,39 +31,6 @@ final class SpiceRackListeners implements OnBlockPlaceListener, OnBlockBreakList
         this.registry = new BlockStorageRegistry(context, "spice-rack");
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        registry.registerBlock(location, title(definition), 3);
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        registry.unregister(location);
-    }
-
-    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        registry.openBlock(player, location);
-        var gui = registry.blockGui(location);
-        if (gui == null) {
-            return;
-        }
-        var inventory = gui.inventory();
-        if (ProcessingGuiSupport.matches(inventory.getItem(FOOD_SLOT), "bread", "cooked", "apple", "carrot", "beef")
-                && ProcessingGuiSupport.matches(inventory.getItem(SPICE_SLOT), "spider_eye", "glow_berries", "sugar", "cocoa")) {
-            player.applyPotionEffect("HASTE", 200, 0);
-            player.applyPotionEffect("SATURATION", 100, 0);
-            ProcessingGuiSupport.consumeOne(inventory, SPICE_SLOT);
-            IgnisWorld world = worldAt(location);
-            IgnisLocation center = Locations.toCenter(location);
-            TheatricsSupport.sparkle(world, center, "FIREWORK", 6);
-            world.playSound(center, "ENTITY_GENERIC_EAT", 0.8f, 1.1f);
-            player.sendMessage("<gold>Spiced plate grants haste and saturation.</gold>");
-        }
-    }
-
     private Component title(BlockDefinition definition) {
         return definition.getTitle() == null ? Component.text("Spice Rack") : definition.getTitle();
     }
@@ -74,16 +41,35 @@ final class SpiceRackListeners implements OnBlockPlaceListener, OnBlockBreakList
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                registry.registerBlock(event.block().location(), title(event.block().definition()), 3);
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                registry.unregister(event.block().location());
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                registry.openBlock(event.player(), event.block().location());
+                var gui = registry.blockGui(event.block().location());
+                if (gui == null) {
+                    return;
+                }
+                var inventory = gui.inventory();
+                if (ProcessingGuiSupport.matches(inventory.getItem(FOOD_SLOT), "bread", "cooked", "apple", "carrot", "beef")
+                        && ProcessingGuiSupport.matches(inventory.getItem(SPICE_SLOT), "spider_eye", "glow_berries", "sugar", "cocoa")) {
+                    event.player().applyPotionEffect("HASTE", 200, 0);
+                    event.player().applyPotionEffect("SATURATION", 100, 0);
+                    ProcessingGuiSupport.consumeOne(inventory, SPICE_SLOT);
+                    IgnisWorld world = worldAt(event.block().location());
+                    IgnisLocation center = Locations.toCenter(event.block().location());
+                    TheatricsSupport.sparkle(world, center, "FIREWORK", 6);
+                    world.playSound(center, "ENTITY_GENERIC_EAT", 0.8f, 1.1f);
+                    event.player().sendMessage("<gold>Spiced plate grants haste and saturation.</gold>");
+                }
     }
 }

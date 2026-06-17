@@ -24,30 +24,25 @@ final class TraitBadgeListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation loc = player.getEyeLocation();
-        int roll = nbtService.getItemInt(item, "ignis:trait_roll", 0) + 1;
-        nbtService.setItemInt(item, "ignis:trait_roll", roll);
-        String trait = StrategySupport.customBoolean(definition.getCustomData(), "randomTrait", true)
-                ? pickTrait(roll)
-                : "Artisan";
-        nbtService.setItemString(item, "ignis:trait", trait);
-        player.sendMessage("<light_purple>Badge trait: <white>" + trait + "</white></light_purple>");
-        TheatricsSupport.sparkle(world, loc, "TOTEM_OF_UNDYING", 10);
-        world.playSound(loc, "ENTITY_PLAYER_LEVELUP", 0.6f, 1.4f);
-    }
-
     private String pickTrait(int roll) {
         String[] traits = {"Artisan", "Scout", "Alchemist", "Engineer", "Duelist"};
         return traits[Math.floorMod(roll, traits.length)];
     }
 
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation loc = event.player().getEyeLocation();
+                int roll = nbtService.getItemInt(event.item(), "ignis:trait_roll", 0) + 1;
+                nbtService.setItemInt(event.item(), "ignis:trait_roll", roll);
+                String trait = StrategySupport.customBoolean(event.definition().getCustomData(), "randomTrait", true)
+                        ? pickTrait(roll)
+                        : "Artisan";
+                nbtService.setItemString(event.item(), "ignis:trait", trait);
+                event.player().sendMessage("<light_purple>Badge trait: <white>" + trait + "</white></light_purple>");
+                TheatricsSupport.sparkle(world, loc, "TOTEM_OF_UNDYING", 10);
+                world.playSound(loc, "ENTITY_PLAYER_LEVELUP", 0.6f, 1.4f);
             }
     }
 }

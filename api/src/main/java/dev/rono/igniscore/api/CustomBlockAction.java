@@ -1,7 +1,7 @@
 package dev.rono.igniscore.api;
 
 /**
- * Outcome of a placed-block click handled by {@link dev.rono.igniscore.api.strategy.IgnisBlockStrategy#onPlacedClick}.
+ * Outcome of a placed-block click handled by {@link dev.rono.igniscore.api.event.OnBlockClickListener}.
  *
  * <p>The core runtime inspects this value to decide whether to run built-in break/ignite services,
  * delegate to custom interaction logic, or leave the click unhandled.</p>
@@ -13,8 +13,8 @@ public enum CustomBlockAction {
     BREAK,
     /** Core ignition service starts the active fuse lifecycle. */
     IGNITE,
-    /** Custom open behavior; core delegates to {@link dev.rono.igniscore.api.strategy.IgnisBlockStrategy#onPlacedInteract}. */
+    /** Custom open behavior; core delegates to {@link dev.rono.igniscore.api.event.OnBlockInteractListener}. */
     OPEN,
-    /** Strategy already handled the click in {@link dev.rono.igniscore.api.strategy.IgnisBlockStrategy#onPlacedClick}. */
+    /** Strategy already handled the click in {@link dev.rono.igniscore.api.event.OnBlockClickListener}. */
     HANDLED
 }

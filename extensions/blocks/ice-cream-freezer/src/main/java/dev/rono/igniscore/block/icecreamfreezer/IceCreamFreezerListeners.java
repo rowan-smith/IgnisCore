@@ -35,31 +35,6 @@ final class IceCreamFreezerListeners implements OnBlockPlaceListener, OnBlockBre
         this.registry = new BlockStorageRegistry(context, "ice-cream-freezer");
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        registry.registerBlock(location, title(definition), 3);
-        PlacedTickSupport.start(context, location, StrategySupport.customInt(definition, "tickPeriod", 60),
-                () -> tick(definition, location));
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.stop(location);
-        registry.unregister(location);
-    }
-
-    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        if (heldItem != null && !heldItem.isAir() && ProcessingGuiSupport.matches(heldItem, "bowl")) {
-            player.applyPotionEffect("FIRE_RESISTANCE", 200, 0);
-            heldItem.setAmount(heldItem.getAmount() - 1);
-            player.sendMessage("<aqua>Ice cream grants brief fire resistance.</aqua>");
-        }
-        registry.openBlock(player, location);
-    }
-
     private void tick(BlockDefinition definition, IgnisLocation location) {
         var gui = registry.blockGui(location);
         if (gui == null) {
@@ -91,16 +66,27 @@ final class IceCreamFreezerListeners implements OnBlockPlaceListener, OnBlockBre
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                registry.registerBlock(event.block().location(), title(event.block().definition()), 3);
+                PlacedTickSupport.start(context, event.block().location(), StrategySupport.customInt(event.block().definition(), "tickPeriod", 60),
+                        () -> tick(event.block().definition(), event.block().location()));
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                PlacedTickSupport.stop(event.block().location());
+                registry.unregister(event.block().location());
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                if (event.heldItem() != null && !event.heldItem().isAir() && ProcessingGuiSupport.matches(event.heldItem(), "bowl")) {
+                    event.player().applyPotionEffect("FIRE_RESISTANCE", 200, 0);
+                    event.heldItem().setAmount(event.heldItem().getAmount() - 1);
+                    event.player().sendMessage("<aqua>Ice cream grants brief fire resistance.</aqua>");
+                }
+                registry.openBlock(event.player(), event.block().location());
     }
 }

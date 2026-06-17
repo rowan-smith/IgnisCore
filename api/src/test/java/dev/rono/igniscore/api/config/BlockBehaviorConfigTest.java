@@ -23,7 +23,7 @@ class BlockBehaviorConfigTest {
                 "ignition_materials", java.util.List.of("FLINT_AND_STEEL"),
                 "sounds", Map.of("place", "BLOCK_BEACON_ACTIVATE", "ignite", "ITEM_FLINTANDSTEEL_USE"))));
 
-        StrategyProfile profile = behavior.merge(StrategyProfile.defaults());
+        StrategyProfile profile = behavior.merge(StrategyProfile.placed());
 
         assertTrue(profile.isCombustible());
         assertEquals(CustomBlockAction.BREAK, profile.getLeftClickAction());
@@ -44,7 +44,7 @@ class BlockBehaviorConfigTest {
                 "combustible", false,
                 "left_click_block", "break",
                 "right_click_block", "open")));
-        StrategyProfile profile = behavior.merge(StrategyProfile.defaults());
+        StrategyProfile profile = behavior.merge(StrategyProfile.placed());
 
         assertFalse(profile.isCombustible());
         assertEquals(CustomBlockAction.OPEN,

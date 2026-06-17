@@ -21,15 +21,6 @@ final class MoodLanternListeners implements OnBlockPlaceListener, OnBlockBreakLi
         this.context = context;
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.start(context, location, StrategySupport.customInt(definition, "tickPeriod", 25),
-                () -> tick(definition, location));
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.stop(location);
-    }
-
     private void tick(BlockDefinition definition, IgnisLocation location) {
         IgnisWorld world = worldAt(location);
         IgnisLocation center = Locations.toCenter(location);
@@ -50,11 +41,12 @@ final class MoodLanternListeners implements OnBlockPlaceListener, OnBlockBreakLi
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                PlacedTickSupport.start(context, event.block().location(), StrategySupport.customInt(event.block().definition(), "tickPeriod", 25),
+                        () -> tick(event.block().definition(), event.block().location()));
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                PlacedTickSupport.stop(event.block().location());
     }
 }

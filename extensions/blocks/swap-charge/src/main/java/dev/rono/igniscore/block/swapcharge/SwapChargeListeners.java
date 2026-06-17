@@ -24,41 +24,33 @@ final class SwapChargeListeners implements OnBlockTickListener, OnBlockTriggerLi
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        if (elapsed % 20 == 0) {
-            TheatricsSupport.pulseRing(world, loc, 1.5, "END_ROD");
-        }
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        double radius = StrategySupport.customDouble(def, "swapRadius", 8.0);
-        EntityUtilSupport.swapNearestPlayers(world, loc, radius);
-        ExplosionSupport.createExplosion(world, loc, def, 2.5, false);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                if (elapsed % 20 == 0) {
+                    TheatricsSupport.pulseRing(world, loc, 1.5, "END_ROD");
+                }
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                double radius = StrategySupport.customDouble(def, "swapRadius", 8.0);
+                EntityUtilSupport.swapNearestPlayers(world, loc, radius);
+                ExplosionSupport.createExplosion(world, loc, def, 2.5, false);
     }
 }

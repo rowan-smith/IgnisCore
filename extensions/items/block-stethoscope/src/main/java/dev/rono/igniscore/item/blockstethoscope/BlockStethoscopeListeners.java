@@ -24,26 +24,21 @@ final class BlockStethoscopeListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation loc = player.getEyeLocation();
-        IgnisBlock target = clickedBlock;
-        if (target == null) {
-            player.sendMessage("<yellow>Aim at a block to listen.</yellow>");
-            return;
-        }
-        IgnisLocation blockLoc = target.getLocation();
-        String material = world.getBlockMaterialKey(blockLoc);
-        player.sendMessage("<gray>Stethoscope: <white>" + material + "</white></gray>");
-        TheatricsSupport.scanBeam(world, loc, Locations.toCenter(blockLoc), "NOTE");
-        world.playSound(loc, "BLOCK_NOTE_BLOCK_HARP", 0.7f, 1.3f);
-    }
-
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation loc = event.player().getEyeLocation();
+                IgnisBlock target = event.clickedBlock();
+                if (target == null) {
+                    event.player().sendMessage("<yellow>Aim at a block to listen.</yellow>");
+                    return;
+                }
+                IgnisLocation blockLoc = target.getLocation();
+                String material = world.getBlockMaterialKey(blockLoc);
+                event.player().sendMessage("<gray>Stethoscope: <white>" + material + "</white></gray>");
+                TheatricsSupport.scanBeam(world, loc, Locations.toCenter(blockLoc), "NOTE");
+                world.playSound(loc, "BLOCK_NOTE_BLOCK_HARP", 0.7f, 1.3f);
             }
     }
 }

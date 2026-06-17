@@ -18,32 +18,28 @@ final class PaintStripperListeners implements OnItemClickListener {
         this.context = context;
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        if (clickedBlock == null) {
-            return;
-        }
-        IgnisLocation loc = clickedBlock.getLocation();
-        IgnisWorld world = player.getWorld();
-        String material = world.getBlockMaterialKey(loc).toLowerCase();
-        if (material.contains("banner")) {
-            world.setBlockMaterialKey(loc, "white_banner");
-            player.sendMessage("<gray>Banner patterns stripped.</gray>");
-        } else if (material.contains("wool") || material.contains("leather")) {
-            world.setBlockMaterialKey(loc, material.replaceAll("_(blue|red|green|yellow|orange|pink|purple|cyan|lime|gray|black|white|brown|magenta|light_blue)", "_white"));
-            player.sendMessage("<gray>Dye removed from block.</gray>");
-        } else {
-            player.sendMessage("<gray>No paint or trim detected on this block.</gray>");
-            return;
-        }
-        TheatricsSupport.sparkle(world, loc.add(0.5, 0.5, 0.5), "CLOUD", 6);
-        world.playSound(loc, "BLOCK_WOOL_BREAK", 0.7f, 1.0f);
-        item.setAmount(item.getAmount() - 1);
-    }
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                if (event.clickedBlock() == null) {
+                    return;
+                }
+                IgnisLocation loc = event.clickedBlock().getLocation();
+                IgnisWorld world = event.player().getWorld();
+                String material = world.getBlockMaterialKey(loc).toLowerCase();
+                if (material.contains("banner")) {
+                    world.setBlockMaterialKey(loc, "white_banner");
+                    event.player().sendMessage("<gray>Banner patterns stripped.</gray>");
+                } else if (material.contains("wool") || material.contains("leather")) {
+                    world.setBlockMaterialKey(loc, material.replaceAll("_(blue|red|green|yellow|orange|pink|purple|cyan|lime|gray|black|white|brown|magenta|light_blue)", "_white"));
+                    event.player().sendMessage("<gray>Dye removed from block.</gray>");
+                } else {
+                    event.player().sendMessage("<gray>No paint or trim detected on this block.</gray>");
+                    return;
+                }
+                TheatricsSupport.sparkle(world, loc.add(0.5, 0.5, 0.5), "CLOUD", 6);
+                world.playSound(loc, "BLOCK_WOOL_BREAK", 0.7f, 1.0f);
+                event.item().setAmount(event.item().getAmount() - 1);
             }
     }
 }

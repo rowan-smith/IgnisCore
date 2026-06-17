@@ -19,40 +19,36 @@ final class SandblasterListeners implements OnItemClickListener {
         this.context = context;
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        if (clickedBlock == null) {
-            return;
-        }
-        IgnisWorld world = player.getWorld();
-        IgnisLocation center = clickedBlock.getLocation();
-        int radius = StrategySupport.customInt(definition.getCustomData(), "etchRadius", 1);
-        int etched = 0;
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                for (int z = -radius; z <= radius; z++) {
-                    IgnisLocation probe = center.add(x, y, z);
-                    String material = world.getBlockMaterialKey(probe).toLowerCase();
-                    if (material.contains("smooth_stone") || material.equals("stone")) {
-                        world.setBlockMaterialKey(probe, "chiseled_stone_bricks");
-                        etched++;
-                    }
-                }
-            }
-        }
-        if (etched == 0) {
-            player.sendMessage("<gray>No smooth stone in range to etch.</gray>");
-            return;
-        }
-        TheatricsSupport.sparkle(world, center.add(0.5, 0.5, 0.5), "CLOUD", 10);
-        world.playSound(center, "BLOCK_STONE_BREAK", 0.7f, 1.1f);
-        player.sendMessage("<gray>Etched <white>" + etched + "</white> blocks.</gray>");
-        item.setAmount(item.getAmount() - 1);
-    }
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                if (event.clickedBlock() == null) {
+                    return;
+                }
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation center = event.clickedBlock().getLocation();
+                int radius = StrategySupport.customInt(event.definition().getCustomData(), "etchRadius", 1);
+                int etched = 0;
+                for (int x = -radius; x <= radius; x++) {
+                    for (int y = -radius; y <= radius; y++) {
+                        for (int z = -radius; z <= radius; z++) {
+                            IgnisLocation probe = center.add(x, y, z);
+                            String material = world.getBlockMaterialKey(probe).toLowerCase();
+                            if (material.contains("smooth_stone") || material.equals("stone")) {
+                                world.setBlockMaterialKey(probe, "chiseled_stone_bricks");
+                                etched++;
+                            }
+                        }
+                    }
+                }
+                if (etched == 0) {
+                    event.player().sendMessage("<gray>No smooth stone in range to etch.</gray>");
+                    return;
+                }
+                TheatricsSupport.sparkle(world, center.add(0.5, 0.5, 0.5), "CLOUD", 10);
+                world.playSound(center, "BLOCK_STONE_BREAK", 0.7f, 1.1f);
+                event.player().sendMessage("<gray>Etched <white>" + etched + "</white> blocks.</gray>");
+                event.item().setAmount(event.item().getAmount() - 1);
             }
     }
 }

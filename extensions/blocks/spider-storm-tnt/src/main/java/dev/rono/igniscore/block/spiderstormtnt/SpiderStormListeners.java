@@ -25,30 +25,6 @@ final class SpiderStormListeners implements OnBlockPlaceListener, OnBlockTrigger
         this.nbtService = context.nbt();
     }
 
-    void onPlaced(IgnisLocation location) {
-        IgnisLocation center = Locations.toCenter(location);
-        IgnisWorld world = worldAt(center);
-        world.spawnParticle(center, "SPORE_BLOSSOM_AIR", 18, 0.45, 0.45, 0.45, 0.01);
-        world.spawnParticle(center, "SMOKE", 8, 0.3, 0.3, 0.3, 0.01);
-    }
-
-    void onTrigger(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        float finalPower = ExplosionSupport.resolvePower(def, 4.0);
-        boolean realExplosion = StrategySupport.customBoolean(def, "realExplosion", true);
-
-        if (realExplosion) {
-            world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
-            ExplosionSupport.createExplosion(world, loc, def, 4.0, false);
-        } else {
-            spawnBurst(world, loc, finalPower);
-        }
-
-        spawnEntityPayload(world, def, loc, finalPower);
-    }
-
     private void spawnEntityPayload(IgnisWorld world, BlockDefinition def, IgnisLocation loc, float finalPower) {
         Object payloadObj = def.getCustomData().get("entityPayload");
         if (!(payloadObj instanceof Map<?, ?> payload)) {
@@ -120,11 +96,27 @@ final class SpiderStormListeners implements OnBlockPlaceListener, OnBlockTrigger
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().location());
+                IgnisLocation center = Locations.toCenter(event.block().location());
+                IgnisWorld world = worldAt(center);
+                world.spawnParticle(center, "SPORE_BLOSSOM_AIR", 18, 0.45, 0.45, 0.45, 0.01);
+                world.spawnParticle(center, "SMOKE", 8, 0.3, 0.3, 0.3, 0.01);
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                float finalPower = ExplosionSupport.resolvePower(def, 4.0);
+                boolean realExplosion = StrategySupport.customBoolean(def, "realExplosion", true);
+
+                if (realExplosion) {
+                    world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
+                    ExplosionSupport.createExplosion(world, loc, def, 4.0, false);
+                } else {
+                    spawnBurst(world, loc, finalPower);
+                }
+
+                spawnEntityPayload(world, def, loc, finalPower);
     }
 }

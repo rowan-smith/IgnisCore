@@ -21,7 +21,7 @@ import dev.rono.igniscore.api.event.OnBlockTickListener;
 import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.event.OnItemClickListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.model.PlacedBlock;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.port.IgnisItem;
@@ -44,7 +44,7 @@ public class StrategyEventPublisher {
     }
 
     public void fireBlockPlace(BlockDefinition definition, IgnisLocation location, IgnisItem placedFrom) {
-        BlockPlaceEvent event = new BlockPlaceEvent(definition, location, placedFrom);
+        BlockPlaceEvent event = new BlockPlaceEvent(PlacedBlock.of(definition, location), placedFrom);
         eventBus.dispatch(definition.getExtensionId(), OnBlockPlaceListener.class,
                 listener -> listener.onBlockPlace(event));
     }
@@ -55,7 +55,8 @@ public class StrategyEventPublisher {
                                             IgnisInteraction interaction,
                                             IgnisItem heldItem) {
         CustomBlockAction defaultResult = resolveDefaultClick(definition, interaction, heldItem);
-        BlockClickEvent event = new BlockClickEvent(definition, location, player, interaction, heldItem, defaultResult);
+        BlockClickEvent event = new BlockClickEvent(
+                PlacedBlock.of(definition, location), player, interaction, heldItem, defaultResult);
         eventBus.dispatch(definition.getExtensionId(), OnBlockClickListener.class,
                 listener -> listener.onBlockClick(event));
         return event.result();
@@ -67,13 +68,14 @@ public class StrategyEventPublisher {
                                   IgnisInteraction interaction,
                                   IgnisItem heldItem,
                                   CustomBlockAction action) {
-        BlockInteractEvent event = new BlockInteractEvent(definition, location, player, interaction, heldItem, action);
+        BlockInteractEvent event = new BlockInteractEvent(
+                PlacedBlock.of(definition, location), player, interaction, heldItem, action);
         eventBus.dispatch(definition.getExtensionId(), OnBlockInteractListener.class,
                 listener -> listener.onBlockInteract(event));
     }
 
     public void fireBlockBreak(BlockDefinition definition, IgnisLocation location, IgnisItem droppedItem) {
-        BlockBreakEvent event = new BlockBreakEvent(definition, location, droppedItem);
+        BlockBreakEvent event = new BlockBreakEvent(PlacedBlock.of(definition, location), droppedItem);
         eventBus.dispatch(definition.getExtensionId(), OnBlockBreakListener.class,
                 listener -> listener.onBlockBreak(event));
     }

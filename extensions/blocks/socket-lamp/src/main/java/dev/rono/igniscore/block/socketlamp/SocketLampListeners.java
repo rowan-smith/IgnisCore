@@ -26,28 +26,6 @@ final class SocketLampListeners implements OnBlockPlaceListener, OnBlockBreakLis
         this.context = context;
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        String key = LinkedBlockRegistry.key(location);
-        LIGHT_LEVEL.put(key, StrategySupport.customInt(definition, "defaultLight", 15));
-        LinkedBlockRegistry.register(location, (player, action) -> {
-            if ("cycle".equals(action)) {
-                int level = LIGHT_LEVEL.merge(key, 0, (a, b) -> (a + 1) % 16);
-                IgnisWorld world = worldAt(location);
-                IgnisLocation center = Locations.toCenter(location);
-                TheatricsSupport.sparkle(world, center, level > 0 ? "END_ROD" : "SMOKE", Math.max(1, level));
-                world.playSound(center, "BLOCK_NOTE_BLOCK_PLING", 0.5f, 0.5f + level / 15f);
-                player.sendActionBar("<yellow>Lamp level: <white>" + level + "</white>/15</yellow>");
-            }
-        });
-        PlacedTickSupport.start(context, location, 40L, () -> tick(definition, location));
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.stop(location);
-        LinkedBlockRegistry.unregister(location);
-        LIGHT_LEVEL.remove(LinkedBlockRegistry.key(location));
-    }
-
     private void tick(BlockDefinition definition, IgnisLocation location) {
         int level = LIGHT_LEVEL.getOrDefault(LinkedBlockRegistry.key(location), 0);
         if (level <= 0) {
@@ -64,11 +42,25 @@ final class SocketLampListeners implements OnBlockPlaceListener, OnBlockBreakLis
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                String key = LinkedBlockRegistry.key(event.block().location());
+                LIGHT_LEVEL.put(key, StrategySupport.customInt(event.block().definition(), "defaultLight", 15));
+                LinkedBlockRegistry.register(event.block().location(), (player, action) -> {
+                    if ("cycle".equals(action)) {
+                        int level = LIGHT_LEVEL.merge(key, 0, (a, b) -> (a + 1) % 16);
+                        IgnisWorld world = worldAt(event.block().location());
+                        IgnisLocation center = Locations.toCenter(event.block().location());
+                        TheatricsSupport.sparkle(world, center, level > 0 ? "END_ROD" : "SMOKE", Math.max(1, level));
+                        world.playSound(center, "BLOCK_NOTE_BLOCK_PLING", 0.5f, 0.5f + level / 15f);
+                        player.sendActionBar("<yellow>Lamp level: <white>" + level + "</white>/15</yellow>");
+                    }
+                });
+                PlacedTickSupport.start(context, event.block().location(), 40L, () -> tick(event.block().definition(), event.block().location()));
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                PlacedTickSupport.stop(event.block().location());
+                LinkedBlockRegistry.unregister(event.block().location());
+                LIGHT_LEVEL.remove(LinkedBlockRegistry.key(event.block().location()));
     }
 }

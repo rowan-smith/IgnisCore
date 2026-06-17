@@ -30,28 +30,6 @@ final class ChickenCoopCacheListeners implements OnBlockPlaceListener, OnBlockBr
         this.registry = new BlockStorageRegistry(context, "chicken-coop-cache");
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        registry.registerBlock(location, title(definition), 3);
-        context.extensions().registerDropCollector(location, (breakLocation, drops) -> collectEggs(location, drops));
-        long period = StrategySupport.customInt(definition, "tickPeriod", 100);
-        PlacedTickSupport.start(context, location, period, () -> tick(definition, location));
-        TheatricsSupport.chime(worldAt(location), Locations.toCenter(location), 1.0f);
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.stop(location);
-        context.extensions().unregisterDropCollector(location);
-        registry.unregister(location);
-    }
-
-    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action == CustomBlockAction.OPEN) {
-            registry.openBlock(player, location);
-        }
-    }
-
     private boolean collectEggs(IgnisLocation coopLocation, Collection<IgnisItem> drops) {
         var gui = registry.blockGui(coopLocation);
         if (gui == null) {
@@ -121,16 +99,24 @@ final class ChickenCoopCacheListeners implements OnBlockPlaceListener, OnBlockBr
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                registry.registerBlock(event.block().location(), title(event.block().definition()), 3);
+                context.extensions().registerDropCollector(event.block().location(), (breakLocation, drops) -> collectEggs(event.block().location(), drops));
+                long period = StrategySupport.customInt(event.block().definition(), "tickPeriod", 100);
+                PlacedTickSupport.start(context, event.block().location(), period, () -> tick(event.block().definition(), event.block().location()));
+                TheatricsSupport.chime(worldAt(event.block().location()), Locations.toCenter(event.block().location()), 1.0f);
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                PlacedTickSupport.stop(event.block().location());
+                context.extensions().unregisterDropCollector(event.block().location());
+                registry.unregister(event.block().location());
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() == CustomBlockAction.OPEN) {
+                    registry.openBlock(event.player(), event.block().location());
+                }
     }
 }

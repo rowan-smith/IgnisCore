@@ -12,6 +12,6 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 public interface IgnisBlockStrategy extends IgnisStrategy {
 
     default StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
+        return StrategyProfile.placed();
     }
 }

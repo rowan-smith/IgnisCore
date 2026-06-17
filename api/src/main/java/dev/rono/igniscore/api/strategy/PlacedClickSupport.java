@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * Default placed-block click resolution from a {@link StrategyProfile}.
  *
- * <p>Extensions override {@link IgnisBlockStrategy#onPlacedClick} for custom behavior; use this helper
- * when delegating to profile defaults or composing profile rules with extension logic.</p>
+ * <p>Extensions implement {@link dev.rono.igniscore.api.event.OnBlockClickListener} for custom behavior;
+ * use this helper when delegating to profile defaults or composing profile rules with extension logic.</p>
  */
 public final class PlacedClickSupport {
     private PlacedClickSupport() {

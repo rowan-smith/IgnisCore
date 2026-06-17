@@ -24,24 +24,19 @@ final class ChunkGridOverlayListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation loc = player.getEyeLocation();
-        int chunkX = (int) Math.floor(loc.x()) >> 4;
-        int chunkZ = (int) Math.floor(loc.z()) >> 4;
-        nbtService.setItemString(item, "ignis:chunk", chunkX + "," + chunkZ);
-        player.sendActionBar("<gray>Chunk " + chunkX + ", " + chunkZ + "</gray>");
-        double size = 8.0;
-        IgnisLocation corner = new IgnisLocation(loc.worldId(), loc.worldName(), chunkX * 16.0, loc.y(), chunkZ * 16.0, 0f, 0f);
-        TheatricsSupport.pulseRing(world, corner.add(size, 0, size), size, "FLAME");
-        world.playSound(loc, "BLOCK_BEACON_AMBIENT", 0.5f, 1.8f);
-    }
-
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation loc = event.player().getEyeLocation();
+                int chunkX = (int) Math.floor(loc.x()) >> 4;
+                int chunkZ = (int) Math.floor(loc.z()) >> 4;
+                nbtService.setItemString(event.item(), "ignis:chunk", chunkX + "," + chunkZ);
+                event.player().sendActionBar("<gray>Chunk " + chunkX + ", " + chunkZ + "</gray>");
+                double size = 8.0;
+                IgnisLocation corner = new IgnisLocation(loc.worldId(), loc.worldName(), chunkX * 16.0, loc.y(), chunkZ * 16.0, 0f, 0f);
+                TheatricsSupport.pulseRing(world, corner.add(size, 0, size), size, "FLAME");
+                world.playSound(loc, "BLOCK_BEACON_AMBIENT", 0.5f, 1.8f);
             }
     }
 }

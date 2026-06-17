@@ -17,17 +17,13 @@ final class SprinklerTimerListeners implements OnItemClickListener {
         this.context = context;
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        String blockType = StrategySupport.customString(definition.getCustomData(), "linkBlockType", "");
-        String action = StrategySupport.customString(definition.getCustomData(), "remoteAction", "activate");
-        double range = StrategySupport.customDouble(definition.getCustomData(), "linkRange", 64.0);
-        LinkItemSupport.onUse(context, player, definition, item, clickedBlock, blockType, action, range);
-    }
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                String blockType = StrategySupport.customString(event.definition().getCustomData(), "linkBlockType", "");
+                String action = StrategySupport.customString(event.definition().getCustomData(), "remoteAction", "activate");
+                double range = StrategySupport.customDouble(event.definition().getCustomData(), "linkRange", 64.0);
+                LinkItemSupport.onUse(context, event.player(), event.definition(), event.item(), event.clickedBlock(), blockType, action, range);
             }
     }
 }

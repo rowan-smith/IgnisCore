@@ -24,23 +24,18 @@ final class PlayerChronicleBookListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation loc = player.getEyeLocation();
-        int page = nbtService.getItemInt(item, "ignis:chronicle_page", 0) + 1;
-        nbtService.setItemInt(item, "ignis:chronicle_page", page);
-        String entry = player.getName() + " @ " + (int) loc.x() + "," + (int) loc.y() + "," + (int) loc.z();
-        nbtService.setItemString(item, "ignis:chronicle_" + page, entry);
-        player.sendMessage("<gold>Chronicle page <white>" + page + "</white> written.</gold>");
-        world.playSound(loc, "ITEM_BOOK_PAGE_TURN", 0.8f, 1.0f);
-        TheatricsSupport.sparkle(world, loc, "ENCHANT", 6);
-    }
-
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation loc = event.player().getEyeLocation();
+                int page = nbtService.getItemInt(event.item(), "ignis:chronicle_page", 0) + 1;
+                nbtService.setItemInt(event.item(), "ignis:chronicle_page", page);
+                String entry = event.player().getName() + " @ " + (int) loc.x() + "," + (int) loc.y() + "," + (int) loc.z();
+                nbtService.setItemString(event.item(), "ignis:chronicle_" + page, entry);
+                event.player().sendMessage("<gold>Chronicle page <white>" + page + "</white> written.</gold>");
+                world.playSound(loc, "ITEM_BOOK_PAGE_TURN", 0.8f, 1.0f);
+                TheatricsSupport.sparkle(world, loc, "ENCHANT", 6);
             }
     }
 }

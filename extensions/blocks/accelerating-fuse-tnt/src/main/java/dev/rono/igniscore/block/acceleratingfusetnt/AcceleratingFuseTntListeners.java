@@ -24,44 +24,36 @@ final class AcceleratingFuseTntListeners implements OnBlockTickListener, OnBlock
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        float pitch = 0.6f + (elapsed / (float) Math.max(1, fuse)) * 1.4f;
-        int particles = 2 + elapsed / Math.max(1, interval);
-        world.spawnParticle(loc, "SMOKE", particles, 0.25, 0.15, 0.25, 0.03);
-        if (elapsed % 8 == 0) {
-            world.playSound(loc, "BLOCK_NOTE_BLOCK_HAT", 0.7f, pitch);
-        }
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.5f, 1.1f);
-        TheatricsSupport.sparkle(world, loc, "EXPLOSION", 30);
-        ExplosionSupport.createExplosion(world, loc, def, 5.0, false);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                float pitch = 0.6f + (elapsed / (float) Math.max(1, fuse)) * 1.4f;
+                int particles = 2 + elapsed / Math.max(1, interval);
+                world.spawnParticle(loc, "SMOKE", particles, 0.25, 0.15, 0.25, 0.03);
+                if (elapsed % 8 == 0) {
+                    world.playSound(loc, "BLOCK_NOTE_BLOCK_HAT", 0.7f, pitch);
+                }
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.5f, 1.1f);
+                TheatricsSupport.sparkle(world, loc, "EXPLOSION", 30);
+                ExplosionSupport.createExplosion(world, loc, def, 5.0, false);
     }
 }

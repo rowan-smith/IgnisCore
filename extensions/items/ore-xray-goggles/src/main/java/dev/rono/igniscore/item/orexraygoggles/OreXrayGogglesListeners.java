@@ -24,25 +24,20 @@ final class OreXrayGogglesListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation loc = player.getEyeLocation();
-        int radius = StrategySupport.customInt(definition.getCustomData(), "xrayRadius", 14);
-        IgnisLocation ore = BlockScanSupport.findNearestOre(world, loc, radius);
-        if (ore == null) {
-            player.sendMessage("<gray>No ore signature detected.</gray>");
-            return;
-        }
-        player.sendMessage("<green>Ore ping toward <white>" + (int) ore.x() + " " + (int) ore.y() + " " + (int) ore.z() + "</white></green>");
-        TheatricsSupport.scanBeam(world, loc, ore.add(0.5, 0.5, 0.5), "CRIT");
-        world.playSound(loc, "BLOCK_AMETHYST_BLOCK_RESONATE", 0.7f, 1.5f);
-    }
-
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation loc = event.player().getEyeLocation();
+                int radius = StrategySupport.customInt(event.definition().getCustomData(), "xrayRadius", 14);
+                IgnisLocation ore = BlockScanSupport.findNearestOre(world, loc, radius);
+                if (ore == null) {
+                    event.player().sendMessage("<gray>No ore signature detected.</gray>");
+                    return;
+                }
+                event.player().sendMessage("<green>Ore ping toward <white>" + (int) ore.x() + " " + (int) ore.y() + " " + (int) ore.z() + "</white></green>");
+                TheatricsSupport.scanBeam(world, loc, ore.add(0.5, 0.5, 0.5), "CRIT");
+                world.playSound(loc, "BLOCK_AMETHYST_BLOCK_RESONATE", 0.7f, 1.5f);
             }
     }
 }

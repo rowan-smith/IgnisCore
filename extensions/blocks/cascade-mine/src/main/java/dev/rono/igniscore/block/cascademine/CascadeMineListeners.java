@@ -24,49 +24,41 @@ final class CascadeMineListeners implements OnBlockTickListener, OnBlockTriggerL
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        world.spawnParticle(loc, "LAVA", 2, 0.3, 0.2, 0.3, 0.01);
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        float power = ExplosionSupport.resolvePower(def, 3.5);
-        int waves = StrategySupport.customInt(def, "cascadeWaves", 4);
-        int delay = StrategySupport.customInt(def, "cascadeDelay", 6);
-        world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
-        ExplosionSupport.createExplosion(world, loc, def, power, false);
-        for (int i = 1; i <= waves; i++) {
-            final int wave = i;
-            context.scheduler().runLater(loc, () -> {
-                IgnisLocation ring = loc.add(wave * 1.5, 0, 0);
-                world.spawnParticle(ring, "EXPLOSION", 3, 0.4, 0.2, 0.4, 0.02);
-                ExplosionSupport.createExplosion(world, ring, power * 0.55f, false, true);
-            }, delay * (long) i);
-        }
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                world.spawnParticle(loc, "LAVA", 2, 0.3, 0.2, 0.3, 0.01);
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                float power = ExplosionSupport.resolvePower(def, 3.5);
+                int waves = StrategySupport.customInt(def, "cascadeWaves", 4);
+                int delay = StrategySupport.customInt(def, "cascadeDelay", 6);
+                world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
+                ExplosionSupport.createExplosion(world, loc, def, power, false);
+                for (int i = 1; i <= waves; i++) {
+                    final int wave = i;
+                    context.scheduler().runLater(loc, () -> {
+                        IgnisLocation ring = loc.add(wave * 1.5, 0, 0);
+                        world.spawnParticle(ring, "EXPLOSION", 3, 0.4, 0.2, 0.4, 0.02);
+                        ExplosionSupport.createExplosion(world, ring, power * 0.55f, false, true);
+                    }, delay * (long) i);
+                }
     }
 }

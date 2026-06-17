@@ -24,52 +24,44 @@ final class RiftGeneratorListeners implements OnBlockTickListener, OnBlockTrigge
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        double pull = StrategySupport.customDouble(def, "riftPull", 0.12);
-        for (Object entity : world.getNearbyEntities(loc, 6.0)) {
-            IgnisLocation entityLoc = world.getEntityLocation(entity);
-            if (entityLoc == null) {
-                continue;
-            }
-            double dx = loc.x() - entityLoc.x();
-            double dy = loc.y() - entityLoc.y();
-            double dz = loc.z() - entityLoc.z();
-            double dist = Math.max(0.2, Math.sqrt(dx * dx + dy * dy + dz * dz));
-            world.setEntityVelocity(entity, dx / dist * pull, dy / dist * pull, dz / dist * pull);
-        }
-        world.spawnParticle(loc, "PORTAL", 10, 0.4, 0.5, 0.4, 0.08);
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        double radius = StrategySupport.customDouble(def, "riftRadius", 7.0);
-        EntityUtilSupport.teleportRandomHorizontal(world, loc, radius, 3.0);
-        world.playSound(loc, "ENTITY_ENDER_DRAGON_GROWL", 0.8f, 1.2f);
-        ExplosionSupport.createExplosion(world, loc, def, 4.5, false);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                double pull = StrategySupport.customDouble(def, "riftPull", 0.12);
+                for (Object entity : world.getNearbyEntities(loc, 6.0)) {
+                    IgnisLocation entityLoc = world.getEntityLocation(entity);
+                    if (entityLoc == null) {
+                        continue;
+                    }
+                    double dx = loc.x() - entityLoc.x();
+                    double dy = loc.y() - entityLoc.y();
+                    double dz = loc.z() - entityLoc.z();
+                    double dist = Math.max(0.2, Math.sqrt(dx * dx + dy * dy + dz * dz));
+                    world.setEntityVelocity(entity, dx / dist * pull, dy / dist * pull, dz / dist * pull);
+                }
+                world.spawnParticle(loc, "PORTAL", 10, 0.4, 0.5, 0.4, 0.08);
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                double radius = StrategySupport.customDouble(def, "riftRadius", 7.0);
+                EntityUtilSupport.teleportRandomHorizontal(world, loc, radius, 3.0);
+                world.playSound(loc, "ENTITY_ENDER_DRAGON_GROWL", 0.8f, 1.2f);
+                ExplosionSupport.createExplosion(world, loc, def, 4.5, false);
     }
 }

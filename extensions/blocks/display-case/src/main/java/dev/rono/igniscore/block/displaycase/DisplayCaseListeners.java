@@ -29,34 +29,6 @@ final class DisplayCaseListeners implements OnBlockPlaceListener, OnBlockBreakLi
         this.registry = new BlockStorageRegistry(context, "display-case");
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        registry.registerBlock(location, title(definition), 3);
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        registry.unregister(location);
-    }
-
-    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        registry.openBlock(player, location);
-        var gui = registry.blockGui(location);
-        if (gui == null) {
-            return;
-        }
-        IgnisItem display = gui.inventory().getItem(DISPLAY_SLOT);
-        if (display != null && !display.isAir()) {
-            player.sendMessage("<gray>Museum exhibit: <white>" + display.getAmount() + "x "
-                    + display.getMaterialKey() + "</white></gray>");
-            IgnisWorld world = worldAt(location);
-            TheatricsSupport.sparkle(world, Locations.toCenter(location), "END_ROD", 6);
-        }
-    }
-
     private Component title(BlockDefinition definition) {
         return definition.getTitle() == null ? Component.text("Display Case") : definition.getTitle();
     }
@@ -67,16 +39,30 @@ final class DisplayCaseListeners implements OnBlockPlaceListener, OnBlockBreakLi
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                registry.registerBlock(event.block().location(), title(event.block().definition()), 3);
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                registry.unregister(event.block().location());
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                registry.openBlock(event.player(), event.block().location());
+                var gui = registry.blockGui(event.block().location());
+                if (gui == null) {
+                    return;
+                }
+                IgnisItem display = gui.inventory().getItem(DISPLAY_SLOT);
+                if (display != null && !display.isAir()) {
+                    event.player().sendMessage("<gray>Museum exhibit: <white>" + display.getAmount() + "x "
+                            + display.getMaterialKey() + "</white></gray>");
+                    IgnisWorld world = worldAt(event.block().location());
+                    TheatricsSupport.sparkle(world, Locations.toCenter(event.block().location()), "END_ROD", 6);
+                }
     }
 }

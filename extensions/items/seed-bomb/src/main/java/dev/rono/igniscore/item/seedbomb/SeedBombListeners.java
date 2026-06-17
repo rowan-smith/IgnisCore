@@ -19,46 +19,42 @@ final class SeedBombListeners implements OnItemClickListener {
         this.context = context;
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation eye = player.getEyeLocation();
-        double speed = StrategySupport.customDouble(definition.getCustomData(), "throwSpeed", 1.1);
-        Object bomb = world.spawnProjectile("egg", eye, player, 0, 0, speed);
-        item.setAmount(item.getAmount() - 1);
-        if (bomb == null) {
-            return;
-        }
-        int fuse = StrategySupport.customInt(definition.getCustomData(), "scatterDelayTicks", 15);
-        int radius = StrategySupport.customInt(definition.getCustomData(), "scatterRadius", 3);
-        context.scheduler().runLater(eye, () -> {
-            IgnisLocation impact = world.isEntityValid(bomb) ? world.getEntityLocation(bomb) : eye;
-            if (impact == null) {
-                return;
-            }
-            if (world.isEntityValid(bomb)) {
-                world.removeEntity(bomb);
-            }
-            String[] plants = {"short_grass", "dandelion", "poppy", "cornflower"};
-            for (int x = -radius; x <= radius; x++) {
-                for (int z = -radius; z <= radius; z++) {
-                    IgnisLocation soil = impact.add(x, -1, z);
-                    IgnisLocation spot = impact.add(x, 0, z);
-                    String below = world.getBlockMaterialKey(soil).toLowerCase();
-                    String above = world.getBlockMaterialKey(spot).toLowerCase();
-                    if ((below.contains("dirt") || below.contains("grass")) && above.contains("air")) {
-                        world.setBlockMaterialKey(spot, plants[(x + z + radius) % plants.length]);
-                    }
-                }
-            }
-            TheatricsSupport.sparkle(world, impact, "HAPPY_VILLAGER", 12);
-            world.playSound(impact, "BLOCK_GRASS_PLACE", 0.8f, 1.2f);
-        }, fuse);
-    }
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation eye = event.player().getEyeLocation();
+                double speed = StrategySupport.customDouble(event.definition().getCustomData(), "throwSpeed", 1.1);
+                Object bomb = world.spawnProjectile("egg", eye, event.player(), 0, 0, speed);
+                event.item().setAmount(event.item().getAmount() - 1);
+                if (bomb == null) {
+                    return;
+                }
+                int fuse = StrategySupport.customInt(event.definition().getCustomData(), "scatterDelayTicks", 15);
+                int radius = StrategySupport.customInt(event.definition().getCustomData(), "scatterRadius", 3);
+                context.scheduler().runLater(eye, () -> {
+                    IgnisLocation impact = world.isEntityValid(bomb) ? world.getEntityLocation(bomb) : eye;
+                    if (impact == null) {
+                        return;
+                    }
+                    if (world.isEntityValid(bomb)) {
+                        world.removeEntity(bomb);
+                    }
+                    String[] plants = {"short_grass", "dandelion", "poppy", "cornflower"};
+                    for (int x = -radius; x <= radius; x++) {
+                        for (int z = -radius; z <= radius; z++) {
+                            IgnisLocation soil = impact.add(x, -1, z);
+                            IgnisLocation spot = impact.add(x, 0, z);
+                            String below = world.getBlockMaterialKey(soil).toLowerCase();
+                            String above = world.getBlockMaterialKey(spot).toLowerCase();
+                            if ((below.contains("dirt") || below.contains("grass")) && above.contains("air")) {
+                                world.setBlockMaterialKey(spot, plants[(x + z + radius) % plants.length]);
+                            }
+                        }
+                    }
+                    TheatricsSupport.sparkle(world, impact, "HAPPY_VILLAGER", 12);
+                    world.playSound(impact, "BLOCK_GRASS_PLACE", 0.8f, 1.2f);
+                }, fuse);
             }
     }
 }

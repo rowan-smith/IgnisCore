@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class StrategyProfileTest {
     @Test
     void defaultsAreNeutral() {
-        StrategyProfile profile = StrategyProfile.defaults();
+        StrategyProfile profile = StrategyProfile.placed();
 
         assertFalse(profile.isCombustible());
         assertTrue(profile.isPlaceable());

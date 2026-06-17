@@ -14,7 +14,7 @@ class PlacedClickSupportTest {
 
     @Test
     void neutralDefaultsDoNotAssignClickActions() {
-        StrategyProfile profile = StrategyProfile.defaults();
+        StrategyProfile profile = StrategyProfile.placed();
 
         assertEquals(CustomBlockAction.NONE,
                 PlacedClickSupport.resolve(profile, IgnisInteraction.LEFT_CLICK_BLOCK, "AIR"));
@@ -71,7 +71,7 @@ class PlacedClickSupportTest {
 
     @Test
     void airClicksIgnoreNonBlockInteractions() {
-        StrategyProfile profile = StrategyProfile.defaults();
+        StrategyProfile profile = StrategyProfile.placed();
 
         assertEquals(CustomBlockAction.NONE,
                 PlacedClickSupport.resolve(profile, IgnisInteraction.RIGHT_CLICK_AIR, "FLINT_AND_STEEL"));

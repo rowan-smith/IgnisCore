@@ -32,36 +32,6 @@ final class PicnicBasketListeners implements OnBlockPlaceListener, OnBlockBreakL
         this.registry = new BlockStorageRegistry(context, "picnic-basket");
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        registry.registerBlock(location, title(definition), 1);
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        registry.unregister(location);
-        LAST_OPEN.remove(blockKey(location));
-    }
-
-    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        String key = blockKey(location);
-        long now = System.currentTimeMillis();
-        Long previous = LAST_OPEN.put(key, now);
-        registry.openBlock(player, location);
-        if (previous != null && now - previous < 5000L) {
-            IgnisWorld world = worldAt(location);
-            IgnisLocation center = Locations.toCenter(location);
-            for (IgnisPlayer nearby : world.getPlayersNear(center, 6.0)) {
-                nearby.applyPotionEffect("SATURATION", 100, 0);
-                nearby.sendMessage("<gold>Shared picnic — saturation boost!</gold>");
-            }
-            TheatricsSupport.sparkle(world, center, "HEART", 10);
-        }
-    }
-
     private static String blockKey(IgnisLocation location) {
         IgnisLocation b = Locations.toBlock(location);
         return b.worldName() + ":" + (int) b.x() + ":" + (int) b.y() + ":" + (int) b.z();
@@ -77,16 +47,32 @@ final class PicnicBasketListeners implements OnBlockPlaceListener, OnBlockBreakL
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                registry.registerBlock(event.block().location(), title(event.block().definition()), 1);
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                registry.unregister(event.block().location());
+                LAST_OPEN.remove(blockKey(event.block().location()));
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                String key = blockKey(event.block().location());
+                long now = System.currentTimeMillis();
+                Long previous = LAST_OPEN.put(key, now);
+                registry.openBlock(event.player(), event.block().location());
+                if (previous != null && now - previous < 5000L) {
+                    IgnisWorld world = worldAt(event.block().location());
+                    IgnisLocation center = Locations.toCenter(event.block().location());
+                    for (IgnisPlayer nearby : world.getPlayersNear(center, 6.0)) {
+                        nearby.applyPotionEffect("SATURATION", 100, 0);
+                        nearby.sendMessage("<gold>Shared picnic — saturation boost!</gold>");
+                    }
+                    TheatricsSupport.sparkle(world, center, "HEART", 10);
+                }
     }
 }

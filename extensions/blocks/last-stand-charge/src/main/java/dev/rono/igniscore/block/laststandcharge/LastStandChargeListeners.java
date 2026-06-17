@@ -24,43 +24,35 @@ final class LastStandChargeListeners implements OnBlockTickListener, OnBlockTrig
         this.context = context;
     }
 
-    void onTick(RuntimeBlockInstance instance) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        int fuse = ExplosionSupport.fuseTicks(instance, 80);
-        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        int interval = StrategySupport.customInt(def, "tickInterval", 5);
-        if (elapsed % interval != 0) {
-            return;
-        }
-        double radius = StrategySupport.customDouble(def, "stasisRadius", 5.0);
-        if (instance.getTicksLeft() < StrategySupport.customInt(def, "lastStandTicks", 30)) {
-            EntityUtilSupport.freezeInRadius(world, loc, radius);
-            TheatricsSupport.sparkle(world, loc, "TOTEM_OF_UNDYING", 6);
-        }
-    }
-
-    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        BlockDefinition def = instance.getDefinition();
-        IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        IgnisWorld world = worldAt(loc);
-        world.playSound(loc, "ITEM_TOTEM_USE", 1.0f, 0.8f);
-        TheatricsSupport.pulseRing(world, loc, 3.0, "EXPLOSION");
-        ExplosionSupport.createExplosion(world, loc, def, StrategySupport.customDouble(def, "lastStandPower", 6.0), false);
-    }
-
     private IgnisWorld worldAt(IgnisLocation location) {
         return context.extensions().resolveWorld(location);
     }
 
     @Override
     public void onBlockTick(BlockTickEvent event) {
-        onTick(event.instance());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                int fuse = ExplosionSupport.fuseTicks(event.instance(), 80);
+                int elapsed = ExplosionSupport.elapsedFuseTicks(event.instance(), 80);
+                int interval = StrategySupport.customInt(def, "tickInterval", 5);
+                if (elapsed % interval != 0) {
+                    return;
+                }
+                double radius = StrategySupport.customDouble(def, "stasisRadius", 5.0);
+                if (event.instance().getTicksLeft() < StrategySupport.customInt(def, "lastStandTicks", 30)) {
+                    EntityUtilSupport.freezeInRadius(world, loc, radius);
+                    TheatricsSupport.sparkle(world, loc, "TOTEM_OF_UNDYING", 6);
+                }
     }
 
     @Override
     public void onBlockTrigger(BlockTriggerEvent event) {
-        onTrigger(event.instance(), event.triggerContext());
+                BlockDefinition def = event.instance().getDefinition();
+                IgnisLocation loc = Locations.toCenter(event.instance().getLocation());
+                IgnisWorld world = worldAt(loc);
+                world.playSound(loc, "ITEM_TOTEM_USE", 1.0f, 0.8f);
+                TheatricsSupport.pulseRing(world, loc, 3.0, "EXPLOSION");
+                ExplosionSupport.createExplosion(world, loc, def, StrategySupport.customDouble(def, "lastStandPower", 6.0), false);
     }
 }

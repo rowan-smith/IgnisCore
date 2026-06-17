@@ -23,17 +23,6 @@ final class ScarecrowAnchorListeners implements OnBlockPlaceListener, OnBlockBre
         this.context = context;
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        long period = StrategySupport.customInt(definition, "tickPeriod", 20);
-        PlacedTickSupport.start(context, location, period, () -> tick(definition, location));
-        IgnisLocation center = Locations.toCenter(location);
-        TheatricsSupport.chime(worldAt(center), center, 1.0f);
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.stop(location);
-    }
-
     private void tick(BlockDefinition definition, IgnisLocation location) {
         IgnisWorld world = worldAt(location);
         IgnisLocation center = Locations.toCenter(location);
@@ -60,11 +49,14 @@ final class ScarecrowAnchorListeners implements OnBlockPlaceListener, OnBlockBre
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                long period = StrategySupport.customInt(event.block().definition(), "tickPeriod", 20);
+                PlacedTickSupport.start(context, event.block().location(), period, () -> tick(event.block().definition(), event.block().location()));
+                IgnisLocation center = Locations.toCenter(event.block().location());
+                TheatricsSupport.chime(worldAt(center), center, 1.0f);
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                PlacedTickSupport.stop(event.block().location());
     }
 }

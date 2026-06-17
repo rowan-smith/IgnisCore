@@ -25,27 +25,6 @@ final class SprinklerHeadListeners implements OnBlockPlaceListener, OnBlockBreak
         this.context = context;
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        String key = LinkedBlockRegistry.key(location);
-        ARMED.put(key, false);
-        LinkedBlockRegistry.register(location, (player, action) -> {
-            if ("arm".equals(action) || "toggle".equals(action)) {
-                boolean armed = ARMED.merge(key, false, (a, b) -> !a);
-                player.sendMessage(armed ? "<green>Sprinkler armed.</green>" : "<gray>Sprinkler disarmed.</gray>");
-                IgnisWorld world = worldAt(location);
-                world.playSound(Locations.toCenter(location), "BLOCK_DISPENSER_DISPENSE", 0.6f, 1.0f);
-            }
-        });
-        PlacedTickSupport.start(context, location, StrategySupport.customInt(definition, "tickPeriod", 60),
-                () -> tick(definition, location));
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.stop(location);
-        LinkedBlockRegistry.unregister(location);
-        ARMED.remove(LinkedBlockRegistry.key(location));
-    }
-
     private void tick(BlockDefinition definition, IgnisLocation location) {
         if (!ARMED.getOrDefault(LinkedBlockRegistry.key(location), false)) {
             return;
@@ -72,11 +51,24 @@ final class SprinklerHeadListeners implements OnBlockPlaceListener, OnBlockBreak
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                String key = LinkedBlockRegistry.key(event.block().location());
+                ARMED.put(key, false);
+                LinkedBlockRegistry.register(event.block().location(), (player, action) -> {
+                    if ("arm".equals(action) || "toggle".equals(action)) {
+                        boolean armed = ARMED.merge(key, false, (a, b) -> !a);
+                        player.sendMessage(armed ? "<green>Sprinkler armed.</green>" : "<gray>Sprinkler disarmed.</gray>");
+                        IgnisWorld world = worldAt(event.block().location());
+                        world.playSound(Locations.toCenter(event.block().location()), "BLOCK_DISPENSER_DISPENSE", 0.6f, 1.0f);
+                    }
+                });
+                PlacedTickSupport.start(context, event.block().location(), StrategySupport.customInt(event.block().definition(), "tickPeriod", 60),
+                        () -> tick(event.block().definition(), event.block().location()));
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                PlacedTickSupport.stop(event.block().location());
+                LinkedBlockRegistry.unregister(event.block().location());
+                ARMED.remove(LinkedBlockRegistry.key(event.block().location()));
     }
 }

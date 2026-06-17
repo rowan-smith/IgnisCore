@@ -24,30 +24,25 @@ final class StructureCompassListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation loc = player.getEyeLocation();
-        String heading = nbtService.getItemString(item, "ignis:compass_heading");
-        if (heading == null || heading.isBlank()) {
-            heading = "north";
-            nbtService.setItemString(item, "ignis:compass_heading", heading);
-        }
-        float yaw = switch (heading.toLowerCase()) {
-            case "east" -> 90f;
-            case "south" -> 180f;
-            case "west" -> 270f;
-            default -> 0f;
-        };
-        player.sendMessage("<aqua>Structure compass bearing: <white>" + heading + "</white> (" + (int) yaw + "°)</aqua>");
-        TheatricsSupport.pulseRing(world, loc, 3.0, "END_ROD");
-        world.playSound(loc, "ITEM_LODESTONE_COMPASS_LOCK", 0.8f, 1.0f);
-    }
-
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation loc = event.player().getEyeLocation();
+                String heading = nbtService.getItemString(event.item(), "ignis:compass_heading");
+                if (heading == null || heading.isBlank()) {
+                    heading = "north";
+                    nbtService.setItemString(event.item(), "ignis:compass_heading", heading);
+                }
+                float yaw = switch (heading.toLowerCase()) {
+                    case "east" -> 90f;
+                    case "south" -> 180f;
+                    case "west" -> 270f;
+                    default -> 0f;
+                };
+                event.player().sendMessage("<aqua>Structure compass bearing: <white>" + heading + "</white> (" + (int) yaw + "°)</aqua>");
+                TheatricsSupport.pulseRing(world, loc, 3.0, "END_ROD");
+                world.playSound(loc, "ITEM_LODESTONE_COMPASS_LOCK", 0.8f, 1.0f);
             }
     }
 }

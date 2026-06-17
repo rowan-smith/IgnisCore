@@ -9,8 +9,8 @@ import java.util.Optional;
 /**
  * Default item interaction resolution from YAML {@code behavior} sections.
  *
- * <p>Extensions override {@link IgnisItemStrategy#onItemAction} for custom behavior; use this helper
- * when composing behavior tokens with extension logic outside the default interface routing.</p>
+ * <p>Extensions implement {@link dev.rono.igniscore.api.event.OnItemClickListener} for custom behavior;
+ * use this helper when composing behavior tokens with extension logic outside the default interface routing.</p>
  */
 public final class ItemUseSupport {
     private ItemUseSupport() {

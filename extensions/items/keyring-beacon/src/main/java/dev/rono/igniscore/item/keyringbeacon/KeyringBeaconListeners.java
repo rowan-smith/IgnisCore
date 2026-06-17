@@ -24,24 +24,19 @@ final class KeyringBeaconListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation loc = player.getEyeLocation();
-        int slots = StrategySupport.customInt(definition.getCustomData(), "beaconSlots", 3);
-        int index = nbtService.getItemInt(item, "ignis:beacon_index", 0) % Math.max(1, slots);
-        String key = "ignis:beacon_" + index;
-        nbtService.setItemString(item, key, loc.x() + "," + loc.y() + "," + loc.z());
-        nbtService.setItemInt(item, "ignis:beacon_index", index + 1);
-        player.sendMessage("<aqua>Beacon slot <white>" + index + "</white> marked.</aqua>");
-        TheatricsSupport.pulseRing(world, loc, 2.0, "END_ROD");
-        world.playSound(loc, "BLOCK_BEACON_ACTIVATE", 0.7f, 1.0f);
-    }
-
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation loc = event.player().getEyeLocation();
+                int slots = StrategySupport.customInt(event.definition().getCustomData(), "beaconSlots", 3);
+                int index = nbtService.getItemInt(event.item(), "ignis:beacon_index", 0) % Math.max(1, slots);
+                String key = "ignis:beacon_" + index;
+                nbtService.setItemString(event.item(), key, loc.x() + "," + loc.y() + "," + loc.z());
+                nbtService.setItemInt(event.item(), "ignis:beacon_index", index + 1);
+                event.player().sendMessage("<aqua>Beacon slot <white>" + index + "</white> marked.</aqua>");
+                TheatricsSupport.pulseRing(world, loc, 2.0, "END_ROD");
+                world.playSound(loc, "BLOCK_BEACON_ACTIVATE", 0.7f, 1.0f);
             }
     }
 }

@@ -35,32 +35,6 @@ final class CompostTeaBrewerListeners implements OnBlockPlaceListener, OnBlockBr
         this.registry = new BlockStorageRegistry(context, "compost-tea-brewer");
     }
 
-    void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        registry.registerBlock(location, title(definition), 3);
-        PlacedTickSupport.start(context, location, StrategySupport.customInt(definition, "tickPeriod", 45),
-                () -> tick(definition, location));
-    }
-
-    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        PlacedTickSupport.stop(location);
-        registry.unregister(location);
-    }
-
-    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
-                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
-                          CustomBlockAction action) {
-        if (action != CustomBlockAction.OPEN) {
-            return;
-        }
-        if (heldItem != null && !heldItem.isAir() && ProcessingGuiSupport.matches(heldItem, "splash_potion", "lingering_potion")) {
-            IgnisWorld world = worldAt(location);
-            BlockScanSupport.bonemealRadius(world, Locations.toCenter(location), StrategySupport.customInt(definition, "cropRadius", 4));
-            heldItem.setAmount(heldItem.getAmount() - 1);
-            player.sendMessage("<green>Compost tea splashes growth over nearby crops.</green>");
-        }
-        registry.openBlock(player, location);
-    }
-
     private void tick(BlockDefinition definition, IgnisLocation location) {
         var gui = registry.blockGui(location);
         if (gui == null) {
@@ -90,16 +64,28 @@ final class CompostTeaBrewerListeners implements OnBlockPlaceListener, OnBlockBr
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        onPlaced(event.block().definition(), event.block().location());
+                registry.registerBlock(event.block().location(), title(event.block().definition()), 3);
+                PlacedTickSupport.start(context, event.block().location(), StrategySupport.customInt(event.block().definition(), "tickPeriod", 45),
+                        () -> tick(event.block().definition(), event.block().location()));
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        onPlacedBreak(event.block().definition(), event.block().location());
+                PlacedTickSupport.stop(event.block().location());
+                registry.unregister(event.block().location());
     }
 
     @Override
     public void onBlockInteract(BlockInteractEvent event) {
-        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+                if (event.action() != CustomBlockAction.OPEN) {
+                    return;
+                }
+                if (event.heldItem() != null && !event.heldItem().isAir() && ProcessingGuiSupport.matches(event.heldItem(), "splash_potion", "lingering_potion")) {
+                    IgnisWorld world = worldAt(event.block().location());
+                    BlockScanSupport.bonemealRadius(world, Locations.toCenter(event.block().location()), StrategySupport.customInt(event.block().definition(), "cropRadius", 4));
+                    event.heldItem().setAmount(event.heldItem().getAmount() - 1);
+                    event.player().sendMessage("<green>Compost tea splashes growth over nearby crops.</green>");
+                }
+                registry.openBlock(event.player(), event.block().location());
     }
 }

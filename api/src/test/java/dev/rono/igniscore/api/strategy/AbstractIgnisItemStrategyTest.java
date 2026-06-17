@@ -41,15 +41,15 @@ class AbstractIgnisItemStrategyTest {
         }
 
         double readDouble(ItemDefinition definition, String key, double defaultValue) {
-            return getCustomDouble(definition, key, defaultValue);
+            return StrategySupport.customDouble(definition.getCustomData(), key, defaultValue);
         }
 
         int readInt(ItemDefinition definition, String key, int defaultValue) {
-            return getCustomInt(definition, key, defaultValue);
+            return StrategySupport.customInt(definition.getCustomData(), key, defaultValue);
         }
 
         boolean readBoolean(ItemDefinition definition, String key, boolean defaultValue) {
-            return getCustomBoolean(definition, key, defaultValue);
+            return StrategySupport.customBoolean(definition.getCustomData(), key, defaultValue);
         }
     }
 }

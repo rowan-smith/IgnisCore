@@ -11,8 +11,8 @@ import java.util.OptionalInt;
  *
  * <p>Override {@link IgnisBlockStrategy#profile} to declare click behavior, combustibility, fuse
  * timing, and presentation. Fuse and explosion radius are <em>opt-in</em> — use {@link #fuse(int)}
- * or {@link #combustible(int, double)} for fuse blocks, and {@link #placed()} (or
- * {@link #defaults()}) for placed utility and interact blocks that do not need a fuse lifecycle.</p>
+ * or {@link #combustible(int, double)} for fuse blocks, and {@link #placed()} for placed utility
+ * and interact blocks that do not need a fuse lifecycle.</p>
  *
  * <p>Profiles are typically merged with YAML {@code behavior} sections before click resolution.</p>
  */
@@ -46,22 +46,12 @@ public final class StrategyProfile {
     /**
      * Returns a neutral profile for placed utility, interact, and GUI blocks.
      *
-     * <p>Non-combustible, no fuse lifecycle, no click actions. Equivalent to {@link #defaults()}.</p>
+     * <p>Non-combustible, no fuse lifecycle, no click actions.</p>
      *
      * @return placed-block profile
      */
     public static StrategyProfile placed() {
         return builder().build();
-    }
-
-    /**
-     * Returns a profile with builder defaults (non-combustible, placeable, breakable, no fuse lifecycle).
-     *
-     * @return default profile instance
-     * @see #placed()
-     */
-    public static StrategyProfile defaults() {
-        return placed();
     }
 
     /**

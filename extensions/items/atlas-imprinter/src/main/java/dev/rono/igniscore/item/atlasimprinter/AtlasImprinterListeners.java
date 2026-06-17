@@ -24,23 +24,18 @@ final class AtlasImprinterListeners implements OnItemClickListener {
         this.nbtService = context.nbt();
     }
 
-    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-        IgnisWorld world = player.getWorld();
-        IgnisLocation loc = player.getEyeLocation();
-        int maps = nbtService.getItemInt(item, "ignis:atlas_maps", 0) + 1;
-        nbtService.setItemInt(item, "ignis:atlas_maps", maps);
-        String stamp = (int) loc.x() + ":" + (int) loc.z();
-        nbtService.setItemString(item, "ignis:atlas_" + maps, stamp);
-        player.sendMessage("<gold>Atlas imprint <white>#" + maps + "</white> at " + stamp + "</gold>");
-        TheatricsSupport.sparkle(world, loc, "COMPOSTER", 8);
-        world.playSound(loc, "BLOCK_CARTOGRAPHY_TABLE_USE", 0.8f, 1.1f);
-    }
-
-
     @Override
     public void onItemClick(ItemClickEvent event) {
         if ("use".equals(event.actionToken())) {
-                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+                IgnisWorld world = event.player().getWorld();
+                IgnisLocation loc = event.player().getEyeLocation();
+                int maps = nbtService.getItemInt(event.item(), "ignis:atlas_maps", 0) + 1;
+                nbtService.setItemInt(event.item(), "ignis:atlas_maps", maps);
+                String stamp = (int) loc.x() + ":" + (int) loc.z();
+                nbtService.setItemString(event.item(), "ignis:atlas_" + maps, stamp);
+                event.player().sendMessage("<gold>Atlas imprint <white>#" + maps + "</white> at " + stamp + "</gold>");
+                TheatricsSupport.sparkle(world, loc, "COMPOSTER", 8);
+                world.playSound(loc, "BLOCK_CARTOGRAPHY_TABLE_USE", 0.8f, 1.1f);
             }
     }
 }
