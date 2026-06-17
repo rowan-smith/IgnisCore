@@ -3,7 +3,7 @@ id: bricklayers-broth
 display:
   title: "&bBricklayer's Broth"
   description:
-    - "&7Utility item"
+    - "&7Haste II; faster block placement 90s."
 
 item:
   base_material: paper

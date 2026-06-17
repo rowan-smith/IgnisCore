@@ -3,7 +3,7 @@ id: antidote-swab
 display:
   title: "&bAntidote Swab"
   description:
-    - "&7Utility item"
+    - "&7Clears one negative effect."
 
 item:
   base_material: paper

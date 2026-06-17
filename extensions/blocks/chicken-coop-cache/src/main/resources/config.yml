@@ -3,7 +3,7 @@ id: chicken-coop-cache
 display:
   title: "&bChicken Coop Cache"
   description:
-    - "&7Utility extension"
+    - "&7Collects eggs from nearby chickens into storage."
 
 block:
   placeable: true
@@ -22,9 +22,11 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   left_click_block: break
   right_click_block: open
   sounds:
     place: BLOCK_METAL_PLACE
-
+custom_data:
+  coopRadius: 6.0

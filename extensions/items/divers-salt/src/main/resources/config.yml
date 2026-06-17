@@ -3,7 +3,7 @@ id: divers-salt
 display:
   title: "&bDiver's Salt"
   description:
-    - "&7Utility item"
+    - "&7Water breathing for 90 seconds."
 
 item:
   base_material: paper

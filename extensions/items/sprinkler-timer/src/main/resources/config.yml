@@ -3,7 +3,7 @@ id: sprinkler-timer
 display:
   title: "&bSprinkler Timer"
   description:
-    - "&7Utility item"
+    - "&7Link to sprinkler head; arm/disarm remotely."
 
 item:
   base_material: paper

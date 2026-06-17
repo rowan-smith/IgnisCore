@@ -3,7 +3,7 @@ id: picnic-basket
 display:
   title: "&bPicnic Basket"
   description:
-    - "&7Utility extension"
+    - "&7Shared consumable storage; duo open grants saturation."
 
 block:
   placeable: true
@@ -22,9 +22,9 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   left_click_block: break
   right_click_block: open
   sounds:
     place: BLOCK_METAL_PLACE
-

@@ -3,7 +3,7 @@ id: pizza-oven
 display:
   title: "&bPizza Oven"
   description:
-    - "&7Utility extension"
+    - "&7Bakes bread, beetroot, and milk into cake."
 
 block:
   placeable: true
@@ -22,9 +22,11 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   left_click_block: break
   right_click_block: open
   sounds:
     place: BLOCK_METAL_PLACE
-
+custom_data:
+  tickPeriod: 50

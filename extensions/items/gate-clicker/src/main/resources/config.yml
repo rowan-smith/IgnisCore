@@ -3,7 +3,7 @@ id: gate-clicker
 display:
   title: "&bGate Clicker"
   description:
-    - "&7Utility item"
+    - "&7Link to keyed hatch; toggle from 64 blocks."
 
 item:
   base_material: paper

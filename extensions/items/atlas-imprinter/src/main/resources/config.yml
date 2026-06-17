@@ -3,7 +3,7 @@ id: atlas-imprinter
 display:
   title: "&bAtlas Imprinter"
   description:
-    - "&7Utility item"
+    - "&7Stamps coordinates into atlas imprints."
 
 item:
   base_material: paper

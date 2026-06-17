@@ -3,7 +3,7 @@ id: swap-charge
 display:
   title: "&bSwap Charge"
   description:
-    - "&7Utility extension"
+    - "&7Swaps nearest players on detonation."
 
 block:
   placeable: true
@@ -22,6 +22,7 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   combustible: true
   left_click_block: break
@@ -32,6 +33,7 @@ behavior:
   sounds:
     place: BLOCK_TNT_PLACE
     ignite: ITEM_FLINTANDSTEEL_USE
-
 custom_data:
   fuse: 50
+  swapRadius: 8.0
+  power: 2.5

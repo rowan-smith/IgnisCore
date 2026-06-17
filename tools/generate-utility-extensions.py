@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Scaffold utility extension modules for IgnisCore."""
+"""Scaffold utility extension Java modules for IgnisCore.
+
+Generates pom.xml, manifest YAML, Strategy.java, Behavior.java, and tests.
+config.yml is maintained per module — see tools/write-extension-configs.py.
+"""
 
 from __future__ import annotations
 
@@ -172,62 +176,6 @@ def profiles_yaml(profiles: list[str] | None) -> str:
     return "\n".join(lines) + "\n"
 
 
-def custom_data_yaml(data: dict | None, indent: int = 2) -> str:
-    if not data:
-        return ""
-    pad = " " * indent
-    lines = []
-    for key, value in data.items():
-        if isinstance(value, str):
-            lines.append(f'{pad}{key}: "{value}"')
-        else:
-            lines.append(f"{pad}{key}: {value}")
-    return "\n".join(lines)
-
-
-def block_custom_data(ext: dict) -> str:
-    data = dict(ext.get("custom_data") or {})
-    if ext["type"] == "fuse" and "fuse" not in data:
-        data["fuse"] = ext.get("fuse", 80)
-    if not data:
-        return ""
-    return "custom_data:\n" + custom_data_yaml(data) + "\n"
-
-
-def block_behavior_yaml(ext: dict) -> str:
-    ext_type = ext["type"]
-    combustible = ext.get("combustible", ext_type == "fuse")
-    if ext_type == "interact":
-        return """behavior:
-  left_click_block: break
-  right_click_block: open
-  sounds:
-    place: BLOCK_METAL_PLACE"""
-    if ext_type == "placed":
-        return """behavior:
-  left_click_block: break
-  right_click_block: none
-  sounds:
-    place: BLOCK_AMETHYST_BLOCK_CHIME"""
-    if combustible:
-        return """behavior:
-  combustible: true
-  left_click_block: break
-  right_click_block: ignite
-  ignition_materials:
-    - FLINT_AND_STEEL
-    - FIRE_CHARGE
-  sounds:
-    place: BLOCK_TNT_PLACE
-    ignite: ITEM_FLINTANDSTEEL_USE"""
-    return """behavior:
-  combustible: false
-  left_click_block: break
-  right_click_block: none
-  sounds:
-    place: BLOCK_TNT_PLACE"""
-
-
 def block_pom(artifact: str) -> str:
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -254,64 +202,6 @@ def block_pom(artifact: str) -> str:
 
 def item_pom(artifact: str) -> str:
     return block_pom(artifact).replace("dev.rono.blocks", "dev.rono.items", 1).replace("<artifactId>blocks</artifactId>", "<artifactId>items</artifactId>", 1)
-
-
-def block_config(ext: dict) -> str:
-    behavior = block_behavior_yaml(ext)
-    custom_data = block_custom_data(ext)
-    return f"""id: {ext['id']}
-
-display:
-  title: "&b{ext['name']}"
-  description:
-    - "&7Utility extension"
-
-block:
-  placeable: true
-  breakable: true
-  breaking:
-    ticks: 0
-    break_sound: BLOCK_GRAVEL_BREAK
-    hit_sound: BLOCK_GRAVEL_HIT
-
-textures:
-  top: top.png
-  side: side.png
-  bottom: bottom.png
-
-model:
-  type: "block_display"
-  mode: "auto"
-
-{behavior}
-
-{custom_data}"""
-
-
-def item_config(ext: dict) -> str:
-    custom_data = ext.get("custom_data")
-    custom_section = ""
-    if custom_data:
-        yaml = custom_data_yaml(custom_data)
-        if yaml:
-            custom_section = f"\ncustom_data:\n{yaml}\n"
-    return f"""id: {ext['id']}
-
-display:
-  title: "&b{ext['name']}"
-  description:
-    - "&7Utility item"
-
-item:
-  base_material: paper
-
-textures:
-  icon: icon.png
-
-behavior:
-  right_click_air: use
-  right_click_block: use
-{custom_section}"""
 
 
 def load_behavior(kind: str, class_name: str, package: str, is_item: bool) -> str:
@@ -495,7 +385,6 @@ api-version: @ignis.api.version@
 author: IgnisCore
 strategy: dev.rono.igniscore.block.{package}.Strategy
 {integration_yaml(ext.get('integrations'))}{profiles_yaml(ext.get('profiles'))}""")
-    write(base / "src/main/resources/config.yml", block_config(ext))
     write(base / f"src/main/java/dev/rono/igniscore/block/{package}/Strategy.java", block_strategy(package, class_name, ext))
     write(base / f"src/main/java/dev/rono/igniscore/block/{package}/{class_name}Behavior.java", load_behavior(ext["kind"], class_name, package, False))
     write(base / f"src/test/java/dev/rono/igniscore/block/{package}/StrategyTest.java", strategy_test_block(package, ext["id"]))
@@ -513,7 +402,6 @@ api-version: @ignis.api.version@
 author: IgnisCore
 strategy: dev.rono.igniscore.item.{package}.Strategy
 {integration_yaml(ext.get('integrations'))}{profiles_yaml(ext.get('profiles'))}""")
-    write(base / "src/main/resources/config.yml", item_config(ext))
     write(base / f"src/main/java/dev/rono/igniscore/item/{package}/Strategy.java", item_strategy(package, class_name))
     write(base / f"src/main/java/dev/rono/igniscore/item/{package}/{class_name}Behavior.java", load_behavior(ext["kind"], class_name, package, True))
     write(base / f"src/test/java/dev/rono/igniscore/item/{package}/StrategyTest.java", strategy_test_item(package, ext["id"]))

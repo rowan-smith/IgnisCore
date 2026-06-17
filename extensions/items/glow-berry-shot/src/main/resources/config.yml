@@ -3,7 +3,7 @@ id: glow-berry-shot
 display:
   title: "&bGlow Berry Shot"
   description:
-    - "&7Utility item"
+    - "&7Night vision + player glow 120s."
 
 item:
   base_material: paper

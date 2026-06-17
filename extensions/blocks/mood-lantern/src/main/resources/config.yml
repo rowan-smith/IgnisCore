@@ -3,7 +3,7 @@ id: mood-lantern
 display:
   title: "&bMood Lantern"
   description:
-    - "&7Utility extension"
+    - "&7Particle mood shifts with nearby mobs."
 
 block:
   placeable: true
@@ -22,9 +22,11 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   left_click_block: break
   right_click_block: none
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
-
+custom_data:
+  moodRadius: 10.0

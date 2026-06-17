@@ -3,7 +3,7 @@ id: trait-badge
 display:
   title: "&bTrait Badge"
   description:
-    - "&7Utility item"
+    - "&7Rolls and stores a random trait."
 
 item:
   base_material: paper

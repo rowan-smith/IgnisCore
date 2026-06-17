@@ -3,7 +3,7 @@ id: luck-dust
 display:
   title: "&bLuck Dust"
   description:
-    - "&7Utility item"
+    - "&7Sprinkle near chest for bonus loot roll."
 
 item:
   base_material: paper

@@ -3,7 +3,7 @@ id: lock
 display:
   title: "&bLock"
   description:
-    - "&7Utility item"
+    - "&7Toggles engaged/disengaged lock state."
 
 item:
   base_material: paper

@@ -3,7 +3,7 @@ id: miners-lunch
 display:
   title: "&bMiner's Lunch"
   description:
-    - "&7Utility item"
+    - "&7Haste + saturation; 10-minute cooldown."
 
 item:
   base_material: paper

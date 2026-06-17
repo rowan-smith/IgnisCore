@@ -3,7 +3,7 @@ id: paint-stripper
 display:
   title: "&bPaint Stripper"
   description:
-    - "&7Utility item"
+    - "&7Strips banners or dye from blocks."
 
 item:
   base_material: paper

@@ -3,7 +3,7 @@ id: structure-compass
 display:
   title: "&bStructure Compass"
   description:
-    - "&7Utility item"
+    - "&7Shows stored compass bearing."
 
 item:
   base_material: paper

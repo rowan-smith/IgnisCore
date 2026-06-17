@@ -3,7 +3,7 @@ id: vine-shears
 display:
   title: "&bVine Shears"
   description:
-    - "&7Utility item"
+    - "&7Cuts connected vine clusters from one click."
 
 item:
   base_material: paper
@@ -14,3 +14,6 @@ textures:
 behavior:
   right_click_air: use
   right_click_block: use
+
+custom_data:
+  maxVines: 32

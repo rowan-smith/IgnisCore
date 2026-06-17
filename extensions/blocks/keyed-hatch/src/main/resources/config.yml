@@ -3,7 +3,7 @@ id: keyed-hatch
 display:
   title: "&bKeyed Hatch"
   description:
-    - "&7Utility extension"
+    - "&7Remote-toggle iron hatch or bars."
 
 block:
   placeable: true
@@ -22,9 +22,9 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   left_click_block: break
   right_click_block: none
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
-

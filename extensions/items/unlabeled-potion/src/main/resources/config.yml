@@ -3,7 +3,7 @@ id: unlabeled-potion
 display:
   title: "&bUnlabeled Potion"
   description:
-    - "&7Utility item"
+    - "&7Random harmless effect; identifies after first drink."
 
 item:
   base_material: paper

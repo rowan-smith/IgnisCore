@@ -3,7 +3,7 @@ id: last-stand-charge
 display:
   title: "&bLast Stand Charge"
   description:
-    - "&7Utility extension"
+    - "&7Freezes nearby entities, then erupts. Ignite manually."
 
 block:
   placeable: true
@@ -22,12 +22,15 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   combustible: false
   left_click_block: break
   right_click_block: none
   sounds:
     place: BLOCK_TNT_PLACE
-
 custom_data:
   fuse: 0
+  stasisRadius: 5.0
+  lastStandTicks: 30
+  lastStandPower: 6.0

@@ -3,7 +3,7 @@ id: mulch-spreader
 display:
   title: "&bMulch Spreader"
   description:
-    - "&7Utility item"
+    - "&7Mossifies paths or spreads moss near water."
 
 item:
   base_material: paper

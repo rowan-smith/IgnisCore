@@ -3,7 +3,7 @@ id: mob-grinder-hub
 display:
   title: "&bMob Grinder Hub"
   description:
-    - "&7Utility extension"
+    - "&7Pulls and damages hostiles in range."
 
 block:
   placeable: true
@@ -22,9 +22,11 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   left_click_block: break
   right_click_block: none
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
-
+custom_data:
+  grindRadius: 5.0

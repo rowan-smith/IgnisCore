@@ -3,7 +3,7 @@ id: quantum-coin
 display:
   title: "&bQuantum Coin"
   description:
-    - "&7Utility item"
+    - "&7Flips heads or tails."
 
 item:
   base_material: paper

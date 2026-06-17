@@ -3,7 +3,7 @@ id: powder-trail
 display:
   title: "&bPowder Trail"
   description:
-    - "&7Utility extension"
+    - "&7Smoke trail while fusing, then detonates."
 
 block:
   placeable: true
@@ -22,6 +22,7 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   combustible: true
   left_click_block: break
@@ -32,6 +33,8 @@ behavior:
   sounds:
     place: BLOCK_TNT_PLACE
     ignite: ITEM_FLINTANDSTEEL_USE
-
 custom_data:
   fuse: 0
+  trailStep: 0.6
+  power: 4.0
+  fire: false

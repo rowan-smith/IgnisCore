@@ -3,7 +3,7 @@ id: lamp-dimmer
 display:
   title: "&bLamp Dimmer"
   description:
-    - "&7Utility item"
+    - "&7Link to socket lamp; cycle brightness remotely."
 
 item:
   base_material: paper

@@ -3,7 +3,7 @@ id: pollinator-block
 display:
   title: "&bPollinator Block"
   description:
-    - "&7Utility extension"
+    - "&7Bonemeals crops in a small radius."
 
 block:
   placeable: true
@@ -22,9 +22,11 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   left_click_block: break
   right_click_block: none
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
-
+custom_data:
+  pollinateRadius: 3

@@ -3,7 +3,7 @@ id: stasis-field
 display:
   title: "&bStasis Field"
   description:
-    - "&7Utility extension"
+    - "&7Freezes entities within radius while placed."
 
 block:
   placeable: true
@@ -22,9 +22,11 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   left_click_block: break
   right_click_block: none
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
-
+custom_data:
+  stasisRadius: 4.5

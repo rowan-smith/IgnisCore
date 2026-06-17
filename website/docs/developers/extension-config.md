@@ -117,6 +117,17 @@ The utility suite under `extensions/blocks/` and `extensions/items/` includes:
 
 See the [Extension Cookbook](/developers/cookbook) for raw Java patterns that read these keys.
 
+## Maintaining utility extension configs
+
+Bundled utility extensions (`extensions/blocks/*`, `extensions/items/*` from the generator) keep `config.yml` **in each module**. Do not regenerate configs from `generate-utility-extensions.py`.
+
+| Tool | Purpose |
+|------|---------|
+| `tools/write-extension-configs.py` | Explicit per-module catalog; run after bulk catalog edits |
+| `extensions/*/src/main/resources/config.yml` | Preferred place to edit a single extension |
+
+Hand-authored reference extensions (`nuke`, `grenade`, `quarry-cache`) are edited in place only.
+
 ## Related
 
 - [Block lifecycle](/concepts/blocks) — placed vs active phases

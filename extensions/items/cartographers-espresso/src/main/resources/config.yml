@@ -3,7 +3,7 @@ id: cartographers-espresso
 display:
   title: "&bCartographer's Espresso"
   description:
-    - "&7Utility item"
+    - "&7Speed + compass heading toward ruins."
 
 item:
   base_material: paper

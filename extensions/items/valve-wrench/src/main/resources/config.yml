@@ -3,7 +3,7 @@ id: valve-wrench
 display:
   title: "&bValve Wrench"
   description:
-    - "&7Utility item"
+    - "&7Link to pipe valve; toggle flow remotely."
 
 item:
   base_material: paper

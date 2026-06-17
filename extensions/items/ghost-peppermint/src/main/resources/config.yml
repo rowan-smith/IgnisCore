@@ -3,7 +3,7 @@ id: ghost-peppermint
 display:
   title: "&bGhost Peppermint"
   description:
-    - "&7Utility item"
+    - "&7Phantoms ignore you until next sleep."
 
 item:
   base_material: paper

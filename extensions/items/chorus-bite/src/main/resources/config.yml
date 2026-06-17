@@ -3,7 +3,7 @@ id: chorus-bite
 display:
   title: "&bChorus Bite"
   description:
-    - "&7Utility item"
+    - "&7Random 8-block sideways warp."
 
 item:
   base_material: paper

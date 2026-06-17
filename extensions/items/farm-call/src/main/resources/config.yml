@@ -3,7 +3,7 @@ id: farm-call
 display:
   title: "&bFarm Call"
   description:
-    - "&7Utility item"
+    - "&7Link to barn bell; call livestock remotely."
 
 item:
   base_material: paper

@@ -3,7 +3,7 @@ id: heavy-coat-tonic
 display:
   title: "&bHeavy Coat Tonic"
   description:
-    - "&7Utility item"
+    - "&7Slowness I + Resistance II for 45s."
 
 item:
   base_material: paper
