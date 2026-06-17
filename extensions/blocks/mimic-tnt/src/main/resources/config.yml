@@ -1,11 +1,9 @@
-# Mimic TNT
+# =============================================================================
+# Mimic TNT — spawns decoy primed TNT; only one is real
+# =============================================================================
 #
-# A deceptive explosive that hides its true detonation point.
-#
-# After priming, it spawns multiple fake TNT entities in the
-# surrounding area. Only one is real — the rest detonate harmlessly.
-# The real TNT may explode unpredictably, creating tension and
-# misdirection for nearby players.
+# On ignite, multiple TNT entities scatter from the block. One carries the
+# real blast power; the rest are harmless fakes.
 
 id: mimic-tnt
 
@@ -44,12 +42,15 @@ behavior:
     place: BLOCK_BEACON_ACTIVATE
     ignite: ITEM_FLINTANDSTEEL_USE
 
+# mimicCount              — number of fake TNT entities (plus one real)
+# mimicHorizontalPower    — scatter velocity on X/Z
+# mimicVerticalPower      — upward scatter velocity
 custom_data:
-    fuse: 80
-    radius: 4.0
-    power: 4.0
-    fire: false
-    blockDamage: true
-    mimicCount: 8
-    mimicHorizontalPower: 1.0
-    mimicVerticalPower: 0.5
+  fuse: 80
+  radius: 4.0
+  power: 4.0
+  fire: false
+  blockDamage: true
+  mimicCount: 8
+  mimicHorizontalPower: 1.0
+  mimicVerticalPower: 0.5

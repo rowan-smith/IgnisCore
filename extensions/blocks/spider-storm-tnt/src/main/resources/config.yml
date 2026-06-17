@@ -1,3 +1,9 @@
+# =============================================================================
+# Spider Storm TNT — spawns a swarm of spiders on detonation
+# =============================================================================
+#
+# Can suppress the vanilla explosion and rely on entityPayload instead.
+
 id: spider-storm-tnt
 
 display:
@@ -40,6 +46,12 @@ behavior:
     place: ENTITY_SPIDER_AMBIENT
     ignite: ITEM_FLINTANDSTEEL_USE
 
+# realExplosion — false = particle burst only; entities come from entityPayload
+# multiplier    — scales resolved power for spread distance and spider aggression
+# entityPayload.type          — Bukkit entity type name
+# entityPayload.count         — how many to spawn
+# entityPayload.behavior      — extension-specific AI hint (aggressive)
+# entityPayload.targetPlayers — whether spiders acquire nearby player targets
 custom_data:
   fuse: 80
   radius: 10.0

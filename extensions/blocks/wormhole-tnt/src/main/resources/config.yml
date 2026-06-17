@@ -1,11 +1,9 @@
-# Wormhole TNT
+# =============================================================================
+# Wormhole TNT — pulls entities inward, then detonates outward
+# =============================================================================
 #
-# A spatial distortion explosive that manipulates nearby matter before detonation.
-#
-# On priming, it creates a temporary wormhole that pulls in entities, mobs,
-# players, blocks, and dropped items. Everything is drawn toward a single
-# point before the wormhole collapses, releasing a powerful outward explosion
-# that ejects all collected matter violently across the area.
+# After ignition, nearby entities are drawn toward the block. Blocks may be
+# ripped into the void based on wormholeRip* settings before the final blast.
 
 id: wormhole-tnt
 
@@ -44,12 +42,16 @@ behavior:
     place: BLOCK_BEACON_ACTIVATE
     ignite: ITEM_FLINTANDSTEEL_USE
 
+# Standard explosion keys: fuse, radius, power, fire, blockDamage
+# wormholeRipRadius      — cube radius for block erosion during fuse
+# wormholeRipStartTicks  — fuse ticks remaining when ripping begins
+# wormholeRipChance      — per-block probability each rip pass (0.0–1.0)
 custom_data:
-    fuse: 100
-    radius: 12.0
-    power: 10.0
-    fire: false
-    blockDamage: true
-    wormholeRipRadius: 4
-    wormholeRipStartTicks: 60
-    wormholeRipChance: 0.05
+  fuse: 100
+  radius: 12.0
+  power: 10.0
+  fire: false
+  blockDamage: true
+  wormholeRipRadius: 4
+  wormholeRipStartTicks: 60
+  wormholeRipChance: 0.05

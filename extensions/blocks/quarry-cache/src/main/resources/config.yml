@@ -1,3 +1,15 @@
+# =============================================================================
+# Quarry Cache — collects nearby block drops into internal storage
+# =============================================================================
+#
+# Sections:
+#   display     — name and lore on the block item
+#   block       — placement, mining, tool-specific break speeds
+#   textures    — face images
+#   model       — authoring metadata only
+#   behavior    — left-click break, right-click open GUI
+#   custom_data — collection radius and debug visuals
+
 id: quarry-cache
 
 display:
@@ -10,6 +22,8 @@ display:
     - "&eRight-click&7 to open storage"
     - "&eCenter top row&7 sets item filters"
 
+# block.breaking.tool_ticks.<SUFFIX> — faster mining when tool material ends with suffix
+#   e.g. _PICKAXE matches wooden_pickaxe, iron_pickaxe, …
 block:
   placeable: true
   breakable: true
@@ -32,6 +46,7 @@ model:
   type: "block_display"
   mode: "auto"
 
+# right_click_block: open — core calls strategy onPlacedInteract with OPEN
 behavior:
   combustible: false
   left_click_block: break
@@ -39,6 +54,8 @@ behavior:
   sounds:
     place: BLOCK_CHEST_PLACE
 
+# collectRadius / collectDepth — horizontal radius and vertical depth for drop collection
+# showCollectZone — spawn particles outlining the collection area
 custom_data:
   collectRadius: 5.0
   collectDepth: 5.0
