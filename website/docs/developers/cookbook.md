@@ -14,7 +14,8 @@ Short, task-oriented recipes for IgnisCore block and item extensions. Prefer **`
 public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        context.eventBus().subscribe(PlacedClickListener.fixed(CustomBlockAction.BREAK, CustomBlockAction.NONE));
+        context.eventBus().subscribe(new MyOnBlockClickListener());
+        context.eventBus().subscribe(new MyOnBlockTriggerListener(context));
     }
 }
 ```
@@ -60,10 +61,12 @@ Subscribe combustible click routing and fuse listeners in the constructor:
 ```java
 public Strategy(IgnisStrategyContext context) {
     super(context);
-    context.eventBus().subscribe(PlacedClickListener.combustible());
-    context.eventBus().subscribe(new MyOnBlockTriggerListener(context));
+    context.eventBus().subscribe(new NukeOnBlockClickListener());
+    context.eventBus().subscribe(new NukeOnBlockTriggerListener(context));
 }
 ```
+
+`NukeOnBlockClickListener` reads `behavior.combustible` and `ignition_materials` from the block definition.
 
 Bundled fuse blocks often choose per-extension defaults in code (for example splitter-charge **60**, nuke **160**) while also storing fuse in `custom_data`.
 

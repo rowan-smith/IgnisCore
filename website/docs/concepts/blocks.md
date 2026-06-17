@@ -61,7 +61,7 @@ behavior:
 
 ## Behavior and clicks
 
-Declare combustibility, ignition materials, and sounds in `behavior`. Wire click routing with `OnBlockClickListener` subscriptions (for example `PlacedClickListener.combustible()` or `PlacedClickListener.fixed(...)`). Fuse and radius belong in `custom_data`.
+Declare combustibility, ignition materials, and sounds in `behavior`. Wire click routing with a module-local `OnBlockClickListener` (for example `NukeOnBlockClickListener`). Fuse and radius belong in `custom_data`.
 
 ## Persistence
 

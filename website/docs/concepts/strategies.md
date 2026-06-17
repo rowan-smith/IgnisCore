@@ -54,7 +54,7 @@ Prefer the short accessors on `IgnisStrategyContext`:
 
 ## Behavior config and clicks
 
-YAML `behavior` sections declare combustibility, ignition materials, and placement/ignite sounds. Click routing is handled by `OnBlockClickListener` subscriptions — use `PlacedClickListener.fixed(...)` or `PlacedClickListener.combustible()` from extension shared helpers.
+YAML `behavior` sections declare combustibility, ignition materials, and placement/ignite sounds. Click routing is handled by per-module `OnBlockClickListener` classes subscribed in the strategy constructor.
 
 Fuse timing and explosion radius live in `custom_data` and are read at runtime by the core and your listeners.
 
