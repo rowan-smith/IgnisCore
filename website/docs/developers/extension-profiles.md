@@ -4,7 +4,9 @@ description: Manifest profiles and integration requirements for IgnisCore extens
 slug: /developers/extension-profiles
 ---
 
-Extension manifests (`block-extension.yml` / `item-extension.yml`) can declare **profiles** (behavior hints) and **required integrations** (platform capabilities). Both are parsed at load time and documented in Javadoc on [`ExtensionManifest`](/developers/reference).
+Extension manifests (`block-extension.yml` / `item-extension.yml`) can declare **profiles** (behavior hints) and **required integrations** (platform capabilities). Both are parsed at load time and documented in Javadoc on [`ExtensionManifest`](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/extension/ExtensionManifest.html).
+
+`profiles` are optional but recommended for new extensions — many bundled modules omit them and rely on strategy code alone.
 
 ## Profiles
 
@@ -20,13 +22,15 @@ Profiles describe which strategy callbacks and services an extension uses. They 
 | `processing-gui` | `PROCESSING_GUI` | `ExtensionSupport` inventories, tick-based recipes |
 | `drop-collector` | `DROP_COLLECTOR` | `registerDropCollector` |
 
-### Example
+### Example (interact + GUI)
 
 ```yaml
-id: prep-counter
-name: Prep Counter
-api-version: "1"
-strategy: dev.rono.igniscore.block.prepcounter.Strategy
+id: picnic-basket
+name: Picnic Basket
+version: 1.0.0
+api-version: 1.0.0
+author: YourName
+strategy: dev.rono.igniscore.block.picnicbasket.Strategy
 profiles:
   - interact
   - placed-hooks
@@ -44,15 +48,24 @@ Declare integrations your extension needs for full behavior. At load time IgnisC
 
 Missing integrations **warn** by default so the extension still loads; features that depend on them should check `context.protocol().isEnabled()` or `context.nbt().isEnabled()` at runtime.
 
-### Example
+### Example (protocol integration)
 
 ```yaml
 id: entity-camera
+name: Entity Camera
+version: 1.0.0
+api-version: 1.0.0
+author: YourName
+strategy: dev.rono.igniscore.block.entitycamera.Strategy
 requires-integrations:
   - protocol
-profiles:
-  - interact
 ```
+
+## Manifest parsing notes
+
+- `api-version` must be semver (`major.minor.patch`, e.g. `1.0.0`).
+- When `strategy` is omitted, the loader infers `dev.rono.igniscore.<block|item>.<package>.Strategy` from the manifest `id`.
+- Legacy manifests may use `main:` instead of `strategy:`; the loader rewrites it at parse time.
 
 ## Choosing a template
 

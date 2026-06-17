@@ -62,6 +62,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         if (context.protocol().isEnabled()) {
             context.protocol().sendFakeExplosion(loc, 2f, List.of(player));
         }
+        IgnisInventory inventory = context.extensions().createInventory(null, 27, Component.text("My GUI"));
         context.extensions().openInventory(player, inventory);
     }
 }
@@ -69,11 +70,35 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
 `getScheduler()`, `getNbtService()`, and other `get*` methods remain as aliases.
 
+## IgnisPlayer (L1)
+
+| Method | Purpose |
+|--------|---------|
+| `getUniqueId()`, `getName()` | Player identity |
+| `getLocation()`, `getEyeLocation()`, `getWorld()` | Position and world |
+| `sendMessage`, `sendActionBar` | MiniMessage chat and action bar |
+| `applyPotionEffect` | Platform potion effects by key |
+| `openInventory` | Open a native platform inventory |
+
+## ExtensionSupport (L3)
+
+Access via `context.extensions()`:
+
+| Method | Purpose |
+|--------|---------|
+| `createInventory`, `openInventory` | Extension GUIs |
+| `registerCustomInventory`, `unregisterCustomInventory` | Inventory event hooks |
+| `registerDropCollector`, `unregisterDropCollector` | Auto-collect on break |
+| `resolveWorld` | World handle from a location |
+| `createItem`, `wrapPlayer` | Platform object bridges |
+| `getDataDirectory` | Plugin data folder path |
+| `spectateEntity` | Temporary spectator camera |
+
 ## Rules
 
 - Use `provided` scope — never shade the API into extension JARs
 - Declare matching `api-version` in your manifest — see [API versioning](/faq/api-version)
-- Declare `profiles` and `requires-integrations` — see [Extension profiles](/developers/extension-profiles)
+- Declare `profiles` and `requires-integrations` when they help reviewers and tooling — see [Extension profiles](/developers/extension-profiles)
 - Platform types stay inside adapters — use `IgnisPlayer` etc.
 
 ## Related

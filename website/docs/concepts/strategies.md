@@ -22,15 +22,15 @@ Items extend `AbstractIgnisItemStrategy` instead.
 
 ## IgnisStrategyContext
 
-The context exposes:
+Prefer the short accessors on `IgnisStrategyContext`:
 
-| Service | Purpose |
-|---------|---------|
-| Scheduler | Async and sync tasks |
-| NBT service | Read/write NBT on items and entities |
-| Protocol service | Packet-level hooks when available |
-| Effect service | Particles and sounds |
-| ExtensionSupport | Inventories, drop collectors, world bridge |
+| Accessor | Service | Purpose |
+|----------|---------|---------|
+| `scheduler()` | `IgnisScheduler` | Async and sync tasks |
+| `nbt()` | `IgnisNbtService` | Read/write NBT on items and entities |
+| `protocol()` | `IgnisProtocolService` | Packet-level hooks when available |
+| `effects()` | `IgnisEffectService` | Particles, sounds, fake explosions |
+| `extensions()` | `ExtensionSupport` | Inventories, drop collectors, world bridge |
 
 ## Strategy profiles
 
@@ -45,6 +45,6 @@ Manifest `id` values register in `IgnisStrategyRegistry`. Config `id` values map
 ## Related
 
 - [Block lifecycle](/concepts/blocks) — placed vs active callbacks
-- [Item lifecycle](/concepts/items) — `IgnisInteraction` branching
+- [Item lifecycle](/concepts/items) — behavior tokens and `ItemBehaviorConfig`
 - [API Reference](/developers/api/core-api) — strategy interfaces
 - [Javadoc](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/package-summary.html)

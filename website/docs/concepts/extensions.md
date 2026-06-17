@@ -66,7 +66,8 @@ my-extension/
 |-------|---------|
 | [nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke) | Explosive fuse + documented `custom_data` |
 | [quarry-cache](https://github.com/%%site.repo%%/tree/main/extensions/blocks/quarry-cache) | Non-combustible GUI block |
-| [auto-sieve](https://github.com/%%site.repo%%/tree/main/extensions/blocks/auto-sieve) | Placed tick block, no `custom_data` |
+| [auto-sieve](https://github.com/%%site.repo%%/tree/main/extensions/blocks/auto-sieve) | Placed tick block (`tickPeriod`, `sieveParticles`) |
+| [signal-charge](https://github.com/%%site.repo%%/tree/main/extensions/blocks/signal-charge) | Remote-detonatable fuse block |
 | [socket-lamp](https://github.com/%%site.repo%%/tree/main/extensions/blocks/socket-lamp) | Linked remote-activation block |
 | [picnic-basket](https://github.com/%%site.repo%%/tree/main/extensions/blocks/picnic-basket) | Interact / storage GUI |
 

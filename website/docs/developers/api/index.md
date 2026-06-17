@@ -9,7 +9,7 @@ slug: /developers/api
 | Surface | Maven artifact | Package | Status |
 |---------|----------------|---------|--------|
 | **Core API** | `dev.rono:api` | `dev.rono.igniscore.api.*` | Stable, fully Javadoc'd |
-| **Extension shared** | `dev.rono.extensions:shared` | `dev.rono.extensions.shared.*` | Optional helpers for bundled extensions |
+| **Extension shared** | `dev.rono.extensions:shared` | `dev.rono.extensions.shared.*` | Internal — bundled extensions only |
 
 ## Start here
 
@@ -26,9 +26,10 @@ slug: /developers/api
 | Task | Use |
 |------|-----|
 | Build a block or item extension | **L2–L3** — strategies + `IgnisStrategyContext` |
-| Read extension tuning from YAML | **Core API** — `definition.getCustomData()` + `StrategySupport` |
-| Parse explosion / throwable config | **Extension shared** (optional) or `ExtensionConfig` in core API |
+| Read extension tuning from YAML | **Core API** — `definition.getCustomData()` + `StrategySupport` or `ExtensionConfig` |
 | Access runtime from another plugin | **L4** — `IgnisCoreAPI` facade |
+
+Third-party extension authors should not depend on `extensions/shared`. See [Extension shared (internal)](/developers/api/extension-shared).
 
 ## Sample extensions
 

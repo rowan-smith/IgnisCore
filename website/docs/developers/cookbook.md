@@ -4,7 +4,7 @@ description: Copy-paste recipes for IgnisCore block and item extensions using th
 slug: /developers/cookbook
 ---
 
-Short, task-oriented recipes using **`dev.rono:api` only**. Link to Javadoc for full signatures. Sample extensions in `extensions/` may use additional internal helpers; the patterns below show the raw approach.
+Short, task-oriented recipes using **`dev.rono:api` only**. Link to Javadoc for full signatures. Bundled samples under `extensions/` may use internal helpers (`extensions/shared`); the patterns below show the raw core API approach.
 
 ---
 
@@ -33,10 +33,12 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
 ```java
 Map<String, Object> data = definition.getCustomData();
-int fuse = StrategySupport.customInt(data, "fuse", 80);
-float power = (float) StrategySupport.customDouble(data, "power", 4.0);
-boolean fire = StrategySupport.customBoolean(data, "fire", false);
+int fuse = StrategySupport.customInt(definition, "fuse", 0);
+float power = (float) StrategySupport.customDouble(definition, "power", 4.0);
+boolean fire = StrategySupport.customBoolean(definition, "fire", false);
 ```
+
+`StrategySupport` also accepts a raw `Map` if you already called `getCustomData()`. `StrategyProfile.Builder` defaults fuse to **0** — set explicit values in `config.yml` or read them in `profile()`.
 
 Block example `config.yml`:
 
@@ -62,12 +64,14 @@ Strategy profile for combustible blocks:
 ```java
 @Override
 public StrategyProfile profile(BlockDefinition definition) {
-    int fuse = StrategySupport.customInt(definition.getCustomData(), "fuse", 80);
+    int fuse = StrategySupport.customInt(definition, "fuse", 0);
     return StrategyProfile.builder()
             .defaultFuse(fuse)
             .build();
 }
 ```
+
+Bundled fuse blocks often choose per-extension defaults in code (for example splitter-charge **60**, nuke **160**) while also storing fuse in `custom_data`.
 
 `config.yml` behavior (combustible defaults to false — set explicitly for TNT):
 
@@ -88,9 +92,9 @@ Detonate in `onTrigger`:
 ```java
 @Override
 public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-    IgnisWorld world = context.getExtensionSupport().resolveWorld(instance.getLocation());
-    float power = (float) StrategySupport.customDouble(instance.getDefinition().getCustomData(), "power", 4.0);
-    boolean fire = StrategySupport.customBoolean(instance.getDefinition().getCustomData(), "fire", false);
+    IgnisWorld world = context.extensions().resolveWorld(instance.getLocation());
+    float power = (float) StrategySupport.customDouble(instance.getDefinition(), "power", 4.0);
+    boolean fire = StrategySupport.customBoolean(instance.getDefinition(), "fire", false);
     world.createExplosion(instance.getLocation(), power, fire, true);
 }
 ```
@@ -110,12 +114,17 @@ public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem i
     int fuseTicks = StrategySupport.customInt(data, "fuse_ticks", 40);
 
     IgnisLocation eye = player.getEyeLocation();
-    Object projectile = player.getWorld().spawnProjectile("snowball", eye, player, 0, 0, speed);
+    double yawRad = Math.toRadians(eye.yaw());
+    double pitchRad = Math.toRadians(eye.pitch());
+    double vx = -Math.sin(yawRad) * Math.cos(pitchRad) * speed;
+    double vy = -Math.sin(pitchRad) * speed;
+    double vz = Math.cos(yawRad) * Math.cos(pitchRad) * speed;
+    Object projectile = player.getWorld().spawnProjectile("snowball", eye, player, vx, vy, vz);
     item.setAmount(item.getAmount() - 1);
 
     int[] ticks = {0};
     IgnisTask[] task = {null};
-    task[0] = context.getScheduler().runRepeating(eye, () -> {
+    task[0] = context.scheduler().runRepeating(eye, () -> {
         ticks[0]++;
         if (!player.getWorld().isEntityValid(projectile) || ticks[0] >= fuseTicks) {
             IgnisLocation impact = player.getWorld().getEntityLocation(projectile);
@@ -140,7 +149,7 @@ Store a block location on the held item, activate remotely on right-click air:
 
 ```java
 void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
-    IgnisNbtService nbt = context.getNbtService();
+    IgnisNbtService nbt = context.nbt();
     String expectedType = StrategySupport.customString(definition.getCustomData(), "linkBlockType", "");
 
     if (clickedBlock != null) {
@@ -155,7 +164,7 @@ void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, Ig
     }
 
     String world = nbt.getItemString(item, "ignis:link_world");
-    if (world == null || world.isBlank()) {
+    if (world.isBlank()) {
         player.sendMessage("<red>Right-click a block to link first.</red>");
         return;
     }
@@ -184,7 +193,7 @@ custom_data:
 
 ```java
 void consume(IgnisPlayer player, IgnisItem item, ItemDefinition definition) {
-    IgnisNbtService nbt = context.getNbtService();
+    IgnisNbtService nbt = context.nbt();
     String key = "ignis:cooldown:" + definition.getId();
     long cooldownTicks = StrategySupport.customInt(definition.getCustomData(), "cooldownTicks", 0);
     long last = nbt.getItemInt(item, key, 0);
@@ -206,8 +215,8 @@ void consume(IgnisPlayer player, IgnisItem item, ItemDefinition definition) {
 
 ```java
 void onPlaced(BlockDefinition definition, IgnisLocation location) {
-    long period = StrategySupport.customInt(definition.getCustomData(), "tickPeriod", 20);
-    context.getScheduler().runRepeating(location, () -> tick(location), period, period);
+    long period = StrategySupport.customInt(definition, "tickPeriod", 20);
+    context.scheduler().runRepeating(location, () -> tick(location), period, period);
 }
 
 void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
@@ -215,7 +224,7 @@ void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
 }
 ```
 
-Placed utility blocks (`auto-sieve`, `socket-lamp`, `sprinkler-head`, …) use this pattern. Omit `custom_data` when code defaults are sufficient.
+Placed utility blocks (`auto-sieve`, `socket-lamp`, `sprinkler-head`, …) use this pattern. Declare only the `custom_data` keys your strategy reads (for example `tickPeriod`, `sieveParticles`).
 
 **Sample:** [auto-sieve](https://github.com/%%site.repo%%/tree/main/extensions/blocks/auto-sieve)
 

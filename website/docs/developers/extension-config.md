@@ -12,9 +12,11 @@ Each extension JAR ships a `config.yml` beside its manifest. Only include keys y
 |---------|----------|---------|
 | `id` | Yes | In-game type id (`/ignis give`, NBT type key) |
 | `display` | Yes | Title and lore |
-| `block` | Yes | Placeable/breakable flags, mining sounds |
+| `block` | Yes | Placeable/breakable flags, mining sounds, optional `base_material` / `render_material` |
 | `textures` | Yes | Face asset paths |
 | `model` | Optional | Authoring metadata for pack tooling |
+| `interactions` | Optional | Per-face click overrides |
+| `block_display` | Optional | Display entity tuning for `block_display` models |
 | `behavior` | Yes | Surface click routing |
 | `custom_data` | Optional | Extension-specific tuning only |
 
@@ -78,9 +80,12 @@ behavior:
 `custom_data` is a free-form map merged into `BlockDefinition.getCustomData()` / `ItemDefinition.getCustomData()`. Read values in strategy code with `StrategySupport`:
 
 ```java
-int tickPeriod = StrategySupport.customInt(definition.getCustomData(), "tickPeriod", 20);
-double range = StrategySupport.customDouble(definition.getCustomData(), "linkRange", 64.0);
+int tickPeriod = StrategySupport.customInt(definition, "tickPeriod", 20);
+double range = StrategySupport.customDouble(definition, "linkRange", 64.0);
+String label = StrategySupport.customString(definition, "remoteAction", "toggle");
 ```
+
+Alternatively, use `definition.getCustomConfig()` for chained reads via `ExtensionConfig`.
 
 **Do not copy unrelated keys.** A placed crop block does not need `fuse`, `power`, or `radius`. An explosive block does not need `linkBlockType`.
 
@@ -90,8 +95,8 @@ double range = StrategySupport.customDouble(definition.getCustomData(), "linkRan
 |------|--------------------------|
 | Fuse / explosive | `fuse`, `power` or `radius`, `fire`, `blockDamage` |
 | Placed tick block | `tickPeriod`, `scanRadius`, `herdRadius`, … |
-| Link item | `linkBlockType`, `remoteAction`, `linkRange` |
-| Throwable item | `throwSpeed`, `fuse_ticks`, `scatterRadius`, … |
+| Link item | `linkBlockType`, `remoteAction`, `linkRange` or `target_block`, `max_links` |
+| Throwable item | `throw_velocity` (explosives), `throwSpeed` (utility throwables), `fuse_ticks`, … |
 | Consumable | `cooldownTicks`, `cropRadius` |
 | Non-tuned item | *(omit section entirely)* |
 
@@ -99,7 +104,7 @@ Bundled reference configs with inline comments:
 
 - [nuke](https://github.com/%%site.repo%%/blob/main/extensions/blocks/nuke/src/main/resources/config.yml) — full explosive tuning
 - [grenade](https://github.com/%%site.repo%%/blob/main/extensions/items/grenade/src/main/resources/config.yml) — throwable tuning
-- [auto-sieve](https://github.com/%%site.repo%%/blob/main/extensions/blocks/auto-sieve/src/main/resources/config.yml) — no `custom_data`
+- [auto-sieve](https://github.com/%%site.repo%%/blob/main/extensions/blocks/auto-sieve/src/main/resources/config.yml) — placed tick block (`tickPeriod`, `sieveParticles`)
 - [lamp-dimmer](https://github.com/%%site.repo%%/blob/main/extensions/items/lamp-dimmer/src/main/resources/config.yml) — link item keys only
 
 ## Bundled extension catalog
@@ -108,12 +113,15 @@ The utility suite under `extensions/blocks/` and `extensions/items/` includes:
 
 | Category | Examples |
 |----------|----------|
-| Explosives / fuse | `splitter-charge`, `blink-tnt`, `nuke` |
+| Explosives / fuse | `splitter-charge`, `blink-tnt`, `nuke`, `signal-charge` |
+| Tactical TNT | `wormhole-tnt`, `phantom-tnt`, `erupting-tnt`, `mimic-tnt`, `tunneling-tnt`, `spider-storm-tnt` |
 | Placed utilities | `auto-sieve`, `crop-accelerator`, `socket-lamp` |
 | Interact / GUI | `picnic-basket`, `keg-tap`, `chunk-loader-lite` |
-| Link pairs | `lamp-dimmer` + `socket-lamp`, `gate-clicker` + `keyed-hatch` |
+| Link pairs | `lamp-dimmer` + `socket-lamp`, `detonator` + `signal-charge`, `gate-clicker` + `keyed-hatch` |
 | Throwables | `glow-orb`, `seed-bomb`, `smoke-can` |
 | Consumables | `miners-lunch`, `unlabeled-potion`, `farmers-tea` |
+
+The full module list lives in `extensions/blocks/pom.xml` and `extensions/items/pom.xml`.
 
 See the [Extension Cookbook](/developers/cookbook) for raw Java patterns that read these keys.
 
@@ -125,7 +133,7 @@ Bundled utility extensions keep `config.yml` **in each module**. `generate-utili
 |------|---------|
 | `tools/audit-extension-configs.py` | **Verify every key** each Behavior template reads is present in `custom_data` |
 | `tools/audit-extension-configs.py --check` | CI check — fails if any key is missing |
-| `tools/write-extension-configs.py` | Edit display/behavior sections in the catalog, then sync |
+| `tools/write-extension-configs.py` | Bulk-sync display, behavior, and catalog `custom_data` from the utility catalog |
 | `extensions/*/src/main/resources/config.yml` | Preferred place to edit a single extension |
 
 After changing a behavior template, run the audit script to catch missing keys (e.g. `sieveParticles` on auto-sieve):
