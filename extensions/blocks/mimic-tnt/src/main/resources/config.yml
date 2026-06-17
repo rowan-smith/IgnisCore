@@ -32,6 +32,18 @@ model:
   type: "block_display"
   mode: "auto"
 
+behavior:
+  combustible: true
+  left_click_block: break
+  right_click_block: ignite
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+    - FLINT
+  sounds:
+    place: BLOCK_BEACON_ACTIVATE
+    ignite: ITEM_FLINTANDSTEEL_USE
+
 custom_data:
     fuse: 80
     radius: 4.0

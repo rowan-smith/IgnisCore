@@ -16,16 +16,17 @@ class ItemDefinitionBuilderTest {
                 .title(Component.text("Detonator"))
                 .description(List.of(Component.text("Links charges")))
                 .customData(Map.of("max_links", 16))
-                .interactionSettings(Map.of(
-                        "left_click", Map.of("action", "assign_bomb"),
-                        "right_click", Map.of("action", "detonate_linked")
-                ))
+                .behaviorSettings(Map.of(
+                        "left_click_block", "assign",
+                        "right_click_air", "detonate",
+                        "right_click_block", "detonate"))
+                .interactionSettings(Map.of())
                 .customModelData(20002)
                 .iconTexture("icon.png")
                 .build();
 
         assertEquals("detonator", definition.getId());
         assertEquals(16, definition.getCustomConfig().getInt("max_links", 0));
-        assertEquals("assign_bomb", definition.getInteractionConfig().section("left_click").getString("action", ""));
+        assertEquals("assign", definition.getBehaviorConfig().getString("left_click_block", ""));
     }
 }

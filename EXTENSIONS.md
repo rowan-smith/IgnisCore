@@ -74,6 +74,51 @@ Items extend `AbstractIgnisItemStrategy` instead.
 
 `IgnisStrategyContext` exposes scheduler, NBT, protocol, effects, and `ExtensionSupport` (inventories, drop collectors, world bridge).
 
+## Config layout
+
+Every extension `config.yml` uses the same top-level sections:
+
+| Section | Purpose |
+|---------|---------|
+| `display` | Title and description |
+| `block` / `item` | Placeable/breakable flags, base material, breaking tuning |
+| `textures` | Asset paths |
+| `behavior` | **Surface clicks only** — left/right block and air actions |
+| `custom_data` | Extension-specific tuning (fuse, power, collect radius, etc.) |
+
+Legacy `interactions` is still parsed for effect tuning (particles, etc.) but new extensions should put ignite sounds under `behavior.sounds`.
+
+### Block `behavior`
+
+```yaml
+behavior:
+  combustible: true
+  left_click_block: break      # none | break | ignite | open | handled
+  right_click_block: ignite
+  left_click_air: none
+  right_click_air: none
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+    - FLINT
+  sounds:
+    place: BLOCK_BEACON_ACTIVATE
+    ignite: ITEM_FLINTANDSTEEL_USE
+```
+
+The core merges `behavior` into the strategy profile at runtime. Override {@link IgnisBlockStrategy#onPlacedClick} only when you need logic beyond these actions.
+
+### Item `behavior`
+
+```yaml
+behavior:
+  left_click_block: assign
+  right_click_air: detonate
+  right_click_block: detonate
+```
+
+Action tokens are interpreted by the item strategy (`throw`, `assign`, `detonate`, etc.).
+
 ## Block lifecycle
 
 Blocks have **placed** and **active** phases:
@@ -83,36 +128,9 @@ Blocks have **placed** and **active** phases:
 | **Placed** | Barrier block exists in world | `onPlaced`, `onPlacedClick`, `onPlacedInteract`, `onPlacedBreak` |
 | **Active** | After ignition / fuse | `onPlace`, `onTick`, `onTrigger` |
 
-Click behavior is implemented in strategy code via **`onPlacedClick`**, which returns a {@link CustomBlockAction} (`BREAK`, `IGNITE`, `OPEN`, `HANDLED`, or `NONE`). Override {@link StrategyProfile} for TNT-style defaults, or branch on {@link IgnisInteraction} and held items directly. Use {@link PlacedClickSupport} to reuse profile rules.
+Surface click routing is declared in YAML {@code behavior}. Override {@link IgnisBlockStrategy#onPlacedClick} only for custom logic beyond the standard actions.
 
-Optional YAML `interactions` sections hold **tuning data only** (ignite sounds, particles) — read via `definition.getInteractionConfig()`. Breaking/mining tuning stays under `block.breaking`.
-
-### Block click example
-
-```java
-@Override
-public CustomBlockAction onPlacedClick(BlockDefinition definition, IgnisLocation location,
-                                         IgnisPlayer player, IgnisInteraction interaction,
-                                         IgnisItem heldItem) {
-    return switch (interaction) {
-        case LEFT_CLICK_BLOCK -> CustomBlockAction.BREAK;
-        case RIGHT_CLICK_BLOCK -> CustomBlockAction.OPEN;
-        default -> CustomBlockAction.NONE;
-    };
-}
-
-@Override
-public void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
-                             IgnisInteraction interaction, IgnisItem heldItem, CustomBlockAction action) {
-    if (action == CustomBlockAction.OPEN) {
-        openGui(player, location);
-    }
-}
-```
-
-TNT blocks can rely on the default {@link IgnisBlockStrategy#onPlacedClick} implementation, which delegates to {@link StrategyProfile} via {@link PlacedClickSupport}.
-
-### Typed block config (`extensions/shared`)
+## Block lifecycle
 
 ```java
 import dev.rono.extensions.shared.config.ExtensionConfigs;

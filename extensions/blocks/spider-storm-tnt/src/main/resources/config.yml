@@ -28,9 +28,17 @@ model:
   type: "block_display"
   mode: "auto"
 
-interactions:
-  ignite:
-    sound: ITEM_FLINTANDSTEEL_USE
+behavior:
+  combustible: true
+  left_click_block: break
+  right_click_block: ignite
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+    - FLINT
+  sounds:
+    place: ENTITY_SPIDER_AMBIENT
+    ignite: ITEM_FLINTANDSTEEL_USE
 
 custom_data:
   fuse: 80

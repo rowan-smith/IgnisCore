@@ -12,6 +12,11 @@ item:
 textures:
   icon: icon.png
 
+behavior:
+  left_click_block: assign
+  right_click_air: detonate
+  right_click_block: detonate
+
 custom_data:
     target_block: signal-charge
     max_links: 16

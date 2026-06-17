@@ -5,7 +5,6 @@ import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.extensions.shared.strategy.StrategyProfiles;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
     private final PhantomBehavior behavior;
@@ -17,7 +16,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfiles.explosiveProfile().toBuilder()
+        return StrategyProfile.builder()
                 .defaultFuse(160)
                 .build();
     }

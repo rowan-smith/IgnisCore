@@ -1,6 +1,7 @@
 package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.config.BlockBehaviorConfig;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.util.Locations;
@@ -41,8 +42,14 @@ public class CustomBlockIgnitionService {
 
         Location location = block.getLocation();
         Location center = BukkitBridge.toBukkit(Locations.toCenter(BukkitBridge.toIgnis(location)));
-        Map<String, Object> igniteSettings = getMap(definition.getInteractionSettings(), ACTION_IGNITE);
-        effectService.playSound(center, getString(igniteSettings, "sound", "ITEM_FLINTANDSTEEL_USE"), 1.0f, 1.0f);
+        BlockBehaviorConfig behavior = BlockBehaviorConfig.from(definition.getBehaviorConfig());
+        Map<String, Object> igniteSettings = behavior.igniteEffects().asMap();
+        if (igniteSettings.isEmpty()) {
+            igniteSettings = getMap(definition.getInteractionSettings(), ACTION_IGNITE);
+        }
+        effectService.playSound(center, behavior.igniteSoundOr(
+                getString(getMap(definition.getInteractionSettings(), ACTION_IGNITE), "sound", "ITEM_FLINTANDSTEEL_USE")),
+                1.0f, 1.0f);
         effectService.spawnConfiguredParticles(center, getList(igniteSettings, "particles"), Particle.FLAME,
                 18, 0.35, 0.35, 0.35, 0.03);
 

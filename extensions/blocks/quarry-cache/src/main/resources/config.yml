@@ -32,6 +32,13 @@ model:
   type: "block_display"
   mode: "auto"
 
+behavior:
+  combustible: false
+  left_click_block: break
+  right_click_block: open
+  sounds:
+    place: BLOCK_CHEST_PLACE
+
 custom_data:
   collectRadius: 5.0
   collectDepth: 5.0

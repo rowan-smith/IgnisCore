@@ -42,6 +42,7 @@ public final class DefinitionParser {
         String side4 = textures.containsKey("side-4") ? YamlDefinitions.string(textures, "side-4", null) : null;
 
         Map<String, Object> customData = new HashMap<>(YamlDefinitions.flattenSection(YamlDefinitions.section(config, "custom_data")));
+        Map<String, Object> behaviorSettings = new HashMap<>(YamlDefinitions.section(config, "behavior"));
         Map<String, Object> interactionSettings = YamlDefinitions.flattenSection(YamlDefinitions.section(config, "interactions"));
 
         Map<String, Object> displaySection = YamlDefinitions.section(config, "block_display");
@@ -51,7 +52,7 @@ public final class DefinitionParser {
         boolean floatBob = YamlDefinitions.bool(animations, "float", true);
 
         return new BlockDefinition(id, baseMaterial, renderMaterial, title, description, placeable, breakable,
-                top, side, bottom, customData, breakSettings, interactionSettings,
+                top, side, bottom, customData, breakSettings, behaviorSettings, interactionSettings,
                 YamlDefinitions.flattenSection(displaySection), modelData, rotate, floatBob, pulse, extensionId,
                 side1, side2, side3, side4);
     }
@@ -80,9 +81,10 @@ public final class DefinitionParser {
         Map<String, Object> textures = YamlDefinitions.section(config, "textures");
         String iconTexture = YamlDefinitions.string(textures, "icon", "icon.png");
         Map<String, Object> customData = YamlDefinitions.flattenSection(YamlDefinitions.section(config, "custom_data"));
+        Map<String, Object> behaviorSettings = new HashMap<>(YamlDefinitions.section(config, "behavior"));
         Map<String, Object> interactionSettings = YamlDefinitions.flattenSection(YamlDefinitions.section(config, "interactions"));
 
-        return new ItemDefinition(id, baseMaterial, title, description, customData,
+        return new ItemDefinition(id, baseMaterial, title, description, customData, behaviorSettings,
                 interactionSettings, modelData, extensionId, iconTexture);
     }
 }

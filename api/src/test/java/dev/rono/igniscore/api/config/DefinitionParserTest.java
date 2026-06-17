@@ -92,6 +92,26 @@ class DefinitionParserTest {
     }
 
     @Test
+    void parsesBehaviorSectionForBlocks() {
+        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
+                id: cache
+                behavior:
+                  combustible: false
+                  left_click_block: break
+                  right_click_block: open
+                  sounds:
+                    place: BLOCK_CHEST_PLACE
+                custom_data:
+                  capacity: 64
+                """), "cache", 10001, "quarry-cache");
+
+        assertEquals("break", definition.getBehaviorConfig().getString("left_click_block", ""));
+        assertEquals("open", definition.getBehaviorConfig().getString("right_click_block", ""));
+        assertEquals("BLOCK_CHEST_PLACE", definition.getBehaviorConfig().section("sounds").getString("place", ""));
+        assertEquals(64, definition.getCustomData().get("capacity"));
+    }
+
+    @Test
     void parsesItemDefinition() {
         ItemDefinition definition = DefinitionParser.parseItem(yaml("""
                 id: grenade
@@ -106,9 +126,9 @@ class DefinitionParserTest {
                 custom_data:
                   power: 4.0
                   fuse_ticks: 40
-                interactions:
-                  right_click:
-                    action: throw
+                behavior:
+                  right_click_air: throw
+                  right_click_block: throw
                 """), "fallback-item", 20005, "grenade");
 
         assertEquals("grenade", definition.getId());
@@ -116,7 +136,8 @@ class DefinitionParserTest {
         assertEquals("Grenade", PlainTextComponentSerializer.plainText().serialize(definition.getTitle()));
         assertEquals(4.0, definition.getCustomData().get("power"));
         assertEquals(40, definition.getCustomData().get("fuse_ticks"));
-        assertEquals("throw", ((Map<?, ?>) definition.getInteractionSettings().get("right_click")).get("action"));
+        assertEquals("throw", definition.getBehaviorConfig().getString("right_click_air", ""));
+        assertEquals("throw", definition.getBehaviorConfig().getString("right_click_block", ""));
         assertEquals(20005, definition.getCustomModelData());
         assertEquals("grenade", definition.getExtensionId());
         assertEquals("grenade-icon.png", definition.getIconTexture());
