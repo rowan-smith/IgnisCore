@@ -13,7 +13,7 @@ class IgnisBootstrapJarIT {
 
     @Test
     void shadedJarRegistersBootloadersAndAdventurePlatform() throws Exception {
-        Path jar = Path.of("target/igniscore-1.0.0.jar");
+        Path jar = Path.of("target/IgnisCore-1.0.0.jar");
 
         try (JarFile jarFile = new JarFile(jar.toFile())) {
             var serviceEntry = jarFile.getJarEntry(

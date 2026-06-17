@@ -37,7 +37,7 @@ One bootstrap JAR works on every supported platform. Each server loads only its 
 mvn clean package
 ```
 
-Deploy **`bootstrap/target/igniscore-%%site.version%%.jar`**.
+Deploy **`bootstrap/target/%%site.jarName%%`**.
 
 ## Related
 

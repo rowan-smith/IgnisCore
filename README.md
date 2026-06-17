@@ -6,7 +6,7 @@ Multi-platform framework for custom Minecraft blocks, items, and runtime extensi
 
 ## Quick start
 
-1. Download the latest `igniscore-<version>.jar` from [GitHub Releases](https://github.com/rowan-smith/IgnisCore/releases)
+1. Download the latest `IgnisCore-<version>.jar` from [GitHub Releases](https://github.com/rowan-smith/IgnisCore/releases)
 2. Install [NBTAPI](https://www.spigotmc.org/resources/nbt-api.7939/) on Spigot/Paper
 3. Place the jar in `plugins/` and restart
 4. Run `/ignis` in-game
@@ -17,7 +17,7 @@ Multi-platform framework for custom Minecraft blocks, items, and runtime extensi
 mvn clean package
 ```
 
-Deploy `bootstrap/target/igniscore-<version>.jar` (version matches `pom.xml`).
+Deploy `bootstrap/target/IgnisCore-<version>.jar` (version matches `pom.xml`).
 
 ## Extension authoring
 
