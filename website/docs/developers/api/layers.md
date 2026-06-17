@@ -46,8 +46,7 @@ IgnisCore exposes one Maven artifact (`dev.rono:api`) with four intentional laye
 
 1. Depend on `api` with `provided` scope.
 2. Call `IgnisCoreAPI` after IgnisCore has enabled (same classloader as the plugin).
-3. Use `IgnisCoreAPI` after IgnisCore has enabled (same classloader as the plugin).
-4. Common facade methods: `createItem`, `createBlockItem`, `triggerBlock`, `ignitePlacedBlock`, `getPlacedBlockType`, `getActiveBlocks`, `getBlockTypes`, `getItemTypes`, `getStrategyRegistry`, `getNbtService`, `getProtocolService`, `getEffectService`, `reloadExtensions`.
+3. Common facade methods: `createItem`, `createBlockItem`, `triggerBlock`, `ignitePlacedBlock`, `getPlacedBlockType`, `getActiveBlocks`, `getBlockTypes`, `getItemTypes`, `getStrategyRegistry`, `getNbtService`, `getProtocolService`, `getEffectService`, `reloadExtensions`.
 
 ## Optional helpers
 

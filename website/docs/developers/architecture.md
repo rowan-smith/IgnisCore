@@ -39,12 +39,17 @@ All platforms use `PlatformBootloaderLoader` (`common`) to identify server softw
 - **Bukkit family:** `IgnisBootstrapPlugin` from `plugin.yml` → Guice + `IgnisCoreApplication`
 - **Sponge:** version-matched `IgnisSpongePlugin` from `sponge_plugins.json` → same loader
 
-### Bootloader priority (Bukkit)
+### Bootloader priority (Bukkit family)
 
 | Priority | Bootloader | Server |
 |----------|------------|--------|
 | 100 | Paper bootloaders | Paper 26.1.x / 1.21.x / 1.20.x |
 | 50 | Spigot bootloaders | Spigot 26.1.x / 1.21.x / 1.20.x |
+
+### Bootloader priority (Sponge)
+
+| Priority | Bootloader | Server |
+|----------|------------|--------|
 | 200 | Sponge bootloaders | Sponge 19.x / 12.x / 8.5.x |
 
 ## Dependency rules

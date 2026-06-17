@@ -1,10 +1,10 @@
 ---
 title: Item Lifecycle
-description: Custom throwable and clickable items in IgnisCore.
+description: Custom items — throwables, consumables, link tools, and click-driven behavior.
 slug: /concepts/items
 ---
 
-Custom items are standard inventory items tagged with IgnisCore NBT. Behavior is driven by YAML `behavior` and strategy code.
+Custom items are standard inventory items tagged with IgnisCore NBT. Behavior is driven by YAML `behavior` and strategy code — from throwable explosives and utility tools to consumables with cooldowns and link items that remote-control blocks.
 
 ## Config sections
 

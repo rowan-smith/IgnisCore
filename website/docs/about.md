@@ -4,7 +4,7 @@ description: About the IgnisCore project.
 slug: /about
 ---
 
-IgnisCore is a multi-platform framework for custom explosive blocks and throwable items, maintained by [rowan-smith](https://github.com/rowan-smith).
+IgnisCore is a multi-platform framework for custom blocks, items, and runtime extensions, maintained by [rowan-smith](https://github.com/rowan-smith). The bootstrap plugin ships **120+ bundled extensions** (87 blocks, 42 items) alongside a layered plugin API for integrators.
 
 ## Links
 

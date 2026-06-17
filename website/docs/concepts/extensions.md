@@ -4,7 +4,7 @@ description: How IgnisCore loads block and item extension JARs at runtime.
 slug: /concepts/extensions
 ---
 
-Extensions are platform-agnostic JARs loaded at runtime from the plugin data folder. Each extension registers a **strategy** class and ships YAML config plus texture assets.
+Extensions are platform-agnostic JARs loaded at runtime from the plugin data folder. Each extension registers a **strategy** class and ships YAML config plus texture assets. The bootstrap plugin bundles **120+ reference extensions**; you can add your own JARs alongside them.
 
 ## Deploy paths
 

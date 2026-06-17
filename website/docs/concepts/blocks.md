@@ -1,10 +1,10 @@
 ---
 title: Block Lifecycle
-description: Placed and active phases for custom IgnisCore blocks.
+description: Placed and active phases for custom IgnisCore blocks — fuse explosives, utility blocks, and interact blocks.
 slug: /concepts/blocks
 ---
 
-Custom blocks exist as barrier blocks in the world with two distinct phases.
+Custom blocks exist as barrier blocks in the world with two distinct phases. Bundled extensions range from fuse explosives and tactical TNT to placed utility blocks (auto-sieve, crop accelerators) and interact blocks with GUIs.
 
 ## Phases
 
