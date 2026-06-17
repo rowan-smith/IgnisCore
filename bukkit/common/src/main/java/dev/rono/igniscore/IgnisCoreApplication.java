@@ -127,6 +127,26 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     }
 
     @Override
+    public dev.rono.igniscore.api.service.IgnisRegionService getRegionService() {
+        return facade.getRegionService();
+    }
+
+    @Override
+    public dev.rono.igniscore.api.service.IgnisHologramService getHologramService() {
+        return facade.getHologramService();
+    }
+
+    @Override
+    public dev.rono.igniscore.api.service.IgnisNpcService getNpcService() {
+        return facade.getNpcService();
+    }
+
+    @Override
+    public dev.rono.igniscore.api.integration.IgnisIntegrationRegistry getIntegrationRegistry() {
+        return facade.getIntegrationRegistry();
+    }
+
+    @Override
     public void reloadExtensions() {
         facade.reloadExtensions();
     }

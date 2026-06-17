@@ -5,7 +5,9 @@ import dev.rono.igniscore.api.config.YamlDefinitions;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,14 +18,17 @@ public final class ExtensionManifest {
     private final String apiVersion;
     private final String strategyClass;
     private final String author;
+    private final List<String> requiredIntegrations;
 
-    private ExtensionManifest(String id, String name, String version, String apiVersion, String strategyClass, String author) {
+    private ExtensionManifest(String id, String name, String version, String apiVersion,
+                              String strategyClass, String author, List<String> requiredIntegrations) {
         this.id = Objects.requireNonNull(id, "id");
         this.name = name != null ? name : id;
         this.version = version != null ? version : "1.0.0";
         this.apiVersion = apiVersion != null ? apiVersion : IgnisApiVersion.CURRENT;
         this.strategyClass = Objects.requireNonNull(strategyClass, "strategy");
         this.author = author != null ? author : "unknown";
+        this.requiredIntegrations = List.copyOf(requiredIntegrations != null ? requiredIntegrations : List.of());
     }
 
     public static ExtensionManifest fromStream(InputStream inputStream, String manifestFileName) {
@@ -69,8 +74,22 @@ public final class ExtensionManifest {
                 YamlDefinitions.string(config, "version", "1.0.0"),
                 YamlDefinitions.string(config, "api-version", IgnisApiVersion.CURRENT),
                 requireStrategyClass(config, id, manifestFileName),
-                YamlDefinitions.string(config, "author", "unknown")
-        );
+                YamlDefinitions.string(config, "author", "unknown"),
+                parseRequiredIntegrations(config));
+    }
+
+    private static List<String> parseRequiredIntegrations(Map<String, Object> config) {
+        Object raw = config.get("requires-integrations");
+        if (raw instanceof List<?> list) {
+            List<String> integrations = new ArrayList<>();
+            for (Object entry : list) {
+                if (entry != null) {
+                    integrations.add(entry.toString().trim().toLowerCase());
+                }
+            }
+            return integrations;
+        }
+        return List.of();
     }
 
     private static String requireStrategyClass(Map<String, Object> config, String extensionId, String manifestFileName) {
@@ -121,5 +140,9 @@ public final class ExtensionManifest {
 
     public String getAuthor() {
         return author;
+    }
+
+    public List<String> getRequiredIntegrations() {
+        return requiredIntegrations;
     }
 }

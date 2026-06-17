@@ -13,6 +13,11 @@ public final class SpongeNoopProtocolService implements IgnisProtocolService {
     }
 
     @Override
+    public String providerName() {
+        return "unavailable";
+    }
+
+    @Override
     public void sendFakeExplosion(IgnisLocation location, float power, Collection<IgnisPlayer> players) {
     }
 }

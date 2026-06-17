@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.IgnisApiVersion;
 import dev.rono.igniscore.api.config.DefinitionParser;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.extension.ExtensionResources;
+import dev.rono.igniscore.api.integration.IgnisIntegrationRegistry;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ExtensionDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -28,14 +29,17 @@ public final class ExtensionLoadEngine {
     private final IgnisRuntimeHost host;
     private final IgnisStrategyRegistry strategyRegistry;
     private final IgnisStrategyContext strategyContext;
+    private final IgnisIntegrationRegistry integrationRegistry;
 
     @Inject
     ExtensionLoadEngine(IgnisRuntimeHost host,
                         IgnisStrategyRegistry strategyRegistry,
-                        IgnisStrategyContext strategyContext) {
+                        IgnisStrategyContext strategyContext,
+                        IgnisIntegrationRegistry integrationRegistry) {
         this.host = host;
         this.strategyRegistry = strategyRegistry;
         this.strategyContext = strategyContext;
+        this.integrationRegistry = integrationRegistry;
     }
 
     List<LoadedExtension<BlockDefinition>> loadBlocks() {
@@ -120,6 +124,7 @@ public final class ExtensionLoadEngine {
                                                                D definition,
                                                                ExtensionKind kind) throws Exception {
         IgnisApiVersion.requireCompatible(manifest.getApiVersion(), manifest.getId());
+        validateIntegrations(manifest);
 
         String strategyId = descriptor.getId();
 
@@ -141,6 +146,16 @@ public final class ExtensionLoadEngine {
         } catch (Exception e) {
             classLoader.close();
             throw e;
+        }
+    }
+
+    private void validateIntegrations(ExtensionManifest manifest) {
+        for (String integrationId : manifest.getRequiredIntegrations()) {
+            if (!integrationRegistry.isEnabled(integrationId)) {
+                throw new IllegalStateException("Extension " + manifest.getId()
+                        + " requires integration '" + integrationId + "' (provider: "
+                        + integrationRegistry.providerName(integrationId) + ")");
+            }
         }
     }
 }

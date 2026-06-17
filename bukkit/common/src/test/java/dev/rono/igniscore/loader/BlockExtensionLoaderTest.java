@@ -59,7 +59,8 @@ class BlockExtensionLoaderTest {
             }
         };
         var strategyRegistry = TestIgnisCore.newStrategyRegistry();
-        var engine = new ExtensionLoadEngine(host, strategyRegistry, null);
+        var engine = new ExtensionLoadEngine(host, strategyRegistry, TestIgnisCore.noopStrategyContext(),
+                TestIgnisCore.permissiveIntegrationRegistry());
         resourceProvider = new ExtensionResourceProvider();
         loader = new BlockExtensionLoader(engine, resourceProvider);
     }

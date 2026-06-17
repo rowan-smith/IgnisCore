@@ -49,8 +49,8 @@ final class RingBehavior {
             world.spawnParticle(burst, "EXPLOSION", 2, 0.1, 0.3, 0.1, 0.02);
         }
 
-        BlockBlastSupport.breakTorus(world, loc, majorRadius, minorRadius, staggered,
-                batchSize, batchDelayTicks, context.getScheduler());
+        BlockBlastSupport.breakTorus(context.getRegionService(), world, loc, majorRadius, minorRadius,
+                staggered, batchSize, batchDelayTicks, context.getScheduler());
         world.createExplosion(loc, 1.5f, false, false);
     }
 
