@@ -12,7 +12,9 @@ import java.util.Optional;
 
 /**
  * Typed view of the standard {@code behavior} YAML section for blocks.
- * Controls surface click routing and combustibility only.
+ *
+ * <p>Controls surface click routing, combustibility, ignition materials, and ignite sounds or
+ * effects. Strategy defaults from {@link StrategyProfile} apply when a behavior key is omitted.</p>
  */
 public final class BlockBehaviorConfig {
     private final Boolean combustible;
@@ -45,10 +47,19 @@ public final class BlockBehaviorConfig {
         this.igniteEffects = igniteEffects == null ? ExtensionConfig.empty() : igniteEffects;
     }
 
+    /**
+     * @return config with no behavior overrides
+     */
     public static BlockBehaviorConfig empty() {
         return new BlockBehaviorConfig(null, null, null, null, null, List.of(), null, null, ExtensionConfig.empty());
     }
 
+    /**
+     * Parses the {@code behavior} section from an extension config map.
+     *
+     * @param config behavior section wrapped as {@link ExtensionConfig}
+     * @return parsed behavior settings, or {@link #empty()} when absent
+     */
     public static BlockBehaviorConfig from(ExtensionConfig config) {
         if (config == null || config.asMap().isEmpty()) {
             return empty();
@@ -69,6 +80,9 @@ public final class BlockBehaviorConfig {
                 effects.section("ignite"));
     }
 
+    /**
+     * @return {@code true} when no behavior keys were configured
+     */
     public boolean isEmpty() {
         return combustible == null
                 && leftClickBlock == null
@@ -81,6 +95,12 @@ public final class BlockBehaviorConfig {
                 && igniteEffects.asMap().isEmpty();
     }
 
+    /**
+     * Overlays configured behavior onto a base strategy profile.
+     *
+     * @param base strategy defaults from the extension
+     * @return merged profile, or {@code base} unchanged when {@link #isEmpty()}
+     */
     public StrategyProfile merge(StrategyProfile base) {
         if (isEmpty()) {
             return base;
@@ -108,6 +128,15 @@ public final class BlockBehaviorConfig {
         return builder.build();
     }
 
+    /**
+     * Resolves the click action for a player interaction, applying ignition rules for
+     * right-click block when combustible.
+     *
+     * @param interaction player interaction type
+     * @param profile merged strategy profile
+     * @param materialKey held item material key for ignition checks
+     * @return resolved block action
+     */
     public CustomBlockAction resolve(IgnisInteraction interaction, StrategyProfile profile, String materialKey) {
         return switch (interaction) {
             case LEFT_CLICK_BLOCK -> orDefault(leftClickBlock, profile.getLeftClickAction());
@@ -118,10 +147,17 @@ public final class BlockBehaviorConfig {
         };
     }
 
+    /**
+     * @param fallback sound id when {@code sounds.ignite} is not set
+     * @return configured ignite sound or the fallback
+     */
     public String igniteSoundOr(String fallback) {
         return igniteSound != null ? igniteSound : fallback;
     }
 
+    /**
+     * @return nested {@code effects.ignite} section for particle or protocol effects
+     */
     public ExtensionConfig igniteEffects() {
         return igniteEffects;
     }

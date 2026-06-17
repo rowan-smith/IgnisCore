@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ExtensionManifestTest {
     @Test
@@ -129,5 +130,127 @@ class ExtensionManifestTest {
                         "unknown-manifest.yml"));
 
         assertEquals("extension manifest requires strategy", error.getMessage());
+    }
+
+    @Test
+    void parsesRequiresIntegrations() {
+        String yaml = """
+                id: nuke
+                requires-integrations:
+                  - protocol
+                  - nbt-entity
+                """;
+
+        ExtensionManifest manifest = ExtensionManifest.fromStream(
+                new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
+                "block-extension.yml");
+
+        assertEquals(2, manifest.getRequiredIntegrations().size());
+        assertEquals(ExtensionIntegration.PROTOCOL, manifest.getRequiredIntegrations().get(0));
+        assertEquals(ExtensionIntegration.NBT_ENTITY, manifest.getRequiredIntegrations().get(1));
+    }
+
+    @Test
+    void parsesRequiresIntegrationsWithUnderscores() {
+        String yaml = """
+                id: nuke
+                requires-integrations:
+                  - nbt_entity
+                """;
+
+        ExtensionManifest manifest = ExtensionManifest.fromStream(
+                new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
+                "block-extension.yml");
+
+        assertEquals(1, manifest.getRequiredIntegrations().size());
+        assertEquals(ExtensionIntegration.NBT_ENTITY, manifest.getRequiredIntegrations().get(0));
+    }
+
+    @Test
+    void defaultsRequiresIntegrationsToEmpty() {
+        ExtensionManifest manifest = ExtensionManifest.fromStream(
+                new ByteArrayInputStream("id: nuke\n".getBytes(StandardCharsets.UTF_8)),
+                "block-extension.yml");
+
+        assertTrue(manifest.getRequiredIntegrations().isEmpty());
+    }
+
+    @Test
+    void rejectsUnknownRequiresIntegrationsEntry() {
+        String yaml = """
+                id: nuke
+                requires-integrations:
+                  - unknown-integration
+                """;
+
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                () -> ExtensionManifest.fromStream(
+                        new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
+                        "block-extension.yml"));
+
+        assertEquals("Unknown requires-integrations entry: unknown-integration", error.getMessage());
+    }
+
+    @Test
+    void parsesProfiles() {
+        String yaml = """
+                id: nuke
+                profiles:
+                  - fuse
+                  - placed-hooks
+                  - drop-collector
+                """;
+
+        ExtensionManifest manifest = ExtensionManifest.fromStream(
+                new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
+                "block-extension.yml");
+
+        assertEquals(3, manifest.getProfiles().size());
+        assertEquals(ExtensionProfile.FUSE, manifest.getProfiles().get(0));
+        assertEquals(ExtensionProfile.PLACED_HOOKS, manifest.getProfiles().get(1));
+        assertEquals(ExtensionProfile.DROP_COLLECTOR, manifest.getProfiles().get(2));
+    }
+
+    @Test
+    void parsesProfilesWithUnderscores() {
+        String yaml = """
+                id: grenade
+                profiles:
+                  - item_use
+                  - processing_gui
+                """;
+
+        ExtensionManifest manifest = ExtensionManifest.fromStream(
+                new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
+                "item-extension.yml");
+
+        assertEquals(2, manifest.getProfiles().size());
+        assertEquals(ExtensionProfile.ITEM_USE, manifest.getProfiles().get(0));
+        assertEquals(ExtensionProfile.PROCESSING_GUI, manifest.getProfiles().get(1));
+    }
+
+    @Test
+    void defaultsProfilesToEmpty() {
+        ExtensionManifest manifest = ExtensionManifest.fromStream(
+                new ByteArrayInputStream("id: nuke\n".getBytes(StandardCharsets.UTF_8)),
+                "block-extension.yml");
+
+        assertTrue(manifest.getProfiles().isEmpty());
+    }
+
+    @Test
+    void rejectsUnknownProfilesEntry() {
+        String yaml = """
+                id: nuke
+                profiles:
+                  - unknown-profile
+                """;
+
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                () -> ExtensionManifest.fromStream(
+                        new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8)),
+                        "block-extension.yml"));
+
+        assertEquals("Unknown profiles entry: unknown-profile", error.getMessage());
     }
 }
