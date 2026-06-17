@@ -26,7 +26,7 @@ class BehaviorTest {
     }
 
     @Test
-    void triggerCreatesExplosion() {
+    void triggerCreatesBurst() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "spider-storm-tnt", 10001);
         Strategy strategy = new Strategy(ctx.context());
@@ -35,6 +35,6 @@ class BehaviorTest {
 
         ctx.eventBus().fireBlockTrigger(new BlockTriggerEvent(instance, null), "spider-storm-tnt");
 
-        assertFalse(ctx.world().explosions().isEmpty());
+        assertFalse(ctx.world().particles().isEmpty());
     }
 }

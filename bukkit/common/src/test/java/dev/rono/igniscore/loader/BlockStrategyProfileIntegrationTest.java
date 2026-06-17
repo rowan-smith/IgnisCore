@@ -20,6 +20,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,7 +32,8 @@ class BlockStrategyProfileIntegrationTest {
     @ValueSource(strings = {
             "auto-sieve",
             "picnic-basket",
-            "socket-lamp"
+            "socket-lamp",
+            "signal-charge"
     })
     void placedUtilityStrategiesDoNotDeclareFuseLifecycle(String moduleName) throws Exception {
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
@@ -67,8 +69,7 @@ class BlockStrategyProfileIntegrationTest {
             "erupting-tnt",
             "mimic-tnt",
             "tunneling-tnt",
-            "spider-storm-tnt",
-            "signal-charge"
+            "spider-storm-tnt"
     })
     void bundledStrategiesExposeProfilesForTheirDefinitions(String moduleName) throws Exception {
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);

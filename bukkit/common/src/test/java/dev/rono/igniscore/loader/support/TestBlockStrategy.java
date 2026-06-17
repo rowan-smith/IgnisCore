@@ -21,6 +21,5 @@ public class TestBlockStrategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public void registerEvents() {
-        onBlockTrigger(event -> { });
     }
 }

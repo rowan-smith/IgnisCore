@@ -2,6 +2,7 @@ package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.testsupport.NoopExtensionSupport;
+import dev.rono.igniscore.testsupport.NoopEventBus;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.Test;
 

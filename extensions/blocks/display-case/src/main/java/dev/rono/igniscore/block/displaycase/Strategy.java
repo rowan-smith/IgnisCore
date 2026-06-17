@@ -23,6 +23,6 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public void registerEvents() {
         onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
         onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
-        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.location(), event.player(), interaction, event.heldItem(), event.action()));
+        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.location(), event.player(), event.interaction(), event.heldItem(), event.action()));
     }
 }

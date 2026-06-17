@@ -31,10 +31,10 @@ public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public void registerEvents() {
-        eventBus.subscribe(descriptor().id(), this::onBlockTrigger);
+        eventBus.subscribe(descriptor().getId(), this::handleBlockTrigger);
     }
 
-    private void onBlockTrigger(BlockTriggerEvent event) {
+    private void handleBlockTrigger(BlockTriggerEvent event) {
         BlockDefinition def = event.instance().getDefinition();
         IgnisLocation loc = event.instance().getLocation();
         float power = resolvePower(def);

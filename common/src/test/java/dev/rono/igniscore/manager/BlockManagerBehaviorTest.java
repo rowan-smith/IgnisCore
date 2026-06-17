@@ -137,6 +137,12 @@ class BlockManagerBehaviorTest {
         CommonTestSupport.RecordingBlockVisualRenderer batchedRenderer = new CommonTestSupport.RecordingBlockVisualRenderer();
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl(
                 new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus));
+        DefaultExplosionStrategy testStrategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus);
+        testStrategy.bindDescriptor(IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"));
+        testStrategy.registerEvents();
+        registry.register(
+                IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"),
+                testStrategy);
         StrategyProfileResolver profileResolver = new StrategyProfileResolver(registry);
         StrategyEventPublisher events = new StrategyEventPublisher(eventBus, profileResolver);
         BlockManager batchedManager = new BlockManager(

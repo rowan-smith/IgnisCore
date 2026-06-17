@@ -1,5 +1,6 @@
 package dev.rono.igniscore.api;
 
+import dev.rono.igniscore.api.event.IgnisEventBus;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
@@ -10,6 +11,7 @@ import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
+import dev.rono.igniscore.testsupport.NoopEventBus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -214,6 +216,11 @@ class IgnisCoreAPITest {
         @Override
         public IgnisEffectService getEffectService() {
             return effectService;
+        }
+
+        @Override
+        public IgnisEventBus eventBus() {
+            return NoopEventBus.INSTANCE;
         }
 
         @Override

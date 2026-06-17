@@ -5,6 +5,7 @@ import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.loader.support.TestExtensionJarBuilder;
 import dev.rono.igniscore.support.TestIgnisCore;
+import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.testsupport.CommonTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,8 @@ class BlockExtensionLoaderTest {
             }
         };
         var strategyRegistry = TestIgnisCore.newStrategyRegistry();
-        var engine = new ExtensionLoadEngine(host, strategyRegistry, null);
+        var behaviorContext = BehaviorTestSupport.createContext();
+        var engine = new ExtensionLoadEngine(host, strategyRegistry, behaviorContext.context());
         resourceProvider = new ExtensionResourceProvider();
         loader = new BlockExtensionLoader(engine, resourceProvider);
     }

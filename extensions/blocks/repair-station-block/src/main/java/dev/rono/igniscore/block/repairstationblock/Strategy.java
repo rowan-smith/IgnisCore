@@ -21,6 +21,6 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public void registerEvents() {
-        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.location(), event.player(), interaction, event.heldItem(), event.action()));
+        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.location(), event.player(), event.interaction(), event.heldItem(), event.action()));
     }
 }

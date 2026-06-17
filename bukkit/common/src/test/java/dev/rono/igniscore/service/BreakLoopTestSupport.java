@@ -7,6 +7,8 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
+import dev.rono.igniscore.event.IgnisEventBusImpl;
+import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.listener.BlockListener;
 import dev.rono.igniscore.listener.ExtensionSupportListener;
 import dev.rono.igniscore.manager.BlockManager;
@@ -54,7 +56,7 @@ public final class BreakLoopTestSupport {
         ExtensionSupportService extensionSupport = new ExtensionSupportService(
                 CommonTestSupport.platformAdapter(behaviorContext.world(), tempDir));
         IgnisStrategyRegistryImpl strategyRegistry = new IgnisStrategyRegistryImpl(
-                new DefaultExplosionStrategy(behaviorContext.context().getExtensionSupport(), new dev.rono.igniscore.event.IgnisEventBusImpl()));
+                new DefaultExplosionStrategy(behaviorContext.context().getExtensionSupport(), new IgnisEventBusImpl()));
         strategyRegistry.register(
                 IgnisStrategyDescriptor.of("storage", "Storage", "1.0.0", "test"),
                 storageStrategy());
@@ -62,14 +64,16 @@ public final class BreakLoopTestSupport {
         PlacedBlockPersistenceService persistence = new PlacedBlockPersistenceService(
                 CommonTestSupport.runtimeHost(tempDir));
         CommonTestSupport.RecordingBlockVisualRenderer visualRenderer = new CommonTestSupport.RecordingBlockVisualRenderer();
+        StrategyProfileResolver profileResolver = new StrategyProfileResolver(strategyRegistry);
+        StrategyEventPublisher events = new StrategyEventPublisher(new IgnisEventBusImpl(), profileResolver);
         BlockManager blockManager = new BlockManager(
                 new RuntimeBlockService(),
-                strategyRegistry,
                 behaviorContext.effects(),
-                new StrategyProfileResolver(strategyRegistry),
+                profileResolver,
                 persistence,
                 new CommonTestSupport.ImmediateIgnisScheduler(),
                 visualRenderer,
+                events,
                 PerformanceSettings.defaults());
 
         List<dev.rono.igniscore.loader.LoadedExtension<BlockDefinition>> loaded = Arrays.stream(definitions)
@@ -87,13 +91,12 @@ public final class BreakLoopTestSupport {
         PdcBackedNbtService nbtService = new PdcBackedNbtService();
         BlockItemFactory blockItemFactory = new BlockItemFactory(blockManager, nbtService, platformHooks);
         ConfiguredEffectService effectService = new ConfiguredEffectService(plugin, platformHooks);
-        StrategyProfileResolver profileResolver = new StrategyProfileResolver(strategyRegistry);
         CustomBlockBreakService breakService = new CustomBlockBreakService(
                 plugin,
                 blockManager,
                 blockItemFactory,
                 effectService,
-                strategyRegistry,
+                events,
                 profileResolver);
         CustomBlockIgnitionService ignitionService = new CustomBlockIgnitionService(
                 blockManager, breakService, effectService);
@@ -107,7 +110,7 @@ public final class BreakLoopTestSupport {
                 breakService,
                 ignitionService,
                 itemIdentifier,
-                strategyRegistry);
+                events);
         ExtensionSupportListener extensionSupportListener = new ExtensionSupportListener(
                 blockManager, extensionSupport);
 
@@ -141,7 +144,7 @@ public final class BreakLoopTestSupport {
                                                      BehaviorTestSupport.TestContext behaviorContext,
                                                      BlockDefinition... definitions) {
         DefaultExplosionStrategy fallback = new DefaultExplosionStrategy(
-                behaviorContext.context().getExtensionSupport(), new dev.rono.igniscore.event.IgnisEventBusImpl());
+                behaviorContext.context().getExtensionSupport(), new IgnisEventBusImpl());
         for (BlockDefinition definition : definitions) {
             String extensionId = definition.getExtensionId();
             if (!strategyRegistry.isRegistered(extensionId)) {

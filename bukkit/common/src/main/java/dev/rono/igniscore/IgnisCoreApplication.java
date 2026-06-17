@@ -127,6 +127,11 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
     }
 
     @Override
+    public dev.rono.igniscore.api.event.IgnisEventBus eventBus() {
+        return facade.eventBus();
+    }
+
+    @Override
     public void reloadExtensions() {
         facade.reloadExtensions();
     }

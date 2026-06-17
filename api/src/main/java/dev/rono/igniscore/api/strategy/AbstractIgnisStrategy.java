@@ -46,35 +46,35 @@ public abstract class AbstractIgnisStrategy implements IgnisStrategy {
     }
 
     protected final void onBlockPlace(OnBlockPlaceListener listener) {
-        requireContext().eventBus().subscribe(descriptor().id(), listener);
+        requireContext().eventBus().subscribe(descriptor().getId(), listener);
     }
 
     protected final void onBlockClick(OnBlockClickListener listener) {
-        requireContext().eventBus().subscribe(descriptor().id(), listener);
+        requireContext().eventBus().subscribe(descriptor().getId(), listener);
     }
 
     protected final void onBlockInteract(OnBlockInteractListener listener) {
-        requireContext().eventBus().subscribe(descriptor().id(), listener);
+        requireContext().eventBus().subscribe(descriptor().getId(), listener);
     }
 
     protected final void onBlockBreak(OnBlockBreakListener listener) {
-        requireContext().eventBus().subscribe(descriptor().id(), listener);
+        requireContext().eventBus().subscribe(descriptor().getId(), listener);
     }
 
     protected final void onBlockActivate(OnBlockActivateListener listener) {
-        requireContext().eventBus().subscribe(descriptor().id(), listener);
+        requireContext().eventBus().subscribe(descriptor().getId(), listener);
     }
 
     protected final void onBlockTick(OnBlockTickListener listener) {
-        requireContext().eventBus().subscribe(descriptor().id(), listener);
+        requireContext().eventBus().subscribe(descriptor().getId(), listener);
     }
 
     protected final void onBlockTrigger(OnBlockTriggerListener listener) {
-        requireContext().eventBus().subscribe(descriptor().id(), listener);
+        requireContext().eventBus().subscribe(descriptor().getId(), listener);
     }
 
     protected final void onItemClick(OnItemClickListener listener) {
-        requireContext().eventBus().subscribe(descriptor().id(), listener);
+        requireContext().eventBus().subscribe(descriptor().getId(), listener);
     }
 
     private IgnisStrategyContext requireContext() {
