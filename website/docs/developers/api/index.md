@@ -8,21 +8,25 @@ slug: /developers/api
 
 | Surface | Maven artifact | Package | Status |
 |---------|----------------|---------|--------|
-| **Core API** | `dev.rono:api` | `dev.rono.igniscore.api.*` | Stable |
-| **Extension shared** | `dev.rono.extensions:shared` | `dev.rono.extensions.shared.*` | Stable helpers |
+| **Core API** | `dev.rono:api` | `dev.rono.igniscore.api.*` | Stable, fully Javadoc'd |
+| **Extension shared** | `dev.rono.extensions:shared` | `dev.rono.extensions.shared.*` | Optional helpers for bundled extensions |
+
+## Start here
+
+| Doc | Content |
+|-----|---------|
+| [API layers](/developers/api/layers) | L1–L4 model — extension vs integrator entry points |
+| [Core API](/developers/api/core-api) | Package map and `IgnisStrategyContext` |
+| [Extension profiles](/developers/extension-profiles) | Manifest `profiles` and `requires-integrations` |
+| [Javadoc](/developers/reference) | Every public class and method |
 
 ## Which API should I use?
 
 | Task | Use |
 |------|-----|
-| Build a block or item extension | **Core API** — strategies, models, ports |
-| Parse explosion / throwable config | **Extension shared** — `ExtensionConfigs` helpers |
-| Access runtime from another plugin | **Core API** — `IgnisCoreAPI` facade |
-
-## Sub-references
-
-- [Core API](/developers/api/core-api) — strategies, ports, models, config
-- [Extension shared](/developers/api/extension-shared) — typed config helpers
+| Build a block or item extension | **L2–L3** — strategies + `IgnisStrategyContext` |
+| Parse explosion / throwable config | **Extension shared** (optional) or `ExtensionConfig` in core API |
+| Access runtime from another plugin | **L4** — `IgnisCoreAPI` facade |
 
 ## Sample extensions
 
@@ -35,5 +39,4 @@ slug: /developers/api
 ## Related docs
 
 - [Extension Cookbook](/developers/cookbook) — practical recipes
-- [Javadoc](/developers/reference) — full class reference
 - [Architecture](/developers/architecture) — module boundaries

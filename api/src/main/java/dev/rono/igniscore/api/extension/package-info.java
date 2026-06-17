@@ -1,9 +1,10 @@
 /**
- * Extension JAR metadata, resource access, and load-time requirements.
+ * Extension manifest metadata, optional integration requirements, and
+ * behavior profile declarations.
  *
- * <p>Each extension ships {@code block-extension.yml} or {@code item-extension.yml} parsed by
- * {@link ExtensionManifest}. Optional {@code requires-integrations} and {@code profiles} entries
- * describe platform dependencies and expected strategy callbacks. {@link ExtensionResources}
- * opens classpath assets from the extension class loader.</p>
+ * <p>Every extension JAR ships a {@link ExtensionManifest} parsed from
+ * {@code block-extension.yml} or {@code item-extension.yml}. Use
+ * {@link ExtensionIntegration} and {@link ExtensionProfile} tokens in YAML
+ * to document and validate capabilities at load time.</p>
  */
 package dev.rono.igniscore.api.extension;

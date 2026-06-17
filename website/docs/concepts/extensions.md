@@ -35,7 +35,13 @@ version: 1.0.0
 api-version: 1.0.0
 author: YourName
 strategy: dev.rono.igniscore.block.mytnt.Strategy
+profiles:
+  - fuse
+requires-integrations:
+  - protocol   # optional — only if you need ProtocolLib
 ```
+
+See [Extension profiles](/developers/extension-profiles) for all profile and integration tokens.
 
 ## Project layout
 
@@ -70,5 +76,7 @@ my-extension/
 ## Related
 
 - [Strategies](/concepts/strategies) — Java strategy contract
+- [Extension profiles](/developers/extension-profiles) — manifest profiles and integrations
+- [API layers](/developers/api/layers) — extension vs integrator surfaces
 - [Extension Cookbook](/developers/cookbook) — build your own
 - [Storage](/storage) — deploy paths and reload

@@ -27,13 +27,12 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 
 | Layer | What it covers |
 |-------|----------------|
+| **[API layers](/developers/api/layers)** | L1–L4 model — extension vs integrator surfaces |
+| **[Extension profiles](/developers/extension-profiles)** | Manifest profiles and integration requirements |
 | **[Extension Cookbook](/developers/cookbook/)** | Practical recipes — explosions, throwables, GUI blocks |
-| **[API Reference](/developers/api/)** | Core API and extension-shared helpers |
+| **[API Reference](/developers/api/)** | Core API package map and entry points |
 | **[Architecture](/developers/architecture/)** | Module stack, boot flow, dependency rules |
-| **[Javadoc](/developers/reference/)** | Full class and method reference |
-| **[Sample extensions](https://github.com/%%site.repo%%/tree/main/extensions)** | Working JARs in the repo |
-
-The website is intentionally thin — detailed API signatures live in Javadoc. The cookbook shows you *how* to do common tasks with links to the relevant classes.
+| **[Javadoc](/developers/reference/)** | Full class and method reference (100% public API coverage) |
 
 ## Two libraries
 
