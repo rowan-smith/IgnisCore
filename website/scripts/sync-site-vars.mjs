@@ -13,7 +13,7 @@ const PACKAGE_PATH = path.join(WEBSITE_ROOT, 'package.json');
 const POM_PATH = path.join(REPO_ROOT, 'pom.xml');
 
 const DEFAULTS = {
-  repo: 'rowan-smith/igniscore',
+  repo: 'rowan-smith/IgnisCore',
   siteUrl: 'https://igniscore.rono.dev',
   baseUrl: '/',
 };
