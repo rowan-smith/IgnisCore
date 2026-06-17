@@ -7,7 +7,7 @@ import dev.rono.igniscore.api.port.IgnisLocation;
 /**
  * Fired when a placed custom block is removed from the world.
  */
-public final class BlockBreakEvent {
+public final class BlockBreakEvent implements BlockEvent {
     private final BlockDefinition definition;
     private final IgnisLocation location;
     private final IgnisItem droppedItem;
@@ -18,10 +18,20 @@ public final class BlockBreakEvent {
         this.droppedItem = droppedItem;
     }
 
+    @Override
     public BlockDefinition definition() {
         return definition;
     }
 
+    @Override
+    public IgnisLocation block() {
+        return location;
+    }
+
+    /**
+     * @deprecated use {@link #block()}
+     */
+    @Deprecated
     public IgnisLocation location() {
         return location;
     }

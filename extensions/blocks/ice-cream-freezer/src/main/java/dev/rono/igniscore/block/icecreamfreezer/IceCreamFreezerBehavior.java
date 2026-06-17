@@ -68,7 +68,7 @@ final class IceCreamFreezerBehavior {
         ProcessingGuiSupport.consumeOne(inventory, SNOW_SLOT);
         ProcessingGuiSupport.consumeOne(inventory, BERRY_SLOT);
         ProcessingGuiSupport.consumeOne(inventory, BUCKET_SLOT);
-        ProcessingGuiSupport.setOutput(context.getExtensionSupport(), inventory, OUTPUT_SLOT, "bowl", 1);
+        ProcessingGuiSupport.setOutput(context.extensions(), inventory, OUTPUT_SLOT, "bowl", 1);
         IgnisWorld world = worldAt(location);
         IgnisLocation center = Locations.toCenter(location);
         TheatricsSupport.sparkle(world, center, "CLOUD", 8);
@@ -80,6 +80,6 @@ final class IceCreamFreezerBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

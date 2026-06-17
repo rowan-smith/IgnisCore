@@ -19,7 +19,7 @@ final class SpiderStormBehavior {
 
     SpiderStormBehavior(IgnisStrategyContext context) {
         this.context = context;
-        this.nbtService = context.getNbtService();
+        this.nbtService = context.nbt();
     }
 
     void onPlaced(IgnisLocation location) {
@@ -112,6 +112,6 @@ final class SpiderStormBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

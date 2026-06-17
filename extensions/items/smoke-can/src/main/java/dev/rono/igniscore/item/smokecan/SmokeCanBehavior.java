@@ -29,7 +29,7 @@ final class SmokeCanBehavior {
         int duration = StrategySupport.customInt(definition.getCustomData(), "smokeDurationTicks", 400);
         int[] ticks = {0};
         IgnisTask[] ref = {null};
-        ref[0] = context.getScheduler().runRepeating(eye, () -> {
+        ref[0] = context.scheduler().runRepeating(eye, () -> {
             ticks[0]++;
             IgnisLocation loc = world.isEntityValid(can) ? world.getEntityLocation(can) : null;
             if (loc != null) {

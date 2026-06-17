@@ -28,7 +28,7 @@ final class SeedBombBehavior {
         }
         int fuse = StrategySupport.customInt(definition.getCustomData(), "scatterDelayTicks", 15);
         int radius = StrategySupport.customInt(definition.getCustomData(), "scatterRadius", 3);
-        context.getScheduler().runLater(eye, () -> {
+        context.scheduler().runLater(eye, () -> {
             IgnisLocation impact = world.isEntityValid(bomb) ? world.getEntityLocation(bomb) : eye;
             if (impact == null) {
                 return;

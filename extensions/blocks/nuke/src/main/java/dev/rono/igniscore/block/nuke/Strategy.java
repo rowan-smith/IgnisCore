@@ -11,6 +11,10 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new NukeBehavior(context);
+        onBlockPlace(event -> behavior.onPlaced(event.block()));
+        onBlockActivate(event -> behavior.onPlace(event.instance()));
+        onBlockTick(event -> behavior.onTick(event.instance()));
+        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.instance().getDefinition()));
     }
 
     @Override
@@ -21,11 +25,4 @@ public class Strategy extends AbstractIgnisBlockStrategy {
                 .build();
     }
 
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.location()));
-        onBlockActivate(event -> behavior.onPlace(event.instance()));
-        onBlockTick(event -> behavior.onTick(event.instance()));
-        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.instance().getDefinition()));
-    }
 }

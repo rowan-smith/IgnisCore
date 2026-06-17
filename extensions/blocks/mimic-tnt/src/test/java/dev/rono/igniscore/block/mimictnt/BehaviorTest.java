@@ -13,8 +13,7 @@ class BehaviorTest {
     void activateDoesNotThrow() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "mimic-tnt", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "mimic-tnt");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "mimic-tnt");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(definition);
 
         org.junit.jupiter.api.Assertions.assertDoesNotThrow(() ->

@@ -56,7 +56,7 @@ public final class BreakLoopTestSupport {
         ExtensionSupportService extensionSupport = new ExtensionSupportService(
                 CommonTestSupport.platformAdapter(behaviorContext.world(), tempDir));
         IgnisStrategyRegistryImpl strategyRegistry = new IgnisStrategyRegistryImpl(
-                new DefaultExplosionStrategy(behaviorContext.context().getExtensionSupport(), new IgnisEventBusImpl()));
+                new DefaultExplosionStrategy(behaviorContext.context().extensions(), new IgnisEventBusImpl()));
         strategyRegistry.register(
                 IgnisStrategyDescriptor.of("storage", "Storage", "1.0.0", "test"),
                 storageStrategy());
@@ -136,7 +136,7 @@ public final class BreakLoopTestSupport {
     }
 
     public static void performTicks(ServerMock server, long ticks) {
-        BukkitSchedulerMock scheduler = (BukkitSchedulerMock) server.getScheduler();
+        BukkitSchedulerMock scheduler = (BukkitSchedulerMock) server.scheduler();
         scheduler.performTicks(ticks);
     }
 
@@ -144,7 +144,7 @@ public final class BreakLoopTestSupport {
                                                      BehaviorTestSupport.TestContext behaviorContext,
                                                      BlockDefinition... definitions) {
         DefaultExplosionStrategy fallback = new DefaultExplosionStrategy(
-                behaviorContext.context().getExtensionSupport(), new IgnisEventBusImpl());
+                behaviorContext.context().extensions(), new IgnisEventBusImpl());
         for (BlockDefinition definition : definitions) {
             String extensionId = definition.getExtensionId();
             if (!strategyRegistry.isRegistered(extensionId)) {

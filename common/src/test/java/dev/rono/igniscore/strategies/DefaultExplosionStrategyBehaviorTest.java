@@ -21,8 +21,7 @@ class DefaultExplosionStrategyBehaviorTest {
     void triggerStoresBlastPowerAndExplodes() {
         TestEventBus eventBus = new TestEventBus();
         BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext(eventBus);
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus);
-        strategy.registerEvents();
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().extensions(), eventBus);
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(sampleDefinition());
 
         eventBus.fireBlockTrigger(new BlockTriggerEvent(instance, null), "default");
@@ -36,8 +35,7 @@ class DefaultExplosionStrategyBehaviorTest {
     void triggerUsesCustomPowerFromDefinition() {
         IgnisEventBus eventBus = new TestEventBus();
         BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext(eventBus);
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus);
-        strategy.registerEvents();
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().extensions(), eventBus);
         BlockDefinition powered = new BlockDefinition(
                 "powered",
                 "paper",

@@ -8,11 +8,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new DetonatorBehavior(new DetonatorLinkStorage(context.getNbtService()));
-    }
-
-    @Override
-    public void registerEvents() {
+        this.behavior = new DetonatorBehavior(new DetonatorLinkStorage(context.nbt()));
         onItemClick(event -> {
             switch (event.actionToken()) {
                 case "assign" -> behavior.assignBomb(event.player(), event.definition(), event.item(), event.clickedBlock());
@@ -21,5 +17,6 @@ public class Strategy extends AbstractIgnisItemStrategy {
             }
         });
     }
+
 }
 

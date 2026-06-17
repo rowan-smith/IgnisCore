@@ -9,10 +9,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new SignalChargeBehavior(context);
-    }
-
-    @Override
-    public void registerEvents() {
         onBlockTrigger(event -> behavior.onTrigger(event.instance()));
     }
+
 }

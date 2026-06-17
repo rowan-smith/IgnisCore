@@ -13,14 +13,12 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         this.registry = new QuarryCacheRegistry(context);
     }
 
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> registry.register(event.location(), event.definition(), event.placedFrom()));
-        onBlockBreak(event -> registry.handleBreak(event.location(), event.droppedItem()));
-        onBlockInteract(event -> {
+        context.eventBus().subscribe(event -> registry.register(event.block(), event.definition(), event.placedFrom()));
+        context.eventBus().subscribe(event -> registry.handleBreak(event.block(), event.droppedItem()));
+        context.eventBus().subscribe(event -> {
             if (event.action() == CustomBlockAction.OPEN) {
-                registry.openGui(event.player(), event.location());
+                registry.openGui(event.player(), event.block());
             }
         });
-    }
+
 }

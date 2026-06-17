@@ -9,14 +9,11 @@ public class Strategy extends AbstractIgnisItemStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new GrenadeBehavior(context);
-    }
-
-    @Override
-    public void registerEvents() {
         onItemClick(event -> {
             if ("throw".equals(event.actionToken())) {
                 behavior.onItemUse(event.player(), event.definition(), event.item());
             }
         });
     }
+
 }

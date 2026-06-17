@@ -23,20 +23,16 @@ public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
         super(IgnisStrategyDescriptor.of("default", "Default Explosion", "1.0.0", "IgnisCore"));
         this.extensionSupport = extensionSupport;
         this.eventBus = eventBus;
+        eventBus.subscribe(descriptor().getId(), this::handleBlockTrigger);
     }
 
     public StrategyProfile profile(BlockDefinition definition) {
         return StrategyProfile.combustible(80, 4.0);
     }
 
-    @Override
-    public void registerEvents() {
-        eventBus.subscribe(descriptor().getId(), this::handleBlockTrigger);
-    }
-
     private void handleBlockTrigger(BlockTriggerEvent event) {
-        BlockDefinition def = event.instance().getDefinition();
-        IgnisLocation loc = event.instance().getLocation();
+        BlockDefinition def = event.definition();
+        IgnisLocation loc = event.block();
         float power = resolvePower(def);
 
         event.instance().getData().setDouble("ignis:blast_power", power);

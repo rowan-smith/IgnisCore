@@ -2,6 +2,7 @@ package dev.rono.igniscore.event;
 
 import com.google.inject.Singleton;
 import dev.rono.igniscore.api.event.IgnisEventBus;
+import dev.rono.igniscore.api.loader.ExtensionLoadScope;
 import dev.rono.igniscore.api.event.OnBlockActivateListener;
 import dev.rono.igniscore.api.event.OnBlockBreakListener;
 import dev.rono.igniscore.api.event.OnBlockClickListener;
@@ -25,42 +26,42 @@ public class IgnisEventBusImpl implements IgnisEventBus {
 
     @Override
     public void subscribe(OnBlockPlaceListener listener) {
-        subscribe(null, listener);
+        subscribe(resolveExtensionId(), listener);
     }
 
     @Override
     public void subscribe(OnBlockClickListener listener) {
-        subscribe(null, listener);
+        subscribe(resolveExtensionId(), listener);
     }
 
     @Override
     public void subscribe(OnBlockInteractListener listener) {
-        subscribe(null, listener);
+        subscribe(resolveExtensionId(), listener);
     }
 
     @Override
     public void subscribe(OnBlockBreakListener listener) {
-        subscribe(null, listener);
+        subscribe(resolveExtensionId(), listener);
     }
 
     @Override
     public void subscribe(OnBlockActivateListener listener) {
-        subscribe(null, listener);
+        subscribe(resolveExtensionId(), listener);
     }
 
     @Override
     public void subscribe(OnBlockTickListener listener) {
-        subscribe(null, listener);
+        subscribe(resolveExtensionId(), listener);
     }
 
     @Override
     public void subscribe(OnBlockTriggerListener listener) {
-        subscribe(null, listener);
+        subscribe(resolveExtensionId(), listener);
     }
 
     @Override
     public void subscribe(OnItemClickListener listener) {
-        subscribe(null, listener);
+        subscribe(resolveExtensionId(), listener);
     }
 
     @Override
@@ -116,6 +117,10 @@ public class IgnisEventBusImpl implements IgnisEventBus {
 
     private static String normalizeExtensionId(String extensionId) {
         return extensionId == null ? null : extensionId.toLowerCase();
+    }
+
+    private static String resolveExtensionId() {
+        return ExtensionLoadScope.current();
     }
 
     public <L> void dispatch(String extensionId, Class<L> type, java.util.function.Consumer<L> invocation) {

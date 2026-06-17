@@ -27,7 +27,7 @@ final class ChickenCoopCacheBehavior {
 
     void onPlaced(BlockDefinition definition, IgnisLocation location) {
         registry.registerBlock(location, title(definition), 3);
-        context.getExtensionSupport().registerDropCollector(location, (breakLocation, drops) -> collectEggs(location, drops));
+        context.extensions().registerDropCollector(location, (breakLocation, drops) -> collectEggs(location, drops));
         long period = StrategySupport.customInt(definition, "tickPeriod", 100);
         PlacedTickSupport.start(context, location, period, () -> tick(definition, location));
         TheatricsSupport.chime(worldAt(location), Locations.toCenter(location), 1.0f);
@@ -35,7 +35,7 @@ final class ChickenCoopCacheBehavior {
 
     void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
         PlacedTickSupport.stop(location);
-        context.getExtensionSupport().unregisterDropCollector(location);
+        context.extensions().unregisterDropCollector(location);
         registry.unregister(location);
     }
 
@@ -95,7 +95,7 @@ final class ChickenCoopCacheBehavior {
                 world.playSound(center, "ENTITY_CHICKEN_EGG", 0.3f, 1.2f);
                 var gui = registry.blockGui(location);
                 if (gui != null) {
-                    storeItem(gui.inventory(), context.getExtensionSupport().createItem("egg", 1));
+                    storeItem(gui.inventory(), context.extensions().createItem("egg", 1));
                 }
                 break;
             }
@@ -111,6 +111,6 @@ final class ChickenCoopCacheBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

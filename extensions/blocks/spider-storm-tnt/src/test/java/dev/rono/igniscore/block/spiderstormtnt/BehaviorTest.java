@@ -17,8 +17,7 @@ class BehaviorTest {
     void placedSpawnsParticles() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "spider-storm-tnt", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "spider-storm-tnt");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "spider-storm-tnt");
 
         ctx.eventBus().fireBlockPlace(new BlockPlaceEvent(definition, new IgnisLocation("world", 1, 2, 3), null), "spider-storm-tnt");
 
@@ -29,8 +28,7 @@ class BehaviorTest {
     void triggerCreatesBurst() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "spider-storm-tnt", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "spider-storm-tnt");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "spider-storm-tnt");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(definition);
 
         ctx.eventBus().fireBlockTrigger(new BlockTriggerEvent(instance, null), "spider-storm-tnt");

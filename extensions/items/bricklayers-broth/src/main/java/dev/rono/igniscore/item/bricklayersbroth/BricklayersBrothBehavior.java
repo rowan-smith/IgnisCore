@@ -26,7 +26,7 @@ final class BricklayersBrothBehavior {
 
     BricklayersBrothBehavior(IgnisStrategyContext context) {
         this.context = context;
-        this.nbt = context.getNbtService();
+        this.nbt = context.nbt();
     }
 
     void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {

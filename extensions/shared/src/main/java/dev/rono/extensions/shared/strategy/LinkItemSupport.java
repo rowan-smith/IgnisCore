@@ -25,7 +25,7 @@ public final class LinkItemSupport {
                              String expectedBlockType,
                              String remoteAction,
                              double linkRange) {
-        IgnisNbtService nbt = context.getNbtService();
+        IgnisNbtService nbt = context.nbt();
         IgnisWorld world = player.getWorld();
 
         if (clickedBlock != null) {

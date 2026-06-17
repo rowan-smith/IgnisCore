@@ -113,17 +113,17 @@ public class IgnisCoreApplication implements IgnisCoreFacade {
 
     @Override
     public dev.rono.igniscore.api.service.IgnisNbtService getNbtService() {
-        return facade.getNbtService();
+        return facade.nbt();
     }
 
     @Override
     public dev.rono.igniscore.api.service.IgnisProtocolService getProtocolService() {
-        return facade.getProtocolService();
+        return facade.protocol();
     }
 
     @Override
     public dev.rono.igniscore.api.service.IgnisEffectService getEffectService() {
-        return facade.getEffectService();
+        return facade.effects();
     }
 
     @Override

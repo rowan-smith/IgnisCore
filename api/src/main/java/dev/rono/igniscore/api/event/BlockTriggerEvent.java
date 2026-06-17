@@ -5,7 +5,7 @@ import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 /**
  * Fired when an active block instance reaches the end of its fuse or is externally triggered.
  */
-public final class BlockTriggerEvent {
+public final class BlockTriggerEvent implements RuntimeBlockEvent {
     private final RuntimeBlockInstance instance;
     private final Object triggerContext;
 
@@ -14,6 +14,7 @@ public final class BlockTriggerEvent {
         this.triggerContext = triggerContext;
     }
 
+    @Override
     public RuntimeBlockInstance instance() {
         return instance;
     }

@@ -24,7 +24,7 @@ final class TunnelingBehavior {
 
         double dirX = 0;
         double dirZ = 1;
-        IgnisPlayer player = context.getExtensionSupport().wrapPlayer(triggerContext);
+        IgnisPlayer player = context.extensions().wrapPlayer(triggerContext);
         if (player != null) {
             IgnisLocation eye = player.getEyeLocation();
             double yawRad = Math.toRadians(eye.yaw());
@@ -46,7 +46,7 @@ final class TunnelingBehavior {
         double[] current = {loc.x(), loc.y(), loc.z()};
         int[] count = {0};
         IgnisTask[] taskRef = {null};
-        taskRef[0] = context.getScheduler().runRepeating(loc, () -> {
+        taskRef[0] = context.scheduler().runRepeating(loc, () -> {
             if (count[0]++ >= tunnelLength) {
                 if (taskRef[0] != null) {
                     taskRef[0].cancel();
@@ -62,6 +62,6 @@ final class TunnelingBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

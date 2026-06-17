@@ -15,8 +15,7 @@ class BehaviorTest {
     void triggerCreatesExplosionAndParticles() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "wormhole-tnt", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "wormhole-tnt");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "wormhole-tnt");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(definition);
 
         ctx.eventBus().fireBlockTrigger(new BlockTriggerEvent(instance, null), "wormhole-tnt");

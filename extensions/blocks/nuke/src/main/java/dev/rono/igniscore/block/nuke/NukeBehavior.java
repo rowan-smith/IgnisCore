@@ -25,7 +25,7 @@ final class NukeBehavior {
 
     void onPlace(RuntimeBlockInstance instance) {
         IgnisLocation center = Locations.toCenter(instance.getLocation());
-        context.getEffectService().playSound(center, "BLOCK_BEACON_ACTIVATE", 2.0f, 0.6f);
+        context.effects().playSound(center, "BLOCK_BEACON_ACTIVATE", 2.0f, 0.6f);
     }
 
     void onTick(RuntimeBlockInstance instance) {
@@ -64,8 +64,8 @@ final class NukeBehavior {
 
         IgnisLocation center = Locations.toCenter(instance.getLocation());
         float pitch = ticksLeft <= 15 ? 1.9f : ticksLeft <= 40 ? 1.45f : ticksLeft <= 80 ? 1.1f : 0.75f;
-        context.getEffectService().playSound(center, "BLOCK_NOTE_BLOCK_PLING", 2.0f, pitch);
-        context.getEffectService().playSound(center, "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.5f);
+        context.effects().playSound(center, "BLOCK_NOTE_BLOCK_PLING", 2.0f, pitch);
+        context.effects().playSound(center, "BLOCK_NOTE_BLOCK_BASS", 0.8f, 0.5f);
     }
 
     private void spawnFuseParticles(RuntimeBlockInstance instance) {
@@ -99,6 +99,6 @@ final class NukeBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

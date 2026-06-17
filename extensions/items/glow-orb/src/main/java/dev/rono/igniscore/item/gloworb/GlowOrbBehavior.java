@@ -32,7 +32,7 @@ final class GlowOrbBehavior {
         TheatricsSupport.sparkle(world, stick, "END_ROD", 8);
         int[] ticks = {0};
         IgnisTask[] ref = {null};
-        ref[0] = context.getScheduler().runRepeating(stick, () -> {
+        ref[0] = context.scheduler().runRepeating(stick, () -> {
             ticks[0]++;
             IgnisLocation loc = world.isEntityValid(orb) ? world.getEntityLocation(orb) : stick;
             if (loc != null) {

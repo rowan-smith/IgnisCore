@@ -62,7 +62,7 @@ final class PizzaOvenBehavior {
         ProcessingGuiSupport.consumeOne(inventory, BREAD_SLOT);
         ProcessingGuiSupport.consumeOne(inventory, TOMATO_SLOT);
         ProcessingGuiSupport.consumeOne(inventory, CHEESE_SLOT);
-        ProcessingGuiSupport.setOutput(context.getExtensionSupport(), inventory, OUTPUT_SLOT, "cake", 1);
+        ProcessingGuiSupport.setOutput(context.extensions(), inventory, OUTPUT_SLOT, "cake", 1);
         IgnisWorld world = worldAt(location);
         IgnisLocation center = Locations.toCenter(location);
         world.spawnParticle(center, "FLAME", 6, 0.3, 0.2, 0.3, 0.02);
@@ -75,6 +75,6 @@ final class PizzaOvenBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

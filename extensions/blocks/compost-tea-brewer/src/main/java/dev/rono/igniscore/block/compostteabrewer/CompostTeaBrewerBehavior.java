@@ -67,7 +67,7 @@ final class CompostTeaBrewerBehavior {
         }
         ProcessingGuiSupport.consumeOne(inventory, BONE_SLOT);
         ProcessingGuiSupport.consumeOne(inventory, BOTTLE_SLOT);
-        ProcessingGuiSupport.setOutput(context.getExtensionSupport(), inventory, OUTPUT_SLOT, "splash_potion", 1);
+        ProcessingGuiSupport.setOutput(context.extensions(), inventory, OUTPUT_SLOT, "splash_potion", 1);
         IgnisWorld world = worldAt(location);
         IgnisLocation center = Locations.toCenter(location);
         TheatricsSupport.sparkle(world, center, "HAPPY_VILLAGER", 6);
@@ -79,6 +79,6 @@ final class CompostTeaBrewerBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

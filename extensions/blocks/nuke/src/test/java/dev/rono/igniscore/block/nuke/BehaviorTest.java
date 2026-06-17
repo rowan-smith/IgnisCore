@@ -18,8 +18,7 @@ class BehaviorTest {
     void placedSpawnsParticles() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "nuke", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "nuke");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "nuke");
 
         ctx.eventBus().fireBlockPlace(
                 new BlockPlaceEvent(definition, new IgnisLocation("world", 1, 2, 3), null),
@@ -32,8 +31,7 @@ class BehaviorTest {
     void triggerStoresPowerAndExplodes() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "nuke", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "nuke");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "nuke");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(definition);
 
         ctx.eventBus().fireBlockTrigger(new BlockTriggerEvent(instance, null), "nuke");

@@ -59,7 +59,7 @@ final class PiglinBarterPostBehavior {
         ProcessingGuiSupport.consumeOne(inventory, INPUT_SLOT);
         String[] loot = {"ender_pearl", "crying_obsidian", "spectral_arrow", "gilded_blackstone", "iron_nugget"};
         String reward = loot[(int) (Math.random() * loot.length)];
-        ProcessingGuiSupport.setOutput(context.getExtensionSupport(), inventory, OUTPUT_START, reward, 1);
+        ProcessingGuiSupport.setOutput(context.extensions(), inventory, OUTPUT_START, reward, 1);
         IgnisWorld world = worldAt(location);
         IgnisLocation center = Locations.toCenter(location);
         TheatricsSupport.sparkle(world, center, "CRIMSON_SPORE", 8);
@@ -71,6 +71,6 @@ final class PiglinBarterPostBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

@@ -11,6 +11,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new MossCreeperBehavior(context);
+        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.block()));
+        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.block()));
     }
 
     @Override
@@ -18,9 +20,4 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         return StrategyProfile.defaults();
     }
 
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
-    }
 }

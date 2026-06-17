@@ -65,7 +65,7 @@ final class PrepCounterBehavior {
         for (int slot : INPUT_SLOTS) {
             ProcessingGuiSupport.consumeOne(inventory, slot);
         }
-        ProcessingGuiSupport.setOutput(context.getExtensionSupport(), inventory, OUTPUT_SLOT, "golden_carrot", 1);
+        ProcessingGuiSupport.setOutput(context.extensions(), inventory, OUTPUT_SLOT, "golden_carrot", 1);
         IgnisWorld world = worldAt(location);
         IgnisLocation center = Locations.toCenter(location);
         TheatricsSupport.sparkle(world, center, "HAPPY_VILLAGER", 10);
@@ -77,6 +77,6 @@ final class PrepCounterBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

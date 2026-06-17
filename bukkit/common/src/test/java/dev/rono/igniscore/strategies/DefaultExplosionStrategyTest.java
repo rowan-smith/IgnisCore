@@ -46,8 +46,7 @@ class DefaultExplosionStrategyTest {
     void triggerStoresBlastPowerAndExplodes() {
         IgnisEventBusImpl eventBus = new IgnisEventBusImpl();
         BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext(eventBus);
-        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus);
-        strategy.registerEvents();
+        DefaultExplosionStrategy strategy = new DefaultExplosionStrategy(ctx.context().extensions(), eventBus);
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(sampleDefinition());
 
         eventBus.dispatch("default", dev.rono.igniscore.api.event.OnBlockTriggerListener.class,

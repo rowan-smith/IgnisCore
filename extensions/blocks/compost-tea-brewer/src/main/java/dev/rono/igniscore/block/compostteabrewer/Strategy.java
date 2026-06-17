@@ -12,6 +12,9 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new CompostTeaBrewerBehavior(context);
+        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.block()));
+        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.block()));
+        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.block(), event.player(), event.interaction(), event.heldItem(), event.action()));
     }
 
     @Override
@@ -19,10 +22,4 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         return StrategyProfile.defaults();
     }
 
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
-        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.location(), event.player(), event.interaction(), event.heldItem(), event.action()));
-    }
 }

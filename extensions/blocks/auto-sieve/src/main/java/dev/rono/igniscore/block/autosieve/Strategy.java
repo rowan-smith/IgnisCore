@@ -11,16 +11,12 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new AutoSieveBehavior(context);
+        context.eventBus().subscribe(new AutoSieveOnBlockPlaceListener(behavior));
+        context.eventBus().subscribe(new AutoSieveOnBlockBreakListener(behavior));
     }
 
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
         return StrategyProfile.defaults();
-    }
-
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
     }
 }

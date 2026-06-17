@@ -15,8 +15,12 @@ import dev.rono.igniscore.api.model.ItemDefinition;
 import java.util.Objects;
 
 /**
- * Base class for extension strategies with descriptor binding, custom-config helpers, and
- * scoped event bus subscriptions.
+ * Base class for extension strategies with descriptor binding and custom-config helpers.
+ *
+ * <p>Subscribe to lifecycle events in the strategy constructor via
+ * {@link IgnisStrategyContext#eventBus()}. During extension loading, unqualified
+ * {@code eventBus().subscribe(listener)} calls are automatically scoped to the loading
+ * extension id.</p>
  */
 public abstract class AbstractIgnisStrategy implements IgnisStrategy {
     private IgnisStrategyDescriptor descriptor;
@@ -46,35 +50,35 @@ public abstract class AbstractIgnisStrategy implements IgnisStrategy {
     }
 
     protected final void onBlockPlace(OnBlockPlaceListener listener) {
-        requireContext().eventBus().subscribe(descriptor().getId(), listener);
+        requireContext().eventBus().subscribe(listener);
     }
 
     protected final void onBlockClick(OnBlockClickListener listener) {
-        requireContext().eventBus().subscribe(descriptor().getId(), listener);
+        requireContext().eventBus().subscribe(listener);
     }
 
     protected final void onBlockInteract(OnBlockInteractListener listener) {
-        requireContext().eventBus().subscribe(descriptor().getId(), listener);
+        requireContext().eventBus().subscribe(listener);
     }
 
     protected final void onBlockBreak(OnBlockBreakListener listener) {
-        requireContext().eventBus().subscribe(descriptor().getId(), listener);
+        requireContext().eventBus().subscribe(listener);
     }
 
     protected final void onBlockActivate(OnBlockActivateListener listener) {
-        requireContext().eventBus().subscribe(descriptor().getId(), listener);
+        requireContext().eventBus().subscribe(listener);
     }
 
     protected final void onBlockTick(OnBlockTickListener listener) {
-        requireContext().eventBus().subscribe(descriptor().getId(), listener);
+        requireContext().eventBus().subscribe(listener);
     }
 
     protected final void onBlockTrigger(OnBlockTriggerListener listener) {
-        requireContext().eventBus().subscribe(descriptor().getId(), listener);
+        requireContext().eventBus().subscribe(listener);
     }
 
     protected final void onItemClick(OnItemClickListener listener) {
-        requireContext().eventBus().subscribe(descriptor().getId(), listener);
+        requireContext().eventBus().subscribe(listener);
     }
 
     private IgnisStrategyContext requireContext() {

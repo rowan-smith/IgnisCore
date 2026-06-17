@@ -47,10 +47,10 @@ public class ExtensionReloadService {
         var plugin = pluginContext.plugin();
         extensionBootstrap.prepareForReload(scope);
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.getServer().scheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 ExtensionLoadResult result = extensionBootstrap.loadFresh(scope);
-                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                plugin.getServer().scheduler().runTask(plugin, () -> {
                     try {
                         extensionBootstrap.commitReload(scope, result);
                         if (sender != null && successMessage != null) {
@@ -64,7 +64,7 @@ public class ExtensionReloadService {
                     }
                 });
             } catch (RuntimeException error) {
-                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                plugin.getServer().scheduler().runTask(plugin, () -> {
                     reloadInProgress.set(false);
                     if (sender != null) {
                         platformHooks.sendMessage(sender, pluginContext.message(

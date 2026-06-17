@@ -44,7 +44,7 @@ final class CascadeMineBehavior {
         ExplosionSupport.createExplosion(world, loc, def, power, false);
         for (int i = 1; i <= waves; i++) {
             final int wave = i;
-            context.getScheduler().runLater(loc, () -> {
+            context.scheduler().runLater(loc, () -> {
                 IgnisLocation ring = loc.add(wave * 1.5, 0, 0);
                 world.spawnParticle(ring, "EXPLOSION", 3, 0.4, 0.2, 0.4, 0.02);
                 ExplosionSupport.createExplosion(world, ring, power * 0.55f, false, true);
@@ -53,6 +53,6 @@ final class CascadeMineBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

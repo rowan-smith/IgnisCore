@@ -47,7 +47,7 @@ final class EchoFuseTntBehavior {
         ExplosionSupport.createExplosion(world, loc, def, power, false);
         for (int i = 1; i <= echoes; i++) {
             final int echo = i;
-            context.getScheduler().runLater(loc, () -> {
+            context.scheduler().runLater(loc, () -> {
                 world.playSound(loc, "ENTITY_FIREWORK_ROCKET_BLAST", 0.9f, 0.8f + echo * 0.1f);
                 world.spawnParticle(loc, "CLOUD", 12, 1.0, 0.5, 1.0, 0.04);
                 ExplosionSupport.createExplosion(world, loc, power * 0.45f, false, false);
@@ -56,6 +56,6 @@ final class EchoFuseTntBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

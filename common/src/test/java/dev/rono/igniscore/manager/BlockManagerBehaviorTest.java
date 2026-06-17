@@ -47,7 +47,7 @@ class BlockManagerBehaviorTest {
         visualRenderer = new CommonTestSupport.RecordingBlockVisualRenderer();
         persistence = new PlacedBlockPersistenceService(CommonTestSupport.runtimeHost(tempDir));
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl(
-                new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus));
+                new DefaultExplosionStrategy(ctx.context().extensions(), eventBus));
         StrategyProfileResolver profileResolver = new StrategyProfileResolver(registry);
         StrategyEventPublisher events = new StrategyEventPublisher(eventBus, profileResolver);
         blockManager = new BlockManager(
@@ -60,9 +60,8 @@ class BlockManagerBehaviorTest {
                 events,
                 PerformanceSettings.fromValues(1, 1, 3));
         definition = sampleDefinition();
-        DefaultExplosionStrategy testStrategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus);
+        DefaultExplosionStrategy testStrategy = new DefaultExplosionStrategy(ctx.context().extensions(), eventBus);
         testStrategy.bindDescriptor(IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"));
-        testStrategy.registerEvents();
         registry.register(
                 IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"),
                 testStrategy);
@@ -136,10 +135,9 @@ class BlockManagerBehaviorTest {
         CommonTestSupport.DeferredIgnisScheduler deferredScheduler = new CommonTestSupport.DeferredIgnisScheduler();
         CommonTestSupport.RecordingBlockVisualRenderer batchedRenderer = new CommonTestSupport.RecordingBlockVisualRenderer();
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl(
-                new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus));
-        DefaultExplosionStrategy testStrategy = new DefaultExplosionStrategy(ctx.context().getExtensionSupport(), eventBus);
+                new DefaultExplosionStrategy(ctx.context().extensions(), eventBus));
+        DefaultExplosionStrategy testStrategy = new DefaultExplosionStrategy(ctx.context().extensions(), eventBus);
         testStrategy.bindDescriptor(IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"));
-        testStrategy.registerEvents();
         registry.register(
                 IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"),
                 testStrategy);

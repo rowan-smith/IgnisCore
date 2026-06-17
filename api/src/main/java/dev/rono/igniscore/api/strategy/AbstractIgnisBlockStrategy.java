@@ -5,10 +5,9 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 /**
  * Convenience base class for custom block behavior strategies.
  *
- * <p>Extension JARs list a concrete subclass in {@code *-extension.yml}. Implement
- * {@link #registerEvents()} and subscribe with {@code onBlockPlace}, {@code onBlockClick},
- * and the other helpers. Override {@link IgnisBlockStrategy#profile} to declare default click
- * and ignition behavior.</p>
+ * <p>Extension JARs list a concrete subclass in {@code *-extension.yml}. Subscribe to block
+ * lifecycle events in the strategy constructor via {@link IgnisStrategyContext#eventBus()}.
+ * Override {@link IgnisBlockStrategy#profile} to declare default click and ignition behavior.</p>
  */
 public abstract class AbstractIgnisBlockStrategy extends AbstractIgnisStrategy implements IgnisBlockStrategy {
 

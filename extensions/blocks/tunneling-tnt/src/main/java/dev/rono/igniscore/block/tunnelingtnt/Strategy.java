@@ -11,6 +11,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new TunnelingBehavior(context);
+        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));
     }
 
     @Override
@@ -20,8 +21,4 @@ public class Strategy extends AbstractIgnisBlockStrategy {
                 .build();
     }
 
-    @Override
-    public void registerEvents() {
-        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));
-    }
 }

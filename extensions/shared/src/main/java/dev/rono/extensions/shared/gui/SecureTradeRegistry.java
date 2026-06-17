@@ -23,7 +23,7 @@ public final class SecureTradeRegistry {
     private final Map<UUID, IgnisLocation> openPlayers = new ConcurrentHashMap<>();
 
     public SecureTradeRegistry(IgnisStrategyContext context) {
-        this.extensionSupport = context.getExtensionSupport();
+        this.extensionSupport = context.extensions();
         this.persistence = new BlockStoragePersistence(extensionSupport, "secure-trade");
     }
 

@@ -17,22 +17,22 @@ public final class BukkitIgnisScheduler implements IgnisScheduler {
 
     @Override
     public IgnisTask runLater(IgnisLocation location, Runnable task, long delayTicks) {
-        return wrap(Bukkit.getScheduler().runTaskLater(plugin, task, delayTicks));
+        return wrap(Bukkit.scheduler().runTaskLater(plugin, task, delayTicks));
     }
 
     @Override
     public IgnisTask runRepeating(IgnisLocation location, Runnable task, long delayTicks, long periodTicks) {
-        return wrap(Bukkit.getScheduler().runTaskTimer(plugin, task, delayTicks, periodTicks));
+        return wrap(Bukkit.scheduler().runTaskTimer(plugin, task, delayTicks, periodTicks));
     }
 
     @Override
     public void runGlobal(Runnable task) {
-        Bukkit.getScheduler().runTask(plugin, task);
+        Bukkit.scheduler().runTask(plugin, task);
     }
 
     @Override
     public void runGlobalLater(Runnable task, long delayTicks) {
-        Bukkit.getScheduler().runTaskLater(plugin, task, delayTicks);
+        Bukkit.scheduler().runTaskLater(plugin, task, delayTicks);
     }
 
     private static IgnisTask wrap(BukkitTask task) {

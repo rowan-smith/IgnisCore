@@ -21,7 +21,7 @@ public final class BlockStorageRegistry {
     private final Map<String, BlockStorageGui> playerGuis = new ConcurrentHashMap<>();
 
     public BlockStorageRegistry(IgnisStrategyContext context, String namespace) {
-        this.extensionSupport = context.getExtensionSupport();
+        this.extensionSupport = context.extensions();
         this.persistence = new BlockStoragePersistence(extensionSupport, namespace);
     }
 

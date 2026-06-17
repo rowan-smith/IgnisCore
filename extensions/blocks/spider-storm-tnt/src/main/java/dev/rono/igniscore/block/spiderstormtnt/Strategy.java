@@ -11,6 +11,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new SpiderStormBehavior(context);
+        onBlockPlace(event -> behavior.onPlaced(event.block()));
+        onBlockTrigger(event -> behavior.onTrigger(event.instance()));
     }
 
     @Override
@@ -20,9 +22,4 @@ public class Strategy extends AbstractIgnisBlockStrategy {
                 .build();
     }
 
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.location()));
-        onBlockTrigger(event -> behavior.onTrigger(event.instance()));
-    }
 }

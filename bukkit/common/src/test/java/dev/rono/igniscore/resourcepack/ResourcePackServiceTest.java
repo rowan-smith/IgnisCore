@@ -121,11 +121,11 @@ class ResourcePackServiceTest extends MockBukkitTestBase {
     }
 
     private void runAsyncTasks() {
-        ((BukkitSchedulerMock) server.getScheduler()).waitAsyncTasksFinished();
+        ((BukkitSchedulerMock) server.scheduler()).waitAsyncTasksFinished();
     }
 
     private void runSyncTasks() {
-        ((BukkitSchedulerMock) server.getScheduler()).performTicks(1);
+        ((BukkitSchedulerMock) server.scheduler()).performTicks(1);
     }
 
     private static BlockDefinition sampleBlock(String id, int modelData) {

@@ -10,7 +10,7 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
 /**
  * Fired after a block click resolves to {@link CustomBlockAction#OPEN} or similar custom handling.
  */
-public final class BlockInteractEvent {
+public final class BlockInteractEvent implements PlayerBlockEvent {
     private final BlockDefinition definition;
     private final IgnisLocation location;
     private final IgnisPlayer player;
@@ -32,14 +32,25 @@ public final class BlockInteractEvent {
         this.action = action;
     }
 
+    @Override
     public BlockDefinition definition() {
         return definition;
     }
 
+    @Override
+    public IgnisLocation block() {
+        return location;
+    }
+
+    /**
+     * @deprecated use {@link #block()}
+     */
+    @Deprecated
     public IgnisLocation location() {
         return location;
     }
 
+    @Override
     public IgnisPlayer player() {
         return player;
     }

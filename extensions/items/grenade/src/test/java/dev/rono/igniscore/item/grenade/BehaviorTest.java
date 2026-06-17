@@ -20,8 +20,7 @@ class BehaviorTest {
     void itemUseConsumesStack() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         ItemDefinition definition = ExtensionTestSupport.loadItemDefinition(BehaviorTest.class, "grenade", 20001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "grenade");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "grenade");
         TestPlayer player = new TestPlayer(ctx.world());
         TestItem item = new TestItem(1);
 

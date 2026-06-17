@@ -11,6 +11,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new MimicBehavior(context);
+        onBlockActivate(event -> behavior.onPlace(event.instance(), event.instance().getDefinition()));
     }
 
     @Override
@@ -20,8 +21,4 @@ public class Strategy extends AbstractIgnisBlockStrategy {
                 .build();
     }
 
-    @Override
-    public void registerEvents() {
-        onBlockActivate(event -> behavior.onPlace(event.instance(), event.instance().getDefinition()));
-    }
 }

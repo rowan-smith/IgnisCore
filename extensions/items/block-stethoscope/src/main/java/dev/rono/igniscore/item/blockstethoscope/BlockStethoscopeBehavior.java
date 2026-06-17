@@ -19,7 +19,7 @@ final class BlockStethoscopeBehavior {
 
     BlockStethoscopeBehavior(IgnisStrategyContext context) {
         this.context = context;
-        this.nbtService = context.getNbtService();
+        this.nbtService = context.nbt();
     }
 
     void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {

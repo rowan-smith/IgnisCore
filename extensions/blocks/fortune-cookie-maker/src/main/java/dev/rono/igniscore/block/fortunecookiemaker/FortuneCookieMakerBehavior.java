@@ -72,7 +72,7 @@ final class FortuneCookieMakerBehavior {
         }
         ProcessingGuiSupport.consumeOne(inventory, WHEAT_SLOT);
         ProcessingGuiSupport.consumeOne(inventory, PAPER_SLOT);
-        ProcessingGuiSupport.setOutput(context.getExtensionSupport(), inventory, OUTPUT_SLOT, "cookie", 1);
+        ProcessingGuiSupport.setOutput(context.extensions(), inventory, OUTPUT_SLOT, "cookie", 1);
         IgnisWorld world = worldAt(location);
         world.playSound(Locations.toCenter(location), "ENTITY_GENERIC_EAT", 0.5f, 1.3f);
     }
@@ -82,6 +82,6 @@ final class FortuneCookieMakerBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

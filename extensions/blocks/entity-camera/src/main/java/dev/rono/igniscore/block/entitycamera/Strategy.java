@@ -12,6 +12,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new EntityCameraBehavior(context);
+        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.block(), event.player(), event.interaction(), event.heldItem(), event.action()));
     }
 
     @Override
@@ -19,8 +20,4 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         return StrategyProfile.defaults();
     }
 
-    @Override
-    public void registerEvents() {
-        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.location(), event.player(), event.interaction(), event.heldItem(), event.action()));
-    }
 }

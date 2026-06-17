@@ -11,6 +11,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
         this.behavior = new RicochetTntBehavior(context);
+        onBlockTick(event -> behavior.onTick(event.instance()));
+        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));
     }
 
     @Override
@@ -20,9 +22,4 @@ public class Strategy extends AbstractIgnisBlockStrategy {
                 .build();
     }
 
-    @Override
-    public void registerEvents() {
-        onBlockTick(event -> behavior.onTick(event.instance()));
-        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));
-    }
 }

@@ -41,9 +41,9 @@ class IgnisCoreAPITest {
         assertEquals("grenade", facade.lastItemType);
         assertSame(facade.blocks, IgnisCoreAPI.getBlockTypes());
         assertSame(facade.registry, IgnisCoreAPI.getStrategyRegistry());
-        assertSame(facade.nbtService, IgnisCoreAPI.getNbtService());
-        assertSame(facade.protocolService, IgnisCoreAPI.getProtocolService());
-        assertSame(facade.effectService, IgnisCoreAPI.getEffectService());
+        assertSame(facade.nbtService, IgnisCoreAPI.nbt());
+        assertSame(facade.protocolService, IgnisCoreAPI.protocol());
+        assertSame(facade.effectService, IgnisCoreAPI.effects());
     }
 
     @Test

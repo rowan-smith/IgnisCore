@@ -7,7 +7,11 @@ import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
 
 /**
- * Single entry point for services injected into extension strategies.
+ * Service container injected into extension strategy constructors.
+ *
+ * <p>Despite the name, this is the extension author's primary handle on core services
+ * (scheduler, NBT, effects, protocol integrations, platform bridge, and the event bus).
+ * It is created once per server and shared across all loaded extensions.</p>
  */
 public final class IgnisStrategyContext {
     private final IgnisScheduler scheduler;
@@ -16,6 +20,7 @@ public final class IgnisStrategyContext {
     private final IgnisEffectService effectService;
     private final ExtensionSupport extensionSupport;
     private final IgnisEventBus eventBus;
+    public final ExtensionConfigAccess config = new ExtensionConfigAccess();
 
     public IgnisStrategyContext(IgnisScheduler scheduler,
                                 IgnisNbtService nbtService,
@@ -52,30 +57,6 @@ public final class IgnisStrategyContext {
     }
 
     public IgnisEventBus eventBus() {
-        return eventBus;
-    }
-
-    public IgnisScheduler getScheduler() {
-        return scheduler;
-    }
-
-    public IgnisNbtService getNbtService() {
-        return nbtService;
-    }
-
-    public IgnisProtocolService getProtocolService() {
-        return protocolService;
-    }
-
-    public IgnisEffectService getEffectService() {
-        return effectService;
-    }
-
-    public ExtensionSupport getExtensionSupport() {
-        return extensionSupport;
-    }
-
-    public IgnisEventBus getEventBus() {
         return eventBus;
     }
 }

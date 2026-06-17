@@ -12,7 +12,7 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
  *
  * <p>Listeners may change {@link #result()} to control core handling (ignite, break, open).</p>
  */
-public final class BlockClickEvent {
+public final class BlockClickEvent implements PlayerBlockEvent {
     private final BlockDefinition definition;
     private final IgnisLocation location;
     private final IgnisPlayer player;
@@ -34,14 +34,25 @@ public final class BlockClickEvent {
         this.result = defaultResult;
     }
 
+    @Override
     public BlockDefinition definition() {
         return definition;
     }
 
+    @Override
+    public IgnisLocation block() {
+        return location;
+    }
+
+    /**
+     * @deprecated use {@link #block()}
+     */
+    @Deprecated
     public IgnisLocation location() {
         return location;
     }
 
+    @Override
     public IgnisPlayer player() {
         return player;
     }

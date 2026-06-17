@@ -59,7 +59,7 @@ final class KegTapBehavior {
             return;
         }
         ProcessingGuiSupport.consumeOne(inventory, BUCKET_SLOT);
-        ProcessingGuiSupport.setOutput(context.getExtensionSupport(), inventory, OUTPUT_SLOT, "potion", 1);
+        ProcessingGuiSupport.setOutput(context.extensions(), inventory, OUTPUT_SLOT, "potion", 1);
         IgnisWorld world = worldAt(location);
         world.playSound(Locations.toCenter(location), "ITEM_BOTTLE_FILL", 0.6f, 1.0f);
     }
@@ -69,6 +69,6 @@ final class KegTapBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

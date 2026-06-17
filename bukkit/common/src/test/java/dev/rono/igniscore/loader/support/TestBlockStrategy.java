@@ -18,8 +18,4 @@ public class TestBlockStrategy extends AbstractIgnisBlockStrategy {
                 .rightClickAction(dev.rono.igniscore.api.CustomBlockAction.NONE)
                 .build();
     }
-
-    @Override
-    public void registerEvents() {
-    }
 }

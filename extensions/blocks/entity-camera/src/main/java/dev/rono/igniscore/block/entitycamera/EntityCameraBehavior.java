@@ -37,7 +37,7 @@ final class EntityCameraBehavior {
             player.sendMessage("<red>No passive mob in range for camera link.</red>");
             return;
         }
-        context.getExtensionSupport().spectateEntity(player, target, duration);
+        context.extensions().spectateEntity(player, target, duration);
         IgnisLocation entityLoc = world.getEntityLocation(target);
         if (entityLoc != null) {
             TheatricsSupport.scanBeam(world, center, entityLoc, "END_ROD");
@@ -70,6 +70,6 @@ final class EntityCameraBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }
