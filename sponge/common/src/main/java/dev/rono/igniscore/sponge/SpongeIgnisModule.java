@@ -8,8 +8,11 @@ import dev.rono.igniscore.api.port.IgnisPlatformIntegration;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.api.port.ResourcePackHost;
 import dev.rono.igniscore.api.service.IgnisEffectService;
+import dev.rono.igniscore.api.service.IgnisHologramService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.service.IgnisNpcService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
+import dev.rono.igniscore.api.service.IgnisRegionService;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.module.IgnisCommonModule;
 import dev.rono.igniscore.sponge.adapter.SpongePlatformAdapter;
@@ -23,9 +26,13 @@ import dev.rono.igniscore.sponge.service.SpongeCustomItemFactory;
 import dev.rono.igniscore.sponge.service.SpongeItemFactory;
 import dev.rono.igniscore.sponge.service.SpongeItemIdentifier;
 import dev.rono.igniscore.sponge.service.SpongeNbtService;
-import dev.rono.igniscore.sponge.service.SpongeNoopEffectService;
-import dev.rono.igniscore.sponge.service.SpongeNoopProtocolService;
+import dev.rono.igniscore.sponge.integration.hologram.SpongeHologramService;
+import dev.rono.igniscore.sponge.integration.region.SpongeCompositeRegionService;
+import dev.rono.igniscore.sponge.integration.region.SpongeWorldEditRegionService;
+import dev.rono.igniscore.sponge.service.SpongeEffectService;
+import dev.rono.igniscore.sponge.service.SpongeProtocolService;
 import dev.rono.igniscore.sponge.service.SpongeResourcePackHost;
+import dev.rono.igniscore.sponge.service.SpongeNoopNpcService;
 
 public class SpongeIgnisModule extends AbstractModule {
     private final SpongePluginHost plugin;
@@ -63,10 +70,17 @@ public class SpongeIgnisModule extends AbstractModule {
 
         bind(SpongeNbtService.class).in(Scopes.SINGLETON);
         bind(IgnisNbtService.class).to(SpongeNbtService.class).in(Scopes.SINGLETON);
-        bind(SpongeNoopProtocolService.class).in(Scopes.SINGLETON);
-        bind(IgnisProtocolService.class).to(SpongeNoopProtocolService.class).in(Scopes.SINGLETON);
-        bind(SpongeNoopEffectService.class).in(Scopes.SINGLETON);
-        bind(IgnisEffectService.class).to(SpongeNoopEffectService.class).in(Scopes.SINGLETON);
+        bind(SpongeWorldEditRegionService.class).in(Scopes.SINGLETON);
+        bind(SpongeCompositeRegionService.class).in(Scopes.SINGLETON);
+        bind(IgnisRegionService.class).to(SpongeCompositeRegionService.class).in(Scopes.SINGLETON);
+        bind(SpongeHologramService.class).in(Scopes.SINGLETON);
+        bind(IgnisHologramService.class).to(SpongeHologramService.class).in(Scopes.SINGLETON);
+        bind(SpongeNoopNpcService.class).in(Scopes.SINGLETON);
+        bind(IgnisNpcService.class).to(SpongeNoopNpcService.class).in(Scopes.SINGLETON);
+        bind(SpongeProtocolService.class).in(Scopes.SINGLETON);
+        bind(IgnisProtocolService.class).to(SpongeProtocolService.class).in(Scopes.SINGLETON);
+        bind(SpongeEffectService.class).in(Scopes.SINGLETON);
+        bind(IgnisEffectService.class).to(SpongeEffectService.class).in(Scopes.SINGLETON);
 
         bind(SpongeItemFactory.class).in(Scopes.SINGLETON);
         bind(SpongeItemIdentifier.class).in(Scopes.SINGLETON);

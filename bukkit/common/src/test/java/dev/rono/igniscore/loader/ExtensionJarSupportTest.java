@@ -167,6 +167,7 @@ class ExtensionJarSupportTest {
     }
 
     private IgnisStrategyContext nullContext() {
-        return new IgnisStrategyContext(null, null, null, null, dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE, new dev.rono.igniscore.event.IgnisEventBusImpl());
+        return new IgnisStrategyContext(null, null, null, null, null, null, null, null,
+                dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE, new dev.rono.igniscore.event.IgnisEventBusImpl());
     }
 }

@@ -26,7 +26,13 @@ behavior:
   right_click_block: detonate
 
 # target_block — config id of the block type that can be linked (signal-charge)
+# target_blocks — list of block ids for multi-type detonators
 # max_links    — maximum simultaneous links stored on the item
 custom_data:
   target_block: signal-charge
+  target_blocks:
+    - signal-charge
+    - remote-c4
+    - timed-charge
+    - scare-charge
   max_links: 16

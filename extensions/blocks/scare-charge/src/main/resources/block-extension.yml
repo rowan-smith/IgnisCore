@@ -1,0 +1,8 @@
+id: scare-charge
+name: Scare Charge
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.scarecharge.Strategy
+requires-integrations:
+  - protocol

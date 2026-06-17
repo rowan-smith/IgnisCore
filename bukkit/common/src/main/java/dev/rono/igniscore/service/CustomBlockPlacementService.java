@@ -74,7 +74,10 @@ public class CustomBlockPlacementService {
 
         event.setCancelled(true);
         targetBlock.setType(CUSTOM_BLOCK_BACKING_MATERIAL);
-        blockRegistry.registerPlacedBlock(BukkitBridge.toIgnis(targetBlock.getLocation()), typeId, BukkitBridge.wrap(item));
+        dev.rono.igniscore.api.port.IgnisLocation ignisLocation = BukkitBridge.toIgnis(targetBlock.getLocation());
+        dev.rono.igniscore.api.util.PlacedMetaSupport.recordPlacementYaw(
+                ignisLocation, event.getPlayer().getLocation().getYaw());
+        blockRegistry.registerPlacedBlock(ignisLocation, typeId, BukkitBridge.wrap(item));
         event.getPlayer().swingMainHand();
         debug("Successfully placed " + typeId + " at " + targetBlock.getLocation().toVector());
 
@@ -86,7 +89,10 @@ public class CustomBlockPlacementService {
     public void handleBlockPlace(BlockPlaceEvent event) {
         String typeId = itemIdentifier.resolveTypeId(event.getItemInHand());
         if (isKnownType(typeId)) {
-            blockRegistry.registerPlacedBlock(BukkitBridge.toIgnis(event.getBlock().getLocation()), typeId, BukkitBridge.wrap(event.getItemInHand()));
+            dev.rono.igniscore.api.port.IgnisLocation ignisLocation = BukkitBridge.toIgnis(event.getBlock().getLocation());
+            dev.rono.igniscore.api.util.PlacedMetaSupport.recordPlacementYaw(
+                    ignisLocation, event.getPlayer().getLocation().getYaw());
+            blockRegistry.registerPlacedBlock(ignisLocation, typeId, BukkitBridge.wrap(event.getItemInHand()));
         }
     }
 

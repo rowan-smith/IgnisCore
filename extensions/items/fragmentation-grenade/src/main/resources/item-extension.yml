@@ -1,0 +1,5 @@
+id: fragmentation-grenade
+name: Fragmentation Grenade
+version: @project.version@
+api-version: @ignis.api.version@
+strategy: dev.rono.igniscore.item.fragmentationgrenade.Strategy

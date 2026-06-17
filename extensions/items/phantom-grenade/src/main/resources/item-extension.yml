@@ -1,0 +1,8 @@
+id: phantom-grenade
+name: Phantom Grenade
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.phantomgrenade.Strategy
+requires-integrations:
+  - protocol

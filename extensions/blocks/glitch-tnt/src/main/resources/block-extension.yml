@@ -1,0 +1,8 @@
+id: glitch-tnt
+name: Glitch TNT
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.glitchtnt.Strategy
+requires-integrations:
+  - protocol

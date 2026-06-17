@@ -1,0 +1,8 @@
+id: echo-blast
+name: Echo Blast
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.echoblast.Strategy
+requires-integrations:
+  - protocol

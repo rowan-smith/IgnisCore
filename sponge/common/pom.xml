@@ -47,6 +47,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>com.sk89q.worldedit</groupId>
+      <artifactId>worldedit-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>

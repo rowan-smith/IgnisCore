@@ -51,10 +51,12 @@ public final class ExtensionTestSupport {
     }
 
     public static IgnisStrategyContext noopContext() {
-        return new IgnisStrategyContext(null, null, null, null, NoopExtensionSupport.INSTANCE, NoopEventBus.INSTANCE);
+        return new IgnisStrategyContext(null, null, null, null, null, null, null, null,
+                NoopExtensionSupport.INSTANCE, NoopEventBus.INSTANCE);
     }
 
     public static IgnisStrategyContext context(ExtensionSupport extensionSupport) {
-        return new IgnisStrategyContext(null, null, null, null, extensionSupport, NoopEventBus.INSTANCE);
+        return new IgnisStrategyContext(null, null, null, null, null, null, null, null,
+                extensionSupport, NoopEventBus.INSTANCE);
     }
 }

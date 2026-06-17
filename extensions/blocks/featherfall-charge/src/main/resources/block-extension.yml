@@ -1,0 +1,6 @@
+id: featherfall-charge
+name: Featherfall Charge
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.featherfallcharge.Strategy

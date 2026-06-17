@@ -12,9 +12,13 @@ import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.PlatformAdapter;
 import dev.rono.igniscore.api.port.ResourcePackHost;
+import dev.rono.igniscore.api.integration.IgnisIntegrationRegistry;
 import dev.rono.igniscore.api.service.IgnisEffectService;
+import dev.rono.igniscore.api.service.IgnisHologramService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.service.IgnisNpcService;
 import dev.rono.igniscore.api.service.IgnisProtocolService;
+import dev.rono.igniscore.api.service.IgnisRegionService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 import dev.rono.igniscore.event.IgnisEventBusImpl;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
@@ -36,6 +40,10 @@ public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
     private final IgnisNbtService nbtService;
     private final IgnisProtocolService protocolService;
     private final IgnisEffectService effectService;
+    private final IgnisRegionService regionService;
+    private final IgnisHologramService hologramService;
+    private final IgnisNpcService npcService;
+    private final IgnisIntegrationRegistry integrationRegistry;
     private final ExtensionBootstrap extensionBootstrap;
     private final ResourcePackHost resourcePackHost;
     private final PlatformAdapter platformAdapter;
@@ -50,6 +58,10 @@ public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
                                IgnisNbtService nbtService,
                                IgnisProtocolService protocolService,
                                IgnisEffectService effectService,
+                               IgnisRegionService regionService,
+                               IgnisHologramService hologramService,
+                               IgnisNpcService npcService,
+                               IgnisIntegrationRegistry integrationRegistry,
                                ExtensionBootstrap extensionBootstrap,
                                ResourcePackHost resourcePackHost,
                                PlatformAdapter platformAdapter,
@@ -61,6 +73,10 @@ public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
         this.nbtService = nbtService;
         this.protocolService = protocolService;
         this.effectService = effectService;
+        this.regionService = regionService;
+        this.hologramService = hologramService;
+        this.npcService = npcService;
+        this.integrationRegistry = integrationRegistry;
         this.extensionBootstrap = extensionBootstrap;
         this.resourcePackHost = resourcePackHost;
         this.platformAdapter = platformAdapter;
@@ -133,6 +149,26 @@ public class IgnisCoreFacadeImpl implements IgnisCoreFacade {
     @Override
     public IgnisEffectService getEffectService() {
         return effectService;
+    }
+
+    @Override
+    public IgnisRegionService getRegionService() {
+        return regionService;
+    }
+
+    @Override
+    public IgnisHologramService getHologramService() {
+        return hologramService;
+    }
+
+    @Override
+    public IgnisNpcService getNpcService() {
+        return npcService;
+    }
+
+    @Override
+    public IgnisIntegrationRegistry getIntegrationRegistry() {
+        return integrationRegistry;
     }
 
     @Override

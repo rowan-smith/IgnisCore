@@ -1,0 +1,5 @@
+id: depth-charge
+name: Depth Charge
+version: @project.version@
+api-version: @ignis.api.version@
+strategy: dev.rono.igniscore.block.depthcharge.Strategy

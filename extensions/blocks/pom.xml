@@ -105,6 +105,48 @@
     <module>pipe-valve</module>
     <module>picnic-basket</module>
     <module>keg-tap</module>
+    <module>shrapnel-mine</module>
+    <module>concussion-tnt</module>
+    <module>cavity-tnt</module>
+    <module>drill-tnt</module>
+    <module>ring-tnt</module>
+    <module>seismic-tnt</module>
+    <module>depth-charge</module>
+    <module>orbit-tnt</module>
+    <module>black-hole-tnt</module>
+    <module>trampoline-tnt</module>
+    <module>magnet-tnt</module>
+    <module>anti-gravity-zone</module>
+    <module>slingshot-tnt</module>
+    <module>tether-tnt</module>
+    <module>centrifuge-tnt</module>
+    <module>featherfall-charge</module>
+    <module>inferno-tnt</module>
+    <module>frost-tnt</module>
+    <module>lightning-rod-tnt</module>
+    <module>acid-tnt</module>
+    <module>mudslide-tnt</module>
+    <module>wildfire-seed</module>
+    <module>ember-mine</module>
+    <module>tsunami-charge</module>
+    <module>poison-cloud-tnt</module>
+    <module>solar-flare-tnt</module>
+    <module>bouncing-betty</module>
+    <module>claymore-mine</module>
+    <module>remote-c4</module>
+    <module>timed-charge</module>
+    <module>tripwire-charge</module>
+    <module>breaching-charge</module>
+    <module>mirage-tnt</module>
+    <module>hologram-tnt</module>
+    <module>silent-tnt</module>
+    <module>doppelganger-block</module>
+    <module>fake-bedrock</module>
+    <module>scare-charge</module>
+    <module>echo-blast</module>
+    <module>glitch-tnt</module>
+    <module>invisiwall</module>
+    <module>screen-shake-charge</module>
   </modules>
 
   <dependencyManagement>

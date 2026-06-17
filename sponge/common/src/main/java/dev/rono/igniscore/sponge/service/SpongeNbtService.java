@@ -12,6 +12,21 @@ public class SpongeNbtService implements IgnisNbtService {
     private static final DataQuery ROOT = DataQuery.of("igniscore");
 
     @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public String providerName() {
+        return "Sponge-DataContainer";
+    }
+
+    @Override
+    public boolean supportsEntityData() {
+        return true;
+    }
+
+    @Override
     public void setItemString(IgnisItem item, String key, String value) {
         editItem(item, container -> container.set(DataQuery.of(normalizeKey(key)), value));
     }

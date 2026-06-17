@@ -1,0 +1,8 @@
+id: invisiwall
+name: Invisiwall
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.invisiwall.Strategy
+requires-integrations:
+  - protocol

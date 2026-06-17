@@ -1,0 +1,25 @@
+id: flashbang
+
+display:
+  title: "&fFlashbang"
+  description:
+    - "&7Non-lethal stun grenade"
+    - "&7Blinds and deafens nearby players"
+
+item:
+  base_material: snowball
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: throw
+  right_click_block: throw
+
+custom_data:
+  fuse_ticks: 30
+  throw_velocity: 1.4
+  radius: 14.0
+  blindnessDuration: 120
+  nauseaDuration: 100
+  darknessDuration: 80
