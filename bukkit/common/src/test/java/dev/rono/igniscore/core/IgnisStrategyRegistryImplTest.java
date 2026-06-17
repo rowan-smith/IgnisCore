@@ -4,9 +4,6 @@ import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.CustomBlockAction;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -111,14 +108,6 @@ class IgnisStrategyRegistryImplTest {
             @Override
             public IgnisStrategyDescriptor descriptor() {
                 return IgnisStrategyDescriptor.of(id, id, "1.0.0", "test");
-            }
-
-            @Override
-            public StrategyProfile profile(BlockDefinition definition) {
-                return StrategyProfile.builder()
-                        .combustible(true)
-                        .rightClickAction(CustomBlockAction.IGNITE)
-                        .build();
             }
         };
     }

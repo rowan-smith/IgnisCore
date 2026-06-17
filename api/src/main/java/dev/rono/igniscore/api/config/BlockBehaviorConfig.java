@@ -1,7 +1,5 @@
 package dev.rono.igniscore.api.config;
 
-import dev.rono.igniscore.api.strategy.StrategyProfile;
-
 import java.util.List;
 import java.util.Map;
 
@@ -71,30 +69,24 @@ public final class BlockBehaviorConfig {
     }
 
     /**
-     * Overlays configured behavior onto a base strategy profile.
-     *
-     * @param base strategy defaults from the extension
-     * @return merged profile, or {@code base} unchanged when {@link #isEmpty()}
+     * @return configured combustible flag, or {@code false} when unset
      */
-    public StrategyProfile merge(StrategyProfile base) {
-        if (isEmpty()) {
-            return base;
-        }
+    public boolean combustible() {
+        return combustible != null && combustible;
+    }
 
-        StrategyProfile.Builder builder = base.toBuilder();
-        if (combustible != null) {
-            builder.combustible(combustible);
-        }
-        if (!ignitionMaterials.isEmpty()) {
-            builder.ignitionMaterials(ignitionMaterials);
-        }
-        if (placementSound != null) {
-            builder.placementSound(placementSound);
-        }
-        if (igniteSound != null) {
-            builder.igniteSound(igniteSound);
-        }
-        return builder.build();
+    /**
+     * @return configured ignition material keys
+     */
+    public List<String> ignitionMaterials() {
+        return ignitionMaterials;
+    }
+
+    /**
+     * @return configured placement sound key, or {@code null}
+     */
+    public String placementSound() {
+        return placementSound;
     }
 
     /**

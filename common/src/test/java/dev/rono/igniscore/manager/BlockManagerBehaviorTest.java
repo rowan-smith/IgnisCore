@@ -10,7 +10,6 @@ import dev.rono.igniscore.event.IgnisEventBusImpl;
 import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
 import dev.rono.igniscore.service.RuntimeBlockService;
-import dev.rono.igniscore.service.StrategyProfileResolver;
 import dev.rono.igniscore.strategies.DefaultExplosionStrategy;
 import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.testsupport.CommonTestSupport;
@@ -48,12 +47,10 @@ class BlockManagerBehaviorTest {
         persistence = new PlacedBlockPersistenceService(CommonTestSupport.runtimeHost(tempDir));
         IgnisStrategyRegistryImpl registry = new IgnisStrategyRegistryImpl(
                 new DefaultExplosionStrategy(ctx.context().extensions(), eventBus));
-        StrategyProfileResolver profileResolver = new StrategyProfileResolver(registry);
-        StrategyEventPublisher events = new StrategyEventPublisher(eventBus, profileResolver);
+        StrategyEventPublisher events = new StrategyEventPublisher(eventBus);
         blockManager = new BlockManager(
                 new RuntimeBlockService(),
                 ctx.effects(),
-                profileResolver,
                 persistence,
                 new CommonTestSupport.ImmediateIgnisScheduler(),
                 visualRenderer,
@@ -141,12 +138,10 @@ class BlockManagerBehaviorTest {
         registry.register(
                 IgnisStrategyDescriptor.of(definition.getExtensionId(), "Test Block", "1.0.0", "test"),
                 testStrategy);
-        StrategyProfileResolver profileResolver = new StrategyProfileResolver(registry);
-        StrategyEventPublisher events = new StrategyEventPublisher(eventBus, profileResolver);
+        StrategyEventPublisher events = new StrategyEventPublisher(eventBus);
         BlockManager batchedManager = new BlockManager(
                 new RuntimeBlockService(),
                 ctx.effects(),
-                profileResolver,
                 persistence,
                 deferredScheduler,
                 batchedRenderer,

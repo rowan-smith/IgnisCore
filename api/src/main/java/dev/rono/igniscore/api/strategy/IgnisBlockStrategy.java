@@ -1,17 +1,11 @@
 package dev.rono.igniscore.api.strategy;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
-
 /**
  * Runtime registration for custom block types.
  *
  * <p>Subscribe to block lifecycle events in the strategy constructor via
- * {@link IgnisStrategyContext#eventBus()}. Override {@link #profile} to declare combustibility,
- * fuse, and default click actions.</p>
+ * {@link IgnisStrategyContext#eventBus()}. Declare combustibility, fuse timing, and click routing
+ * in extension YAML and {@code OnBlockClickListener} subscriptions.</p>
  */
 public interface IgnisBlockStrategy extends IgnisStrategy {
-
-    default StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.placed();
-    }
 }

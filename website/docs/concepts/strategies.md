@@ -1,6 +1,6 @@
 ---
 title: Strategies
-description: Strategy classes, profiles, and the IgnisStrategyRegistry.
+description: Strategy classes, event subscriptions, and the IgnisStrategyRegistry.
 slug: /concepts/strategies
 ---
 
@@ -14,24 +14,15 @@ Blocks extend `AbstractIgnisBlockStrategy`:
 public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
-    }
-
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return IgnisStrategies.blocks().placed();
-    }
-
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> { /* placed hook */ });
-        onBlockTrigger(event -> { /* detonation */ });
+        context.eventBus().subscribe(new MyOnBlockPlaceListener(context));
+        context.eventBus().subscribe(new MyOnBlockTriggerListener(context));
     }
 }
 ```
 
-Items extend `AbstractIgnisItemStrategy` and subscribe with `onItemClick` instead.
+Items extend `AbstractIgnisItemStrategy` and subscribe to `OnItemClickListener` in the constructor.
 
-Legacy strategy override methods (`onPlaced`, `onTrigger`, `onItemUse`, `onPlacedClick`, …) were removed in 1.0.0. Implement **`registerEvents()`** and subscribe via the scoped helpers on `AbstractIgnisStrategy`.
+Subscribe to lifecycle events in the strategy constructor via `context.eventBus().subscribe(...)`.
 
 ## Event bus
 
@@ -61,17 +52,15 @@ Prefer the short accessors on `IgnisStrategyContext`:
 | `extensions()` | `ExtensionSupport` | Inventories, drop collectors, world bridge |
 | `eventBus()` | `IgnisEventBus` | Scoped subscriptions (prefer helpers above) |
 
-## Strategy profiles
+## Behavior config and clicks
 
-YAML `behavior` sections merge into the strategy **profile** at runtime. The core routes standard click actions before firing **`onBlockClick`** / **`onItemClick`**.
+YAML `behavior` sections declare combustibility, ignition materials, and placement/ignite sounds. Click routing is handled by `OnBlockClickListener` subscriptions — use `PlacedClickListener.fixed(...)` or `PlacedClickListener.combustible()` from extension shared helpers.
 
-Use `IgnisStrategies.blocks().placed()` (or `StrategyProfile.placed()`) for utility and interact blocks. Use `.fuse(ticks)` or `.combustible(fuse, radius)` when the block participates in the fuse lifecycle. Fuse and explosion radius are opt-in on `StrategyProfile` — omit them for placed-only blocks.
-
-Subscribe with `onBlockClick` or `onItemClick` when you need logic beyond declared behavior tokens.
+Fuse timing and explosion radius live in `custom_data` and are read at runtime by the core and your listeners.
 
 ## Registry
 
-Manifest `id` values register in `IgnisStrategyRegistry`. Config `id` values map to in-game types via `BlockManager` and `ItemManager`. The loader calls `registerEvents()` after binding the manifest descriptor.
+Manifest `id` values register in `IgnisStrategyRegistry`. Config `id` values map to in-game types via `BlockManager` and `ItemManager`.
 
 ## Related
 

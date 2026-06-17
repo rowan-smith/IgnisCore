@@ -1,10 +1,8 @@
 package dev.rono.igniscore.service;
 
-import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.event.IgnisEventBusImpl;
@@ -64,12 +62,10 @@ public final class BreakLoopTestSupport {
         PlacedBlockPersistenceService persistence = new PlacedBlockPersistenceService(
                 CommonTestSupport.runtimeHost(tempDir));
         CommonTestSupport.RecordingBlockVisualRenderer visualRenderer = new CommonTestSupport.RecordingBlockVisualRenderer();
-        StrategyProfileResolver profileResolver = new StrategyProfileResolver(strategyRegistry);
-        StrategyEventPublisher events = new StrategyEventPublisher(new IgnisEventBusImpl(), profileResolver);
+        StrategyEventPublisher events = new StrategyEventPublisher(new IgnisEventBusImpl());
         BlockManager blockManager = new BlockManager(
                 new RuntimeBlockService(),
                 behaviorContext.effects(),
-                profileResolver,
                 persistence,
                 new CommonTestSupport.ImmediateIgnisScheduler(),
                 visualRenderer,
@@ -96,8 +92,7 @@ public final class BreakLoopTestSupport {
                 blockManager,
                 blockItemFactory,
                 effectService,
-                events,
-                profileResolver);
+                events);
         CustomBlockIgnitionService ignitionService = new CustomBlockIgnitionService(
                 blockManager, breakService, effectService);
         BlockItemIdentifier blockItemIdentifier = new BlockItemIdentifier(plugin, nbtService);
@@ -157,14 +152,6 @@ public final class BreakLoopTestSupport {
 
     private static AbstractIgnisBlockStrategy storageStrategy() {
         return new AbstractIgnisBlockStrategy(IgnisStrategyDescriptor.of("storage", "Storage", "1.0.0", "test")) {
-            @Override
-            public StrategyProfile profile(BlockDefinition definition) {
-                return StrategyProfile.builder()
-                        .combustible(false)
-                        .leftClickAction(CustomBlockAction.BREAK)
-                        .rightClickAction(CustomBlockAction.NONE)
-                        .build();
-            }
         };
     }
 }

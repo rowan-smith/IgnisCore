@@ -9,15 +9,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        context.eventBus().subscribe(PlacedClickListener.forStrategy(this));
+        context.eventBus().subscribe(PlacedClickListener.combustible());
         context.eventBus().subscribe(new SignalChargeOnBlockTriggerListener(context));
-    }
-
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.combustible(
-                dev.rono.igniscore.api.strategy.StrategySupport.customInt(definition, "fuse", 80),
-                dev.rono.igniscore.api.strategy.StrategySupport.customDouble(definition, "radius", 4.0));
     }
 
 }

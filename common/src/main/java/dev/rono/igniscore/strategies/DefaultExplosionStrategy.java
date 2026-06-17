@@ -9,7 +9,6 @@ import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.strategy.StrategySupport;
 
 public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
@@ -24,10 +23,6 @@ public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
         this.extensionSupport = extensionSupport;
         this.eventBus = eventBus;
         eventBus.subscribe(descriptor().getId(), this::handleBlockTrigger);
-    }
-
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.combustible(80, 4.0);
     }
 
     private void handleBlockTrigger(BlockTriggerEvent event) {

@@ -14,7 +14,7 @@ Profiles describe which event bus hooks and services an extension uses. They do 
 
 | YAML token | Enum | Typical events / services |
 |------------|------|---------------------------|
-| `fuse` | `FUSE` | `onBlockTick`, `onBlockTrigger`, `StrategyProfile` combustibility |
+| `fuse` | `FUSE` | `onBlockTick`, `onBlockTrigger`, `behavior.combustible` |
 | `placed` | `PLACED` | `onBlockPlace`, `onBlockBreak`, repeating scheduler |
 | `interact` | `INTERACT` | `onBlockInteract`, `CustomBlockAction.OPEN` |
 | `placed-hooks` | `PLACED_HOOKS` | `onBlockPlace` + `onBlockBreak` on interact blocks (GUI registration) |

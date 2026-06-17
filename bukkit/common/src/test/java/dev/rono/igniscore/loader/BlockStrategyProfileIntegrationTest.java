@@ -1,6 +1,7 @@
 package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.config.DefinitionParser;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.event.IgnisEventBusImpl;
 import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
@@ -8,7 +9,6 @@ import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.IgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.loader.support.BundledExtensionJarFactory;
 import org.junit.jupiter.api.io.TempDir;
@@ -35,30 +35,11 @@ class BlockStrategyProfileIntegrationTest {
             "socket-lamp",
             "signal-charge"
     })
-    void placedUtilityStrategiesDoNotDeclareFuseLifecycle(String moduleName) throws Exception {
-        File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
-        ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
-                input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
-        Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
-        IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        BlockDefinition definition = (BlockDefinition) ExtensionKind.BLOCK.parseDefinition(config, manifest.getId(), 10001, manifest.getId());
-        IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
+    void placedUtilityStrategiesLoadWithoutFuseConfig(String moduleName) throws Exception {
+        BlockDefinition definition = loadDefinition(moduleName);
+        loadStrategy(moduleName);
 
-        try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
-            IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(
-                    classLoader,
-                    manifest.getStrategyClass(),
-                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null,
-                            dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE, new IgnisEventBusImpl()),
-                    registry,
-                    descriptor,
-                    ExtensionKind.BLOCK
-            );
-
-            assertTrue(strategy instanceof IgnisBlockStrategy);
-            StrategyProfile profile = ((IgnisBlockStrategy) strategy).profile(definition);
-            assertFalse(profile.hasFuseLifecycle());
-        }
+        assertFalse(definition.getCustomData().containsKey("fuse"));
     }
 
     @ParameterizedTest
@@ -71,17 +52,34 @@ class BlockStrategyProfileIntegrationTest {
             "tunneling-tnt",
             "spider-storm-tnt"
     })
-    void bundledStrategiesExposeProfilesForTheirDefinitions(String moduleName) throws Exception {
+    void bundledExplosiveStrategiesDeclareFuseInConfig(String moduleName) throws Exception {
+        BlockDefinition definition = loadDefinition(moduleName);
+        IgnisStrategy strategy = loadStrategy(moduleName);
+
+        assertTrue(strategy instanceof IgnisBlockStrategy);
+        assertNotNull(definition);
+        assertTrue(definition.getCustomData().containsKey("fuse"));
+        assertTrue(StrategySupport.customInt(definition, "fuse", -1) >= 0);
+        assertTrue(StrategySupport.customDouble(definition, "radius", -1.0) >= 0.0);
+    }
+
+    private BlockDefinition loadDefinition(String moduleName) throws Exception {
         File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
+        return (BlockDefinition) ExtensionKind.BLOCK.parseDefinition(config, manifest.getId(), 10001, manifest.getId());
+    }
+
+    private IgnisStrategy loadStrategy(String moduleName) throws Exception {
+        File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
+        ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
+                input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);
-        BlockDefinition definition = (BlockDefinition) ExtensionKind.BLOCK.parseDefinition(config, manifest.getId(), 10001, manifest.getId());
         IgnisStrategyRegistryImpl registry = TestIgnisCore.newStrategyRegistry();
 
         try (URLClassLoader classLoader = ExtensionJarSupport.createClassLoader(jarFile, getClass().getClassLoader())) {
-            IgnisStrategy strategy = ExtensionJarSupport.loadStrategy(
+            return ExtensionJarSupport.loadStrategy(
                     classLoader,
                     manifest.getStrategyClass(),
                     new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null,
@@ -90,13 +88,6 @@ class BlockStrategyProfileIntegrationTest {
                     descriptor,
                     ExtensionKind.BLOCK
             );
-
-            assertTrue(strategy instanceof IgnisBlockStrategy);
-            StrategyProfile profile = ((IgnisBlockStrategy) strategy).profile(definition);
-            assertNotNull(profile);
-            assertTrue(profile.hasFuseLifecycle());
-            assertTrue(profile.getDefaultFuse() >= 0);
-            assertTrue(profile.getDefaultRadius() >= 0.0);
         }
     }
 }

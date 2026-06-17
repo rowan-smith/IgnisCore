@@ -34,7 +34,6 @@ The bootstrap plugin supplies this module at runtime. Do **not** shade it into e
 | `ExtensionShared.entities()` | Entity queries and radius effects |
 | `ExtensionShared.processing()` | Processing GUI inventory helpers |
 | `ExtensionShared.variants()` | Specialized blast patterns |
-| `ExtensionShared.profiles()` | Preset `StrategyProfile` factories |
 | `ExtensionShared.gui()` | Block storage and trade registries |
 
 ## Examples
@@ -47,9 +46,6 @@ int fuseTicks = throwable.fuseTicks();
 
 // Detonation with YAML overrides
 ExtensionShared.explosion().create(world, location, definition, 4.0, false);
-
-// Preset explosive profile
-StrategyProfile profile = ExtensionShared.profiles().explosive();
 ```
 
 ## When to use core API instead

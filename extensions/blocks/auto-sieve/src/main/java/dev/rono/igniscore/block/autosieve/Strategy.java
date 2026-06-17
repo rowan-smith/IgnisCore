@@ -1,9 +1,7 @@
 package dev.rono.igniscore.block.autosieve;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
@@ -11,10 +9,5 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         context.eventBus().subscribe(new AutoSieveOnBlockPlaceListener(context));
         context.eventBus().subscribe(new AutoSieveOnBlockBreakListener());
         context.eventBus().subscribe(new AutoSieveOnBlockClickListener());
-    }
-
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.placed();
     }
 }
