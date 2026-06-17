@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Locale;
+
 public final class BukkitIgnisPlayer implements IgnisPlayer {
     private final Player handle;
 
@@ -61,11 +63,11 @@ public final class BukkitIgnisPlayer implements IgnisPlayer {
 
     @Override
     public void applyPotionEffect(String effectKey, int durationTicks, int amplifier) {
-        PotionEffectType type = PotionEffectType.getByName(effectKey.toUpperCase());
+        PotionEffectType type = PotionEffectType.getByName(effectKey.toUpperCase(Locale.ROOT));
         if (type == null) {
             return;
         }
-        handle.addPotionEffect(new PotionEffect(type, durationTicks, amplifier, false, true, true));
+        handle.addPotionEffect(new PotionEffect(type, Math.max(1, durationTicks), Math.max(0, amplifier), false, true, true));
     }
 
     @Override

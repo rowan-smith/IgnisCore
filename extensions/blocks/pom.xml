@@ -105,6 +105,13 @@
     <module>pipe-valve</module>
     <module>picnic-basket</module>
     <module>keg-tap</module>
+    <module>shrapnel-mine</module>
+    <module>concussion-tnt</module>
+    <module>cavity-tnt</module>
+    <module>drill-tnt</module>
+    <module>ring-tnt</module>
+    <module>seismic-tnt</module>
+    <module>depth-charge</module>
   </modules>
 
   <dependencyManagement>

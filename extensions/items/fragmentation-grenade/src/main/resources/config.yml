@@ -1,0 +1,27 @@
+id: fragmentation-grenade
+
+display:
+  title: "&8Fragmentation Grenade"
+  description:
+    - "&7Compact shrapnel burst"
+    - "&7High debris count"
+
+item:
+  base_material: snowball
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: throw
+  right_click_block: throw
+
+custom_data:
+  power: 2.0
+  fuse_ticks: 35
+  throw_velocity: 1.3
+  fire: false
+  scanRadius: 4
+  projectileCount: 64
+  minVelocity: 0.65
+  maxVelocity: 1.5

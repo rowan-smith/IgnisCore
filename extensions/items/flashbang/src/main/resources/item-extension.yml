@@ -1,0 +1,5 @@
+id: flashbang
+name: Flashbang
+version: @project.version@
+api-version: @ignis.api.version@
+strategy: dev.rono.igniscore.item.flashbang.Strategy

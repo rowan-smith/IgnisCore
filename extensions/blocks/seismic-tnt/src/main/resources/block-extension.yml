@@ -1,0 +1,5 @@
+id: seismic-tnt
+name: Seismic TNT
+version: @project.version@
+api-version: @ignis.api.version@
+strategy: dev.rono.igniscore.block.seismictnt.Strategy

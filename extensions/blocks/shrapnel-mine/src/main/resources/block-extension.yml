@@ -1,0 +1,5 @@
+id: shrapnel-mine
+name: Shrapnel Mine
+version: @project.version@
+api-version: @ignis.api.version@
+strategy: dev.rono.igniscore.block.shrapnelmine.Strategy

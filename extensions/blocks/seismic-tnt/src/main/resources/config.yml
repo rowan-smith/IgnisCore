@@ -1,0 +1,45 @@
+id: seismic-tnt
+
+display:
+  title: "&6Seismic TNT"
+  description:
+    - "&7Grid of delayed micro-blasts"
+    - "&7Feels like an earthquake"
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+    break_sound: BLOCK_GRAVEL_BREAK
+    hit_sound: BLOCK_GRAVEL_HIT
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+behavior:
+  combustible: true
+  left_click_block: break
+  right_click_block: ignite
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+    - FLINT
+  sounds:
+    place: BLOCK_BEACON_ACTIVATE
+    ignite: ITEM_FLINTANDSTEEL_USE
+
+custom_data:
+  fuse: 40
+  gridSize: 5
+  gridSpacing: 4.0
+  microPower: 2.5
+  waveDelayTicks: 3
+  screenShakeDuration: 60
+  screenShakeRadius: 40.0

@@ -1,0 +1,5 @@
+id: drill-tnt
+name: Drill TNT
+version: @project.version@
+api-version: @ignis.api.version@
+strategy: dev.rono.igniscore.block.drilltnt.Strategy

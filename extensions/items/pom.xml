@@ -60,6 +60,8 @@
     <module>luck-dust</module>
     <module>antidote-swab</module>
     <module>unlabeled-potion</module>
+    <module>fragmentation-grenade</module>
+    <module>flashbang</module>
   </modules>
 
   <dependencyManagement>
