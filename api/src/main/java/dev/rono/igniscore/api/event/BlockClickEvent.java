@@ -2,9 +2,9 @@ package dev.rono.igniscore.api.event;
 
 import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.PlacedBlock;
 import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.port.IgnisItem;
-import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 
 /**
@@ -13,21 +13,27 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
  * <p>Listeners may change {@link #result()} to control core handling (ignite, break, open).</p>
  */
 public final class BlockClickEvent implements PlayerBlockEvent {
-    private final BlockDefinition definition;
-    private final IgnisLocation location;
+    private final PlacedBlock block;
     private final IgnisPlayer player;
     private final IgnisInteraction interaction;
     private final IgnisItem heldItem;
     private CustomBlockAction result;
 
     public BlockClickEvent(BlockDefinition definition,
-                           IgnisLocation location,
+                           dev.rono.igniscore.api.port.IgnisLocation location,
                            IgnisPlayer player,
                            IgnisInteraction interaction,
                            IgnisItem heldItem,
                            CustomBlockAction defaultResult) {
-        this.definition = definition;
-        this.location = location;
+        this(PlacedBlock.of(definition, location), player, interaction, heldItem, defaultResult);
+    }
+
+    public BlockClickEvent(PlacedBlock block,
+                           IgnisPlayer player,
+                           IgnisInteraction interaction,
+                           IgnisItem heldItem,
+                           CustomBlockAction defaultResult) {
+        this.block = block;
         this.player = player;
         this.interaction = interaction;
         this.heldItem = heldItem;
@@ -35,21 +41,16 @@ public final class BlockClickEvent implements PlayerBlockEvent {
     }
 
     @Override
-    public BlockDefinition definition() {
-        return definition;
-    }
-
-    @Override
-    public IgnisLocation block() {
-        return location;
+    public PlacedBlock block() {
+        return block;
     }
 
     /**
-     * @deprecated use {@link #block()}
+     * @deprecated use {@link #block()}{@code .location()}
      */
     @Deprecated
-    public IgnisLocation location() {
-        return location;
+    public dev.rono.igniscore.api.port.IgnisLocation location() {
+        return block.location();
     }
 
     @Override

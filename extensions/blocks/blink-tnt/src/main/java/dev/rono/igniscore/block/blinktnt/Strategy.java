@@ -6,13 +6,12 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final BlinkTntBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new BlinkTntBehavior(context);
-        onBlockTick(event -> behavior.onTick(event.instance()));
-        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));
+        var listeners = new BlinkTntListeners(context);
+        onBlockTick(listeners);
+        onBlockTrigger(listeners);
     }
 
     @Override

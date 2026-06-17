@@ -1,0 +1,71 @@
+package dev.rono.igniscore.block.greenhouseglass;
+
+import dev.rono.extensions.shared.strategy.BlockScanSupport;
+import dev.rono.extensions.shared.strategy.PlacedTickSupport;
+import dev.rono.extensions.shared.strategy.TheatricsSupport;
+import dev.rono.igniscore.api.event.BlockBreakEvent;
+import dev.rono.igniscore.api.event.BlockPlaceEvent;
+import dev.rono.igniscore.api.event.OnBlockBreakListener;
+import dev.rono.igniscore.api.event.OnBlockPlaceListener;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.igniscore.api.util.Locations;
+
+final class GreenhouseGlassListeners implements OnBlockPlaceListener, OnBlockBreakListener {
+    private final IgnisStrategyContext context;
+
+    GreenhouseGlassListeners(IgnisStrategyContext context) {
+        this.context = context;
+    }
+
+    void onPlaced(BlockDefinition definition, IgnisLocation location) {
+        PlacedTickSupport.start(context, location, StrategySupport.customInt(definition, "tickPeriod", 60),
+                () -> tick(definition, location));
+        TheatricsSupport.chime(worldAt(location), Locations.toCenter(location), 1.0f);
+    }
+
+    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
+        PlacedTickSupport.stop(location);
+    }
+
+    private void tick(BlockDefinition definition, IgnisLocation location) {
+        IgnisWorld world = worldAt(location);
+        IgnisLocation center = Locations.toCenter(location);
+        int radius = StrategySupport.customInt(definition, "greenhouseRadius", 2);
+        if (!hasGlassRoof(world, center, radius)) {
+            return;
+        }
+        BlockScanSupport.bonemealRadius(world, center, radius);
+        TheatricsSupport.sparkle(world, center.add(0, 1, 0), "HAPPY_VILLAGER",
+                StrategySupport.customInt(definition, "growthParticles", 4));
+    }
+
+    private boolean hasGlassRoof(IgnisWorld world, IgnisLocation center, int radius) {
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                String above = world.getBlockMaterialKey(center.add(x, 2, z)).toLowerCase();
+                if (!above.contains("glass")) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private IgnisWorld worldAt(IgnisLocation location) {
+        return context.extensions().resolveWorld(location);
+    }
+
+    @Override
+    public void onBlockPlace(BlockPlaceEvent event) {
+        onPlaced(event.block().definition(), event.block().location());
+    }
+
+    @Override
+    public void onBlockBreak(BlockBreakEvent event) {
+        onPlacedBreak(event.block().definition(), event.block().location());
+    }
+}

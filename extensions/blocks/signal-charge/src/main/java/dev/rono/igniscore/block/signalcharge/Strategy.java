@@ -4,12 +4,11 @@ import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final SignalChargeBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new SignalChargeBehavior(context);
-        onBlockTrigger(event -> behavior.onTrigger(event.instance()));
+        var listeners = new SignalChargeListeners(context);
+        onBlockTrigger(listeners);
     }
 
 }

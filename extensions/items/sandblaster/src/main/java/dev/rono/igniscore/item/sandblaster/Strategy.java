@@ -4,16 +4,11 @@ import dev.rono.igniscore.api.strategy.AbstractIgnisItemStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
 public class Strategy extends AbstractIgnisItemStrategy {
-    private final SandblasterBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new SandblasterBehavior(context);
-        onItemClick(event -> {
-            if ("use".equals(event.actionToken())) {
-                behavior.onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
-            }
-        });
+        var listeners = new SandblasterListeners(context);
+        onItemClick(listeners);
     }
 
 }

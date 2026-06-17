@@ -6,13 +6,12 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final PauseTntBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new PauseTntBehavior(context);
-        onBlockTick(event -> behavior.onTick(event.instance()));
-        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));
+        var listeners = new PauseTntListeners(context);
+        onBlockTick(listeners);
+        onBlockTrigger(listeners);
     }
 
     @Override

@@ -1,0 +1,106 @@
+package dev.rono.igniscore.block.icecreamfreezer;
+
+import dev.rono.extensions.shared.gui.BlockStorageRegistry;
+import dev.rono.extensions.shared.strategy.PlacedTickSupport;
+import dev.rono.extensions.shared.strategy.ProcessingGuiSupport;
+import dev.rono.extensions.shared.strategy.TheatricsSupport;
+import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.api.event.BlockBreakEvent;
+import dev.rono.igniscore.api.event.BlockInteractEvent;
+import dev.rono.igniscore.api.event.BlockPlaceEvent;
+import dev.rono.igniscore.api.event.OnBlockBreakListener;
+import dev.rono.igniscore.api.event.OnBlockInteractListener;
+import dev.rono.igniscore.api.event.OnBlockPlaceListener;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.igniscore.api.util.Locations;
+import net.kyori.adventure.text.Component;
+
+final class IceCreamFreezerListeners implements OnBlockPlaceListener, OnBlockBreakListener, OnBlockInteractListener {
+    private static final int SNOW_SLOT = 10;
+    private static final int BERRY_SLOT = 12;
+    private static final int BUCKET_SLOT = 14;
+    private static final int OUTPUT_SLOT = 16;
+
+    private final IgnisStrategyContext context;
+    private final BlockStorageRegistry registry;
+
+    IceCreamFreezerListeners(IgnisStrategyContext context) {
+        this.context = context;
+        this.registry = new BlockStorageRegistry(context, "ice-cream-freezer");
+    }
+
+    void onPlaced(BlockDefinition definition, IgnisLocation location) {
+        registry.registerBlock(location, title(definition), 3);
+        PlacedTickSupport.start(context, location, StrategySupport.customInt(definition, "tickPeriod", 60),
+                () -> tick(definition, location));
+    }
+
+    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
+        PlacedTickSupport.stop(location);
+        registry.unregister(location);
+    }
+
+    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
+                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
+                          CustomBlockAction action) {
+        if (action != CustomBlockAction.OPEN) {
+            return;
+        }
+        if (heldItem != null && !heldItem.isAir() && ProcessingGuiSupport.matches(heldItem, "bowl")) {
+            player.applyPotionEffect("FIRE_RESISTANCE", 200, 0);
+            heldItem.setAmount(heldItem.getAmount() - 1);
+            player.sendMessage("<aqua>Ice cream grants brief fire resistance.</aqua>");
+        }
+        registry.openBlock(player, location);
+    }
+
+    private void tick(BlockDefinition definition, IgnisLocation location) {
+        var gui = registry.blockGui(location);
+        if (gui == null) {
+            return;
+        }
+        var inventory = gui.inventory();
+        if (!ProcessingGuiSupport.matches(inventory.getItem(SNOW_SLOT), "snow_block", "snow")
+                || !ProcessingGuiSupport.matches(inventory.getItem(BERRY_SLOT), "sweet_berries")
+                || !ProcessingGuiSupport.matches(inventory.getItem(BUCKET_SLOT), "bucket", "milk_bucket")) {
+            return;
+        }
+        ProcessingGuiSupport.consumeOne(inventory, SNOW_SLOT);
+        ProcessingGuiSupport.consumeOne(inventory, BERRY_SLOT);
+        ProcessingGuiSupport.consumeOne(inventory, BUCKET_SLOT);
+        ProcessingGuiSupport.setOutput(context.extensions(), inventory, OUTPUT_SLOT, "bowl", 1);
+        IgnisWorld world = worldAt(location);
+        IgnisLocation center = Locations.toCenter(location);
+        TheatricsSupport.sparkle(world, center, "CLOUD", 8);
+        world.playSound(center, "BLOCK_POWDER_SNOW_STEP", 0.7f, 1.3f);
+    }
+
+    private Component title(BlockDefinition definition) {
+        return definition.getTitle() == null ? Component.text("Ice Cream Freezer") : definition.getTitle();
+    }
+
+    private IgnisWorld worldAt(IgnisLocation location) {
+        return context.extensions().resolveWorld(location);
+    }
+
+    @Override
+    public void onBlockPlace(BlockPlaceEvent event) {
+        onPlaced(event.block().definition(), event.block().location());
+    }
+
+    @Override
+    public void onBlockBreak(BlockBreakEvent event) {
+        onPlacedBreak(event.block().definition(), event.block().location());
+    }
+
+    @Override
+    public void onBlockInteract(BlockInteractEvent event) {
+        onPlacedInteract(event.block().definition(), event.block().location(), event.player(), event.interaction(), event.heldItem(), event.action());
+    }
+}

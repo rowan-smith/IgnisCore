@@ -32,7 +32,7 @@ public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
 
     private void handleBlockTrigger(BlockTriggerEvent event) {
         BlockDefinition def = event.definition();
-        IgnisLocation loc = event.block();
+        IgnisLocation loc = event.block().location();
         float power = resolvePower(def);
 
         event.instance().getData().setDouble("ignis:blast_power", power);

@@ -1,0 +1,48 @@
+package dev.rono.igniscore.item.stencilplate;
+
+import dev.rono.extensions.shared.strategy.TheatricsSupport;
+import dev.rono.igniscore.api.event.ItemClickEvent;
+import dev.rono.igniscore.api.event.OnItemClickListener;
+import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.port.IgnisBlock;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+
+final class StencilPlateListeners implements OnItemClickListener {
+    private final IgnisStrategyContext context;
+
+    StencilPlateListeners(IgnisStrategyContext context) {
+        this.context = context;
+    }
+
+    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
+        if (clickedBlock == null) {
+            return;
+        }
+        IgnisLocation loc = clickedBlock.getLocation();
+        IgnisWorld world = player.getWorld();
+        String material = world.getBlockMaterialKey(loc).toLowerCase();
+        if (!material.contains("concrete_powder")) {
+            player.sendMessage("<gray>Stencil only works on concrete powder.</gray>");
+            return;
+        }
+        for (int x = -1; x <= 1; x++) {
+            for (int y = 0; y <= 1; y++) {
+                world.spawnParticle(loc.add(0.5 + x * 0.3, 0.5 + y * 0.3, 0.5), "GLOW", 2, 0.05, 0.05, 0.05, 0.01);
+            }
+        }
+        world.playSound(loc, "BLOCK_SAND_PLACE", 0.8f, 0.9f);
+        player.sendMessage("<aqua>Stencil pattern applied before hardening.</aqua>");
+        item.setAmount(item.getAmount() - 1);
+    }
+
+    @Override
+    public void onItemClick(ItemClickEvent event) {
+        if ("use".equals(event.actionToken())) {
+                onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
+            }
+    }
+}

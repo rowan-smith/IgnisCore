@@ -1,39 +1,36 @@
 package dev.rono.igniscore.api.event;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.PlacedBlock;
 import dev.rono.igniscore.api.port.IgnisItem;
-import dev.rono.igniscore.api.port.IgnisLocation;
 
 /**
  * Fired after a custom block is registered at a world location.
  */
 public final class BlockPlaceEvent implements BlockEvent {
-    private final BlockDefinition definition;
-    private final IgnisLocation location;
+    private final PlacedBlock block;
     private final IgnisItem placedFrom;
 
-    public BlockPlaceEvent(BlockDefinition definition, IgnisLocation location, IgnisItem placedFrom) {
-        this.definition = definition;
-        this.location = location;
+    public BlockPlaceEvent(BlockDefinition definition, dev.rono.igniscore.api.port.IgnisLocation location, IgnisItem placedFrom) {
+        this(PlacedBlock.of(definition, location), placedFrom);
+    }
+
+    public BlockPlaceEvent(PlacedBlock block, IgnisItem placedFrom) {
+        this.block = block;
         this.placedFrom = placedFrom;
     }
 
     @Override
-    public BlockDefinition definition() {
-        return definition;
-    }
-
-    @Override
-    public IgnisLocation block() {
-        return location;
+    public PlacedBlock block() {
+        return block;
     }
 
     /**
-     * @deprecated use {@link #block()}
+     * @deprecated use {@link #block()}{@code .location()}
      */
     @Deprecated
-    public IgnisLocation location() {
-        return location;
+    public dev.rono.igniscore.api.port.IgnisLocation location() {
+        return block.location();
     }
 
     public IgnisItem placedFrom() {

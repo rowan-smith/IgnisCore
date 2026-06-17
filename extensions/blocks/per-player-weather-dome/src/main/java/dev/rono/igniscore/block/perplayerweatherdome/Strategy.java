@@ -6,13 +6,12 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final PerPlayerWeatherDomeBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new PerPlayerWeatherDomeBehavior(context);
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.block()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.block()));
+        var listeners = new PerPlayerWeatherDomeListeners(context);
+        onBlockPlace(listeners);
+        onBlockBreak(listeners);
     }
 
     @Override

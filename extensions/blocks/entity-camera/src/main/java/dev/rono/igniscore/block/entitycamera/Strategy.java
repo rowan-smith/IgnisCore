@@ -7,12 +7,11 @@ import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.api.CustomBlockAction;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final EntityCameraBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new EntityCameraBehavior(context);
-        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.block(), event.player(), event.interaction(), event.heldItem(), event.action()));
+        var listeners = new EntityCameraListeners(context);
+        onBlockInteract(listeners);
     }
 
     @Override

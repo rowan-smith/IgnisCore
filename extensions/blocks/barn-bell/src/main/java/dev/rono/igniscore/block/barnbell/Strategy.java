@@ -6,13 +6,12 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final BarnBellBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new BarnBellBehavior(context);
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.block()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.block()));
+        var listeners = new BarnBellListeners(context);
+        onBlockPlace(listeners);
+        onBlockBreak(listeners);
     }
 
     @Override

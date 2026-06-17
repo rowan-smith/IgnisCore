@@ -1,39 +1,36 @@
 package dev.rono.igniscore.api.event;
 
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.PlacedBlock;
 import dev.rono.igniscore.api.port.IgnisItem;
-import dev.rono.igniscore.api.port.IgnisLocation;
 
 /**
  * Fired when a placed custom block is removed from the world.
  */
 public final class BlockBreakEvent implements BlockEvent {
-    private final BlockDefinition definition;
-    private final IgnisLocation location;
+    private final PlacedBlock block;
     private final IgnisItem droppedItem;
 
-    public BlockBreakEvent(BlockDefinition definition, IgnisLocation location, IgnisItem droppedItem) {
-        this.definition = definition;
-        this.location = location;
+    public BlockBreakEvent(BlockDefinition definition, dev.rono.igniscore.api.port.IgnisLocation location, IgnisItem droppedItem) {
+        this(PlacedBlock.of(definition, location), droppedItem);
+    }
+
+    public BlockBreakEvent(PlacedBlock block, IgnisItem droppedItem) {
+        this.block = block;
         this.droppedItem = droppedItem;
     }
 
     @Override
-    public BlockDefinition definition() {
-        return definition;
-    }
-
-    @Override
-    public IgnisLocation block() {
-        return location;
+    public PlacedBlock block() {
+        return block;
     }
 
     /**
-     * @deprecated use {@link #block()}
+     * @deprecated use {@link #block()}{@code .location()}
      */
     @Deprecated
-    public IgnisLocation location() {
-        return location;
+    public dev.rono.igniscore.api.port.IgnisLocation location() {
+        return block.location();
     }
 
     public IgnisItem droppedItem() {

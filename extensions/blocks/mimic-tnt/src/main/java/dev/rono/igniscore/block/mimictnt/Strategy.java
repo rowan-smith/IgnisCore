@@ -6,12 +6,11 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final MimicBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new MimicBehavior(context);
-        onBlockActivate(event -> behavior.onPlace(event.instance(), event.instance().getDefinition()));
+        var listeners = new MimicListeners(context);
+        onBlockActivate(listeners);
     }
 
     @Override
