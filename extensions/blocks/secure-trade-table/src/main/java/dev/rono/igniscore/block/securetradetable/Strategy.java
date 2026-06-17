@@ -34,5 +34,13 @@ public class Strategy extends AbstractIgnisBlockStrategy {
                                  CustomBlockAction action) {
         behavior.onPlacedInteract(definition, location, player, interaction, heldItem, action);
     }
+    @Override
+    public void onPlaced(BlockDefinition definition, IgnisLocation location) {
+        behavior.onPlaced(definition, location);
+    }
+    @Override
+    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
+        behavior.onPlacedBreak(definition, location);
+    }
 
 }

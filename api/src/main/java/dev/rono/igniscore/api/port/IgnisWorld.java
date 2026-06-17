@@ -49,4 +49,16 @@ public interface IgnisWorld {
     void configurePrimedTnt(Object platformEntity, int fuseTicks, float yield, boolean incendiary);
 
     void removeEntity(Object platformEntity);
+
+    /**
+     * @return item stack carried by a ground item entity, or null if not an item drop
+     */
+    default IgnisItem getDroppedItem(Object platformEntity) {
+        return null;
+    }
+
+    /**
+     * Keeps the chunk containing {@code location} loaded while {@code forceLoaded} is true.
+     */
+    void setChunkForceLoaded(IgnisLocation location, boolean forceLoaded);
 }

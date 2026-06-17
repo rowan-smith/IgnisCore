@@ -1,0 +1,6 @@
+id: pizza-oven
+name: Pizza Oven
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.pizzaoven.Strategy

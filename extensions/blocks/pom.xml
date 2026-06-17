@@ -83,6 +83,21 @@
     <module>item-pedestal-hologram</module>
     <module>secure-trade-table</module>
     <module>checkpoint-obelisk</module>
+    <module>piglin-barter-post</module>
+    <module>prep-counter</module>
+    <module>spice-rack</module>
+    <module>pizza-oven</module>
+    <module>ice-cream-freezer</module>
+    <module>coffee-brewer</module>
+    <module>compost-tea-brewer</module>
+    <module>greenhouse-glass</module>
+    <module>irrigation-sprinkler</module>
+    <module>sapling-nursery</module>
+    <module>display-case</module>
+    <module>ouija-slab</module>
+    <module>fortune-cookie-maker</module>
+    <module>mood-lantern</module>
+    <module>lost-and-found-bin</module>
   </modules>
 
   <dependencyManagement>

@@ -1,49 +1,113 @@
 package dev.rono.igniscore.block.{{PACKAGE}};
 
+import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategySupport;
-import dev.rono.extensions.shared.strategy.BlockScanSupport;
-import dev.rono.extensions.shared.strategy.EntityUtilSupport;
+import dev.rono.extensions.shared.gui.BlockStorageRegistry;
 import dev.rono.extensions.shared.strategy.PlacedTickSupport;
 import dev.rono.extensions.shared.strategy.TheatricsSupport;
 import dev.rono.igniscore.api.util.Locations;
+import net.kyori.adventure.text.Component;
+
+import java.util.Collection;
 
 final class {{CLASS}}Behavior {
     private final IgnisStrategyContext context;
+    private final BlockStorageRegistry registry;
 
     {{CLASS}}Behavior(IgnisStrategyContext context) {
         this.context = context;
+        this.registry = new BlockStorageRegistry(context, "chicken-coop-cache");
     }
 
     void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        long period = StrategySupport.customInt(definition, "tickPeriod", 20);
+        registry.registerBlock(location, title(definition), 3);
+        context.getExtensionSupport().registerDropCollector(location, (breakLocation, drops) -> collectEggs(location, drops));
+        long period = StrategySupport.customInt(definition, "tickPeriod", 100);
         PlacedTickSupport.start(context, location, period, () -> tick(definition, location));
-        IgnisLocation center = Locations.toCenter(location);
-        TheatricsSupport.chime(worldAt(center), center, 1.0f);
+        TheatricsSupport.chime(worldAt(location), Locations.toCenter(location), 1.0f);
     }
 
     void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
         PlacedTickSupport.stop(location);
+        context.getExtensionSupport().unregisterDropCollector(location);
+        registry.unregister(location);
+    }
+
+    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
+                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
+                          CustomBlockAction action) {
+        if (action == CustomBlockAction.OPEN) {
+            registry.openBlock(player, location);
+        }
+    }
+
+    private boolean collectEggs(IgnisLocation coopLocation, Collection<IgnisItem> drops) {
+        var gui = registry.blockGui(coopLocation);
+        if (gui == null) {
+            return false;
+        }
+        boolean stored = false;
+        var inventory = gui.inventory();
+        var iterator = drops.iterator();
+        while (iterator.hasNext()) {
+            IgnisItem drop = iterator.next();
+            if (drop == null || drop.isAir() || !isEgg(drop)) {
+                continue;
+            }
+            if (storeItem(inventory, drop)) {
+                iterator.remove();
+                stored = true;
+            }
+        }
+        return stored;
+    }
+
+    private boolean storeItem(dev.rono.igniscore.api.port.IgnisInventory inventory, IgnisItem stack) {
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            IgnisItem existing = inventory.getItem(slot);
+            if (existing == null || existing.isAir()) {
+                inventory.setItem(slot, stack);
+                return true;
+            }
+            if (existing.getMaterialKey().equals(stack.getMaterialKey()) && existing.getAmount() < 64) {
+                int move = Math.min(stack.getAmount(), 64 - existing.getAmount());
+                existing.setAmount(existing.getAmount() + move);
+                stack.setAmount(stack.getAmount() - move);
+                inventory.setItem(slot, existing);
+                return stack.getAmount() <= 0;
+            }
+        }
+        return false;
     }
 
     private void tick(BlockDefinition definition, IgnisLocation location) {
         IgnisWorld world = worldAt(location);
         IgnisLocation center = Locations.toCenter(location);
-        TheatricsSupport.sparkle(world, center, "EGG_CRACK", StrategySupport.customInt(definition, "eggParticles", 3));
-          world.playSound(center, "ENTITY_CHICKEN_EGG", 0.4f, 1.2f);
-          if (StrategySupport.customBoolean(definition, "collectSimulation", true)) {
-              playerMessageNearby(world, center, "<gray>Coop collected <yellow>1 egg</yellow>.</gray>");
-          }
+        for (Object entity : world.getNearbyEntities(center, StrategySupport.customDouble(definition, "coopRadius", 6.0))) {
+            if (entity.getClass().getSimpleName().toLowerCase().contains("chicken")) {
+                TheatricsSupport.sparkle(world, center, "EGG_CRACK", 2);
+                world.playSound(center, "ENTITY_CHICKEN_EGG", 0.3f, 1.2f);
+                var gui = registry.blockGui(location);
+                if (gui != null) {
+                    storeItem(gui.inventory(), context.getExtensionSupport().createItem("egg", 1));
+                }
+                break;
+            }
+        }
     }
 
-    private void playerMessageNearby(IgnisWorld world, IgnisLocation center, String message) {
-        for (IgnisPlayer player : world.getPlayersNear(center, 6.0)) {
-            player.sendActionBar(message);
-        }
+    private boolean isEgg(IgnisItem item) {
+        return "egg".equalsIgnoreCase(item.getMaterialKey());
+    }
+
+    private Component title(BlockDefinition definition) {
+        return definition.getTitle() == null ? Component.text("Chicken Coop") : definition.getTitle();
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {

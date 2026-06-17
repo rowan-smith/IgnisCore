@@ -61,4 +61,7 @@ public interface PlatformAdapter {
     void clearBlock(IgnisLocation location);
 
     void shutdown();
+
+    default void spectateEntity(IgnisPlayer player, Object platformEntity, int durationTicks) {
+    }
 }

@@ -29,6 +29,14 @@
     <module>structure-compass</module>
     <module>chunk-grid-overlay</module>
     <module>atlas-imprinter</module>
+    <module>cookie-cutter-stamp</module>
+    <module>rivet-gun</module>
+    <module>paint-stripper</module>
+    <module>stencil-plate</module>
+    <module>sandblaster</module>
+    <module>mulch-spreader</module>
+    <module>gravity-marble</module>
+    <module>quantum-coin</module>
   </modules>
 
   <dependencyManagement>

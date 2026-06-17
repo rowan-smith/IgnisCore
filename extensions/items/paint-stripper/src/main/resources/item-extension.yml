@@ -1,0 +1,6 @@
+id: paint-stripper
+name: Paint Stripper
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.paintstripper.Strategy

@@ -25,9 +25,9 @@ model:
 behavior:
   combustible: false
   left_click_block: break
-  right_click_block: none
+  right_click_block: open
   sounds:
-    place: BLOCK_AMETHYST_BLOCK_CHIME
+    place: BLOCK_METAL_PLACE
 
 custom_data:
   fuse: 80

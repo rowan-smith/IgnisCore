@@ -32,7 +32,7 @@ BLOCKS = [
     {"id": "swap-charge", "name": "Swap Charge", "kind": "swap", "type": "fuse", "fuse": 50},
     {"id": "phase-tnt", "name": "Phase TNT", "kind": "phase", "type": "fuse", "fuse": 60},
     {"id": "rift-generator", "name": "Rift Generator", "kind": "rift", "type": "fuse", "fuse": 80},
-    {"id": "pocket-dimension-cache", "name": "Pocket Dimension Cache", "kind": "pocket_cache", "type": "interact"},
+    {"id": "pocket-dimension-cache", "name": "Pocket Dimension Cache", "kind": "pocket_cache", "type": "interact", "placed_hooks": True},
     {"id": "mirror-world-tnt", "name": "Mirror World TNT", "kind": "mirror", "type": "fuse", "fuse": 70},
     {"id": "pollinator-block", "name": "Pollinator Block", "kind": "pollinator", "type": "placed"},
     {"id": "scarecrow-anchor", "name": "Scarecrow Anchor", "kind": "scarecrow", "type": "placed"},
@@ -41,7 +41,7 @@ BLOCKS = [
     {"id": "shepherd-bell", "name": "Shepherd Bell", "kind": "shepherd", "type": "placed"},
     {"id": "milking-station", "name": "Milking Station", "kind": "milking", "type": "placed"},
     {"id": "crop-mri", "name": "Crop MRI", "kind": "crop_mri", "type": "placed"},
-    {"id": "chicken-coop-cache", "name": "Chicken Coop Cache", "kind": "chicken_coop", "type": "placed"},
+    {"id": "chicken-coop-cache", "name": "Chicken Coop Cache", "kind": "chicken_coop", "type": "interact", "placed_hooks": True},
     {"id": "blueprint-projector", "name": "Blueprint Projector", "kind": "blueprint", "type": "placed", "integrations": ["protocol"]},
     {"id": "glow-ink-lantern", "name": "Glow Ink Lantern", "kind": "glow_lantern", "type": "placed"},
     {"id": "auto-sieve", "name": "Auto Sieve", "kind": "auto_sieve", "type": "placed"},
@@ -53,7 +53,7 @@ BLOCKS = [
     {"id": "smoker-stack", "name": "Smoker Stack", "kind": "smoker_stack", "type": "placed"},
     {"id": "ore-echo", "name": "Ore Echo", "kind": "ore_scan", "type": "placed"},
     {"id": "mob-radar", "name": "Mob Radar", "kind": "mob_radar", "type": "placed"},
-    {"id": "chunk-loader-lite", "name": "Chunk Loader Lite", "kind": "chunk_loader", "type": "placed"},
+    {"id": "chunk-loader-lite", "name": "Chunk Loader Lite", "kind": "chunk_loader", "type": "interact", "placed_hooks": True},
     {"id": "entity-camera", "name": "Entity Camera", "kind": "entity_camera", "type": "interact", "integrations": ["protocol"]},
     {"id": "player-proximity-alarm", "name": "Player Proximity Alarm", "kind": "proximity_alarm", "type": "placed"},
     {"id": "motion-floodlight", "name": "Motion Floodlight", "kind": "motion_floodlight", "type": "placed"},
@@ -64,8 +64,23 @@ BLOCKS = [
     {"id": "fish-smoker-rack", "name": "Fish Smoker Rack", "kind": "fish_smoker", "type": "placed"},
     {"id": "per-player-weather-dome", "name": "Per-Player Weather Dome", "kind": "weather_dome", "type": "placed", "integrations": ["protocol"]},
     {"id": "item-pedestal-hologram", "name": "Item Pedestal Hologram", "kind": "item_pedestal", "type": "placed", "integrations": ["protocol"]},
-    {"id": "secure-trade-table", "name": "Secure Trade Table", "kind": "secure_trade", "type": "interact"},
+    {"id": "secure-trade-table", "name": "Secure Trade Table", "kind": "secure_trade", "type": "interact", "placed_hooks": True},
     {"id": "checkpoint-obelisk", "name": "Checkpoint Obelisk", "kind": "checkpoint", "type": "interact"},
+    {"id": "piglin-barter-post", "name": "Piglin Barter Post", "kind": "piglin_barter", "type": "interact", "placed_hooks": True},
+    {"id": "prep-counter", "name": "Prep Counter", "kind": "prep_counter", "type": "interact", "placed_hooks": True},
+    {"id": "spice-rack", "name": "Spice Rack", "kind": "spice_rack", "type": "interact", "placed_hooks": True},
+    {"id": "pizza-oven", "name": "Pizza Oven", "kind": "pizza_oven", "type": "interact", "placed_hooks": True},
+    {"id": "ice-cream-freezer", "name": "Ice Cream Freezer", "kind": "ice_cream_freezer", "type": "interact", "placed_hooks": True},
+    {"id": "coffee-brewer", "name": "Coffee Brewer", "kind": "coffee_brewer", "type": "interact", "placed_hooks": True},
+    {"id": "compost-tea-brewer", "name": "Compost Tea Brewer", "kind": "compost_tea", "type": "interact", "placed_hooks": True},
+    {"id": "greenhouse-glass", "name": "Greenhouse Glass", "kind": "greenhouse_glass", "type": "placed"},
+    {"id": "irrigation-sprinkler", "name": "Irrigation Sprinkler", "kind": "irrigation_sprinkler", "type": "interact", "placed_hooks": True},
+    {"id": "sapling-nursery", "name": "Sapling Nursery", "kind": "sapling_nursery", "type": "interact", "placed_hooks": True},
+    {"id": "display-case", "name": "Display Case", "kind": "display_case", "type": "interact", "placed_hooks": True},
+    {"id": "ouija-slab", "name": "Ouija Slab", "kind": "ouija_slab", "type": "placed"},
+    {"id": "fortune-cookie-maker", "name": "Fortune Cookie Maker", "kind": "fortune_cookie", "type": "interact", "placed_hooks": True},
+    {"id": "mood-lantern", "name": "Mood Lantern", "kind": "mood_lantern", "type": "placed"},
+    {"id": "lost-and-found-bin", "name": "Lost & Found Bin", "kind": "lost_and_found", "type": "interact", "placed_hooks": True},
 ]
 
 ITEMS = [
@@ -78,6 +93,14 @@ ITEMS = [
     {"id": "structure-compass", "name": "Structure Compass", "kind": "structure_compass", "integrations": ["nbt-entity"]},
     {"id": "chunk-grid-overlay", "name": "Chunk Grid Overlay", "kind": "chunk_grid_overlay", "integrations": ["protocol"]},
     {"id": "atlas-imprinter", "name": "Atlas Imprinter", "kind": "atlas_imprinter", "integrations": ["nbt-entity"]},
+    {"id": "cookie-cutter-stamp", "name": "Cookie Cutter Stamp", "kind": "cookie_cutter", "integrations": ["nbt-entity"]},
+    {"id": "rivet-gun", "name": "Rivet Gun", "kind": "rivet_gun"},
+    {"id": "paint-stripper", "name": "Paint Stripper", "kind": "paint_stripper"},
+    {"id": "stencil-plate", "name": "Stencil Plate", "kind": "stencil_plate"},
+    {"id": "sandblaster", "name": "Sandblaster", "kind": "sandblaster"},
+    {"id": "mulch-spreader", "name": "Mulch Spreader", "kind": "mulch_spreader"},
+    {"id": "gravity-marble", "name": "Gravity Marble", "kind": "gravity_marble"},
+    {"id": "quantum-coin", "name": "Quantum Coin", "kind": "quantum_coin", "integrations": ["nbt-entity"]},
 ]
 
 
@@ -264,6 +287,9 @@ def block_strategy(package: str, class_name: str, ext: dict) -> str:
                                  CustomBlockAction action) {
         behavior.onPlacedInteract(definition, location, player, interaction, heldItem, action);
     }""")
+        if ext.get("placed_hooks"):
+            methods.append("    @Override\n    public void onPlaced(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlaced(definition, location);\n    }")
+            methods.append("    @Override\n    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlacedBreak(definition, location);\n    }")
 
     profile_parts = [f".defaultFuse({fuse})"]
     if not combustible:
