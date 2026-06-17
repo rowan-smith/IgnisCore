@@ -37,7 +37,8 @@ class AbstractIgnisItemStrategyTest {
 
     private static final class TestStrategy extends AbstractIgnisItemStrategy {
         private TestStrategy() {
-            super(new IgnisStrategyContext(null, null, null, null, NoopExtensionSupport.INSTANCE, NoopEventBus.INSTANCE));
+            super(new IgnisStrategyContext(null, null, null, null, null, null, null, null,
+                    NoopExtensionSupport.INSTANCE, NoopEventBus.INSTANCE));
         }
 
         double readDouble(ItemDefinition definition, String key, double defaultValue) {

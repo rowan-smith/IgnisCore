@@ -1,0 +1,22 @@
+id: cryo-grenade
+
+display:
+  title: "&6Cryo Grenade"
+  description:
+    - "&7Throwable flare explosive"
+
+item:
+  base_material: snowball
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: throw
+  right_click_block: throw
+
+custom_data:
+  power: 3.0
+  fuse_ticks: 40
+  throw_velocity: 1.2
+  fire: false

@@ -95,6 +95,21 @@ class IgnisCoreAPITest {
         };
         private final IgnisNbtService nbtService = new IgnisNbtService() {
             @Override
+            public boolean isEnabled() {
+                return true;
+            }
+
+            @Override
+            public String providerName() {
+                return "test";
+            }
+
+            @Override
+            public boolean supportsEntityData() {
+                return true;
+            }
+
+            @Override
             public void setItemString(IgnisItem item, String key, String value) {
             }
 
@@ -134,6 +149,11 @@ class IgnisCoreAPITest {
             @Override
             public boolean isEnabled() {
                 return false;
+            }
+
+            @Override
+            public String providerName() {
+                return "test";
             }
 
             @Override
@@ -216,6 +236,26 @@ class IgnisCoreAPITest {
         @Override
         public IgnisEffectService getEffectService() {
             return effectService;
+        }
+
+        @Override
+        public dev.rono.igniscore.api.service.IgnisRegionService getRegionService() {
+            return null;
+        }
+
+        @Override
+        public dev.rono.igniscore.api.service.IgnisHologramService getHologramService() {
+            return null;
+        }
+
+        @Override
+        public dev.rono.igniscore.api.service.IgnisNpcService getNpcService() {
+            return null;
+        }
+
+        @Override
+        public dev.rono.igniscore.api.integration.IgnisIntegrationRegistry getIntegrationRegistry() {
+            return null;
         }
 
         @Override

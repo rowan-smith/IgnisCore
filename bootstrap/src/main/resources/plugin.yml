@@ -5,8 +5,8 @@ description: Multi-platform custom block and item system for Minecraft
 
 main: dev.rono.igniscore.bootstrap.IgnisBootstrapPlugin
 api-version: '1.21'
-depend: [NBTAPI]
-softdepend: [ProtocolLib]
+depend: []
+softdepend: [NBTAPI, ProtocolLib, WorldEdit, FastAsyncWorldEdit, DecentHolograms, Citizens]
 prefix: IgnisCore
 
 permissions:

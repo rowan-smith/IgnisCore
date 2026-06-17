@@ -1,0 +1,44 @@
+id: ring-tnt
+
+display:
+  title: "&dRing TNT"
+  description:
+    - "&7Torus-shaped blast"
+    - "&7Destroys a donut, spares the core"
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+    break_sound: BLOCK_GRAVEL_BREAK
+    hit_sound: BLOCK_GRAVEL_HIT
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+behavior:
+  combustible: true
+  left_click_block: break
+  right_click_block: ignite
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+    - FLINT
+  sounds:
+    place: BLOCK_BEACON_ACTIVATE
+    ignite: ITEM_FLINTANDSTEEL_USE
+
+custom_data:
+  fuse: 70
+  majorRadius: 7
+  minorRadius: 3
+  staggered: true
+  batchSize: 16
+  batchDelayTicks: 2

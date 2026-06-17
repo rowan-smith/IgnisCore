@@ -14,6 +14,21 @@ public final class PdcBackedNbtService implements IgnisNbtService {
     private static final NamespacedKey NAMESPACE = NamespacedKey.fromString("ignis:nbt");
 
     @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public String providerName() {
+        return "pdc";
+    }
+
+    @Override
+    public boolean supportsEntityData() {
+        return false;
+    }
+
+    @Override
     public void setItemString(IgnisItem item, String key, String value) {
         setString(BukkitBridge.unwrap(item), key, value);
     }

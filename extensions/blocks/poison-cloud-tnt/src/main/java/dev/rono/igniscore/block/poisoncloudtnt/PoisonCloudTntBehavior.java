@@ -1,0 +1,42 @@
+package dev.rono.igniscore.block.poisoncloudtnt;
+
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.RuntimeBlockInstance;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.BlockTransformSupport;
+import dev.rono.extensions.shared.strategy.ExplosionSupport;
+import dev.rono.igniscore.api.util.Locations;
+
+final class PoisonCloudTntBehavior {
+    private final IgnisStrategyContext context;
+
+    PoisonCloudTntBehavior(IgnisStrategyContext context) {
+        this.context = context;
+    }
+
+    void onTick(RuntimeBlockInstance instance) {
+        if (instance.getTicksLeft() % 10 != 0) {
+            return;
+        }
+        IgnisLocation center = Locations.toCenter(instance.getLocation());
+        worldAt(center).spawnParticle(center, "ENTITY_EFFECT", 4, 1.2, 0.3, 1.2, 0.01);
+    }
+
+    void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
+        BlockDefinition def = instance.getDefinition();
+        IgnisLocation loc = Locations.toCenter(instance.getLocation());
+        IgnisWorld world = worldAt(loc);
+        double cloudRadius = StrategySupport.customDouble(def, "cloudRadius", 8.0);
+        int cloudDuration = StrategySupport.customInt(def, "cloudDuration", 200);
+        world.playSound(loc, "ENTITY_WITCH_THROW", 1.5f, 0.6f);
+        BlockTransformSupport.poisonCloud(world, loc, cloudRadius, cloudDuration, context.scheduler());
+        ExplosionSupport.createExplosion(world, loc, def, 2.0, false);
+    }
+
+    private IgnisWorld worldAt(IgnisLocation location) {
+        return context.extensions().resolveWorld(location);
+    }
+}

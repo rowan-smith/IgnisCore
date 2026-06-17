@@ -1,0 +1,6 @@
+id: remote-c4
+name: Remote C4
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.remotec4.Strategy

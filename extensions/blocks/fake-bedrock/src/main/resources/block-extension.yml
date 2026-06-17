@@ -1,0 +1,8 @@
+id: fake-bedrock
+name: Fake Bedrock
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.fakebedrock.Strategy
+requires-integrations:
+  - protocol

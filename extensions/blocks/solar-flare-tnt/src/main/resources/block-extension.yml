@@ -1,0 +1,6 @@
+id: solar-flare-tnt
+name: Solar Flare TNT
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.solarflaretnt.Strategy

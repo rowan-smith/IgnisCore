@@ -82,8 +82,7 @@ class BlockStrategyProfileIntegrationTest {
             return ExtensionJarSupport.loadStrategy(
                     classLoader,
                     manifest.getStrategyClass(),
-                    new dev.rono.igniscore.api.strategy.IgnisStrategyContext(null, null, null, null,
-                            dev.rono.igniscore.support.NoopExtensionSupport.INSTANCE, new IgnisEventBusImpl()),
+                    TestIgnisCore.noopStrategyContext(),
                     registry,
                     descriptor,
                     ExtensionKind.BLOCK

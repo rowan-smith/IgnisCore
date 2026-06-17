@@ -1,0 +1,8 @@
+id: black-hole-tnt
+name: Black Hole TNT
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.blackholetnt.Strategy
+requires-integrations:
+  - region

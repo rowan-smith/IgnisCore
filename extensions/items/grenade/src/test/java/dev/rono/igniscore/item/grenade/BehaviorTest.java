@@ -104,5 +104,9 @@ class BehaviorTest {
         @Override
         public void openInventory(Object nativeInventory) {
         }
+
+        @Override
+        public void applyPotionEffect(String effectKey, int durationTicks, int amplifier) {
+        }
     }
 }

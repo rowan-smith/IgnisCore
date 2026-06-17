@@ -1,5 +1,6 @@
 package dev.rono.igniscore.service;
 
+import com.google.inject.Inject;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;
@@ -8,13 +9,39 @@ import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.nbtapi.iface.ReadableItemNBT;
 import de.tr7zw.nbtapi.iface.ReadableNBT;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class NBTService implements IgnisNbtService {
+    private final boolean enabled;
+
+    @Inject
+    public NBTService(Plugin plugin) {
+        this.enabled = Bukkit.getPluginManager().isPluginEnabled("NBTAPI");
+        if (!enabled) {
+            plugin.getLogger().fine("NBT-API plugin not loaded; CompositeNbtService will use PDC for items.");
+        }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public String providerName() {
+        return "NBT-API";
+    }
+
+    @Override
+    public boolean supportsEntityData() {
+        return enabled;
+    }
 
     @Override
     public void setItemString(IgnisItem item, String key, String value) {

@@ -1,0 +1,6 @@
+id: tether-tnt
+name: Tether TNT
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.tethertnt.Strategy

@@ -1,0 +1,6 @@
+id: sticky-bomb
+name: Sticky Bomb
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.stickybomb.Strategy

@@ -1,0 +1,6 @@
+id: anti-gravity-zone
+name: Anti-Gravity Zone
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.antigravityzone.Strategy
