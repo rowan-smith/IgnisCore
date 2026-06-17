@@ -4,6 +4,10 @@ import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.Locale;
 
 public final class BukkitIgnisPlayer implements IgnisPlayer {
     private final Player handle;
@@ -51,5 +55,14 @@ public final class BukkitIgnisPlayer implements IgnisPlayer {
         if (nativeInventory instanceof org.bukkit.inventory.Inventory inventory) {
             handle.openInventory(inventory);
         }
+    }
+
+    @Override
+    public void applyPotionEffect(String effectKey, int durationTicks, int amplifier) {
+        PotionEffectType type = PotionEffectType.getByName(effectKey.toUpperCase(Locale.ROOT));
+        if (type == null) {
+            return;
+        }
+        handle.addPotionEffect(new PotionEffect(type, Math.max(1, durationTicks), Math.max(0, amplifier)));
     }
 }

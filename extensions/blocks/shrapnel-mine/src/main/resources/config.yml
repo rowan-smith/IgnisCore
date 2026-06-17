@@ -1,0 +1,40 @@
+id: shrapnel-mine
+
+display:
+  title: "&8Shrapnel Mine"
+  description:
+    - "&7Buried proximity mine"
+    - "&7Launches deadly debris"
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+    break_sound: BLOCK_GRAVEL_BREAK
+    hit_sound: BLOCK_GRAVEL_HIT
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+behavior:
+  combustible: false
+  left_click_block: break
+  right_click_block: none
+  sounds:
+    place: BLOCK_GRASS_PLACE
+
+custom_data:
+  fuse: 0
+  buried: true
+  triggerRadius: 1.2
+  scanRadius: 5
+  projectileCount: 48
+  minVelocity: 0.55
+  maxVelocity: 1.35

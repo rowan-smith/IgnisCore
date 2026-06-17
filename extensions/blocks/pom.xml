@@ -27,6 +27,13 @@
     <module>spider-storm-tnt</module>
     <module>signal-charge</module>
     <module>quarry-cache</module>
+    <module>shrapnel-mine</module>
+    <module>concussion-tnt</module>
+    <module>cavity-tnt</module>
+    <module>drill-tnt</module>
+    <module>ring-tnt</module>
+    <module>seismic-tnt</module>
+    <module>depth-charge</module>
   </modules>
 
   <dependencyManagement>

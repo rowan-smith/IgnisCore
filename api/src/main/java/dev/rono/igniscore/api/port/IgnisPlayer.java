@@ -20,4 +20,9 @@ public interface IgnisPlayer {
     void sendMessage(String miniMessage);
 
     void openInventory(Object nativeInventory);
+
+    /**
+     * Applies a potion effect using Bukkit/Sponge effect enum names (e.g. BLINDNESS, NAUSEA).
+     */
+    void applyPotionEffect(String effectKey, int durationTicks, int amplifier);
 }
