@@ -1,7 +1,6 @@
 package dev.rono.igniscore.strategies;
 
 import com.google.inject.Inject;
-import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
@@ -23,18 +22,8 @@ public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
         this.extensionSupport = extensionSupport;
     }
 
-    @Override
     public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
-                .combustible(true)
-                .leftClickAction(CustomBlockAction.BREAK)
-                .rightClickAction(CustomBlockAction.IGNITE)
-                .defaultFuse(80)
-                .defaultRadius(4.0)
-                .placementSound("BLOCK_BEACON_ACTIVATE")
-                .igniteSound("ITEM_FLINTANDSTEEL_USE")
-                .displayScale(1.01)
-                .build();
+        return StrategyProfile.combustible(80, 4.0);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
+        return StrategyProfile.placed();
     }
 }
 ```
@@ -38,7 +38,7 @@ float power = (float) StrategySupport.customDouble(definition, "power", 4.0);
 boolean fire = StrategySupport.customBoolean(definition, "fire", false);
 ```
 
-`StrategySupport` also accepts a raw `Map` if you already called `getCustomData()`. `StrategyProfile.Builder` defaults fuse to **0** — set explicit values in `config.yml` or read them in `profile()`.
+`StrategySupport` also accepts a raw `Map` if you already called `getCustomData()`. Fuse and radius are **opt-in** on `StrategyProfile` — use `StrategyProfile.placed()` for utility blocks, `StrategyProfile.fuse(ticks)` for fuse lifecycle blocks, or `StrategyProfile.combustible(fuse, radius)` for ignitable explosives.
 
 Block example `config.yml`:
 
@@ -64,10 +64,8 @@ Strategy profile for combustible blocks:
 ```java
 @Override
 public StrategyProfile profile(BlockDefinition definition) {
-    int fuse = StrategySupport.customInt(definition, "fuse", 0);
-    return StrategyProfile.builder()
-            .defaultFuse(fuse)
-            .build();
+    int fuse = StrategySupport.customInt(definition, "fuse", 80);
+    return StrategyProfile.fuse(fuse);
 }
 ```
 

@@ -248,23 +248,24 @@ def block_strategy(package: str, class_name: str, ext: dict) -> str:
             methods.append("    @Override\n    public void onPlaced(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlaced(definition, location);\n    }")
             methods.append("    @Override\n    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlacedBreak(definition, location);\n    }")
 
-    profile_parts = []
     if ext_type == "fuse":
-        profile_parts.append(f".defaultFuse({fuse})")
-        if not combustible:
-            profile_parts.append(".combustible(false)")
-
-    if profile_parts:
-        profile_method = f"""    @Override
+        if combustible:
+            profile_method = f"""    @Override
+    public StrategyProfile profile(BlockDefinition definition) {{
+        return StrategyProfile.fuse({fuse});
+    }}"""
+        else:
+            profile_method = f"""    @Override
     public StrategyProfile profile(BlockDefinition definition) {{
         return StrategyProfile.builder()
-                {''.join(profile_parts)}
+                .defaultFuse({fuse})
+                .combustible(false)
                 .build();
     }}"""
     else:
         profile_method = """    @Override
     public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
+        return StrategyProfile.placed();
     }"""
 
     return f"""package dev.rono.igniscore.block.{package};
