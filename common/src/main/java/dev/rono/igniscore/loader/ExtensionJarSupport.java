@@ -125,7 +125,8 @@ final class ExtensionJarSupport {
                                       IgnisStrategyDescriptor descriptor,
                                       ExtensionKind kind) throws Exception {
         Class<?> strategyClass = Class.forName(strategyClassName, true, classLoader);
-        Object instance = strategyClass.getConstructor(IgnisStrategyContext.class).newInstance(strategyContext);
+        Object instance = dev.rono.igniscore.api.loader.ExtensionLoadScope.call(descriptor.getId(), () ->
+                strategyClass.getConstructor(IgnisStrategyContext.class).newInstance(strategyContext));
         if (!(instance instanceof IgnisStrategy strategy)) {
             throw new IllegalStateException(strategyClassName + " does not implement IgnisStrategy");
         }
@@ -138,7 +139,6 @@ final class ExtensionJarSupport {
             abstractStrategy.bindDescriptor(descriptor);
         }
 
-        strategy.registerEvents();
         strategyRegistry.register(descriptor, strategy);
         return strategy;
     }

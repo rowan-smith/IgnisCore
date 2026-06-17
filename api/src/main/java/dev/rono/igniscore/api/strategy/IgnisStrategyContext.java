@@ -1,8 +1,8 @@
 package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.api.event.IgnisEventBus;
-import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.integration.IgnisIntegrationRegistry;
+import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.service.IgnisHologramService;
 import dev.rono.igniscore.api.service.IgnisNbtService;
@@ -11,7 +11,11 @@ import dev.rono.igniscore.api.service.IgnisProtocolService;
 import dev.rono.igniscore.api.service.IgnisRegionService;
 
 /**
- * Single entry point for services injected into extension strategies.
+ * Service container injected into extension strategy constructors.
+ *
+ * <p>Despite the name, this is the extension author's primary handle on core services
+ * (scheduler, NBT, effects, protocol integrations, platform bridge, and the event bus).
+ * It is created once per server and shared across all loaded extensions.</p>
  */
 public final class IgnisStrategyContext {
     private final IgnisScheduler scheduler;
@@ -63,51 +67,27 @@ public final class IgnisStrategyContext {
         return protocolService;
     }
 
+    public IgnisRegionService region() {
+        return regionService;
+    }
+
+    public IgnisHologramService hologram() {
+        return hologramService;
+    }
+
+    public IgnisNpcService npc() {
+        return npcService;
+    }
+
+    public IgnisIntegrationRegistry integrations() {
+        return integrationRegistry;
+    }
+
     public ExtensionSupport extensions() {
         return extensionSupport;
     }
 
     public IgnisEventBus eventBus() {
-        return eventBus;
-    }
-
-    public IgnisScheduler getScheduler() {
-        return scheduler;
-    }
-
-    public IgnisNbtService getNbtService() {
-        return nbtService;
-    }
-
-    public IgnisProtocolService getProtocolService() {
-        return protocolService;
-    }
-
-    public IgnisEffectService getEffectService() {
-        return effectService;
-    }
-
-    public IgnisRegionService getRegionService() {
-        return regionService;
-    }
-
-    public IgnisHologramService getHologramService() {
-        return hologramService;
-    }
-
-    public IgnisNpcService getNpcService() {
-        return npcService;
-    }
-
-    public IgnisIntegrationRegistry getIntegrationRegistry() {
-        return integrationRegistry;
-    }
-
-    public ExtensionSupport getExtensionSupport() {
-        return extensionSupport;
-    }
-
-    public IgnisEventBus getEventBus() {
         return eventBus;
     }
 }

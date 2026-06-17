@@ -23,9 +23,9 @@ final class PhantomGrenadeBehavior {
             float fakePower = (float) StrategySupport.customDouble(definition.getCustomData(), "fakePower", 6.0);
             int delay = StrategySupport.customInt(definition.getCustomData(), "realDelayTicks", 40);
             PreviewTrickSupport.forNearbyPlayers(world, impact, 32, p ->
-                    context.getEffectService().playFakeExplosion(impact, fakePower, world.getPlayersNear(impact, 32)));
+                    context.effects().playFakeExplosion(impact, fakePower, world.getPlayersNear(impact, 32)));
             world.spawnParticle(impact, "EXPLOSION", 2, 0.2, 0.2, 0.2, 0.01);
-            context.getScheduler().runLater(impact, () -> {
+            context.scheduler().runLater(impact, () -> {
                 world.playSound(impact, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
                 ExplosionSupport.createExplosion(world, impact, definition, 3.5, false);
             }, delay);

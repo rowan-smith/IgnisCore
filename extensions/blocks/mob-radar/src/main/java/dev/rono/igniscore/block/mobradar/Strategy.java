@@ -1,26 +1,15 @@
 package dev.rono.igniscore.block.mobradar;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final MobRadarBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new MobRadarBehavior(context);
+        context.eventBus().subscribe(new MobRadarOnBlockClickListener());
+        context.eventBus().subscribe(new MobRadarOnBlockPlaceListener(context));
+        context.eventBus().subscribe(new MobRadarOnBlockBreakListener());
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
-    }
-
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
-    }
 }

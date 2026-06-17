@@ -25,10 +25,10 @@ final class EchoBlastBehavior {
         int delay = StrategySupport.customInt(def, "echoDelay", 15);
         world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.2f, 1.0f);
         ExplosionSupport.createExplosion(world, loc, def, 4.0, false);
-        PreviewTrickSupport.delayedFakeBursts(context.getEffectService(), world, loc, bursts, delay, context.getScheduler());
+        PreviewTrickSupport.delayedFakeBursts(context.effects(), world, loc, bursts, delay, context.scheduler());
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

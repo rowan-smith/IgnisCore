@@ -41,19 +41,19 @@ final class SeismicBehavior {
         double shakeRadius = StrategySupport.customDouble(def, "screenShakeRadius", 40.0);
 
         EntityBlastSupport.violentScreenShake(
-                context.getEffectService(),
-                context.getProtocolService(),
+                context.effects(),
+                context.protocol(),
                 world,
                 epicenter,
                 shakeRadius,
                 shakeDuration,
-                context.getScheduler());
+                context.scheduler());
 
         int half = gridSize / 2;
         int[] index = {0};
         int total = gridSize * gridSize;
         IgnisTask[] taskRef = {null};
-        taskRef[0] = context.getScheduler().runRepeating(epicenter, () -> {
+        taskRef[0] = context.scheduler().runRepeating(epicenter, () -> {
             if (index[0] >= total) {
                 if (taskRef[0] != null) {
                     taskRef[0].cancel();
@@ -75,6 +75,6 @@ final class SeismicBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

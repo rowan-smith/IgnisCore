@@ -33,11 +33,11 @@ final class MudslideTntBehavior {
         int depth = StrategySupport.customInt(def, "slideDepth", 4);
         int batchDelay = StrategySupport.customInt(def, "batchDelay", 4);
         world.playSound(loc, "BLOCK_MUD_BREAK", 1.5f, 0.6f);
-        BlockTransformSupport.mudslideFlow(world, loc, radius, depth, context.getScheduler(), batchDelay);
+        BlockTransformSupport.mudslideFlow(world, loc, radius, depth, context.scheduler(), batchDelay);
         ExplosionSupport.createExplosion(world, loc, def, 2.5, false);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

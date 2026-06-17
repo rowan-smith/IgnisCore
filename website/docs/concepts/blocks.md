@@ -59,9 +59,9 @@ behavior:
 | `open` | Open extension GUI |
 | `handled` | Strategy handles the click |
 
-## Strategy profiles
+## Behavior and clicks
 
-Declare default click and fuse behavior in `profile()`. Fuse and radius are **opt-in** — use `IgnisStrategies.blocks().placed()` for utility blocks, `.fuse(ticks)` for fuse lifecycle blocks, or `.combustible(fuse, radius)` for ignitable explosives.
+Declare combustibility, ignition materials, and sounds in `behavior`. Wire click routing with a module-local `OnBlockClickListener` (for example `NukeOnBlockClickListener`). Fuse and radius belong in `custom_data`.
 
 ## Persistence
 

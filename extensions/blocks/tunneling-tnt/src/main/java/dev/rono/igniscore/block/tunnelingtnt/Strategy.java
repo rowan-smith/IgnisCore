@@ -1,27 +1,14 @@
 package dev.rono.igniscore.block.tunnelingtnt;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final TunnelingBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new TunnelingBehavior(context);
+        context.eventBus().subscribe(new TunnelingOnBlockClickListener());
+        context.eventBus().subscribe(new TunnelingOnBlockTriggerListener(context));
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
-                .defaultFuse(60)
-                .build();
-    }
-
-    @Override
-    public void registerEvents() {
-        onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));
-    }
 }

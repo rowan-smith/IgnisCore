@@ -28,7 +28,7 @@ final class SmokeGrenadeBehavior {
         world.playSound(impact, "BLOCK_FIRE_EXTINGUISH", 1.0f, 0.7f);
         int[] elapsed = {0};
         IgnisTask[] ref = {null};
-        ref[0] = context.getScheduler().runRepeating(impact, () -> {
+        ref[0] = context.scheduler().runRepeating(impact, () -> {
             if (elapsed[0]++ >= duration / 5) {
                 if (ref[0] != null) {
                     ref[0].cancel();

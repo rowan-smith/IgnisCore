@@ -155,7 +155,7 @@ class ResourcePackServiceTest extends MockBukkitTestBase {
         private Map<String, BlockDefinition> definitions;
 
         StubBlockManager(BlockDefinition definition) {
-            super(null, null, null, null, null, null, null, PerformanceSettings.defaults());
+            super(null, null, null, null, null, null, PerformanceSettings.defaults());
             this.definitions = Map.of(definition.getId(), definition);
         }
 

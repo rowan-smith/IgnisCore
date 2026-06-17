@@ -3,7 +3,6 @@ package dev.rono.igniscore.event;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.rono.igniscore.api.CustomBlockAction;
-import dev.rono.igniscore.api.config.BlockBehaviorConfig;
 import dev.rono.igniscore.api.event.BlockActivateEvent;
 import dev.rono.igniscore.api.event.BlockBreakEvent;
 import dev.rono.igniscore.api.event.BlockClickEvent;
@@ -21,30 +20,26 @@ import dev.rono.igniscore.api.event.OnBlockTickListener;
 import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.event.OnItemClickListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.model.PlacedBlock;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.strategy.ItemUseSupport;
-import dev.rono.igniscore.api.strategy.PlacedClickSupport;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.service.StrategyProfileResolver;
+import dev.rono.igniscore.api.model.ItemDefinition;
 
 @Singleton
 public class StrategyEventPublisher {
     private final IgnisEventBusImpl eventBus;
-    private final StrategyProfileResolver profileResolver;
 
     @Inject
-    public StrategyEventPublisher(IgnisEventBusImpl eventBus, StrategyProfileResolver profileResolver) {
+    public StrategyEventPublisher(IgnisEventBusImpl eventBus) {
         this.eventBus = eventBus;
-        this.profileResolver = profileResolver;
     }
 
     public void fireBlockPlace(BlockDefinition definition, IgnisLocation location, IgnisItem placedFrom) {
-        BlockPlaceEvent event = new BlockPlaceEvent(definition, location, placedFrom);
+        BlockPlaceEvent event = new BlockPlaceEvent(PlacedBlock.of(definition, location), placedFrom);
         eventBus.dispatch(definition.getExtensionId(), OnBlockPlaceListener.class,
                 listener -> listener.onBlockPlace(event));
     }
@@ -54,8 +49,8 @@ public class StrategyEventPublisher {
                                             IgnisPlayer player,
                                             IgnisInteraction interaction,
                                             IgnisItem heldItem) {
-        CustomBlockAction defaultResult = resolveDefaultClick(definition, interaction, heldItem);
-        BlockClickEvent event = new BlockClickEvent(definition, location, player, interaction, heldItem, defaultResult);
+        BlockClickEvent event = new BlockClickEvent(
+                PlacedBlock.of(definition, location), player, interaction, heldItem, CustomBlockAction.NONE);
         eventBus.dispatch(definition.getExtensionId(), OnBlockClickListener.class,
                 listener -> listener.onBlockClick(event));
         return event.result();
@@ -67,13 +62,14 @@ public class StrategyEventPublisher {
                                   IgnisInteraction interaction,
                                   IgnisItem heldItem,
                                   CustomBlockAction action) {
-        BlockInteractEvent event = new BlockInteractEvent(definition, location, player, interaction, heldItem, action);
+        BlockInteractEvent event = new BlockInteractEvent(
+                PlacedBlock.of(definition, location), player, interaction, heldItem, action);
         eventBus.dispatch(definition.getExtensionId(), OnBlockInteractListener.class,
                 listener -> listener.onBlockInteract(event));
     }
 
     public void fireBlockBreak(BlockDefinition definition, IgnisLocation location, IgnisItem droppedItem) {
-        BlockBreakEvent event = new BlockBreakEvent(definition, location, droppedItem);
+        BlockBreakEvent event = new BlockBreakEvent(PlacedBlock.of(definition, location), droppedItem);
         eventBus.dispatch(definition.getExtensionId(), OnBlockBreakListener.class,
                 listener -> listener.onBlockBreak(event));
     }
@@ -105,25 +101,5 @@ public class StrategyEventPublisher {
         ItemClickEvent event = new ItemClickEvent(player, definition, item, interaction, clickedBlock, actionToken);
         eventBus.dispatch(definition.getExtensionId(), OnItemClickListener.class,
                 listener -> listener.onItemClick(event));
-    }
-
-    private CustomBlockAction resolveDefaultClick(BlockDefinition definition,
-                                                  IgnisInteraction interaction,
-                                                  IgnisItem heldItem) {
-        BlockBehaviorConfig behavior = BlockBehaviorConfig.from(definition.getBehaviorConfig());
-        StrategyProfile profile = profileResolver.resolve(definition);
-        StrategyProfile merged = behavior.merge(profile);
-        if (!behavior.isEmpty()) {
-            return behavior.resolve(interaction, merged, materialKey(heldItem));
-        }
-        return PlacedClickSupport.resolve(merged, interaction, heldItem);
-    }
-
-    private static String materialKey(IgnisItem heldItem) {
-        if (heldItem == null || heldItem.isAir()) {
-            return "AIR";
-        }
-        String materialKey = heldItem.getMaterialKey();
-        return materialKey == null || materialKey.isBlank() ? "AIR" : materialKey;
     }
 }

@@ -1,28 +1,17 @@
 package dev.rono.igniscore.block.irrigationsprinkler;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.api.CustomBlockAction;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final IrrigationSprinklerBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new IrrigationSprinklerBehavior(context);
+        context.eventBus().subscribe(new IrrigationSprinklerOnBlockClickListener());
+        IrrigationSprinklerRuntime runtime = new IrrigationSprinklerRuntime(context);
+        context.eventBus().subscribe(new IrrigationSprinklerOnBlockPlaceListener(runtime));
+        context.eventBus().subscribe(new IrrigationSprinklerOnBlockBreakListener(runtime));
+        context.eventBus().subscribe(new IrrigationSprinklerOnBlockInteractListener(runtime));
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
-    }
-
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
-        onBlockInteract(event -> behavior.onPlacedInteract(event.definition(), event.location(), event.player(), event.interaction(), event.heldItem(), event.action()));
-    }
 }

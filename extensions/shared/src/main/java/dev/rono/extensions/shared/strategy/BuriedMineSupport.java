@@ -28,13 +28,13 @@ public final class BuriedMineSupport {
         disarm(blockLocation);
 
         IgnisTask[] taskRef = {null};
-        taskRef[0] = context.getScheduler().runRepeating(blockLocation, () -> {
+        taskRef[0] = context.scheduler().runRepeating(blockLocation, () -> {
             if (!blockTypeId.equalsIgnoreCase(IgnisCoreAPI.getPlacedBlockType(Locations.toBlock(blockLocation)))) {
                 disarm(blockLocation);
                 return;
             }
 
-            IgnisWorld world = context.getExtensionSupport().resolveWorld(blockLocation);
+            IgnisWorld world = context.extensions().resolveWorld(blockLocation);
             IgnisLocation center = Locations.toCenter(blockLocation);
             boolean triggered = false;
 

@@ -14,7 +14,7 @@ public final class DirectionalBlastSupport {
     }
 
     public static float resolveYaw(IgnisStrategyContext context, Object triggerContext, IgnisLocation fallback) {
-        IgnisPlayer player = context.getExtensionSupport().wrapPlayer(triggerContext);
+        IgnisPlayer player = context.extensions().wrapPlayer(triggerContext);
         if (player != null) {
             return player.getEyeLocation().yaw();
         }

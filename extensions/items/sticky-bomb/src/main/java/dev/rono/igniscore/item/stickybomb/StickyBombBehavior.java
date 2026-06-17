@@ -36,7 +36,7 @@ final class StickyBombBehavior {
         int[] ticks = {0};
         IgnisLocation[] stuckAt = {null};
         IgnisTask[] taskRef = {null};
-        taskRef[0] = context.getScheduler().runRepeating(spawn, () -> {
+        taskRef[0] = context.scheduler().runRepeating(spawn, () -> {
             ticks[0]++;
             if (!world.isEntityValid(projectile)) {
                 IgnisLocation impact = stuckAt[0] != null ? stuckAt[0] : spawn;

@@ -40,12 +40,12 @@ final class ConcussionBehavior {
         world.spawnParticle(loc, "EXPLOSION_EMITTER", 4, 1.5, 0.8, 1.5, 0.0);
         world.spawnParticle(loc, "CLOUD", 120, knockbackRadius * 0.35, 1.2, knockbackRadius * 0.35, 0.06);
 
-        context.getEffectService().playFakeExplosion(loc, 8.0f, world.getPlayersNear(loc, knockbackRadius));
+        context.effects().playFakeExplosion(loc, 8.0f, world.getPlayersNear(loc, knockbackRadius));
         EntityBlastSupport.applyKnockback(world, loc, knockbackRadius, knockbackStrength, true);
         ExplosionSupport.createExplosion(world, loc, terrainPower, false, false);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

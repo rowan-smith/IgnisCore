@@ -1,26 +1,15 @@
 package dev.rono.igniscore.block.brewingaccelerator;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final BrewingAcceleratorBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new BrewingAcceleratorBehavior(context);
+        context.eventBus().subscribe(new BrewingAcceleratorOnBlockClickListener());
+        context.eventBus().subscribe(new BrewingAcceleratorOnBlockPlaceListener(context));
+        context.eventBus().subscribe(new BrewingAcceleratorOnBlockBreakListener());
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
-    }
-
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
-    }
 }

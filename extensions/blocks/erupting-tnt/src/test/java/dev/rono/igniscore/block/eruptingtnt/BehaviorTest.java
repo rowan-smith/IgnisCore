@@ -15,8 +15,7 @@ class BehaviorTest {
     void triggerCreatesExplosion() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "erupting-tnt", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "erupting-tnt");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "erupting-tnt");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(definition);
 
         ctx.eventBus().fireBlockTrigger(new BlockTriggerEvent(instance, null), "erupting-tnt");

@@ -24,7 +24,7 @@ final class HologramTntBehavior {
         int count = StrategySupport.customInt(def, "decoyCount", 6);
         double radius = StrategySupport.customDouble(def, "decoyRadius", 3.0);
         for (IgnisPlayer player : worldAt(center).getPlayersNear(center, 24)) {
-            PreviewTrickSupport.ringBlockPreviews(context.getEffectService(), player, center, count, radius, "tnt");
+            PreviewTrickSupport.ringBlockPreviews(context.effects(), player, center, count, radius, "tnt");
         }
     }
 
@@ -36,6 +36,6 @@ final class HologramTntBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

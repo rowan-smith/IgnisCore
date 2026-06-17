@@ -1,33 +1,16 @@
 package dev.rono.igniscore.block.depthcharge;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final DepthChargeBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new DepthChargeBehavior(context);
+        DepthChargeRuntime runtime = new DepthChargeRuntime(context);
+        context.eventBus().subscribe(new DepthChargeOnBlockClickListener());
+        context.eventBus().subscribe(new DepthChargeOnBlockTickListener(runtime));
+        context.eventBus().subscribe(new DepthChargeOnBlockTriggerListener(runtime));
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
-                .defaultFuse(50)
-                .build();
-    }
-
-    @Override
-    public void onTick(RuntimeBlockInstance instance) {
-        behavior.onTick(instance);
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object context) {
-        behavior.onTrigger(instance);
-    }
 }

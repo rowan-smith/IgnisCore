@@ -1,6 +1,7 @@
 package dev.rono.igniscore.service;
 
 import com.google.inject.Inject;
+import dev.rono.igniscore.api.config.BlockBehaviorConfig;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.util.Locations;
@@ -36,7 +37,6 @@ public class CustomBlockBreakService {
     private final BlockItemFactory blockItemFactory;
     private final ConfiguredEffectService effectService;
     private final StrategyEventPublisher events;
-    private final StrategyProfileResolver profileResolver;
     private final Map<UUID, MiningSession> miningSessions = new ConcurrentHashMap<>();
 
     @Inject
@@ -44,14 +44,12 @@ public class CustomBlockBreakService {
                                    BlockManager blockManager,
                                    BlockItemFactory blockItemFactory,
                                    ConfiguredEffectService effectService,
-                                   StrategyEventPublisher events,
-                                   StrategyProfileResolver profileResolver) {
+                                   StrategyEventPublisher events) {
         this.plugin = plugin;
         this.blockManager = blockManager;
         this.blockItemFactory = blockItemFactory;
         this.effectService = effectService;
         this.events = events;
-        this.profileResolver = profileResolver;
     }
 
     public void start(Player player, Block block, BlockDefinition definition) {
@@ -182,7 +180,7 @@ public class CustomBlockBreakService {
     }
 
     private boolean isInstantBreakBlock(BlockDefinition definition) {
-        return profileResolver.resolve(definition).isCombustible();
+        return BlockBehaviorConfig.from(definition.getBehaviorConfig()).combustible();
     }
 
     private void sendBlockDamage(Location location, float progress, int sourceEntityId) {

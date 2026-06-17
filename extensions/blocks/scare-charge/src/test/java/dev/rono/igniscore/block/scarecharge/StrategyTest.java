@@ -1,8 +1,6 @@
 package dev.rono.igniscore.block.scarecharge;
 
 import dev.rono.igniscore.api.extension.ExtensionManifest;
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.testsupport.ExtensionTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -18,13 +16,9 @@ class StrategyTest {
         assertEquals(EXTENSION_ID, manifest.getId());
         assertEquals("dev.rono.igniscore.block.scarecharge.Strategy", manifest.getStrategyClass());
     }
-
     @Test
-    void strategyExposesProfileForConfig() {
-        BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(StrategyTest.class, EXTENSION_ID, 10001);
+    void strategyConstructs() {
         Strategy strategy = new Strategy(ExtensionTestSupport.noopContext());
-        StrategyProfile profile = strategy.profile(definition);
-        assertNotNull(profile);
-        assertEquals(EXTENSION_ID, definition.getId());
+        assertNotNull(strategy);
     }
 }

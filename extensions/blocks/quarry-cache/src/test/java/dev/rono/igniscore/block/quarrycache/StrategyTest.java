@@ -4,7 +4,8 @@ import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.config.BlockBehaviorConfig;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.igniscore.api.strategy.PlacedClickSupport;
+import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.testsupport.ExtensionTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -24,12 +25,14 @@ class StrategyTest {
     void configDeclaresOpenSurfaceBehavior() {
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(StrategyTest.class, "quarry-cache", 10001);
         Strategy strategy = new Strategy(ExtensionTestSupport.noopContext());
-        StrategyProfile profile = BlockBehaviorConfig.from(definition.getBehaviorConfig())
-                .merge(strategy.profile(definition));
 
-        assertNotNull(profile);
-        assertFalse(profile.isCombustible());
-        assertEquals(CustomBlockAction.BREAK, profile.getLeftClickAction());
-        assertEquals(CustomBlockAction.OPEN, profile.getRightClickAction());
+        assertNotNull(strategy);
+        assertFalse(BlockBehaviorConfig.from(definition.getBehaviorConfig()).combustible());
+        assertEquals(CustomBlockAction.BREAK,
+                PlacedClickSupport.resolve(definition, CustomBlockAction.BREAK, CustomBlockAction.OPEN,
+                        IgnisInteraction.LEFT_CLICK_BLOCK, "AIR"));
+        assertEquals(CustomBlockAction.OPEN,
+                PlacedClickSupport.resolve(definition, CustomBlockAction.BREAK, CustomBlockAction.OPEN,
+                        IgnisInteraction.RIGHT_CLICK_BLOCK, "AIR"));
     }
 }

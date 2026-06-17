@@ -49,8 +49,6 @@ model:
 # right_click_block: open — core calls strategy onPlacedInteract with OPEN
 behavior:
   combustible: false
-  left_click_block: break
-  right_click_block: open
   sounds:
     place: BLOCK_CHEST_PLACE
 

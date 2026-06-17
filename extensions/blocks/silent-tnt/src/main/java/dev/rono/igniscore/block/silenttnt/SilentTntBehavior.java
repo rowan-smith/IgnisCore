@@ -31,10 +31,10 @@ final class SilentTntBehavior {
         boolean blockDamage = StrategySupport.customBoolean(instance.getDefinition(), "blockDamage", true);
         PreviewTrickSupport.silentDetonation(world, loc, realPower, blockDamage);
         PreviewTrickSupport.forNearbyPlayers(world, loc, 32, player ->
-                context.getEffectService().playFakeExplosion(loc, 0f, world.getPlayersNear(loc, 32)));
+                context.effects().playFakeExplosion(loc, 0f, world.getPlayersNear(loc, 32)));
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

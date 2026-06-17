@@ -1,26 +1,15 @@
 package dev.rono.igniscore.block.milkingstation;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final MilkingStationBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new MilkingStationBehavior(context);
+        context.eventBus().subscribe(new MilkingStationOnBlockClickListener());
+        context.eventBus().subscribe(new MilkingStationOnBlockPlaceListener(context));
+        context.eventBus().subscribe(new MilkingStationOnBlockBreakListener());
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
-    }
-
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
-    }
 }

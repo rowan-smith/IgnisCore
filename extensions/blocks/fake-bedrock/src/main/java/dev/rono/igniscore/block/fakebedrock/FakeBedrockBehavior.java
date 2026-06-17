@@ -25,7 +25,7 @@ final class FakeBedrockBehavior {
                     }
                     IgnisLocation shell = location.add(x, y, z);
                     for (IgnisPlayer player : world.getPlayersNear(Locations.toCenter(location), 20)) {
-                        context.getEffectService().showBlockPreview(player, shell, "bedrock");
+                        context.effects().showBlockPreview(player, shell, "bedrock");
                     }
                 }
             }
@@ -40,6 +40,6 @@ final class FakeBedrockBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

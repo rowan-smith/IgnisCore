@@ -28,7 +28,7 @@ final class InvisiwallBehavior {
             for (int h = 0; h < height; h++) {
                 IgnisLocation panel = location.add(nx * w, h, nz * w);
                 for (IgnisPlayer player : world.getPlayersNear(Locations.toCenter(location), 24)) {
-                    context.getEffectService().showBlockPreview(player, panel, "glass");
+                    context.effects().showBlockPreview(player, panel, "glass");
                 }
             }
         }
@@ -43,6 +43,6 @@ final class InvisiwallBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

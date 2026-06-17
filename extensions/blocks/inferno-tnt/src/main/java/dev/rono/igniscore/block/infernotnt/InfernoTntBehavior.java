@@ -35,11 +35,11 @@ final class InfernoTntBehavior {
         int spreadDuration = StrategySupport.customInt(def, "spreadDuration", 600);
         world.playSound(loc, "ITEM_FIRECHARGE_USE", 2.0f, 0.5f);
         BlockTransformSupport.infernoPatch(world, loc, radius);
-        BlockTransformSupport.spreadInferno(world, loc, radius, spreadDuration, context.getScheduler());
+        BlockTransformSupport.spreadInferno(world, loc, radius, spreadDuration, context.scheduler());
         ExplosionSupport.createExplosion(world, loc, def, 3.0, true);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

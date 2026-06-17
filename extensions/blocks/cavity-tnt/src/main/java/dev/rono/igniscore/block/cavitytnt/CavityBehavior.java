@@ -38,12 +38,12 @@ final class CavityBehavior {
 
         world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 2.0f, 0.85f);
         world.spawnParticle(loc, "EXPLOSION_EMITTER", 3, outerRadius * 0.3, outerRadius * 0.3, outerRadius * 0.3, 0.0);
-        BlockBlastSupport.breakHollowSphere(context.getRegionService(), world, loc, outerRadius, shellThickness,
-                staggered, batchSize, batchDelayTicks, context.getScheduler());
+        BlockBlastSupport.breakHollowSphere(context.region(), world, loc, outerRadius, shellThickness,
+                staggered, batchSize, batchDelayTicks, context.scheduler());
         world.createExplosion(loc, 2.0f, false, false);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

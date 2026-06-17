@@ -3,8 +3,8 @@ package dev.rono.igniscore.api.strategy;
 /**
  * Runtime registration for custom item types.
  *
- * <p>Implement {@link #registerEvents()} and subscribe to {@code onItemClick} via helpers on
- * {@link AbstractIgnisItemStrategy}.</p>
+ * <p>Subscribe to item lifecycle events in the strategy constructor via
+ * {@link IgnisStrategyContext#eventBus()}.</p>
  */
 public interface IgnisItemStrategy extends IgnisStrategy {
 }

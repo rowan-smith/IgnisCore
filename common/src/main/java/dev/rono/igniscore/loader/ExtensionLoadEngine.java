@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.rono.igniscore.api.IgnisApiVersion;
 import dev.rono.igniscore.api.config.DefinitionParser;
+import dev.rono.igniscore.api.extension.ExtensionIntegration;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.extension.ExtensionRequirements;
 import dev.rono.igniscore.api.extension.ExtensionRuntimeCapabilities;
@@ -161,7 +162,8 @@ public final class ExtensionLoadEngine {
     }
 
     private void validateIntegrations(ExtensionManifest manifest) {
-        for (String integrationId : manifest.getRequiredIntegrations()) {
+        for (ExtensionIntegration integration : manifest.getRequiredIntegrations()) {
+            String integrationId = integration.manifestKey();
             if (!integrationRegistry.isEnabled(integrationId)) {
                 throw new IllegalStateException("Extension " + manifest.getId()
                         + " requires integration '" + integrationId + "' (provider: "

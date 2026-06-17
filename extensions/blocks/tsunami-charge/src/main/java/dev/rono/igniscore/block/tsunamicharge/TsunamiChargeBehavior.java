@@ -31,11 +31,11 @@ final class TsunamiChargeBehavior {
         IgnisWorld world = worldAt(loc);
         int waveRadius = StrategySupport.customInt(def, "waveRadius", 10);
         world.playSound(loc, "ENTITY_PLAYER_SPLASH", 2.0f, 0.5f);
-        BlockTransformSupport.tsunamiWave(world, loc, waveRadius, context.getScheduler());
+        BlockTransformSupport.tsunamiWave(world, loc, waveRadius, context.scheduler());
         ExplosionSupport.createExplosion(world, loc, def, 2.0, false);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

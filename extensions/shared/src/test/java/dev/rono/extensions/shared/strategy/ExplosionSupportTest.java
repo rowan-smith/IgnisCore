@@ -1,8 +1,6 @@
 package dev.rono.extensions.shared.strategy;
 
-import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.Test;
 
@@ -10,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ExplosionSupportTest {
     @Test
@@ -33,17 +29,6 @@ class ExplosionSupportTest {
         BlockDefinition definition = blockDefinition(Map.of());
 
         assertEquals(6.0f, ExplosionSupport.resolvePower(definition, 6.0));
-    }
-
-    @Test
-    void explosiveProfileMatchesDedicatedFactory() {
-        StrategyProfile profile = StrategyProfiles.explosiveProfile();
-
-        assertTrue(profile.isCombustible());
-        assertEquals(CustomBlockAction.BREAK, profile.getLeftClickAction());
-        assertEquals(CustomBlockAction.IGNITE, profile.getRightClickAction());
-        assertEquals("BLOCK_BEACON_ACTIVATE", profile.getPlacementSound());
-        assertEquals("ITEM_FLINTANDSTEEL_USE", profile.getIgniteSound());
     }
 
     @Test

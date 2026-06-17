@@ -51,7 +51,7 @@ public final class ExplosionVariantsSupport {
 
     public static float resolveYaw(IgnisWorld world, IgnisLocation block, Object triggerContext,
                                     dev.rono.igniscore.api.strategy.IgnisStrategyContext context) {
-        var player = context.getExtensionSupport().wrapPlayer(triggerContext);
+        var player = context.extensions().wrapPlayer(triggerContext);
         if (player != null) {
             return player.getEyeLocation().yaw();
         }

@@ -1,6 +1,5 @@
 package dev.rono.igniscore.api.strategy;
 
-import dev.rono.igniscore.api.config.ExtensionConfig;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.port.IgnisInteraction;
 import net.kyori.adventure.text.Component;
@@ -15,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IgnisStrategiesTest {
     @Test
-    void blocksFacadeExposesProfiles() {
-        assertFalse(IgnisStrategies.blocks().placed().hasFuseLifecycle());
-        assertTrue(IgnisStrategies.blocks().fuse(40).hasFuseLifecycle());
+    void blocksFacadeExposesBehaviorConfig() {
+        assertFalse(IgnisStrategies.blocks().behavior(sampleBlock(Map.of())).combustible());
+        assertTrue(IgnisStrategies.blocks().behavior(sampleBlock(Map.of("combustible", true))).combustible());
     }
 
     @Test
@@ -53,5 +52,29 @@ class IgnisStrategiesTest {
                 "icon.png");
 
         assertEquals(6.0, IgnisStrategies.data().customDouble(definition, "power", 1.0));
+    }
+
+    private static dev.rono.igniscore.api.model.BlockDefinition sampleBlock(Map<String, Object> behavior) {
+        return new dev.rono.igniscore.api.model.BlockDefinition(
+                "test",
+                "paper",
+                "carrot_on_a_stick",
+                Component.text("Test"),
+                List.of(),
+                true,
+                true,
+                "top.png",
+                "side.png",
+                "bottom.png",
+                Map.of(),
+                Map.of(),
+                behavior,
+                Map.of(),
+                Map.of(),
+                10001,
+                false,
+                false,
+                false,
+                "test");
     }
 }

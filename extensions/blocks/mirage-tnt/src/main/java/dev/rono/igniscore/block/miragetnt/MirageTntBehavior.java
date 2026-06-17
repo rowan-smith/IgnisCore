@@ -33,7 +33,7 @@ final class MirageTntBehavior {
         double spread = StrategySupport.customDouble(def, "decoySpread", 6.0);
         float decoyPower = (float) StrategySupport.customDouble(def, "decoyPower", 8.0);
         float realPower = (float) StrategySupport.customDouble(def, "realPower", 2.5);
-        PreviewTrickSupport.playDecoyExplosions(context.getEffectService(), world, loc, decoys, spread, decoyPower);
+        PreviewTrickSupport.playDecoyExplosions(context.effects(), world, loc, decoys, spread, decoyPower);
         double offset = StrategySupport.customDouble(def, "realOffset", 4.0);
         IgnisLocation real = loc.add(offset, -1, 0);
         world.playSound(real, "ENTITY_GENERIC_EXPLODE", 0.8f, 1.0f);
@@ -41,6 +41,6 @@ final class MirageTntBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

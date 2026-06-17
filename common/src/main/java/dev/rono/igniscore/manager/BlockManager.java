@@ -9,14 +9,14 @@ import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.service.IgnisEffectService;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.igniscore.api.config.BlockBehaviorConfig;
+import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.util.Locations;
 import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.loader.LoadedExtension;
 import dev.rono.igniscore.service.PlacedBlockPersistenceService;
 import dev.rono.igniscore.service.RuntimeBlockService;
-import dev.rono.igniscore.service.StrategyProfileResolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     private final RuntimeBlockService runtimeBlockService;
     private final IgnisEffectService effectService;
-    private final StrategyProfileResolver profileResolver;
     private final PlacedBlockPersistenceService placedBlockPersistence;
     private final IgnisScheduler scheduler;
     private final BlockVisualRenderer visualRenderer;
@@ -43,7 +42,6 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     @Inject
     public BlockManager(RuntimeBlockService runtimeBlockService,
                         IgnisEffectService effectService,
-                        StrategyProfileResolver profileResolver,
                         PlacedBlockPersistenceService placedBlockPersistence,
                         IgnisScheduler scheduler,
                         BlockVisualRenderer visualRenderer,
@@ -51,7 +49,6 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
                         PerformanceSettings performanceSettings) {
         this.runtimeBlockService = runtimeBlockService;
         this.effectService = effectService;
-        this.profileResolver = profileResolver;
         this.placedBlockPersistence = placedBlockPersistence;
         this.scheduler = scheduler;
         this.visualRenderer = visualRenderer;
@@ -103,11 +100,11 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     }
 
     private void playPlacementEffects(IgnisLocation location, BlockDefinition type, IgnisItem placedFrom) {
-        StrategyProfile profile = profileResolver.resolve(type);
+        BlockBehaviorConfig behavior = BlockBehaviorConfig.from(type.getBehaviorConfig());
         IgnisLocation center = Locations.toCenter(location);
 
-        if (profile.getPlacementSound() != null) {
-            effectService.playSound(center, profile.getPlacementSound(), 1.6f, 0.7f);
+        if (behavior.placementSound() != null) {
+            effectService.playSound(center, behavior.placementSound(), 1.6f, 0.7f);
         }
 
         events.fireBlockPlace(type, location, placedFrom);
@@ -134,8 +131,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
         }
 
         RuntimeBlockInstance instance = runtimeBlockService.createInstance(type, location);
-        StrategyProfile profile = profileResolver.resolve(type);
-        instance.setTicksLeft(profile.getDefaultFuse());
+        instance.setTicksLeft(StrategySupport.customInt(type, "fuse", 0));
         visualRenderer.spawnAnimatedDisplay(instance);
         events.fireBlockActivate(instance);
 

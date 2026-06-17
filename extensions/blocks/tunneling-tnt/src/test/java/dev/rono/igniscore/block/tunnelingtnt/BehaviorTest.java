@@ -15,8 +15,7 @@ class BehaviorTest {
     void triggerDoesNotThrow() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "tunneling-tnt", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "tunneling-tnt");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "tunneling-tnt");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(definition);
 
         assertDoesNotThrow(() ->

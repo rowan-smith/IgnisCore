@@ -1,8 +1,6 @@
 package dev.rono.igniscore.block.lostandfoundbin;
 
 import dev.rono.igniscore.api.extension.ExtensionManifest;
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.testsupport.ExtensionTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -15,11 +13,9 @@ class StrategyTest {
         ExtensionManifest manifest = ExtensionTestSupport.loadManifest(StrategyTest.class, "block-extension.yml");
         assertEquals("lost-and-found-bin", manifest.getId());
     }
-
     @Test
-    void strategyExposesProfile() {
-        BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(StrategyTest.class, "lost-and-found-bin", 10001);
+    void strategyConstructs() {
         Strategy strategy = new Strategy(ExtensionTestSupport.noopContext());
-        assertNotNull(strategy.profile(definition));
+        assertNotNull(strategy);
     }
 }

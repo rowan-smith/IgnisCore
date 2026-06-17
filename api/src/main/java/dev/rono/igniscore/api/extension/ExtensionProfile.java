@@ -21,10 +21,10 @@ public enum ExtensionProfile {
     /** Right-click open/interact block; may combine with {@link #PLACED_HOOKS}. */
     INTERACT("interact"),
 
-    /** Interact block that also needs {@code onPlaced} / {@code onPlacedBreak} registration. */
+    /** Interact block that also subscribes to place/break lifecycle events. */
     PLACED_HOOKS("placed-hooks"),
 
-    /** Item used from air or on blocks via {@code onItemUse}. */
+    /** Item used from air or on blocks via {@link dev.rono.igniscore.api.event.OnItemClickListener}. */
     ITEM_USE("item-use"),
 
     /** Chest-style or processing GUI backed by {@code ExtensionSupport} inventories. */

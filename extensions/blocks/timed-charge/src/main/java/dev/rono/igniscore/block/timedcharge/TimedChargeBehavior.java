@@ -20,9 +20,9 @@ final class TimedChargeBehavior {
         int seconds = Math.max(0, (instance.getTicksLeft() + 19) / 20);
         IgnisLocation center = Locations.toCenter(instance.getLocation());
         if (hologram == null && seconds > 0) {
-            hologram = PreviewTrickSupport.spawnCountdownHologram(context.getHologramService(), center, seconds);
+            hologram = PreviewTrickSupport.spawnCountdownHologram(context.hologram(), center, seconds);
         } else {
-            PreviewTrickSupport.updateCountdownHologram(context.getHologramService(), hologram, seconds);
+            PreviewTrickSupport.updateCountdownHologram(context.hologram(), hologram, seconds);
         }
         if (instance.getTicksLeft() % 10 == 0) {
             worldAt(center).spawnParticle(center, "CRIT", 2, 0.2, 0.3, 0.2, 0.01);
@@ -30,7 +30,7 @@ final class TimedChargeBehavior {
     }
 
     void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        PreviewTrickSupport.deleteHologram(context.getHologramService(), hologram);
+        PreviewTrickSupport.deleteHologram(context.hologram(), hologram);
         hologram = null;
         IgnisLocation loc = Locations.toCenter(instance.getLocation());
         IgnisWorld world = worldAt(loc);
@@ -39,6 +39,6 @@ final class TimedChargeBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

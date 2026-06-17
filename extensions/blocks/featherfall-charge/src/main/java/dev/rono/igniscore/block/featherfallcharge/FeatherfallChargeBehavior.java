@@ -26,10 +26,10 @@ final class FeatherfallChargeBehavior {
         world.playSound(loc, "ENTITY_PHANTOM_FLAP", 1.5f, 0.6f);
         world.spawnParticle(loc, "CLOUD", 25, radius * 0.35, 0.3, radius * 0.35, 0.03);
         ExplosionSupport.createExplosion(world, loc, def, 2.0, false);
-        EntityPhysicsSupport.applyFeatherfall(world, loc, radius, duration, context.getScheduler());
+        EntityPhysicsSupport.applyFeatherfall(world, loc, radius, duration, context.scheduler());
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

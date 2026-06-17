@@ -32,11 +32,11 @@ final class PoisonCloudTntBehavior {
         double cloudRadius = StrategySupport.customDouble(def, "cloudRadius", 8.0);
         int cloudDuration = StrategySupport.customInt(def, "cloudDuration", 200);
         world.playSound(loc, "ENTITY_WITCH_THROW", 1.5f, 0.6f);
-        BlockTransformSupport.poisonCloud(world, loc, cloudRadius, cloudDuration, context.getScheduler());
+        BlockTransformSupport.poisonCloud(world, loc, cloudRadius, cloudDuration, context.scheduler());
         ExplosionSupport.createExplosion(world, loc, def, 2.0, false);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

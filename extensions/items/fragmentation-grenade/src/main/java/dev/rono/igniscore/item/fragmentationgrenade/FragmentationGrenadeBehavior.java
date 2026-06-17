@@ -41,7 +41,7 @@ final class FragmentationGrenadeBehavior {
 
         int[] ticks = {0};
         IgnisTask[] taskRef = {null};
-        taskRef[0] = context.getScheduler().runRepeating(spawn, () -> {
+        taskRef[0] = context.scheduler().runRepeating(spawn, () -> {
             ticks[0]++;
             if (!world.isEntityValid(projectile) || ticks[0] >= fuseTicks) {
                 IgnisLocation impact = world.isEntityValid(projectile)

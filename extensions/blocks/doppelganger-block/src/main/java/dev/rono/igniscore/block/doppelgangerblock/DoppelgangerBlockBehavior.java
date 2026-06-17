@@ -19,7 +19,7 @@ final class DoppelgangerBlockBehavior {
         IgnisLocation center = Locations.toCenter(location);
         IgnisWorld world = worldAt(center);
         for (IgnisPlayer player : world.getPlayersNear(center, 16)) {
-            context.getEffectService().showBlockPreview(player, location, "stone");
+            context.effects().showBlockPreview(player, location, "stone");
         }
     }
 
@@ -31,6 +31,6 @@ final class DoppelgangerBlockBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

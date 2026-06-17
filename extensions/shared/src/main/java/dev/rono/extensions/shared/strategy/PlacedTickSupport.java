@@ -21,7 +21,7 @@ public final class PlacedTickSupport {
     public static void start(IgnisStrategyContext context, IgnisLocation location, long periodTicks, Runnable action) {
         stop(location);
         IgnisTask[] ref = {null};
-        ref[0] = context.getScheduler().runRepeating(location, action, periodTicks, periodTicks);
+        ref[0] = context.scheduler().runRepeating(location, action, periodTicks, periodTicks);
         ACTIVE.put(key(location), ref[0]);
     }
 

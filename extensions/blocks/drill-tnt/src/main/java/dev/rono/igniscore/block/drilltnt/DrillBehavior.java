@@ -48,12 +48,12 @@ final class DrillBehavior {
         world.playSound(loc, "BLOCK_ANVIL_LAND", 1.0f, 0.8f);
         world.spawnParticle(loc, "CLOUD", 40, radius * 0.4, 0.2, radius * 0.4, 0.03);
 
-        BlockBlastSupport.breakCylinderDown(context.getRegionService(), world, loc, radius, depth,
-                staggered, batchSize, batchDelayTicks, context.getScheduler());
+        BlockBlastSupport.breakCylinderDown(context.region(), world, loc, radius, depth,
+                staggered, batchSize, batchDelayTicks, context.scheduler());
         world.createExplosion(loc, 1.0f, false, false);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

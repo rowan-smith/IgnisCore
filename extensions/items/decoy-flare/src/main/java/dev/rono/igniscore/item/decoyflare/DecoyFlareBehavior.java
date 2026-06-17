@@ -26,7 +26,7 @@ final class DecoyFlareBehavior {
             world.spawnParticle(impact, "LAVA", 8, 0.3, 0.3, 0.3, 0.01);
             int[] elapsed = {0};
             IgnisTask[] ref = {null};
-            ref[0] = context.getScheduler().runRepeating(impact, () -> {
+            ref[0] = context.scheduler().runRepeating(impact, () -> {
                 if (elapsed[0]++ >= duration / 10) {
                     if (ref[0] != null) {
                         ref[0].cancel();

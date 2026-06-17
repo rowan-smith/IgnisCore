@@ -35,11 +35,11 @@ final class BlackHoleTntBehavior {
         boolean bedrockShell = StrategySupport.customBoolean(def, "bedrockShell", true);
         world.playSound(loc, "ENTITY_ENDERMAN_TELEPORT", 2.0f, 0.3f);
         world.spawnParticle(loc, "REVERSE_PORTAL", 40, voidRadius * 0.5, voidRadius * 0.5, voidRadius * 0.5, 0.05);
-        BlockTransformSupport.blackHoleCollapse(context.getRegionService(), world, loc, voidRadius, bedrockShell, context.getScheduler());
+        BlockTransformSupport.blackHoleCollapse(context.region(), world, loc, voidRadius, bedrockShell, context.scheduler());
         world.createExplosion(loc, 1.5f, false, false);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

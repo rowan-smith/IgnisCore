@@ -4,20 +4,11 @@ import dev.rono.igniscore.api.strategy.AbstractIgnisItemStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
 public class Strategy extends AbstractIgnisItemStrategy {
-    private final BlockStethoscopeBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new BlockStethoscopeBehavior(context);
+        context.eventBus().subscribe(new BlockStethoscopeListeners(context));
     }
 
-    @Override
-    public void registerEvents() {
-        onItemClick(event -> {
-            if ("use".equals(event.actionToken())) {
-                behavior.onItemUse(event.player(), event.definition(), event.item(), event.clickedBlock());
-            }
-        });
-    }
 }
 

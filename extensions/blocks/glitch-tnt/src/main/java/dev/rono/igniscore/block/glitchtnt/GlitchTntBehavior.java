@@ -26,7 +26,7 @@ final class GlitchTntBehavior {
         IgnisLocation center = Locations.toCenter(instance.getLocation());
         int radius = StrategySupport.customInt(def, "glitchRadius", 2);
         int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 80);
-        PreviewTrickSupport.cycleBlockPreviews(context.getEffectService(),
+        PreviewTrickSupport.cycleBlockPreviews(context.effects(),
                 worldAt(center).getPlayersNear(center, 20), center, radius, MATERIALS, elapsed);
     }
 
@@ -38,6 +38,6 @@ final class GlitchTntBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

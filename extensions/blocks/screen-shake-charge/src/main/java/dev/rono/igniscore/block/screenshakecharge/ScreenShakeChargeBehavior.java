@@ -25,11 +25,11 @@ final class ScreenShakeChargeBehavior {
         int duration = StrategySupport.customInt(def, "shakeDuration", 20);
         float power = (float) StrategySupport.customDouble(def, "realPower", 1.5);
         ExplosionSupport.createExplosion(world, loc, power, false, false);
-        EntityBlastSupport.violentScreenShake(context.getEffectService(), context.getProtocolService(),
-                world, loc, shakeRadius, duration, context.getScheduler());
+        EntityBlastSupport.violentScreenShake(context.effects(), context.protocol(),
+                world, loc, shakeRadius, duration, context.scheduler());
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

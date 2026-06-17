@@ -3,6 +3,7 @@ package dev.rono.igniscore.block.nuke;
 import dev.rono.igniscore.api.event.BlockPlaceEvent;
 import dev.rono.igniscore.api.event.BlockTriggerEvent;
 import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.model.PlacedBlock;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.testsupport.BehaviorTestSupport;
@@ -18,11 +19,10 @@ class BehaviorTest {
     void placedSpawnsParticles() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "nuke", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "nuke");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "nuke");
 
         ctx.eventBus().fireBlockPlace(
-                new BlockPlaceEvent(definition, new IgnisLocation("world", 1, 2, 3), null),
+                new BlockPlaceEvent(PlacedBlock.of(definition, new IgnisLocation("world", 1, 2, 3)), null),
                 "nuke");
 
         assertFalse(ctx.world().particles().isEmpty());
@@ -32,8 +32,7 @@ class BehaviorTest {
     void triggerStoresPowerAndExplodes() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "nuke", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "nuke");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "nuke");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(definition);
 
         ctx.eventBus().fireBlockTrigger(new BlockTriggerEvent(instance, null), "nuke");

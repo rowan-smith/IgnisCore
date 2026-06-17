@@ -24,7 +24,7 @@ final class TripwireChargeBehavior {
             return;
         }
         double lineRadius = StrategySupport.customDouble(definition, "lineRadius", 1.2);
-        context.getScheduler().runRepeating(location, () -> watchLine(location, partner, lineRadius), 5L, 5L);
+        context.scheduler().runRepeating(location, () -> watchLine(location, partner, lineRadius), 5L, 5L);
     }
 
     void onPlacedBreak(IgnisLocation location) {
@@ -81,6 +81,6 @@ final class TripwireChargeBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

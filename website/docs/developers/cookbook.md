@@ -14,16 +14,8 @@ Short, task-oriented recipes for IgnisCore block and item extensions. Prefer **`
 public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
-    }
-
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return IgnisStrategies.blocks().placed();
-    }
-
-    @Override
-    public void registerEvents() {
-        // Subscribe with onBlockPlace, onBlockClick, … when needed
+        context.eventBus().subscribe(new MyOnBlockClickListener());
+        context.eventBus().subscribe(new MyOnBlockTriggerListener(context));
     }
 }
 ```
@@ -43,7 +35,7 @@ float power = (float) IgnisStrategies.data().customDouble(definition, "power", 4
 boolean fire = IgnisStrategies.data().customBoolean(definition, "fire", false);
 ```
 
-`IgnisStrategies.data()` also accepts a raw `Map` if you already called `getCustomData()`. Fuse and radius are **opt-in** on `StrategyProfile` — use `IgnisStrategies.blocks().placed()` for utility blocks, `IgnisStrategies.blocks().fuse(ticks)` for fuse lifecycle blocks, or `IgnisStrategies.blocks().combustible(fuse, radius)` for ignitable explosives.
+`IgnisStrategies.data()` also accepts a raw `Map` if you already called `getCustomData()`. Declare fuse and radius in `custom_data` for explosive blocks; declare combustibility and ignition materials under `behavior`.
 
 Block example `config.yml`:
 
@@ -64,15 +56,17 @@ Only declare keys your strategy reads — see [Extension config](/developers/ext
 
 ## Explosive fuse block
 
-Strategy profile for combustible blocks:
+Subscribe combustible click routing and fuse listeners in the constructor:
 
 ```java
-@Override
-public StrategyProfile profile(BlockDefinition definition) {
-    int fuse = IgnisStrategies.data().customInt(definition, "fuse", 80);
-    return IgnisStrategies.blocks().fuse(fuse);
+public Strategy(IgnisStrategyContext context) {
+    super(context);
+    context.eventBus().subscribe(new NukeOnBlockClickListener());
+    context.eventBus().subscribe(new NukeOnBlockTriggerListener(context));
 }
 ```
+
+`NukeOnBlockClickListener` reads `behavior.combustible` and `ignition_materials` from the block definition.
 
 Bundled fuse blocks often choose per-extension defaults in code (for example splitter-charge **60**, nuke **160**) while also storing fuse in `custom_data`.
 
@@ -81,8 +75,6 @@ Bundled fuse blocks often choose per-extension defaults in code (for example spl
 ```yaml
 behavior:
   combustible: true
-  left_click_block: break
-  right_click_block: ignite
   ignition_materials:
     - FLINT_AND_STEEL
     - FIRE_CHARGE

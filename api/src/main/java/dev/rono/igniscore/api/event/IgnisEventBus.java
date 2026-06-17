@@ -3,9 +3,12 @@ package dev.rono.igniscore.api.event;
 /**
  * Platform-neutral event bus for extension lifecycle hooks and integrator observers.
  *
- * <p>Extension strategies subscribe in {@link dev.rono.igniscore.api.strategy.IgnisStrategy#registerEvents()}
- * using scoped helpers on {@link dev.rono.igniscore.api.strategy.AbstractIgnisStrategy}, or call
- * {@link #subscribe(String, OnItemClickListener)} with their manifest extension id.</p>
+ * <p>Extension strategies subscribe in their constructor, for example
+ * {@code context.eventBus().subscribe(new MyOnBlockPlaceListener(context))}.
+ * During extension loading, unqualified {@code eventBus().subscribe(listener)} calls are
+ * automatically scoped to the loading extension id. Integrators may subscribe globally (no
+ * extension id) to observe all extensions, or pass an explicit extension id for a single
+ * extension.</p>
  */
 public interface IgnisEventBus {
 

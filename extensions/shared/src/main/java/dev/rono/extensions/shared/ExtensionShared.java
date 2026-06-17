@@ -15,7 +15,6 @@ import dev.rono.extensions.shared.strategy.LinkItemSupport;
 import dev.rono.extensions.shared.strategy.LinkedBlockRegistry;
 import dev.rono.extensions.shared.strategy.PlacedTickSupport;
 import dev.rono.extensions.shared.strategy.ProcessingGuiSupport;
-import dev.rono.extensions.shared.strategy.StrategyProfiles;
 import dev.rono.extensions.shared.strategy.TheatricsSupport;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
@@ -29,7 +28,6 @@ import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 import java.util.Map;
 import java.util.Set;
@@ -102,11 +100,6 @@ public final class ExtensionShared {
     /** Specialized explosive blast patterns. */
     public static Variants variants() {
         return Variants.INSTANCE;
-    }
-
-    /** Preset {@link StrategyProfile} factories. */
-    public static Profiles profiles() {
-        return Profiles.INSTANCE;
     }
 
     /** Block GUI registries (storage, trade). */
@@ -434,17 +427,6 @@ public final class ExtensionShared {
         public float resolveYaw(IgnisWorld world, IgnisLocation block, Object triggerContext,
                                 IgnisStrategyContext context) {
             return ExplosionVariantsSupport.resolveYaw(world, block, triggerContext, context);
-        }
-    }
-
-    public static final class Profiles {
-        static final Profiles INSTANCE = new Profiles();
-
-        private Profiles() {
-        }
-
-        public StrategyProfile explosive() {
-            return StrategyProfiles.explosiveProfile();
         }
     }
 

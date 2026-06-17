@@ -1,26 +1,13 @@
 package dev.rono.igniscore.block.autosieve;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final AutoSieveBehavior behavior;
-
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new AutoSieveBehavior(context);
-    }
-
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
-    }
-
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
+        context.eventBus().subscribe(new AutoSieveOnBlockPlaceListener(context));
+        context.eventBus().subscribe(new AutoSieveOnBlockBreakListener());
+        context.eventBus().subscribe(new AutoSieveOnBlockClickListener());
     }
 }

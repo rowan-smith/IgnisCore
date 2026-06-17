@@ -28,7 +28,7 @@ final class AntiGravityZoneBehavior {
         double radius = StrategySupport.customDouble(definition, "bubbleRadius", 6.0);
         double lift = StrategySupport.customDouble(definition, "liftStrength", 0.18);
         IgnisTask[] ref = {null};
-        ref[0] = context.getScheduler().runRepeating(location, () -> {
+        ref[0] = context.scheduler().runRepeating(location, () -> {
             IgnisWorld world = worldAt(location);
             IgnisLocation center = Locations.toCenter(location);
             EntityPhysicsSupport.applyLevitation(world, center, radius, lift);
@@ -58,6 +58,6 @@ final class AntiGravityZoneBehavior {
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

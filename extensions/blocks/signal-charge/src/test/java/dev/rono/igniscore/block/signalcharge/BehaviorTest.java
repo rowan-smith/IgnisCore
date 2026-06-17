@@ -15,8 +15,7 @@ class BehaviorTest {
     void triggerCreatesExplosion() {
         TestEventBus.TestContext ctx = TestEventBus.createContext();
         BlockDefinition definition = ExtensionTestSupport.loadBlockDefinition(BehaviorTest.class, "signal-charge", 10001);
-        Strategy strategy = new Strategy(ctx.context());
-        TestEventBus.activate(strategy, "signal-charge");
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "signal-charge");
         RuntimeBlockInstance instance = BehaviorTestSupport.blockInstance(definition);
 
         ctx.eventBus().fireBlockTrigger(new BlockTriggerEvent(instance, null), "signal-charge");

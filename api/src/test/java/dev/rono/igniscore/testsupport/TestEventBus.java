@@ -17,6 +17,7 @@ import dev.rono.igniscore.api.event.OnBlockPlaceListener;
 import dev.rono.igniscore.api.event.OnBlockTickListener;
 import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.event.OnItemClickListener;
+import dev.rono.igniscore.api.loader.ExtensionLoadScope;
 import dev.rono.igniscore.api.strategy.AbstractIgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 
 public final class TestEventBus implements IgnisEventBus {
     private final Map<Class<?>, List<Registration<?>>> registrations = new ConcurrentHashMap<>();
@@ -38,12 +40,19 @@ public final class TestEventBus implements IgnisEventBus {
         return new TestContext(base, bus);
     }
 
-    public static void activate(IgnisStrategy strategy, String extensionId) {
+    public static <T extends IgnisStrategy> T activate(Supplier<T> strategyFactory, String extensionId) {
+        return ExtensionLoadScope.call(extensionId, () -> {
+            T strategy = strategyFactory.get();
+            bindDescriptor(strategy, extensionId);
+            return strategy;
+        });
+    }
+
+    public static void bindDescriptor(IgnisStrategy strategy, String extensionId) {
         if (strategy instanceof AbstractIgnisStrategy abstractStrategy) {
             abstractStrategy.bindDescriptor(IgnisStrategyDescriptor.of(
                     extensionId, extensionId, "1.0.0", "test"));
         }
-        strategy.registerEvents();
     }
 
     public void fireBlockPlace(BlockPlaceEvent event, String extensionId) {
@@ -83,42 +92,42 @@ public final class TestEventBus implements IgnisEventBus {
 
     @Override
     public void subscribe(OnBlockPlaceListener listener) {
-        register(OnBlockPlaceListener.class, null, listener);
+        register(OnBlockPlaceListener.class, ExtensionLoadScope.current(), listener);
     }
 
     @Override
     public void subscribe(OnBlockClickListener listener) {
-        register(OnBlockClickListener.class, null, listener);
+        register(OnBlockClickListener.class, ExtensionLoadScope.current(), listener);
     }
 
     @Override
     public void subscribe(OnBlockInteractListener listener) {
-        register(OnBlockInteractListener.class, null, listener);
+        register(OnBlockInteractListener.class, ExtensionLoadScope.current(), listener);
     }
 
     @Override
     public void subscribe(OnBlockBreakListener listener) {
-        register(OnBlockBreakListener.class, null, listener);
+        register(OnBlockBreakListener.class, ExtensionLoadScope.current(), listener);
     }
 
     @Override
     public void subscribe(OnBlockActivateListener listener) {
-        register(OnBlockActivateListener.class, null, listener);
+        register(OnBlockActivateListener.class, ExtensionLoadScope.current(), listener);
     }
 
     @Override
     public void subscribe(OnBlockTickListener listener) {
-        register(OnBlockTickListener.class, null, listener);
+        register(OnBlockTickListener.class, ExtensionLoadScope.current(), listener);
     }
 
     @Override
     public void subscribe(OnBlockTriggerListener listener) {
-        register(OnBlockTriggerListener.class, null, listener);
+        register(OnBlockTriggerListener.class, ExtensionLoadScope.current(), listener);
     }
 
     @Override
     public void subscribe(OnItemClickListener listener) {
-        register(OnItemClickListener.class, null, listener);
+        register(OnItemClickListener.class, ExtensionLoadScope.current(), listener);
     }
 
     @Override

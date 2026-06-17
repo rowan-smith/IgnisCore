@@ -32,6 +32,9 @@ public final class TestDefinitions {
                 "bottom.png",
                 Map.of("fuse", 80, "radius", 4.0),
                 Map.of(),
+                Map.of(
+                        "combustible", true,
+                        "ignition_materials", List.of("FLINT_AND_STEEL", "FIRE_CHARGE", "FLINT")),
                 Map.of(),
                 Map.of(),
                 10001,
@@ -56,6 +59,7 @@ public final class TestDefinitions {
                 "bottom.png",
                 Map.of("fuse", 80, "radius", 4.0),
                 Map.of("ticks", 5),
+                Map.of("combustible", false),
                 Map.of(),
                 Map.of(),
                 10002,

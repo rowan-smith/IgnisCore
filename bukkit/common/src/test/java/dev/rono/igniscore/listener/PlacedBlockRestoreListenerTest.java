@@ -82,7 +82,7 @@ class PlacedBlockRestoreListenerTest extends MockBukkitTestBase {
         int restoreCount;
 
         RecordingBlockManager() {
-            super(null, null, null, null, null, null, null, PerformanceSettings.defaults());
+            super(null, null, null, null, null, null, PerformanceSettings.defaults());
         }
 
         @Override

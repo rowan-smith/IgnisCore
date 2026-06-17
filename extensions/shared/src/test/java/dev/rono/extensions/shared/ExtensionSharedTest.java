@@ -1,6 +1,5 @@
 package dev.rono.extensions.shared;
 
-import dev.rono.igniscore.api.config.ExtensionConfig;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.Test;
@@ -11,11 +10,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ExtensionSharedTest {
-    @Test
-    void profilesFacadeDelegatesToSupportProfiles() {
-        assertEquals(80, ExtensionShared.profiles().explosive().getDefaultFuse());
-    }
-
     @Test
     void configFacadeDelegatesToExtensionConfigs() {
         ItemDefinition definition = new ItemDefinition(

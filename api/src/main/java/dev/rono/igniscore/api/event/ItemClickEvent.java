@@ -12,7 +12,7 @@ import dev.rono.igniscore.api.port.IgnisPlayer;
  * <p>{@link #actionToken()} is the normalized YAML {@code behavior} token when configured,
  * or {@code null} when no behavior action applies to the interaction.</p>
  */
-public final class ItemClickEvent {
+public final class ItemClickEvent implements ItemEvent {
     private final IgnisPlayer player;
     private final ItemDefinition definition;
     private final IgnisItem item;
@@ -38,6 +38,7 @@ public final class ItemClickEvent {
         return player;
     }
 
+    @Override
     public ItemDefinition definition() {
         return definition;
     }

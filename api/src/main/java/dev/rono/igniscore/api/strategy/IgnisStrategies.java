@@ -21,7 +21,7 @@ public final class IgnisStrategies {
     private IgnisStrategies() {
     }
 
-    /** Block profiles, click routing, and YAML behavior merging. */
+    /** Block behavior config and click routing. */
     public static Blocks blocks() {
         return Blocks.INSTANCE;
     }
@@ -42,32 +42,28 @@ public final class IgnisStrategies {
         private Blocks() {
         }
 
-        public StrategyProfile placed() {
-            return StrategyProfile.placed();
+        public BlockBehaviorConfig behavior(BlockDefinition definition) {
+            return BlockBehaviorConfig.from(definition.getBehaviorConfig());
         }
 
-        public StrategyProfile fuse(int fuseTicks) {
-            return StrategyProfile.fuse(fuseTicks);
+        public CustomBlockAction click(BlockDefinition definition,
+                                       CustomBlockAction left,
+                                       CustomBlockAction right,
+                                       IgnisInteraction interaction,
+                                       IgnisItem heldItem) {
+            return PlacedClickSupport.resolve(definition, left, right, interaction, heldItem);
         }
 
-        public StrategyProfile combustible(int fuseTicks, double radius) {
-            return StrategyProfile.combustible(fuseTicks, radius);
+        public CustomBlockAction click(BlockDefinition definition,
+                                       CustomBlockAction left,
+                                       CustomBlockAction right,
+                                       IgnisInteraction interaction,
+                                       String materialKey) {
+            return PlacedClickSupport.resolve(definition, left, right, interaction, materialKey);
         }
 
-        public StrategyProfile mergeBehavior(BlockDefinition definition, StrategyProfile profile) {
-            return BlockBehaviorConfig.from(definition.getBehaviorConfig()).merge(profile);
-        }
-
-        public CustomBlockAction click(StrategyProfile profile, IgnisInteraction interaction, IgnisItem heldItem) {
-            return PlacedClickSupport.resolve(profile, interaction, heldItem);
-        }
-
-        public CustomBlockAction click(StrategyProfile profile, IgnisInteraction interaction, String materialKey) {
-            return PlacedClickSupport.resolve(profile, interaction, materialKey);
-        }
-
-        public boolean isIgnitionMaterial(StrategyProfile profile, String materialKey) {
-            return PlacedClickSupport.isIgnitionMaterial(profile, materialKey);
+        public boolean isIgnitionMaterial(BlockDefinition definition, String materialKey) {
+            return PlacedClickSupport.isIgnitionMaterial(definition, materialKey);
         }
     }
 

@@ -1,10 +1,8 @@
 package dev.rono.igniscore.service;
 
-import dev.rono.igniscore.api.CustomBlockAction;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.event.IgnisEventBusImpl;
@@ -15,6 +13,8 @@ import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import dev.rono.igniscore.strategies.DefaultExplosionStrategy;
 import dev.rono.igniscore.support.PdcBackedNbtService;
+import dev.rono.igniscore.support.TestBlockClickListeners;
+import dev.rono.igniscore.support.TestDefinitions;
 import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.testsupport.CommonTestSupport;
 import org.bukkit.Material;
@@ -55,8 +55,9 @@ public final class BreakLoopTestSupport {
         BehaviorTestSupport.TestContext behaviorContext = BehaviorTestSupport.createContext();
         ExtensionSupportService extensionSupport = new ExtensionSupportService(
                 CommonTestSupport.platformAdapter(behaviorContext.world(), tempDir));
+        IgnisEventBusImpl eventBus = new IgnisEventBusImpl();
         IgnisStrategyRegistryImpl strategyRegistry = new IgnisStrategyRegistryImpl(
-                new DefaultExplosionStrategy(behaviorContext.context().getExtensionSupport(), new IgnisEventBusImpl()));
+                new DefaultExplosionStrategy(behaviorContext.context().extensions(), eventBus));
         strategyRegistry.register(
                 IgnisStrategyDescriptor.of("storage", "Storage", "1.0.0", "test"),
                 storageStrategy());
@@ -64,12 +65,10 @@ public final class BreakLoopTestSupport {
         PlacedBlockPersistenceService persistence = new PlacedBlockPersistenceService(
                 CommonTestSupport.runtimeHost(tempDir));
         CommonTestSupport.RecordingBlockVisualRenderer visualRenderer = new CommonTestSupport.RecordingBlockVisualRenderer();
-        StrategyProfileResolver profileResolver = new StrategyProfileResolver(strategyRegistry);
-        StrategyEventPublisher events = new StrategyEventPublisher(new IgnisEventBusImpl(), profileResolver);
+        StrategyEventPublisher events = new StrategyEventPublisher(eventBus);
         BlockManager blockManager = new BlockManager(
                 new RuntimeBlockService(),
                 behaviorContext.effects(),
-                profileResolver,
                 persistence,
                 new CommonTestSupport.ImmediateIgnisScheduler(),
                 visualRenderer,
@@ -86,7 +85,11 @@ public final class BreakLoopTestSupport {
                 })
                 .toList();
         blockManager.loadFromExtensions(loaded);
-        registerMissingBlockStrategies(strategyRegistry, behaviorContext, definitions);
+        registerMissingBlockStrategies(strategyRegistry, behaviorContext, eventBus, definitions);
+        for (BlockDefinition definition : definitions) {
+            TestBlockClickListeners.register(eventBus, definition);
+        }
+        TestBlockClickListeners.register(eventBus, TestDefinitions.breakableStorage());
 
         PdcBackedNbtService nbtService = new PdcBackedNbtService();
         BlockItemFactory blockItemFactory = new BlockItemFactory(blockManager, nbtService, platformHooks);
@@ -96,8 +99,7 @@ public final class BreakLoopTestSupport {
                 blockManager,
                 blockItemFactory,
                 effectService,
-                events,
-                profileResolver);
+                events);
         CustomBlockIgnitionService ignitionService = new CustomBlockIgnitionService(
                 blockManager, breakService, effectService);
         BlockItemIdentifier blockItemIdentifier = new BlockItemIdentifier(plugin, nbtService);
@@ -142,9 +144,10 @@ public final class BreakLoopTestSupport {
 
     private static void registerMissingBlockStrategies(IgnisStrategyRegistryImpl strategyRegistry,
                                                      BehaviorTestSupport.TestContext behaviorContext,
+                                                     IgnisEventBusImpl eventBus,
                                                      BlockDefinition... definitions) {
         DefaultExplosionStrategy fallback = new DefaultExplosionStrategy(
-                behaviorContext.context().getExtensionSupport(), new IgnisEventBusImpl());
+                behaviorContext.context().extensions(), eventBus);
         for (BlockDefinition definition : definitions) {
             String extensionId = definition.getExtensionId();
             if (!strategyRegistry.isRegistered(extensionId)) {
@@ -157,14 +160,6 @@ public final class BreakLoopTestSupport {
 
     private static AbstractIgnisBlockStrategy storageStrategy() {
         return new AbstractIgnisBlockStrategy(IgnisStrategyDescriptor.of("storage", "Storage", "1.0.0", "test")) {
-            @Override
-            public StrategyProfile profile(BlockDefinition definition) {
-                return StrategyProfile.builder()
-                        .combustible(false)
-                        .leftClickAction(CustomBlockAction.BREAK)
-                        .rightClickAction(CustomBlockAction.NONE)
-                        .build();
-            }
         };
     }
 }

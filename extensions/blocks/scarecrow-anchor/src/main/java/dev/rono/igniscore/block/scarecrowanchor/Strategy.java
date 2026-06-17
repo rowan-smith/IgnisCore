@@ -1,26 +1,15 @@
 package dev.rono.igniscore.block.scarecrowanchor;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final ScarecrowAnchorBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new ScarecrowAnchorBehavior(context);
+        context.eventBus().subscribe(new ScarecrowAnchorOnBlockClickListener());
+        context.eventBus().subscribe(new ScarecrowAnchorOnBlockPlaceListener(context));
+        context.eventBus().subscribe(new ScarecrowAnchorOnBlockBreakListener());
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.defaults();
-    }
-
-    @Override
-    public void registerEvents() {
-        onBlockPlace(event -> behavior.onPlaced(event.definition(), event.location()));
-        onBlockBreak(event -> behavior.onPlacedBreak(event.definition(), event.location()));
-    }
 }

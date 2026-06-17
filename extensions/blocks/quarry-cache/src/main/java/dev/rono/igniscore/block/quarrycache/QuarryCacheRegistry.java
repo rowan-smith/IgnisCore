@@ -25,8 +25,8 @@ final class QuarryCacheRegistry {
 
     QuarryCacheRegistry(IgnisStrategyContext context) {
         this.context = context;
-        this.extensionSupport = context.getExtensionSupport();
-        this.storage = new QuarryCacheStorage(extensionSupport, context.getNbtService());
+        this.extensionSupport = context.extensions();
+        this.storage = new QuarryCacheStorage(extensionSupport, context.nbt());
     }
 
     void register(IgnisLocation location, BlockDefinition definition, IgnisItem placedFrom) {
@@ -56,7 +56,7 @@ final class QuarryCacheRegistry {
         persist(blockLocation, inventory);
 
         if (showIndicator) {
-            indicatorTasks.put(blockLocation, context.getScheduler().runRepeating(
+            indicatorTasks.put(blockLocation, context.scheduler().runRepeating(
                     cache.center(),
                     () -> QuarryCacheZoneIndicator.spawn(cache, extensionSupport),
                     20L,

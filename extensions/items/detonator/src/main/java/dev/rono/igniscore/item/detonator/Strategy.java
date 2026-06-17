@@ -4,22 +4,11 @@ import dev.rono.igniscore.api.strategy.AbstractIgnisItemStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 
 public class Strategy extends AbstractIgnisItemStrategy {
-    private final DetonatorBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new DetonatorBehavior(new DetonatorLinkStorage(context.getNbtService()));
+        context.eventBus().subscribe(new DetonatorListeners(new DetonatorLinkStorage(context.nbt())));
     }
 
-    @Override
-    public void registerEvents() {
-        onItemClick(event -> {
-            switch (event.actionToken()) {
-                case "assign" -> behavior.assignBomb(event.player(), event.definition(), event.item(), event.clickedBlock());
-                case "detonate" -> behavior.detonateLinkedBombs(event.player(), event.definition(), event.item());
-                default -> { }
-            }
-        });
-    }
 }
 

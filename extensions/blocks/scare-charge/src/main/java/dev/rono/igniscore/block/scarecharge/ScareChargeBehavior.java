@@ -22,11 +22,11 @@ final class ScareChargeBehavior {
         IgnisWorld world = worldAt(loc);
         double radius = StrategySupport.customDouble(def, "scareRadius", 50.0);
         float fakePower = (float) StrategySupport.customDouble(def, "fakePower", 12.0);
-        PreviewTrickSupport.scareExplosion(context.getEffectService(), context.getProtocolService(),
+        PreviewTrickSupport.scareExplosion(context.effects(), context.protocol(),
                 world, loc, radius, fakePower);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {
-        return context.getExtensionSupport().resolveWorld(location);
+        return context.extensions().resolveWorld(location);
     }
 }

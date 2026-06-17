@@ -49,15 +49,15 @@ class AbstractIgnisBlockStrategyTest {
         }
 
         double readDouble(BlockDefinition definition, String key, double defaultValue) {
-            return getCustomDouble(definition, key, defaultValue);
+            return StrategySupport.customDouble(definition, key, defaultValue);
         }
 
         int readInt(BlockDefinition definition, String key, int defaultValue) {
-            return getCustomInt(definition, key, defaultValue);
+            return StrategySupport.customInt(definition, key, defaultValue);
         }
 
         boolean readBoolean(BlockDefinition definition, String key, boolean defaultValue) {
-            return getCustomBoolean(definition, key, defaultValue);
+            return StrategySupport.customBoolean(definition, key, defaultValue);
         }
     }
 }

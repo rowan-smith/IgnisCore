@@ -1,38 +1,17 @@
 package dev.rono.igniscore.block.tripwirecharge;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.api.port.IgnisLocation;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final TripwireChargeBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new TripwireChargeBehavior(context);
+        TripwireChargeRuntime runtime = new TripwireChargeRuntime(context);
+        context.eventBus().subscribe(new TripwireChargeOnBlockClickListener());
+        context.eventBus().subscribe(new TripwireChargeOnBlockPlaceListener(runtime));
+        context.eventBus().subscribe(new TripwireChargeOnBlockBreakListener(runtime));
+        context.eventBus().subscribe(new TripwireChargeOnBlockTriggerListener(runtime));
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
-                .defaultFuse(0).combustible(false)
-                .build();
-    }
-
-    @Override
-    public void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlaced(definition, location);
-    }
-    @Override
-    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlacedBreak(location);
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        behavior.onTrigger(instance, triggerContext);
-    }
 }

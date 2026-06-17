@@ -40,7 +40,7 @@ final class FlashbangBehavior {
 
         int[] ticks = {0};
         IgnisTask[] taskRef = {null};
-        taskRef[0] = context.getScheduler().runRepeating(spawn, () -> {
+        taskRef[0] = context.scheduler().runRepeating(spawn, () -> {
             ticks[0]++;
             if (!world.isEntityValid(projectile) || ticks[0] >= fuseTicks) {
                 IgnisLocation impact = world.isEntityValid(projectile)
@@ -69,7 +69,7 @@ final class FlashbangBehavior {
         world.playSound(impact, "ENTITY_GENERIC_EXPLODE", 3.0f, 1.8f);
         world.playSound(impact, "ENTITY_ELDER_GUARDIAN_CURSE", 2.5f, 0.4f);
 
-        context.getEffectService().playFakeExplosion(impact, 6.0f, world.getPlayersNear(impact, radius));
+        context.effects().playFakeExplosion(impact, 6.0f, world.getPlayersNear(impact, radius));
 
         for (IgnisPlayer target : world.getPlayersNear(impact, radius)) {
             double dist = distance(target.getLocation(), impact);
