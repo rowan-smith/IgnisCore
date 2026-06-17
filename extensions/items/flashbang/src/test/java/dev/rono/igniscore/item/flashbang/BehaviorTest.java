@@ -1,13 +1,14 @@
 package dev.rono.igniscore.item.flashbang;
 
+import dev.rono.igniscore.api.event.ItemClickEvent;
 import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.port.IgnisInteraction;
 import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
-import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.testsupport.ExtensionTestSupport;
+import dev.rono.igniscore.testsupport.TestEventBus;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -17,13 +18,15 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class BehaviorTest {
     @Test
     void throwSchedulesFlashDetonation() {
-        BehaviorTestSupport.TestContext ctx = BehaviorTestSupport.createContext();
+        TestEventBus.TestContext ctx = TestEventBus.createContext();
         ItemDefinition definition = ExtensionTestSupport.loadItemDefinition(BehaviorTest.class, "flashbang", 10001);
-        Strategy strategy = new Strategy(ctx.context());
+        Strategy strategy = TestEventBus.activate(() -> new Strategy(ctx.context()), "flashbang");
         IgnisPlayer player = new TestPlayer(ctx.world());
         IgnisItem item = new TestItem();
 
-        assertDoesNotThrow(() -> strategy.onItemUse(player, definition, item, IgnisInteraction.RIGHT_CLICK_AIR, null));
+        assertDoesNotThrow(() -> ctx.eventBus().fireItemClick(
+                new ItemClickEvent(player, definition, item, IgnisInteraction.RIGHT_CLICK_AIR, null, "throw"),
+                "flashbang"));
     }
 
     private static final class TestItem implements IgnisItem {

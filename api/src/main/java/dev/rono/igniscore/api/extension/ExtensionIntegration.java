@@ -23,7 +23,19 @@ public enum ExtensionIntegration {
      * Persistent item and entity NBT access. Required for tools that stamp data
      * onto items or read entity metadata across sessions.
      */
-    NBT_ENTITY("nbt-entity");
+    NBT_ENTITY("nbt-entity"),
+
+    /**
+     * Region editing for shaped blasts and transforms. WorldEdit is used when
+     * available; otherwise Ignis falls back to native world editing.
+     */
+    REGION("region"),
+
+    /**
+     * Floating text and countdown holograms. FancyHolograms or similar plugins
+     * are used when available; otherwise Ignis provides a lightweight fallback.
+     */
+    HOLOGRAM("hologram");
 
     private final String manifestKey;
 

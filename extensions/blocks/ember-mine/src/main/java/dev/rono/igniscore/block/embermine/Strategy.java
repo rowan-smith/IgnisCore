@@ -1,38 +1,17 @@
 package dev.rono.igniscore.block.embermine;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
-import dev.rono.igniscore.api.port.IgnisLocation;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final EmberMineBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new EmberMineBehavior(context);
+        EmberMineRuntime runtime = new EmberMineRuntime(context);
+        context.eventBus().subscribe(new EmberMineOnBlockClickListener());
+        context.eventBus().subscribe(new EmberMineOnBlockPlaceListener(runtime));
+        context.eventBus().subscribe(new EmberMineOnBlockBreakListener(runtime));
+        context.eventBus().subscribe(new EmberMineOnBlockTriggerListener(runtime));
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
-                .defaultFuse(0).combustible(false)
-                .build();
-    }
-
-    @Override
-    public void onPlaced(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlaced(definition, location);
-    }
-    @Override
-    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
-        behavior.onPlacedBreak(location);
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        behavior.onTrigger(instance, triggerContext);
-    }
 }

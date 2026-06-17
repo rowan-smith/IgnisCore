@@ -19,7 +19,7 @@ final class FortuneCookieMakerOnBlockInteractListener implements OnBlockInteract
             return;
         }
         if (event.heldItem() != null && !event.heldItem().isAir() && ProcessingGuiSupport.matches(event.heldItem(), "cookie")) {
-            String fortune = FORTUNES[(int) (Math.random() * FORTUNES.length)];
+            String fortune = FortuneCookieMakerSupport.FORTUNES[(int) (Math.random() * FortuneCookieMakerSupport.FORTUNES.length)];
             event.player().sendMessage("<gold>Fortune:</gold> <italic>" + fortune + "</italic>");
             TheatricsSupport.sparkle(FortuneCookieMakerSupport.worldAt(runtime, event.block().location()), event.player().getLocation(), "NOTE", 6);
         }

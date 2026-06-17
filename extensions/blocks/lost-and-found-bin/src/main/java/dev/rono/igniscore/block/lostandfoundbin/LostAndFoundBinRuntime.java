@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 final class LostAndFoundBinRuntime {
     final IgnisStrategyContext context;
     final BlockStorageRegistry registry;
+    int sweepCounter;
 
     LostAndFoundBinRuntime(IgnisStrategyContext context) {
         this.context = context;

@@ -1,33 +1,16 @@
 package dev.rono.igniscore.block.orbittnt;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final OrbitTntBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new OrbitTntBehavior(context);
+        OrbitTntRuntime runtime = new OrbitTntRuntime(context);
+        context.eventBus().subscribe(new OrbitTntOnBlockClickListener());
+        context.eventBus().subscribe(new OrbitTntOnBlockTickListener(runtime));
+        context.eventBus().subscribe(new OrbitTntOnBlockTriggerListener(runtime));
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
-                .defaultFuse(80)
-                .build();
-    }
-
-    @Override
-    public void onTick(RuntimeBlockInstance instance) {
-        behavior.onTick(instance);
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        behavior.onTrigger(instance, triggerContext);
-    }
 }

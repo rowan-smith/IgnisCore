@@ -79,12 +79,12 @@ class ExtensionReloadServiceTest extends MockBukkitTestBase {
     }
 
     private void runAsyncTasks() {
-        BukkitSchedulerMock scheduler = (BukkitSchedulerMock) server.scheduler();
+        BukkitSchedulerMock scheduler = (BukkitSchedulerMock) server.getScheduler();
         scheduler.waitAsyncTasksFinished();
     }
 
     private void runSyncTasks() {
-        BukkitSchedulerMock scheduler = (BukkitSchedulerMock) server.scheduler();
+        BukkitSchedulerMock scheduler = (BukkitSchedulerMock) server.getScheduler();
         scheduler.performTicks(1);
     }
 

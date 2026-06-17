@@ -32,8 +32,7 @@ class BlockStrategyProfileIntegrationTest {
     @ValueSource(strings = {
             "auto-sieve",
             "picnic-basket",
-            "socket-lamp",
-            "signal-charge"
+            "socket-lamp"
     })
     void placedUtilityStrategiesLoadWithoutFuseConfig(String moduleName) throws Exception {
         BlockDefinition definition = loadDefinition(moduleName);

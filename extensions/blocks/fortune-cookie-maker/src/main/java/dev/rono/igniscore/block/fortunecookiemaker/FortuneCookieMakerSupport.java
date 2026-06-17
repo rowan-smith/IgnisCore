@@ -14,6 +14,13 @@ final class FortuneCookieMakerSupport {
     static final int WHEAT_SLOT = 11;
     static final int PAPER_SLOT = 15;
     static final int OUTPUT_SLOT = 17;
+    static final String[] FORTUNES = {
+            "A surprise awaits behind the next door.",
+            "Beware the creeper in plain sight.",
+            "Your build will inspire the server.",
+            "Share loot and luck will follow.",
+            "Dig down — but not too far."
+    };
 
     static void tick(FortuneCookieMakerRuntime runtime, BlockDefinition definition, IgnisLocation location) {
 

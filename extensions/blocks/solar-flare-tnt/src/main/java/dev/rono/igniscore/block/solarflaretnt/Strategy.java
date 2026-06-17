@@ -1,33 +1,16 @@
 package dev.rono.igniscore.block.solarflaretnt;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final SolarFlareTntBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new SolarFlareTntBehavior(context);
+        SolarFlareTntRuntime runtime = new SolarFlareTntRuntime(context);
+        context.eventBus().subscribe(new SolarFlareTntOnBlockClickListener());
+        context.eventBus().subscribe(new SolarFlareTntOnBlockTickListener(runtime));
+        context.eventBus().subscribe(new SolarFlareTntOnBlockTriggerListener(runtime));
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
-                .defaultFuse(70)
-                .build();
-    }
-
-    @Override
-    public void onTick(RuntimeBlockInstance instance) {
-        behavior.onTick(instance);
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        behavior.onTrigger(instance, triggerContext);
-    }
 }

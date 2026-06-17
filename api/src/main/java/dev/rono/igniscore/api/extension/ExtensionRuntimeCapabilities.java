@@ -22,6 +22,7 @@ public record ExtensionRuntimeCapabilities(boolean protocolEnabled, boolean nbtE
         return switch (integration) {
             case PROTOCOL -> protocolEnabled;
             case NBT_ENTITY -> nbtEntityEnabled;
+            case REGION, HOLOGRAM -> true;
         };
     }
 }

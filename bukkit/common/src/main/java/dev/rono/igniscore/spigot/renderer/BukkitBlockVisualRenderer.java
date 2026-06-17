@@ -53,7 +53,7 @@ public class BukkitBlockVisualRenderer implements BlockVisualRenderer {
             display.setTransformation(createTransformation(type, -0.35f, 0.2f));
             display.setInterpolationDuration(6);
             display.setInterpolationDelay(0);
-            plugin.getServer().scheduler().runTaskLater(plugin, () -> {
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                         if (!display.isValid()) {
                             return;
                         }

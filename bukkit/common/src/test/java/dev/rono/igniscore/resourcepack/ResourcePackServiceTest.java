@@ -121,11 +121,11 @@ class ResourcePackServiceTest extends MockBukkitTestBase {
     }
 
     private void runAsyncTasks() {
-        ((BukkitSchedulerMock) server.scheduler()).waitAsyncTasksFinished();
+        ((BukkitSchedulerMock) server.getScheduler()).waitAsyncTasksFinished();
     }
 
     private void runSyncTasks() {
-        ((BukkitSchedulerMock) server.scheduler()).performTicks(1);
+        ((BukkitSchedulerMock) server.getScheduler()).performTicks(1);
     }
 
     private static BlockDefinition sampleBlock(String id, int modelData) {
@@ -155,7 +155,7 @@ class ResourcePackServiceTest extends MockBukkitTestBase {
         private Map<String, BlockDefinition> definitions;
 
         StubBlockManager(BlockDefinition definition) {
-            super(null, null, null, null, null, null, null, PerformanceSettings.defaults());
+            super(null, null, null, null, null, null, PerformanceSettings.defaults());
             this.definitions = Map.of(definition.getId(), definition);
         }
 

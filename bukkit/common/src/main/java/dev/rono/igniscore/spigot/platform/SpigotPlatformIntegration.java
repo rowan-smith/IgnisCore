@@ -49,7 +49,7 @@ public class SpigotPlatformIntegration implements IgnisPlatformIntegration {
         for (Listener listener : listeners) {
             plugin.getServer().getPluginManager().registerEvents(listener, plugin);
         }
-        plugin.getServer().scheduler().runTask(plugin, placedBlockRestoreListener::restoreLoadedChunks);
+        plugin.getServer().getScheduler().runTask(plugin, placedBlockRestoreListener::restoreLoadedChunks);
     }
 
     @Override

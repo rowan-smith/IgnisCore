@@ -7,7 +7,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        context.eventBus().subscribe(new DetonatorListeners(context));
+        context.eventBus().subscribe(new DetonatorListeners(new DetonatorLinkStorage(context.nbt())));
     }
 
 }

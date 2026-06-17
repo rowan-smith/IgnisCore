@@ -13,6 +13,8 @@ import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.spigot.adapter.BukkitBridge;
 import dev.rono.igniscore.strategies.DefaultExplosionStrategy;
 import dev.rono.igniscore.support.PdcBackedNbtService;
+import dev.rono.igniscore.support.TestBlockClickListeners;
+import dev.rono.igniscore.support.TestDefinitions;
 import dev.rono.igniscore.testsupport.BehaviorTestSupport;
 import dev.rono.igniscore.testsupport.CommonTestSupport;
 import org.bukkit.Material;
@@ -53,8 +55,9 @@ public final class BreakLoopTestSupport {
         BehaviorTestSupport.TestContext behaviorContext = BehaviorTestSupport.createContext();
         ExtensionSupportService extensionSupport = new ExtensionSupportService(
                 CommonTestSupport.platformAdapter(behaviorContext.world(), tempDir));
+        IgnisEventBusImpl eventBus = new IgnisEventBusImpl();
         IgnisStrategyRegistryImpl strategyRegistry = new IgnisStrategyRegistryImpl(
-                new DefaultExplosionStrategy(behaviorContext.context().extensions(), new IgnisEventBusImpl()));
+                new DefaultExplosionStrategy(behaviorContext.context().extensions(), eventBus));
         strategyRegistry.register(
                 IgnisStrategyDescriptor.of("storage", "Storage", "1.0.0", "test"),
                 storageStrategy());
@@ -62,7 +65,7 @@ public final class BreakLoopTestSupport {
         PlacedBlockPersistenceService persistence = new PlacedBlockPersistenceService(
                 CommonTestSupport.runtimeHost(tempDir));
         CommonTestSupport.RecordingBlockVisualRenderer visualRenderer = new CommonTestSupport.RecordingBlockVisualRenderer();
-        StrategyEventPublisher events = new StrategyEventPublisher(new IgnisEventBusImpl());
+        StrategyEventPublisher events = new StrategyEventPublisher(eventBus);
         BlockManager blockManager = new BlockManager(
                 new RuntimeBlockService(),
                 behaviorContext.effects(),
@@ -82,7 +85,11 @@ public final class BreakLoopTestSupport {
                 })
                 .toList();
         blockManager.loadFromExtensions(loaded);
-        registerMissingBlockStrategies(strategyRegistry, behaviorContext, definitions);
+        registerMissingBlockStrategies(strategyRegistry, behaviorContext, eventBus, definitions);
+        for (BlockDefinition definition : definitions) {
+            TestBlockClickListeners.register(eventBus, definition);
+        }
+        TestBlockClickListeners.register(eventBus, TestDefinitions.breakableStorage());
 
         PdcBackedNbtService nbtService = new PdcBackedNbtService();
         BlockItemFactory blockItemFactory = new BlockItemFactory(blockManager, nbtService, platformHooks);
@@ -131,15 +138,16 @@ public final class BreakLoopTestSupport {
     }
 
     public static void performTicks(ServerMock server, long ticks) {
-        BukkitSchedulerMock scheduler = (BukkitSchedulerMock) server.scheduler();
+        BukkitSchedulerMock scheduler = (BukkitSchedulerMock) server.getScheduler();
         scheduler.performTicks(ticks);
     }
 
     private static void registerMissingBlockStrategies(IgnisStrategyRegistryImpl strategyRegistry,
                                                      BehaviorTestSupport.TestContext behaviorContext,
+                                                     IgnisEventBusImpl eventBus,
                                                      BlockDefinition... definitions) {
         DefaultExplosionStrategy fallback = new DefaultExplosionStrategy(
-                behaviorContext.context().extensions(), new IgnisEventBusImpl());
+                behaviorContext.context().extensions(), eventBus);
         for (BlockDefinition definition : definitions) {
             String extensionId = definition.getExtensionId();
             if (!strategyRegistry.isRegistered(extensionId)) {

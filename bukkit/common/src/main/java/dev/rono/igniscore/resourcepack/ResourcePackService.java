@@ -93,12 +93,12 @@ public class ResourcePackService {
         }
 
         var plugin = pluginContext.plugin();
-        plugin.getServer().scheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 ResourcePackBuilder.PackResult result = packBuilder.buildPack(blocks, items);
-                plugin.getServer().scheduler().runTask(plugin, () -> finishAsyncBuild(fingerprint, result, onSuccess, onFailure));
+                plugin.getServer().getScheduler().runTask(plugin, () -> finishAsyncBuild(fingerprint, result, onSuccess, onFailure));
             } catch (IOException error) {
-                plugin.getServer().scheduler().runTask(plugin, () -> finishAsyncBuildFailure(onFailure, error));
+                plugin.getServer().getScheduler().runTask(plugin, () -> finishAsyncBuildFailure(onFailure, error));
             }
         });
     }

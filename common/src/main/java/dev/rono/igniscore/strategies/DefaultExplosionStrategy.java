@@ -3,6 +3,7 @@ package dev.rono.igniscore.strategies;
 import com.google.inject.Inject;
 import dev.rono.igniscore.api.event.BlockTriggerEvent;
 import dev.rono.igniscore.api.event.IgnisEventBus;
+import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisWorld;
@@ -11,7 +12,7 @@ import dev.rono.igniscore.api.strategy.ExtensionSupport;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.StrategySupport;
 
-public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
+public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy implements OnBlockTriggerListener {
     private static final double DEFAULT_POWER = 4.0;
 
     private final ExtensionSupport extensionSupport;
@@ -22,10 +23,18 @@ public class DefaultExplosionStrategy extends AbstractIgnisBlockStrategy {
         super(IgnisStrategyDescriptor.of("default", "Default Explosion", "1.0.0", "IgnisCore"));
         this.extensionSupport = extensionSupport;
         this.eventBus = eventBus;
-        eventBus.subscribe(descriptor().getId(), this::handleBlockTrigger);
+        eventBus.subscribe(descriptor().getId(), this);
     }
 
-    private void handleBlockTrigger(BlockTriggerEvent event) {
+    @Override
+    public void bindDescriptor(IgnisStrategyDescriptor descriptor) {
+        eventBus.unsubscribe(this);
+        super.bindDescriptor(descriptor);
+        eventBus.subscribe(descriptor().getId(), this);
+    }
+
+    @Override
+    public void onBlockTrigger(BlockTriggerEvent event) {
         BlockDefinition def = event.definition();
         IgnisLocation loc = event.block().location();
         float power = resolvePower(def);

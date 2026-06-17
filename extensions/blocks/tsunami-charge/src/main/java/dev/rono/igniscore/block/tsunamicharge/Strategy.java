@@ -1,33 +1,16 @@
 package dev.rono.igniscore.block.tsunamicharge;
 
-import dev.rono.igniscore.api.model.BlockDefinition;
-import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategyProfile;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
-    private final TsunamiChargeBehavior behavior;
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        this.behavior = new TsunamiChargeBehavior(context);
+        TsunamiChargeRuntime runtime = new TsunamiChargeRuntime(context);
+        context.eventBus().subscribe(new TsunamiChargeOnBlockClickListener());
+        context.eventBus().subscribe(new TsunamiChargeOnBlockTickListener(runtime));
+        context.eventBus().subscribe(new TsunamiChargeOnBlockTriggerListener(runtime));
     }
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
-                .defaultFuse(60)
-                .build();
-    }
-
-    @Override
-    public void onTick(RuntimeBlockInstance instance) {
-        behavior.onTick(instance);
-    }
-
-    @Override
-    public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
-        behavior.onTrigger(instance, triggerContext);
-    }
 }

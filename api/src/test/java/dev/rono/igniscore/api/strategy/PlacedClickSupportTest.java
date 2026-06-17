@@ -107,6 +107,7 @@ class PlacedClickSupportTest {
                 Map.of(),
                 behavior,
                 Map.of(),
+                Map.of(),
                 10001,
                 false,
                 false,

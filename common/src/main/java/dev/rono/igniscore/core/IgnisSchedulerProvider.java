@@ -15,6 +15,6 @@ public final class IgnisSchedulerProvider implements Provider<IgnisScheduler> {
 
     @Override
     public IgnisScheduler get() {
-        return platformAdapter.scheduler();
+        return platformAdapter.getScheduler();
     }
 }

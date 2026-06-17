@@ -75,14 +75,14 @@ class PlacedBlockRestoreListenerTest extends MockBukkitTestBase {
     }
 
     private void performTicks(long ticks) {
-        ((BukkitSchedulerMock) server.scheduler()).performTicks(ticks);
+        ((BukkitSchedulerMock) server.getScheduler()).performTicks(ticks);
     }
 
     private static final class RecordingBlockManager extends BlockManager {
         int restoreCount;
 
         RecordingBlockManager() {
-            super(null, null, null, null, null, null, null, PerformanceSettings.defaults());
+            super(null, null, null, null, null, null, PerformanceSettings.defaults());
         }
 
         @Override

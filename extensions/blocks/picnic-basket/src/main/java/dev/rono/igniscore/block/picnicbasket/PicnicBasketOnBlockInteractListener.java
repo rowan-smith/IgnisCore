@@ -21,7 +21,7 @@ final class PicnicBasketOnBlockInteractListener implements OnBlockInteractListen
         if (event.action() != CustomBlockAction.OPEN) {
             return;
         }
-        String key = blockKey(event.block().location());
+        String key = PicnicBasketSupport.blockKey(event.block().location());
         long now = System.currentTimeMillis();
         Long previous = PicnicBasketSupport.LAST_OPEN.put(key, now);
         runtime.registry.openBlock(event.player(), event.block().location());

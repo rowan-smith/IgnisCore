@@ -15,12 +15,12 @@ final class LostAndFoundBinSupport {
 
     static void tick(LostAndFoundBinRuntime runtime, BlockDefinition definition, IgnisLocation location) {
 
-        sweepCounter++;
+        runtime.sweepCounter++;
         int interval = StrategySupport.customInt(definition, "sweepIntervalTicks", 72000);
-        if (sweepCounter < interval / StrategySupport.customInt(definition, "tickPeriod", 100)) {
+        if (runtime.sweepCounter < interval / StrategySupport.customInt(definition, "tickPeriod", 100)) {
             return;
         }
-        sweepCounter = 0;
+        runtime.sweepCounter = 0;
         var gui = runtime.registry.blockGui(location);
         if (gui == null) {
             return;

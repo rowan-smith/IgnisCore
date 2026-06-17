@@ -3,6 +3,7 @@ package dev.rono.igniscore.block.picnicbasket;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.util.Locations;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import net.kyori.adventure.text.Component;
@@ -24,6 +25,11 @@ final class PicnicBasketSupport {
 
         return runtime.context.extensions().resolveWorld(location);
     
+    }
+
+    static String blockKey(IgnisLocation location) {
+        IgnisLocation block = Locations.toBlock(location);
+        return block.worldName() + ":" + (int) block.x() + ":" + (int) block.y() + ":" + (int) block.z();
     }
 }
 

@@ -79,7 +79,7 @@ public class CustomBlockBreakService {
         }
 
         MiningSession session = new MiningSession(location, typeId, player.getEntityId(), totalTicks);
-        session.task = Bukkit.scheduler().runTaskTimer(plugin, () -> tickMiningSession(player, block, definition, session),
+        session.task = Bukkit.getScheduler().runTaskTimer(plugin, () -> tickMiningSession(player, block, definition, session),
                 0L, 1L);
 
         miningSessions.put(player.getUniqueId(), session);

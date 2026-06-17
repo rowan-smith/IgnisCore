@@ -52,7 +52,7 @@ public class IgnisStrategyContextProvider implements Provider<IgnisStrategyConte
     @Override
     public IgnisStrategyContext get() {
         return new IgnisStrategyContext(
-                platformAdapter.scheduler(),
+                platformAdapter.getScheduler(),
                 nbtService,
                 protocolService,
                 effectService,

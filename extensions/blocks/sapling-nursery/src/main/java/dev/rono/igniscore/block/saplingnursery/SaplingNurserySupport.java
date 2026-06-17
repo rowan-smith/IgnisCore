@@ -20,7 +20,7 @@ final class SaplingNurserySupport {
         }
         IgnisWorld world = worldAt(runtime, location);
         IgnisLocation block = Locations.toBlock(location);
-        for (int i = 0; i < SAPLINGS.length; i++) {
+        for (int i = 0; i < gui.inventory().getSize(); i++) {
             IgnisItem sapling = gui.inventory().getItem(i);
             if (!ProcessingGuiSupport.matches(sapling, "sapling", "propagule", "azalea")) {
                 continue;

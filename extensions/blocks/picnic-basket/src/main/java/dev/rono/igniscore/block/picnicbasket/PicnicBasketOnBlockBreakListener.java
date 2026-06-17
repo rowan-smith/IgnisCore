@@ -13,7 +13,7 @@ final class PicnicBasketOnBlockBreakListener implements OnBlockBreakListener {
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
         runtime.registry.unregister(event.block().location());
-        PicnicBasketSupport.LAST_OPEN.remove(blockKey(event.block().location()));
+        PicnicBasketSupport.LAST_OPEN.remove(PicnicBasketSupport.blockKey(event.block().location()));
     }
 }
 

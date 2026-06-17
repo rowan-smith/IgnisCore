@@ -245,7 +245,7 @@ class ExtensionBootstrapTest {
         boolean refreshedVisuals;
 
         RecordingBlockManager() {
-            super(null, null, null, null, null, null, null, PerformanceSettings.defaults());
+            super(null, null, null, null, null, null, PerformanceSettings.defaults());
         }
 
         @Override

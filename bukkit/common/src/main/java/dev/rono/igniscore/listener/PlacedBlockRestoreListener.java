@@ -82,7 +82,7 @@ public class PlacedBlockRestoreListener implements Listener {
         if (pendingRestores.isEmpty() || !batchScheduled.compareAndSet(false, true)) {
             return;
         }
-        plugin.getServer().scheduler().runTask(plugin, this::processBatchAndContinue);
+        plugin.getServer().getScheduler().runTask(plugin, this::processBatchAndContinue);
     }
 
     private void processBatchAndContinue() {
@@ -91,7 +91,7 @@ public class PlacedBlockRestoreListener implements Listener {
             batchScheduled.set(false);
             return;
         }
-        plugin.getServer().scheduler().runTaskLater(plugin, this::processBatchAndContinue, 1L);
+        plugin.getServer().getScheduler().runTaskLater(plugin, this::processBatchAndContinue, 1L);
     }
 
     private void processBatch() {
