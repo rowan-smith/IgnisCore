@@ -10,6 +10,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
         super(context);
         context.eventBus().subscribe(new AutoSieveOnBlockPlaceListener(context));
         context.eventBus().subscribe(new AutoSieveOnBlockBreakListener());
+        context.eventBus().subscribe(new AutoSieveOnBlockClickListener());
     }
 
     @Override
