@@ -1,0 +1,6 @@
+id: coffee-brewer
+name: Coffee Brewer
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.coffeebrewer.Strategy

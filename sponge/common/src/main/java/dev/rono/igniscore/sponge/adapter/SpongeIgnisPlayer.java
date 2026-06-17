@@ -3,6 +3,7 @@ package dev.rono.igniscore.sponge.adapter;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -49,9 +50,18 @@ public final class SpongeIgnisPlayer implements IgnisPlayer {
     }
 
     @Override
+    public void sendActionBar(String miniMessage) {
+        handle.sendActionBar(Component.text(stripTags(miniMessage)));
+    }
+
+    @Override
     public void openInventory(Object nativeInventory) {
         if (nativeInventory instanceof Inventory inventory) {
             handle.openInventory(inventory);
         }
+    }
+
+    private static String stripTags(String miniMessage) {
+        return miniMessage == null ? "" : miniMessage.replaceAll("<[^>]+>", "");
     }
 }

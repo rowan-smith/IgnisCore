@@ -1,0 +1,6 @@
+id: crop-mri
+name: Crop MRI
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.cropmri.Strategy

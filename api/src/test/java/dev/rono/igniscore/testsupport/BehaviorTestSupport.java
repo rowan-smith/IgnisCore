@@ -133,6 +133,10 @@ public final class BehaviorTestSupport {
         public void removeEntity(Object platformEntity) {
         }
 
+        @Override
+        public void setChunkForceLoaded(IgnisLocation location, boolean forceLoaded) {
+        }
+
         public List<String> sounds() {
             return List.copyOf(sounds);
         }

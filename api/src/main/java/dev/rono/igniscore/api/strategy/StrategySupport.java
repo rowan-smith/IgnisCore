@@ -24,6 +24,10 @@ public final class StrategySupport {
         return customInt(definition.getCustomData(), key, defaultValue);
     }
 
+    public static String customString(BlockDefinition definition, String key, String defaultValue) {
+        return customString(definition.getCustomData(), key, defaultValue);
+    }
+
     public static double customDouble(Map<String, Object> customData, String key, double defaultValue) {
         return ExtensionConfig.of(customData).getDouble(key, defaultValue);
     }
@@ -34,5 +38,9 @@ public final class StrategySupport {
 
     public static boolean customBoolean(Map<String, Object> customData, String key, boolean defaultValue) {
         return ExtensionConfig.of(customData).getBoolean(key, defaultValue);
+    }
+
+    public static String customString(Map<String, Object> customData, String key, String defaultValue) {
+        return ExtensionConfig.of(customData).getString(key, defaultValue);
     }
 }

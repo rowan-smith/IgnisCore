@@ -82,6 +82,11 @@ public class ExtensionSupportService implements ExtensionSupport {
         return platformAdapter.getDataDirectory();
     }
 
+    @Override
+    public void spectateEntity(IgnisPlayer player, Object platformEntity, int durationTicks) {
+        platformAdapter.spectateEntity(player, platformEntity, durationTicks);
+    }
+
     public IgnisCustomInventory getCustomInventory(Object nativeInventory) {
         return customInventories.get(nativeInventory);
     }

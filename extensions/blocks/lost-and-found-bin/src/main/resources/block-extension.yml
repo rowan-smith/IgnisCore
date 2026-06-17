@@ -1,0 +1,6 @@
+id: lost-and-found-bin
+name: Lost & Found Bin
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.lostandfoundbin.Strategy

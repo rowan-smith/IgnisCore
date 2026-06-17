@@ -1,0 +1,6 @@
+id: compost-heap
+name: Compost Heap
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.compostheap.Strategy

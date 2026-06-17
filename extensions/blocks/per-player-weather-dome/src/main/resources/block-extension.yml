@@ -1,0 +1,8 @@
+id: per-player-weather-dome
+name: Per-Player Weather Dome
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.perplayerweatherdome.Strategy
+requires-integrations:
+  - protocol

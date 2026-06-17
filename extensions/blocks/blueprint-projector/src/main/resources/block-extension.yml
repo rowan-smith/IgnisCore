@@ -1,0 +1,8 @@
+id: blueprint-projector
+name: Blueprint Projector
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.blueprintprojector.Strategy
+requires-integrations:
+  - protocol

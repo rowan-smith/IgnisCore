@@ -1,0 +1,6 @@
+id: bridge-builder
+name: Bridge Builder
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.bridgebuilder.Strategy

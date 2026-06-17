@@ -1,0 +1,6 @@
+id: light-beacon
+name: Light Beacon
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.lightbeacon.Strategy

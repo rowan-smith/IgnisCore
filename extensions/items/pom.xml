@@ -20,6 +20,23 @@
   <modules>
     <module>grenade</module>
     <module>detonator</module>
+    <module>block-stethoscope</module>
+    <module>lock</module>
+    <module>keyring-beacon</module>
+    <module>trait-badge</module>
+    <module>player-chronicle-book</module>
+    <module>ore-xray-goggles</module>
+    <module>structure-compass</module>
+    <module>chunk-grid-overlay</module>
+    <module>atlas-imprinter</module>
+    <module>cookie-cutter-stamp</module>
+    <module>rivet-gun</module>
+    <module>paint-stripper</module>
+    <module>stencil-plate</module>
+    <module>sandblaster</module>
+    <module>mulch-spreader</module>
+    <module>gravity-marble</module>
+    <module>quantum-coin</module>
   </modules>
 
   <dependencyManagement>

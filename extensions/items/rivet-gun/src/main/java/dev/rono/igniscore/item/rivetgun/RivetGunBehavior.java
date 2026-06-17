@@ -1,0 +1,38 @@
+package dev.rono.igniscore.item.rivetgun;
+
+import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.port.IgnisBlock;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.TheatricsSupport;
+
+final class RivetGunBehavior {
+    private final IgnisStrategyContext context;
+
+    RivetGunBehavior(IgnisStrategyContext context) {
+        this.context = context;
+    }
+
+    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
+        if (clickedBlock == null) {
+            return;
+        }
+        IgnisLocation loc = clickedBlock.getLocation();
+        IgnisWorld world = player.getWorld();
+        String material = world.getBlockMaterialKey(loc).toLowerCase();
+        if (material.contains("reinforced") || material.contains("obsidian")) {
+            player.sendMessage("<gray>Block is already reinforced.</gray>");
+            return;
+        }
+        String reinforced = StrategySupport.customString(definition.getCustomData(), "reinforcedMaterial", "obsidian");
+        world.setBlockMaterialKey(loc, reinforced);
+        TheatricsSupport.sparkle(world, loc.add(0.5, 0.5, 0.5), "CRIT", 8);
+        world.playSound(loc, "BLOCK_ANVIL_USE", 0.8f, 1.2f);
+        player.sendMessage("<gray>Riveted block into reinforced variant.</gray>");
+        item.setAmount(item.getAmount() - 1);
+    }
+}

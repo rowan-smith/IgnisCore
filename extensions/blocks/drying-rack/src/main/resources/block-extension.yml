@@ -1,0 +1,6 @@
+id: drying-rack
+name: Drying Rack
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.dryingrack.Strategy

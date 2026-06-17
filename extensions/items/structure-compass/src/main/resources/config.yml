@@ -1,0 +1,19 @@
+id: structure-compass
+
+display:
+  title: "&bStructure Compass"
+  description:
+    - "&7Utility item"
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  radius: 8.0

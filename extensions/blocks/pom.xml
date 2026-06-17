@@ -27,6 +27,77 @@
     <module>spider-storm-tnt</module>
     <module>signal-charge</module>
     <module>quarry-cache</module>
+    <module>splitter-charge</module>
+    <module>ricochet-tnt</module>
+    <module>cascade-mine</module>
+    <module>powder-trail</module>
+    <module>ore-sniffer</module>
+    <module>xp-vacuum</module>
+    <module>light-beacon</module>
+    <module>crop-accelerator</module>
+    <module>mob-grinder-hub</module>
+    <module>bridge-builder</module>
+    <module>scaffold-charge</module>
+    <module>repair-station-block</module>
+    <module>waypoint-marker</module>
+    <module>pause-tnt</module>
+    <module>accelerating-fuse-tnt</module>
+    <module>stasis-field</module>
+    <module>echo-fuse-tnt</module>
+    <module>last-stand-charge</module>
+    <module>blink-tnt</module>
+    <module>swap-charge</module>
+    <module>phase-tnt</module>
+    <module>rift-generator</module>
+    <module>pocket-dimension-cache</module>
+    <module>mirror-world-tnt</module>
+    <module>pollinator-block</module>
+    <module>scarecrow-anchor</module>
+    <module>compost-heap</module>
+    <module>hydroponic-tray</module>
+    <module>shepherd-bell</module>
+    <module>milking-station</module>
+    <module>crop-mri</module>
+    <module>chicken-coop-cache</module>
+    <module>blueprint-projector</module>
+    <module>glow-ink-lantern</module>
+    <module>auto-sieve</module>
+    <module>drying-rack</module>
+    <module>infuser</module>
+    <module>recycler</module>
+    <module>paint-mixer</module>
+    <module>brewing-accelerator</module>
+    <module>smoker-stack</module>
+    <module>ore-echo</module>
+    <module>mob-radar</module>
+    <module>chunk-loader-lite</module>
+    <module>entity-camera</module>
+    <module>player-proximity-alarm</module>
+    <module>motion-floodlight</module>
+    <module>moss-creeper</module>
+    <module>deoxidizer</module>
+    <module>honey-centrifuge</module>
+    <module>kelp-compressor</module>
+    <module>fish-smoker-rack</module>
+    <module>per-player-weather-dome</module>
+    <module>item-pedestal-hologram</module>
+    <module>secure-trade-table</module>
+    <module>checkpoint-obelisk</module>
+    <module>piglin-barter-post</module>
+    <module>prep-counter</module>
+    <module>spice-rack</module>
+    <module>pizza-oven</module>
+    <module>ice-cream-freezer</module>
+    <module>coffee-brewer</module>
+    <module>compost-tea-brewer</module>
+    <module>greenhouse-glass</module>
+    <module>irrigation-sprinkler</module>
+    <module>sapling-nursery</module>
+    <module>display-case</module>
+    <module>ouija-slab</module>
+    <module>fortune-cookie-maker</module>
+    <module>mood-lantern</module>
+    <module>lost-and-found-bin</module>
   </modules>
 
   <dependencyManagement>

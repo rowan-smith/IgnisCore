@@ -1,0 +1,82 @@
+package dev.rono.igniscore.block.chunkloaderlite;
+
+import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.gui.BlockStorageRegistry;
+import dev.rono.extensions.shared.strategy.PlacedTickSupport;
+import dev.rono.extensions.shared.strategy.TheatricsSupport;
+import dev.rono.igniscore.api.util.Locations;
+import net.kyori.adventure.text.Component;
+
+final class ChunkLoaderLiteBehavior {
+    private final IgnisStrategyContext context;
+    private final BlockStorageRegistry registry;
+
+    ChunkLoaderLiteBehavior(IgnisStrategyContext context) {
+        this.context = context;
+        this.registry = new BlockStorageRegistry(context, "chunk-loader-lite");
+    }
+
+    void onPlaced(BlockDefinition definition, IgnisLocation location) {
+        IgnisWorld world = worldAt(location);
+        world.setChunkForceLoaded(location, true);
+        registry.registerBlock(location, title(definition), 1);
+        long period = StrategySupport.customInt(definition, "tickPeriod", 40);
+        PlacedTickSupport.start(context, location, period, () -> tick(definition, location));
+        TheatricsSupport.chime(world, Locations.toCenter(location), 1.0f);
+    }
+
+    void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
+        PlacedTickSupport.stop(location);
+        IgnisWorld world = worldAt(location);
+        world.setChunkForceLoaded(location, false);
+        registry.unregister(location);
+    }
+
+    void onPlacedInteract(BlockDefinition definition, IgnisLocation location, IgnisPlayer player,
+                          dev.rono.igniscore.api.port.IgnisInteraction interaction, IgnisItem heldItem,
+                          CustomBlockAction action) {
+        if (action == CustomBlockAction.OPEN) {
+            registry.openBlock(player, location);
+        }
+    }
+
+    private void tick(BlockDefinition definition, IgnisLocation location) {
+        IgnisWorld world = worldAt(location);
+        IgnisLocation center = Locations.toCenter(location);
+        var gui = registry.blockGui(location);
+        boolean fueled = false;
+        if (gui != null) {
+            IgnisItem fuel = gui.inventory().getItem(0);
+            fueled = fuel != null && !fuel.isAir() && isFuel(fuel.getMaterialKey());
+            if (fueled && StrategySupport.customBoolean(definition, "consumeFuel", true)) {
+                fuel.setAmount(fuel.getAmount() - 1);
+                gui.inventory().setItem(0, fuel.getAmount() > 0 ? fuel : null);
+            }
+        }
+        world.setChunkForceLoaded(location, fueled);
+        if (fueled) {
+            TheatricsSupport.pulseRing(world, center, 2.5, "PORTAL");
+            world.playSound(center, "BLOCK_BEACON_AMBIENT", 0.2f, 1.5f);
+        }
+    }
+
+    private boolean isFuel(String material) {
+        String key = material.toLowerCase();
+        return key.contains("coal") || key.contains("charcoal") || key.contains("blaze_rod");
+    }
+
+    private Component title(BlockDefinition definition) {
+        return definition.getTitle() == null ? Component.text("Chunk Loader Fuel") : definition.getTitle();
+    }
+
+    private IgnisWorld worldAt(IgnisLocation location) {
+        return context.getExtensionSupport().resolveWorld(location);
+    }
+}

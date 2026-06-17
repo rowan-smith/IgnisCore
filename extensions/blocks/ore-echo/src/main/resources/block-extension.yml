@@ -1,0 +1,6 @@
+id: ore-echo
+name: Ore Echo
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.oreecho.Strategy

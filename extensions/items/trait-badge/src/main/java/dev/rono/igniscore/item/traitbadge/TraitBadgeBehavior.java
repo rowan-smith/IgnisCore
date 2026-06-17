@@ -1,0 +1,44 @@
+package dev.rono.igniscore.item.traitbadge;
+
+import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.port.IgnisBlock;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.service.IgnisNbtService;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.BlockScanSupport;
+import dev.rono.extensions.shared.strategy.TheatricsSupport;
+import dev.rono.igniscore.api.util.Locations;
+
+final class TraitBadgeBehavior {
+    private final IgnisStrategyContext context;
+    private final IgnisNbtService nbtService;
+
+    TraitBadgeBehavior(IgnisStrategyContext context) {
+        this.context = context;
+        this.nbtService = context.getNbtService();
+    }
+
+    void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
+        IgnisWorld world = player.getWorld();
+        IgnisLocation loc = player.getEyeLocation();
+        int roll = nbtService.getItemInt(item, "ignis:trait_roll", 0) + 1;
+        nbtService.setItemInt(item, "ignis:trait_roll", roll);
+        String trait = StrategySupport.customBoolean(definition.getCustomData(), "randomTrait", true)
+                ? pickTrait(roll)
+                : "Artisan";
+        nbtService.setItemString(item, "ignis:trait", trait);
+        player.sendMessage("<light_purple>Badge trait: <white>" + trait + "</white></light_purple>");
+        TheatricsSupport.sparkle(world, loc, "TOTEM_OF_UNDYING", 10);
+        world.playSound(loc, "ENTITY_PLAYER_LEVELUP", 0.6f, 1.4f);
+    }
+
+    private String pickTrait(int roll) {
+        String[] traits = {"Artisan", "Scout", "Alchemist", "Engineer", "Duelist"};
+        return traits[Math.floorMod(roll, traits.length)];
+    }
+
+}

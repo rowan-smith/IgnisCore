@@ -159,4 +159,8 @@ public final class SpongeIgnisWorld implements IgnisWorld {
             entity.remove();
         }
     }
+
+    @Override
+    public void setChunkForceLoaded(IgnisLocation location, boolean forceLoaded) {
+    }
 }

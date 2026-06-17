@@ -19,5 +19,15 @@ public interface IgnisPlayer {
 
     void sendMessage(String miniMessage);
 
+    default void sendActionBar(String miniMessage) {
+        sendMessage(miniMessage);
+    }
+
+    /**
+     * Applies a potion-like effect using platform-native effect types (e.g. SLOWNESS, GLOWING).
+     */
+    default void applyPotionEffect(String effectKey, int durationTicks, int amplifier) {
+    }
+
     void openInventory(Object nativeInventory);
 }
