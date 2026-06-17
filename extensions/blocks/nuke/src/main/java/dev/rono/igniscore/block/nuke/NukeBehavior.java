@@ -1,12 +1,12 @@
 package dev.rono.igniscore.block.nuke;
 
-import dev.rono.igniscore.api.config.ExplosionConfig;
+import dev.rono.extensions.shared.config.ExplosionConfig;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.RuntimeBlockInstance;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
-import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.ExplosionSupport;
 import dev.rono.igniscore.api.util.Locations;
 
 final class NukeBehavior {
@@ -45,7 +45,7 @@ final class NukeBehavior {
         spawnDetonationParticles(world, loc, finalPower);
         world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 8.0f, 0.45f);
         world.playSound(loc, "ENTITY_LIGHTNING_BOLT_THUNDER", 8.0f, 0.55f);
-        StrategySupport.createExplosion(world, loc, def, explosion.power(), explosion.fire());
+        ExplosionSupport.createExplosion(world, loc, def, explosion.power(), explosion.fire());
 
         if (explosion.screenShake()) {
             for (var player : world.getPlayersNear(loc, finalPower * 2)) {
@@ -56,7 +56,7 @@ final class NukeBehavior {
 
     private void playCountdown(RuntimeBlockInstance instance) {
         int ticksLeft = instance.getTicksLeft();
-        int elapsed = StrategySupport.elapsedFuseTicks(instance, 160);
+        int elapsed = ExplosionSupport.elapsedFuseTicks(instance, 160);
         int interval = ticksLeft > 80 ? 20 : ticksLeft > 40 ? 10 : ticksLeft > 15 ? 5 : 2;
         if (elapsed % interval != 0) {
             return;

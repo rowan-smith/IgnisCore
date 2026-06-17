@@ -44,36 +44,6 @@ public final class DefinitionParser {
         Map<String, Object> customData = new HashMap<>(YamlDefinitions.flattenSection(YamlDefinitions.section(config, "custom_data")));
         Map<String, Object> interactionSettings = YamlDefinitions.flattenSection(YamlDefinitions.section(config, "interactions"));
 
-        if (config.containsKey("fuse")) {
-            customData.putIfAbsent("fuse", YamlDefinitions.integer(config, "fuse", 80));
-        }
-        if (config.containsKey("radius")) {
-            customData.putIfAbsent("radius", YamlDefinitions.decimal(config, "radius", 4.0));
-        }
-
-        Map<String, Object> explosion = YamlDefinitions.section(config, "explosion");
-        if (!explosion.isEmpty()) {
-            customData.putIfAbsent("fuse", YamlDefinitions.integer(explosion, "fuse", 80));
-            customData.putIfAbsent("radius", YamlDefinitions.decimal(explosion, "radius", 4.0));
-            customData.put("power", YamlDefinitions.decimal(explosion, "power", 4.0));
-            customData.put("multiplier", YamlDefinitions.decimal(explosion, "multiplier", 1.0));
-
-            Map<String, Object> effects = YamlDefinitions.section(explosion, "effects");
-            customData.put("fire", YamlDefinitions.bool(effects, "fire", false));
-            customData.put("blockDamage", YamlDefinitions.bool(effects, "destroy_blocks", true));
-            customData.put("screenShake", YamlDefinitions.bool(effects, "screen_shake", false));
-
-            Map<String, Object> payloadSection = YamlDefinitions.section(explosion, "entity_payload");
-            if (!payloadSection.isEmpty()) {
-                Map<String, Object> payload = new HashMap<>();
-                payload.put("type", YamlDefinitions.string(payloadSection, "type", null));
-                payload.put("count", YamlDefinitions.integer(payloadSection, "count", 0));
-                payload.put("behavior", YamlDefinitions.string(payloadSection, "behavior", "normal"));
-                payload.put("targetPlayers", YamlDefinitions.bool(payloadSection, "target_players", false));
-                customData.put("entityPayload", payload);
-            }
-        }
-
         Map<String, Object> displaySection = YamlDefinitions.section(config, "block_display");
         Map<String, Object> animations = YamlDefinitions.section(displaySection, "animations");
         boolean pulse = YamlDefinitions.bool(animations, "pulse", true);

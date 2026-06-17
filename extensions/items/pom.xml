@@ -25,6 +25,11 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>dev.rono.extensions</groupId>
+        <artifactId>shared</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>dev.rono</groupId>
         <artifactId>api</artifactId>
         <version>${project.version}</version>
@@ -40,6 +45,11 @@
   </dependencyManagement>
 
   <dependencies>
+    <dependency>
+      <groupId>dev.rono.extensions</groupId>
+      <artifactId>shared</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>

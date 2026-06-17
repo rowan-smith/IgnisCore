@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.ExplosionSupport;
 import dev.rono.igniscore.api.util.Locations;
 
 final class EruptingBehavior {
@@ -18,7 +19,7 @@ final class EruptingBehavior {
     void onTick(RuntimeBlockInstance instance, BlockDefinition def) {
         int interval = StrategySupport.customInt(def, "eruptionInterval", 5);
 
-        if (instance.getTicksLeft() % interval == 0 && instance.getTicksLeft() < StrategySupport.fuse(def, 100) - 10) {
+        if (instance.getTicksLeft() % interval == 0 && instance.getTicksLeft() < ExplosionSupport.fuse(def, 100) - 10) {
             IgnisLocation loc = Locations.toCenter(instance.getLocation());
             IgnisWorld world = worldAt(loc);
             Object tnt = world.spawnEntity("TNT", loc);
@@ -40,7 +41,7 @@ final class EruptingBehavior {
 
     void onTrigger(RuntimeBlockInstance instance) {
         IgnisLocation loc = Locations.toCenter(instance.getLocation());
-        StrategySupport.createExplosion(worldAt(loc), loc, instance.getDefinition(), 4.0, false);
+        ExplosionSupport.createExplosion(worldAt(loc), loc, instance.getDefinition(), 4.0, false);
     }
 
     private IgnisWorld worldAt(IgnisLocation location) {

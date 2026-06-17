@@ -135,6 +135,8 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
         }
 
         RuntimeBlockInstance instance = runtimeBlockService.createInstance(type, location);
+        StrategyProfile profile = profileResolver.resolve(type);
+        instance.setTicksLeft(profile.getDefaultFuse());
         visualRenderer.spawnAnimatedDisplay(instance);
         IgnisBlockStrategy strategy = requireBlockStrategy(type);
         strategy.onPlace(instance);

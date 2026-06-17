@@ -13,16 +13,32 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PlacedClickSupportTest {
 
     @Test
-    void leftClickDefaultsToBreak() {
+    void neutralDefaultsDoNotAssignClickActions() {
         StrategyProfile profile = StrategyProfile.defaults();
+
+        assertEquals(CustomBlockAction.NONE,
+                PlacedClickSupport.resolve(profile, IgnisInteraction.LEFT_CLICK_BLOCK, "AIR"));
+        assertEquals(CustomBlockAction.NONE,
+                PlacedClickSupport.resolve(profile, IgnisInteraction.RIGHT_CLICK_BLOCK, "FLINT_AND_STEEL"));
+    }
+
+    @Test
+    void leftClickUsesProfileAction() {
+        StrategyProfile profile = StrategyProfile.builder()
+                .leftClickAction(CustomBlockAction.BREAK)
+                .build();
 
         assertEquals(CustomBlockAction.BREAK,
                 PlacedClickSupport.resolve(profile, IgnisInteraction.LEFT_CLICK_BLOCK, "AIR"));
     }
 
     @Test
-    void rightClickWithDefaultIgnitionItemIgnitesCombustibleBlocks() {
-        StrategyProfile profile = StrategyProfile.defaults();
+    void rightClickWithIgnitionItemIgnitesCombustibleBlocks() {
+        StrategyProfile profile = StrategyProfile.builder()
+                .combustible(true)
+                .rightClickAction(CustomBlockAction.NONE)
+                .ignitionMaterials(List.of("FLINT_AND_STEEL", "FIRE_CHARGE", "FLINT"))
+                .build();
 
         assertEquals(CustomBlockAction.IGNITE,
                 PlacedClickSupport.resolve(profile, IgnisInteraction.RIGHT_CLICK_BLOCK, "FLINT_AND_STEEL"));
@@ -62,13 +78,13 @@ class PlacedClickSupportTest {
     }
 
     @Test
-    void detectsIgnitionMaterials() {
+    void detectsIgnitionMaterialsFromProfileOnly() {
         StrategyProfile profile = StrategyProfile.builder()
                 .ignitionMaterials(List.of("STICK"))
                 .build();
 
         assertTrue(PlacedClickSupport.isIgnitionMaterial(profile, "STICK"));
-        assertTrue(PlacedClickSupport.isIgnitionMaterial(profile, "FLINT_AND_STEEL"));
+        assertFalse(PlacedClickSupport.isIgnitionMaterial(profile, "FLINT_AND_STEEL"));
         assertFalse(PlacedClickSupport.isIgnitionMaterial(profile, "STONE"));
     }
 }

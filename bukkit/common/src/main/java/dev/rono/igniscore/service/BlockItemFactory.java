@@ -54,7 +54,7 @@ public class BlockItemFactory {
         nbtService.setItemString(ignisItem, "ignis:block_id", typeId);
         nbtService.setItemString(ignisItem, "ignis:extension_id", type.getExtensionId());
         nbtService.setItemInt(ignisItem, "ignis:version", 1);
-        nbtService.setItemInt(ignisItem, "ignis:fuse", StrategySupport.fuse(type, 80));
+        nbtService.setItemInt(ignisItem, "ignis:fuse", StrategySupport.customInt(type, "fuse", 0));
 
         return item;
     }

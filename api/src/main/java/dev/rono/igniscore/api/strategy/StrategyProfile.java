@@ -103,17 +103,17 @@ public final class StrategyProfile {
     }
 
     public static final class Builder {
-        private boolean combustible = true;
+        private boolean combustible = false;
         private boolean placeable = true;
         private boolean breakable = true;
-        private int defaultFuse = 80;
-        private double defaultRadius = 4.0;
-        private CustomBlockAction leftClickAction = CustomBlockAction.BREAK;
-        private CustomBlockAction rightClickAction = CustomBlockAction.IGNITE;
-        private List<String> ignitionMaterials = List.of("FLINT_AND_STEEL", "FIRE_CHARGE", "FLINT");
+        private int defaultFuse = 0;
+        private double defaultRadius = 0.0;
+        private CustomBlockAction leftClickAction = CustomBlockAction.NONE;
+        private CustomBlockAction rightClickAction = CustomBlockAction.NONE;
+        private List<String> ignitionMaterials = List.of();
         private String placementSound;
-        private String igniteSound = "ITEM_FLINTANDSTEEL_USE";
-        private double displayScale = 1.01;
+        private String igniteSound;
+        private double displayScale = 1.0;
 
         public Builder combustible(boolean combustible) {
             this.combustible = combustible;

@@ -6,6 +6,7 @@ import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategyProfile;
+import dev.rono.extensions.shared.strategy.StrategyProfiles;
 
 public class Strategy extends AbstractIgnisBlockStrategy {
     private final SpiderStormBehavior behavior;
@@ -17,7 +18,8 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
+        return StrategyProfiles.explosiveProfile().toBuilder()
+                .defaultFuse(80)
                 .placementSound("ENTITY_SPIDER_AMBIENT")
                 .build();
     }

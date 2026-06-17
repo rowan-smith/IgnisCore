@@ -7,6 +7,7 @@ import dev.rono.igniscore.api.port.IgnisWorld;
 import dev.rono.igniscore.api.service.IgnisNbtService;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.ExplosionSupport;
 import dev.rono.igniscore.api.util.Locations;
 
 import java.util.Comparator;
@@ -32,12 +33,12 @@ final class SpiderStormBehavior {
         BlockDefinition def = instance.getDefinition();
         IgnisLocation loc = Locations.toCenter(instance.getLocation());
         IgnisWorld world = worldAt(loc);
-        float finalPower = StrategySupport.resolvePower(def, 4.0);
+        float finalPower = ExplosionSupport.resolvePower(def, 4.0);
         boolean realExplosion = StrategySupport.customBoolean(def, "realExplosion", true);
 
         if (realExplosion) {
             world.playSound(loc, "ENTITY_GENERIC_EXPLODE", 1.0f, 1.0f);
-            StrategySupport.createExplosion(world, loc, def, 4.0, false);
+            ExplosionSupport.createExplosion(world, loc, def, 4.0, false);
         } else {
             spawnBurst(world, loc, finalPower);
         }

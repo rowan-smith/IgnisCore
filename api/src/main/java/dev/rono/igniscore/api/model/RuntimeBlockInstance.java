@@ -4,8 +4,6 @@ import dev.rono.igniscore.api.port.IgnisDataContainer;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisTask;
 import dev.rono.igniscore.api.port.MapIgnisDataContainer;
-import dev.rono.igniscore.api.strategy.StrategySupport;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -31,7 +29,7 @@ public class RuntimeBlockInstance {
         this.blockDefinitionId = definition.getId();
         this.location = location;
         this.data = new MapIgnisDataContainer();
-        this.ticksLeft = StrategySupport.fuse(definition, 80);
+        this.ticksLeft = 0;
     }
 
     public UUID getUuid() {

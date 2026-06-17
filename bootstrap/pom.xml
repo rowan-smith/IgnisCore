@@ -26,6 +26,10 @@
       <artifactId>common</artifactId>
     </dependency>
     <dependency>
+      <groupId>dev.rono.extensions</groupId>
+      <artifactId>shared</artifactId>
+    </dependency>
+    <dependency>
       <groupId>dev.rono.bukkit</groupId>
       <artifactId>common</artifactId>
     </dependency>

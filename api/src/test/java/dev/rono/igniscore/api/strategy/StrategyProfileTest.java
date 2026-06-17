@@ -11,19 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StrategyProfileTest {
     @Test
-    void defaultsMatchExplosiveBaseline() {
+    void defaultsAreNeutral() {
         StrategyProfile profile = StrategyProfile.defaults();
 
-        assertTrue(profile.isCombustible());
+        assertFalse(profile.isCombustible());
         assertTrue(profile.isPlaceable());
         assertTrue(profile.isBreakable());
-        assertEquals(80, profile.getDefaultFuse());
-        assertEquals(4.0, profile.getDefaultRadius());
-        assertEquals(CustomBlockAction.BREAK, profile.getLeftClickAction());
-        assertEquals(CustomBlockAction.IGNITE, profile.getRightClickAction());
-        assertEquals(List.of("FLINT_AND_STEEL", "FIRE_CHARGE", "FLINT"), profile.getIgnitionMaterials());
-        assertEquals("ITEM_FLINTANDSTEEL_USE", profile.getIgniteSound());
-        assertEquals(1.01, profile.getDisplayScale());
+        assertEquals(0, profile.getDefaultFuse());
+        assertEquals(0.0, profile.getDefaultRadius());
+        assertEquals(CustomBlockAction.NONE, profile.getLeftClickAction());
+        assertEquals(CustomBlockAction.NONE, profile.getRightClickAction());
+        assertTrue(profile.getIgnitionMaterials().isEmpty());
+        assertEquals(1.0, profile.getDisplayScale());
     }
 
     @Test
@@ -49,16 +48,5 @@ class StrategyProfileTest {
         assertEquals(10.0, rebuilt.getDefaultRadius());
         assertEquals(CustomBlockAction.NONE, rebuilt.getLeftClickAction());
         assertEquals(List.of("STICK"), rebuilt.getIgnitionMaterials());
-    }
-
-    @Test
-    void explosiveProfileMatchesDedicatedFactory() {
-        StrategyProfile profile = StrategyProfiles.explosiveProfile();
-
-        assertTrue(profile.isCombustible());
-        assertEquals(CustomBlockAction.BREAK, profile.getLeftClickAction());
-        assertEquals(CustomBlockAction.IGNITE, profile.getRightClickAction());
-        assertEquals("BLOCK_BEACON_ACTIVATE", profile.getPlacementSound());
-        assertEquals("ITEM_FLINTANDSTEEL_USE", profile.getIgniteSound());
     }
 }

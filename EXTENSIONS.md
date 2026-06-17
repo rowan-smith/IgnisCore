@@ -112,9 +112,12 @@ public void onPlacedInteract(BlockDefinition definition, IgnisLocation location,
 
 TNT blocks can rely on the default {@link IgnisBlockStrategy#onPlacedClick} implementation, which delegates to {@link StrategyProfile} via {@link PlacedClickSupport}.
 
-### Typed block config
+### Typed block config (`extensions/shared`)
 
 ```java
+import dev.rono.extensions.shared.config.ExtensionConfigs;
+import dev.rono.extensions.shared.config.ExplosionConfig;
+
 ExplosionConfig explosion = ExtensionConfigs.explosion(definition);
 int fuse = explosion.fuse();
 float power = explosion.resolvedPower();
@@ -137,9 +140,12 @@ public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem i
 }
 ```
 
-### Typed item config
+### Typed item config (`extensions/shared`)
 
 ```java
+import dev.rono.extensions.shared.config.ExtensionConfigs;
+import dev.rono.extensions.shared.config.ThrowableItemConfig;
+
 ThrowableItemConfig throwable = ExtensionConfigs.throwable(definition);
 double speed = throwable.throwVelocity();
 int fuseTicks = throwable.fuseTicks();
@@ -189,9 +195,14 @@ custom_data:
 
 ## Testing
 
-Extension modules depend on `api` test-jar for `ExtensionTestSupport` and `BehaviorTestSupport`:
+Extension modules depend on `api` and `extensions/shared` (provided at runtime via the bootstrap plugin):
 
 ```xml
+<dependency>
+  <groupId>dev.rono.extensions</groupId>
+  <artifactId>shared</artifactId>
+  <scope>provided</scope>
+</dependency>
 <dependency>
   <groupId>dev.rono</groupId>
   <artifactId>api</artifactId>

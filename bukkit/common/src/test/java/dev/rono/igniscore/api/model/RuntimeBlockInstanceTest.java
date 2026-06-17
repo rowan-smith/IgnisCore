@@ -26,7 +26,7 @@ class RuntimeBlockInstanceTest extends MockBukkitTestBase {
         assertSame(definition, instance.getDefinition());
         assertSame(location, instance.getLocation());
         assertEquals(world.getName(), instance.getWorldName());
-        assertEquals(80, instance.getTicksLeft());
+        assertEquals(0, instance.getTicksLeft());
         assertTrue(instance.getDisplayEntityIds().isEmpty());
 
         instance.setTicksLeft(40);

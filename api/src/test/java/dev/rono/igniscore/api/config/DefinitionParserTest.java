@@ -92,56 +92,6 @@ class DefinitionParserTest {
     }
 
     @Test
-    void mapsLegacyExplosionSectionIntoBehaviorFields() {
-        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
-                id: legacy
-                explosion:
-                  fuse: 55
-                  radius: 9.0
-                  power: 7.5
-                  multiplier: 2.0
-                  effects:
-                    fire: true
-                    destroy_blocks: false
-                    screen_shake: true
-                  entity_payload:
-                    type: PRIMED_TNT
-                    count: 3
-                    behavior: scatter
-                    target_players: true
-                """), "legacy", 10001, "legacy-block");
-
-        assertEquals(55, definition.getCustomData().get("fuse"));
-        assertEquals(9.0, definition.getCustomData().get("radius"));
-        assertEquals(7.5, definition.getCustomData().get("power"));
-        assertEquals(2.0, definition.getCustomData().get("multiplier"));
-        assertEquals(true, definition.getCustomData().get("fire"));
-        assertEquals(false, definition.getCustomData().get("blockDamage"));
-        assertEquals(true, definition.getCustomData().get("screenShake"));
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> payload = (Map<String, Object>) definition.getCustomData().get("entityPayload");
-        assertEquals("PRIMED_TNT", payload.get("type"));
-        assertEquals(3, payload.get("count"));
-        assertEquals("scatter", payload.get("behavior"));
-        assertEquals(true, payload.get("targetPlayers"));
-    }
-
-    @Test
-    void preservesExplicitBehaviorValuesOverLegacyExplosionDefaults() {
-        BlockDefinition definition = DefinitionParser.parseBlock(yaml("""
-                fuse: 120
-                radius: 20.0
-                explosion:
-                  fuse: 10
-                  radius: 2.0
-                """), "nuke", 10001, "nuke");
-
-        assertEquals(120, definition.getCustomData().get("fuse"));
-        assertEquals(20.0, definition.getCustomData().get("radius"));
-    }
-
-    @Test
     void parsesItemDefinition() {
         ItemDefinition definition = DefinitionParser.parseItem(yaml("""
                 id: grenade
@@ -243,26 +193,8 @@ class DefinitionParserTest {
         assertNull(definition.getSide1Texture());
     }
 
-    @Test
-    void parsesRealNuclearBlockConfigFixture() throws Exception {
-        try (var input = getClass().getResourceAsStream("/fixtures/nuclear-block-config.yml")) {
-            BlockDefinition definition = DefinitionParser.parseBlock(
-                    YamlDefinitions.loadMap(input),
-                    "nuke",
-                    10001,
-                    "nuke");
-
-            assertEquals("nuke", definition.getId());
-            assertEquals(160, definition.getCustomData().get("fuse"));
-            assertEquals(30.0, definition.getCustomData().get("radius"));
-            assertEquals(30.0, definition.getCustomData().get("power"));
-            assertTrue(definition.isPlaceable());
-            assertTrue(definition.isBreakable());
-            assertTrue(definition.getInteractionSettings().isEmpty());
-        }
-    }
-
     private static Map<String, Object> yaml(String content) {
         return YamlDefinitions.loadMap(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     }
 }
+
