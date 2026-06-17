@@ -8,14 +8,16 @@ Custom blocks exist as barrier blocks in the world with two distinct phases. Bun
 
 ## Phases
 
-| Phase | When | Callbacks |
-|-------|------|-----------|
-| **Placed** | Barrier block exists in world | `onPlaced`, `onPlacedClick`, `onPlacedInteract`, `onPlacedBreak` |
-| **Active** | After ignition / fuse | `onPlace`, `onTick`, `onTrigger` |
+| Phase | When | Event bus hooks |
+|-------|------|-----------------|
+| **Placed** | Barrier block exists in world | `onBlockPlace`, `onBlockClick`, `onBlockInteract`, `onBlockBreak` |
+| **Active** | After ignition / fuse | `onBlockActivate`, `onBlockTick`, `onBlockTrigger` |
 
-Surface click routing is declared in YAML `behavior`. Bundled blocks resolve tokens with `BlockBehaviorConfig.from(definition.getBehaviorConfig())` before calling strategy overrides.
+Subscribe in `registerEvents()` using helpers on `AbstractIgnisBlockStrategy` (`onBlockPlace`, `onBlockClick`, …). See [Core API — Event bus](/developers/api/core-api#event-bus).
 
-Override `onPlacedClick` only for custom logic beyond standard actions.
+Surface click routing is declared in YAML `behavior`. The core resolves tokens with `BlockBehaviorConfig.from(definition.getBehaviorConfig())` and fires **`onBlockClick`** on the event bus.
+
+Use `onBlockClick` when you need custom logic beyond standard actions (for example returning `CustomBlockAction.OPEN` or handling `handled` tokens).
 
 ## Config sections
 
@@ -57,6 +59,10 @@ behavior:
 | `open` | Open extension GUI |
 | `handled` | Strategy handles the click |
 
+## Strategy profiles
+
+Declare default click and fuse behavior in `profile()`. Fuse and radius are **opt-in** — use `IgnisStrategies.blocks().placed()` for utility blocks, `.fuse(ticks)` for fuse lifecycle blocks, or `.combustible(fuse, radius)` for ignitable explosives.
+
 ## Persistence
 
 Placed blocks are indexed in `placed-blocks.json` — see [Storage](/storage).
@@ -64,6 +70,6 @@ Placed blocks are indexed in `placed-blocks.json` — see [Storage](/storage).
 ## Related
 
 - [Extensions](/concepts/extensions) — manifest and deploy
-- [Strategies](/concepts/strategies) — `AbstractIgnisBlockStrategy`
+- [Strategies](/concepts/strategies) — `AbstractIgnisBlockStrategy` and event bus
 - [Extension config](/developers/extension-config) — which keys belong in `config.yml`
 - [Extension Cookbook](/developers/cookbook) — strategy recipes

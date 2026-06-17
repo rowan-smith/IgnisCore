@@ -10,7 +10,7 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 
 1. Copy an existing extension under `extensions/blocks/` or `extensions/items/`
 2. Add Maven dependency on `api` (`provided` scope)
-3. Implement a strategy class extending `AbstractIgnisBlockStrategy` or `AbstractIgnisItemStrategy`
+3. Implement a strategy class extending `AbstractIgnisBlockStrategy` or `AbstractIgnisItemStrategy`, override `profile()` when needed, and subscribe to lifecycle events in `registerEvents()`
 4. Ship `block-extension.yml` / `item-extension.yml`, `config.yml`, and textures
 5. Build with `mvn package` and deploy to the plugin data folder
 

@@ -4,7 +4,7 @@
     "name": "IgnisCore 1.0.0",
     "publishedAt": "2026-06-17T07:44:48.872Z",
     "url": "https://github.com/rowan-smith/IgnisCore/releases/tag/v1.0.0",
-    "body": "See GitHub Releases for full release notes.",
+    "body": "**Event bus lifecycle hooks** — Extension strategies subscribe in `registerEvents()` via `onBlockPlace`, `onBlockTrigger`, `onItemClick`, and related helpers. Legacy strategy override methods are removed.\n\n**Strategy profiles** — Fuse and explosion radius are opt-in on `StrategyProfile`. Use `IgnisStrategies.blocks().placed()`, `.fuse(ticks)`, or `.combustible(fuse, radius)`.\n\n**Facade APIs** — `IgnisStrategies` (core) and `ExtensionShared` (optional shared module) provide grouped accessors.\n\n**Bootstrap JAR** — Deploy `IgnisCore-<version>.jar` from GitHub Releases or `bootstrap/target/`.\n\n129 bundled block and item extensions. See [documentation](/) for migration from pre-1.0 override patterns.",
     "prerelease": false
   }
 ]

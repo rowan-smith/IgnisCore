@@ -4,7 +4,7 @@ description: Copy-paste recipes for IgnisCore block and item extensions using th
 slug: /developers/cookbook
 ---
 
-Short, task-oriented recipes for IgnisCore block and item extensions. Prefer **`IgnisStrategies`** for core strategy helpers and **`ExtensionShared`** for optional shared helpers. Raw `StrategySupport` and port calls are shown where they clarify the underlying behavior.
+Short, task-oriented recipes for IgnisCore block and item extensions. Prefer **`IgnisStrategies`** for core strategy helpers and **`ExtensionShared`** for optional shared helpers. Subscribe to lifecycle hooks in **`registerEvents()`** — legacy strategy override methods (`onPlaced`, `onTrigger`, `onItemUse`, …) are not supported.
 
 ---
 
@@ -19,6 +19,11 @@ public class Strategy extends AbstractIgnisBlockStrategy {
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
         return IgnisStrategies.blocks().placed();
+    }
+
+    @Override
+    public void registerEvents() {
+        // Subscribe with onBlockPlace, onBlockClick, … when needed
     }
 }
 ```
@@ -64,8 +69,8 @@ Strategy profile for combustible blocks:
 ```java
 @Override
 public StrategyProfile profile(BlockDefinition definition) {
-    int fuse = StrategySupport.customInt(definition, "fuse", 80);
-    return StrategyProfile.fuse(fuse);
+    int fuse = IgnisStrategies.data().customInt(definition, "fuse", 80);
+    return IgnisStrategies.blocks().fuse(fuse);
 }
 ```
 
@@ -85,14 +90,20 @@ custom_data:
   fuse: 60
 ```
 
-Detonate in `onTrigger`:
+Detonate on the event bus:
 
 ```java
 @Override
-public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
+public void registerEvents() {
+    onBlockTick(event -> behavior.onTick(event.instance()));
+    onBlockTrigger(event -> behavior.onTrigger(event.instance(), event.triggerContext()));
+}
+
+// In behavior code:
+void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
     IgnisWorld world = context.extensions().resolveWorld(instance.getLocation());
-    float power = (float) StrategySupport.customDouble(instance.getDefinition(), "power", 4.0);
-    boolean fire = StrategySupport.customBoolean(instance.getDefinition(), "fire", false);
+    float power = (float) IgnisStrategies.data().customDouble(instance.getDefinition(), "power", 4.0);
+    boolean fire = IgnisStrategies.data().customBoolean(instance.getDefinition(), "fire", false);
     world.createExplosion(instance.getLocation(), power, fire, true);
 }
 ```
@@ -103,15 +114,16 @@ public void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
 
 ## Throwable item
 
-Override `onItemAction` and use `ExtensionShared` for typed config and detonation:
+Subscribe to `onItemClick` and use `ExtensionShared` for typed config and detonation:
 
 ```java
 @Override
-public void onItemAction(IgnisPlayer player, ItemDefinition definition, IgnisItem item,
-                         IgnisInteraction action, IgnisBlock clickedBlock, String actionToken) {
-    if ("throw".equals(actionToken)) {
-        behavior.onItemUse(player, definition, item);
-    }
+public void registerEvents() {
+    onItemClick(event -> {
+        if ("throw".equals(event.actionToken())) {
+            behavior.onItemUse(event.player(), event.definition(), event.item());
+        }
+    });
 }
 
 // In behavior code:
@@ -129,9 +141,15 @@ ExtensionShared.explosion().create(world, impact, definition, throwable.power(),
 Store a block location on the held item, activate remotely on right-click air:
 
 ```java
+@Override
+public void registerEvents() {
+    onItemClick(event -> onItemUse(
+            event.player(), event.definition(), event.item(), event.clickedBlock()));
+}
+
 void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, IgnisBlock clickedBlock) {
     IgnisNbtService nbt = context.nbt();
-    String expectedType = StrategySupport.customString(definition.getCustomData(), "linkBlockType", "");
+    String expectedType = IgnisStrategies.data().customString(definition.getCustomData(), "linkBlockType", "");
 
     if (clickedBlock != null) {
         IgnisLocation block = Locations.toBlock(clickedBlock.getLocation());
@@ -153,7 +171,7 @@ void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem item, Ig
             nbt.getItemInt(item, "ignis:link_x", 0),
             nbt.getItemInt(item, "ignis:link_y", 0),
             nbt.getItemInt(item, "ignis:link_z", 0));
-    // Dispatch to your placed-block handler (registry, event, or direct strategy call)
+    // Dispatch to your placed-block handler (registry, event bus, or direct call)
 }
 ```
 
@@ -173,10 +191,19 @@ custom_data:
 ## Consumable with cooldown (NBT, raw)
 
 ```java
+@Override
+public void registerEvents() {
+    onItemClick(event -> {
+        if ("use".equals(event.actionToken())) {
+            consume(event.player(), event.item(), event.definition());
+        }
+    });
+}
+
 void consume(IgnisPlayer player, IgnisItem item, ItemDefinition definition) {
     IgnisNbtService nbt = context.nbt();
     String key = "ignis:cooldown:" + definition.getId();
-    long cooldownTicks = StrategySupport.customInt(definition.getCustomData(), "cooldownTicks", 0);
+    long cooldownTicks = IgnisStrategies.data().customInt(definition.getCustomData(), "cooldownTicks", 0);
     long last = nbt.getItemInt(item, key, 0);
     if (last > 0 && System.currentTimeMillis() - last < cooldownTicks * 50L) {
         player.sendMessage("<red>Still on cooldown.</red>");
@@ -195,8 +222,14 @@ void consume(IgnisPlayer player, IgnisItem item, ItemDefinition definition) {
 ## Placed block repeating tick (raw)
 
 ```java
+@Override
+public void registerEvents() {
+    onBlockPlace(event -> onPlaced(event.definition(), event.location()));
+    onBlockBreak(event -> onPlacedBreak(event.definition(), event.location()));
+}
+
 void onPlaced(BlockDefinition definition, IgnisLocation location) {
-    long period = StrategySupport.customInt(definition, "tickPeriod", 20);
+    long period = IgnisStrategies.data().customInt(definition, "tickPeriod", 20);
     context.scheduler().runRepeating(location, () -> tick(location), period, period);
 }
 
@@ -237,7 +270,7 @@ Place in `src/main/resources/block-extension.yml`.
 </dependency>
 ```
 
-Minimum tests: **StrategyTest** (manifest + profile smoke) and behavior tests for lifecycle callbacks.
+Minimum tests: **StrategyTest** (manifest + profile smoke) and behavior tests that fire events via `TestEventBus` (see bundled extension `BehaviorTest` classes).
 
 ---
 
@@ -245,5 +278,5 @@ Minimum tests: **StrategyTest** (manifest + profile smoke) and behavior tests fo
 
 - [Extension config](/developers/extension-config) — what belongs in `config.yml`
 - [Extensions](/concepts/extensions) — deploy paths and identifiers
-- [Core API](/developers/api/core-api) — package overview
+- [Core API](/developers/api/core-api) — event bus and package overview
 - [API versioning](/faq/api-version) — semver rules

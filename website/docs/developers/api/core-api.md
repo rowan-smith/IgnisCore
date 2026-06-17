@@ -66,7 +66,9 @@ public void registerEvents() {
 }
 ```
 
-Integrators observe globally via `IgnisCoreAPI.eventBus().subscribe(...)`.
+Integrators observe globally via `IgnisCoreAPI.eventBus().subscribe(...)` — the same bus instance is exposed on [`IgnisCoreFacade`](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/IgnisCoreFacade.html#eventBus()) when bound at startup.
+
+Legacy strategy override methods were removed in 1.0.0; extensions must use `registerEvents()` and the helpers above.
 
 | Event | When |
 |-------|------|
