@@ -17,9 +17,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     @Override
     public StrategyProfile profile(BlockDefinition definition) {
-        return StrategyProfile.builder()
-                .defaultFuse(80).combustible(false)
-                .build();
+        return StrategyProfile.defaults();
     }
 
     @Override

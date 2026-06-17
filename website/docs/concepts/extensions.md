@@ -58,17 +58,22 @@ my-extension/
 
 | Block | Pattern |
 |-------|---------|
-| [nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke) | Explosive + fuse + `ExplosionConfig` |
+| [nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke) | Explosive fuse + documented `custom_data` |
 | [quarry-cache](https://github.com/%%site.repo%%/tree/main/extensions/blocks/quarry-cache) | Non-combustible GUI block |
-| [tunneling-tnt](https://github.com/%%site.repo%%/tree/main/extensions/blocks/tunneling-tnt) | Minimal `onTrigger`-only strategy |
+| [auto-sieve](https://github.com/%%site.repo%%/tree/main/extensions/blocks/auto-sieve) | Placed tick block, no `custom_data` |
+| [socket-lamp](https://github.com/%%site.repo%%/tree/main/extensions/blocks/socket-lamp) | Linked remote-activation block |
+| [picnic-basket](https://github.com/%%site.repo%%/tree/main/extensions/blocks/picnic-basket) | Interact / storage GUI |
 
 | Item | Pattern |
 |------|---------|
-| [grenade](https://github.com/%%site.repo%%/tree/main/extensions/items/grenade) | Throwable + `ThrowableItemConfig` |
+| [grenade](https://github.com/%%site.repo%%/tree/main/extensions/items/grenade) | Throwable explosive |
+| [lamp-dimmer](https://github.com/%%site.repo%%/tree/main/extensions/items/lamp-dimmer) | Link item with NBT |
+| [miners-lunch](https://github.com/%%site.repo%%/tree/main/extensions/items/miners-lunch) | Consumable + cooldown NBT |
 | [detonator](https://github.com/%%site.repo%%/tree/main/extensions/items/detonator) | Multi-click item |
 
 ## Related
 
 - [Strategies](/concepts/strategies) — Java strategy contract
+- [Extension config](/developers/extension-config) — `config.yml` sections and keys
 - [Extension Cookbook](/developers/cookbook) — build your own
 - [Storage](/storage) — deploy paths and reload

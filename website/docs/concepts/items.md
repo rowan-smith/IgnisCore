@@ -14,7 +14,7 @@ Custom items are standard inventory items tagged with IgnisCore NBT. Behavior is
 | `item` | Base material and item flags |
 | `textures` | Icon asset path |
 | `behavior` | Click actions (assign, throw, detonate, etc.) |
-| `custom_data` | Extension-specific tuning |
+| `custom_data` | Optional — only keys your strategy reads |
 
 ## Item behavior
 
@@ -42,18 +42,18 @@ public void onItemUse(IgnisPlayer player, ItemDefinition definition, IgnisItem i
 }
 ```
 
-## Typed config
-
-Use `extensions/shared` helpers for common patterns:
+## Read custom_data in strategy code
 
 ```java
-ThrowableItemConfig throwable = ExtensionConfigs.throwable(definition);
-double speed = throwable.throwVelocity();
-int fuseTicks = throwable.fuseTicks();
+int fuseTicks = StrategySupport.customInt(definition.getCustomData(), "fuse_ticks", 40);
+double speed = StrategySupport.customDouble(definition.getCustomData(), "throw_velocity", 1.2);
 ```
+
+Omit the `custom_data` section entirely when your strategy uses code defaults only.
 
 ## Related
 
 - [Extensions](/concepts/extensions) — deploy and manifest
-- [Extension Cookbook](/developers/cookbook) — throwable recipes
+- [Extension config](/developers/extension-config) — config.yml reference
+- [Extension Cookbook](/developers/cookbook) — throwable and consumable recipes
 - [API Reference](/developers/api/core-api) — `IgnisItemStrategy`

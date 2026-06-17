@@ -172,16 +172,60 @@ def profiles_yaml(profiles: list[str] | None) -> str:
     return "\n".join(lines) + "\n"
 
 
-def custom_data_yaml(data: dict | None) -> str:
+def custom_data_yaml(data: dict | None, indent: int = 2) -> str:
     if not data:
-        return "  radius: 8.0"
+        return ""
+    pad = " " * indent
     lines = []
     for key, value in data.items():
         if isinstance(value, str):
-            lines.append(f'  {key}: "{value}"')
+            lines.append(f'{pad}{key}: "{value}"')
         else:
-            lines.append(f"  {key}: {value}")
+            lines.append(f"{pad}{key}: {value}")
     return "\n".join(lines)
+
+
+def block_custom_data(ext: dict) -> str:
+    data = dict(ext.get("custom_data") or {})
+    if ext["type"] == "fuse" and "fuse" not in data:
+        data["fuse"] = ext.get("fuse", 80)
+    if not data:
+        return ""
+    return "custom_data:\n" + custom_data_yaml(data) + "\n"
+
+
+def block_behavior_yaml(ext: dict) -> str:
+    ext_type = ext["type"]
+    combustible = ext.get("combustible", ext_type == "fuse")
+    if ext_type == "interact":
+        return """behavior:
+  left_click_block: break
+  right_click_block: open
+  sounds:
+    place: BLOCK_METAL_PLACE"""
+    if ext_type == "placed":
+        return """behavior:
+  left_click_block: break
+  right_click_block: none
+  sounds:
+    place: BLOCK_AMETHYST_BLOCK_CHIME"""
+    if combustible:
+        return """behavior:
+  combustible: true
+  left_click_block: break
+  right_click_block: ignite
+  ignition_materials:
+    - FLINT_AND_STEEL
+    - FIRE_CHARGE
+  sounds:
+    place: BLOCK_TNT_PLACE
+    ignite: ITEM_FLINTANDSTEEL_USE"""
+    return """behavior:
+  combustible: false
+  left_click_block: break
+  right_click_block: none
+  sounds:
+    place: BLOCK_TNT_PLACE"""
 
 
 def block_pom(artifact: str) -> str:
@@ -213,41 +257,8 @@ def item_pom(artifact: str) -> str:
 
 
 def block_config(ext: dict) -> str:
-    ext_type = ext["type"]
-    combustible = ext.get("combustible", ext_type == "fuse")
-    if ext_type == "interact":
-        behavior = """behavior:
-  combustible: false
-  left_click_block: break
-  right_click_block: open
-  sounds:
-    place: BLOCK_METAL_PLACE"""
-    elif ext_type == "placed":
-        behavior = """behavior:
-  combustible: false
-  left_click_block: break
-  right_click_block: none
-  sounds:
-    place: BLOCK_AMETHYST_BLOCK_CHIME"""
-    elif combustible:
-        behavior = """behavior:
-  combustible: true
-  left_click_block: break
-  right_click_block: ignite
-  ignition_materials:
-    - FLINT_AND_STEEL
-    - FIRE_CHARGE
-  sounds:
-    place: BLOCK_TNT_PLACE
-    ignite: ITEM_FLINTANDSTEEL_USE"""
-    else:
-        behavior = """behavior:
-  combustible: false
-  left_click_block: break
-  right_click_block: none
-  sounds:
-    place: BLOCK_TNT_PLACE"""
-    fuse = ext.get("fuse", 80)
+    behavior = block_behavior_yaml(ext)
+    custom_data = block_custom_data(ext)
     return f"""id: {ext['id']}
 
 display:
@@ -274,14 +285,16 @@ model:
 
 {behavior}
 
-custom_data:
-  fuse: {fuse}
-  power: 3.5
-  radius: 8.0
-"""
+{custom_data}"""
 
 
 def item_config(ext: dict) -> str:
+    custom_data = ext.get("custom_data")
+    custom_section = ""
+    if custom_data:
+        yaml = custom_data_yaml(custom_data)
+        if yaml:
+            custom_section = f"\ncustom_data:\n{yaml}\n"
     return f"""id: {ext['id']}
 
 display:
@@ -298,10 +311,7 @@ textures:
 behavior:
   right_click_air: use
   right_click_block: use
-
-custom_data:
-{custom_data_yaml(ext.get('custom_data'))}
-"""
+{custom_section}"""
 
 
 def load_behavior(kind: str, class_name: str, package: str, is_item: bool) -> str:
@@ -348,9 +358,24 @@ def block_strategy(package: str, class_name: str, ext: dict) -> str:
             methods.append("    @Override\n    public void onPlaced(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlaced(definition, location);\n    }")
             methods.append("    @Override\n    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlacedBreak(definition, location);\n    }")
 
-    profile_parts = [f".defaultFuse({fuse})"]
-    if not combustible:
-        profile_parts.append(".combustible(false)")
+    profile_parts = []
+    if ext_type == "fuse":
+        profile_parts.append(f".defaultFuse({fuse})")
+        if not combustible:
+            profile_parts.append(".combustible(false)")
+
+    if profile_parts:
+        profile_method = f"""    @Override
+    public StrategyProfile profile(BlockDefinition definition) {{
+        return StrategyProfile.builder()
+                {''.join(profile_parts)}
+                .build();
+    }}"""
+    else:
+        profile_method = """    @Override
+    public StrategyProfile profile(BlockDefinition definition) {
+        return StrategyProfile.defaults();
+    }"""
 
     return f"""package dev.rono.igniscore.block.{package};
 
@@ -368,12 +393,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {{
         this.behavior = new {class_name}Behavior(context);
     }}
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {{
-        return StrategyProfile.builder()
-                {''.join(profile_parts)}
-                .build();
-    }}
+{profile_method}
 
 {chr(10).join(methods)}
 {trigger_method}
