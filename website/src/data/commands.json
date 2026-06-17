@@ -1,0 +1,50 @@
+[
+  {
+    "command": "/ignis blocks",
+    "syntax": "/ignis blocks",
+    "summary": "Lists all loaded block extension JARs with manifest name, version, and config id.",
+    "category": "General",
+    "docSlug": "/commands/general",
+    "anchor": "ignis-blocks"
+  },
+  {
+    "command": "/ignis debug <on|off|pack>",
+    "syntax": "/ignis debug <on|off|pack>",
+    "summary": "Toggle debug logging or show resource pack diagnostics.",
+    "category": "General",
+    "docSlug": "/commands/general",
+    "anchor": "ignis-debug-onoffpack"
+  },
+  {
+    "command": "/ignis give <player> <block|item> <id>",
+    "syntax": "/ignis give <player> <block|item> <id>",
+    "summary": "Gives a custom block item or throwable item to the target player.",
+    "category": "General",
+    "docSlug": "/commands/general",
+    "anchor": "ignis-give-player-blockitem-id"
+  },
+  {
+    "command": "/ignis items",
+    "syntax": "/ignis items",
+    "summary": "Lists all loaded item extension JARs with manifest name, version, and config id.",
+    "category": "General",
+    "docSlug": "/commands/general",
+    "anchor": "ignis-items"
+  },
+  {
+    "command": "/ignis pack",
+    "syntax": "/ignis pack",
+    "summary": "Rebuilds the resource pack and applies it to the executing player. Player-only.",
+    "category": "General",
+    "docSlug": "/commands/general",
+    "anchor": "ignis-pack"
+  },
+  {
+    "command": "/ignis reload <all|blocks|items|server>",
+    "syntax": "/ignis reload <all|blocks|items|server>",
+    "summary": "Reloads extensions or server configuration.",
+    "category": "General",
+    "docSlug": "/commands/general",
+    "anchor": "ignis-reload-allblocksitemsserver"
+  }
+]

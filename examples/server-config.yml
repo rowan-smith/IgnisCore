@@ -1,0 +1,9 @@
+resource-pack:
+  host: "0.0.0.0"
+  port: 8080
+  public-url: "https://play.example.com/resourcepack.zip"
+
+performance:
+  chunk-restore-blocks-per-tick: 16
+  visual-refresh-blocks-per-tick: 32
+  resource-pack-retain-count: 3
