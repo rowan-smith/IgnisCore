@@ -1,0 +1,6 @@
+id: decoy-flare
+name: Decoy Flare
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.decoyflare.Strategy

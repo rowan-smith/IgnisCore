@@ -11,7 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <p>Unlike {@link dev.rono.igniscore.api.model.RuntimeBlockInstance#getData() persistent NBT},
  * values here live only in memory and are cleared when the block is removed. Use for placement
- * yaw, waypoint labels, or other short-lived state that does not need to survive restarts.</p>
+ * yaw, waypoint labels, tripwire pairs, or other short-lived state that does not need to survive
+ * restarts.</p>
  *
  * <p>Keys are derived from world id or name plus floored block coordinates via
  * {@link Locations#toBlock(IgnisLocation)}.</p>
@@ -19,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class PlacedMetaSupport {
     private static final Map<String, Float> PLACEMENT_YAW = new ConcurrentHashMap<>();
     private static final Map<String, String> STRING_META = new ConcurrentHashMap<>();
+    private static final Map<String, String> TRIPWIRE_PARTNERS = new ConcurrentHashMap<>();
 
     private PlacedMetaSupport() {
     }
@@ -65,6 +67,27 @@ public final class PlacedMetaSupport {
     }
 
     /**
+     * Links two tripwire charge locations as paired triggers.
+     */
+    public static void linkTripwire(IgnisLocation first, IgnisLocation second) {
+        String a = key(first);
+        String b = key(second);
+        TRIPWIRE_PARTNERS.put(a, b);
+        TRIPWIRE_PARTNERS.put(b, a);
+    }
+
+    /**
+     * Returns the paired tripwire location, or {@code null} when none is linked.
+     */
+    public static IgnisLocation tripwirePartner(IgnisLocation location) {
+        String partner = TRIPWIRE_PARTNERS.get(key(location));
+        if (partner == null) {
+            return null;
+        }
+        return decode(partner);
+    }
+
+    /**
      * Removes all ephemeral metadata for the block at {@code location}.
      *
      * @param location block position to clear
@@ -73,6 +96,7 @@ public final class PlacedMetaSupport {
         String encoded = key(location);
         PLACEMENT_YAW.remove(encoded);
         STRING_META.remove(encoded);
+        TRIPWIRE_PARTNERS.remove(encoded);
     }
 
     private static String key(IgnisLocation location) {
@@ -84,5 +108,24 @@ public final class PlacedMetaSupport {
                 + (int) Math.floor(block.x()) + ":"
                 + (int) Math.floor(block.y()) + ":"
                 + (int) Math.floor(block.z());
+    }
+
+    private static IgnisLocation decode(String encoded) {
+        String[] parts = encoded.split(":");
+        if (parts.length != 5) {
+            return null;
+        }
+        try {
+            return new IgnisLocation(
+                    UUID.fromString(parts[0]),
+                    parts[1],
+                    Integer.parseInt(parts[2]),
+                    Integer.parseInt(parts[3]),
+                    Integer.parseInt(parts[4]),
+                    0f,
+                    0f);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 }

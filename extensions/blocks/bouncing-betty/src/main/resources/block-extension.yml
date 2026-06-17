@@ -1,0 +1,6 @@
+id: bouncing-betty
+name: Bouncing Betty
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.bouncingbetty.Strategy

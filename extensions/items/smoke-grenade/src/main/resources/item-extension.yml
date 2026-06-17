@@ -1,0 +1,6 @@
+id: smoke-grenade
+name: Smoke Grenade
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.smokegrenade.Strategy

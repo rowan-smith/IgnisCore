@@ -1,0 +1,8 @@
+id: silent-tnt
+name: Silent TNT
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.silenttnt.Strategy
+requires-integrations:
+  - protocol

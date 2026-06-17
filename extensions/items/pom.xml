@@ -62,6 +62,11 @@
     <module>unlabeled-potion</module>
     <module>fragmentation-grenade</module>
     <module>flashbang</module>
+    <module>cryo-grenade</module>
+    <module>smoke-grenade</module>
+    <module>sticky-bomb</module>
+    <module>decoy-flare</module>
+    <module>phantom-grenade</module>
   </modules>
 
   <dependencyManagement>

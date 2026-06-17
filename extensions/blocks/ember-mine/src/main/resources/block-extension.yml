@@ -1,0 +1,6 @@
+id: ember-mine
+name: Ember Mine
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.embermine.Strategy

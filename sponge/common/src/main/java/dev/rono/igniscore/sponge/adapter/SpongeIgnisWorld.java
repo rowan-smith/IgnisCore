@@ -143,7 +143,22 @@ public final class SpongeIgnisWorld implements IgnisWorld {
 
     @Override
     public Collection<Object> getNearbyEntities(IgnisLocation center, double radius) {
-        return List.of();
+        List<Object> entities = new ArrayList<>();
+        ServerLocation serverLocation = SpongeBridge.toSponge(center, handle);
+        double r2 = radius * radius;
+        for (var entity : handle.entities()) {
+            if (!entity.isLoaded() || entity.isRemoved()) {
+                continue;
+            }
+            var pos = entity.serverLocation().position();
+            double dx = pos.x() - serverLocation.x();
+            double dy = pos.y() - serverLocation.y();
+            double dz = pos.z() - serverLocation.z();
+            if (dx * dx + dy * dy + dz * dz <= r2) {
+                entities.add(entity);
+            }
+        }
+        return entities;
     }
 
     @Override

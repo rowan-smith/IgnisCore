@@ -1,0 +1,6 @@
+id: orbit-tnt
+name: Orbit TNT
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.orbittnt.Strategy
