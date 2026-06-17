@@ -1,5 +1,7 @@
 package dev.rono.igniscore.block.lightbeacon;
 
+import dev.rono.igniscore.api.event.OnBlockBreakListener;
+import dev.rono.igniscore.api.event.OnBlockPlaceListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -9,9 +11,9 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        var listeners = new LightBeaconListeners(context);
-        onBlockPlace(listeners);
-        onBlockBreak(listeners);
+        LightBeaconListeners listeners = new LightBeaconListeners(context);
+        context.eventBus().subscribe((OnBlockPlaceListener) listeners);
+        context.eventBus().subscribe((OnBlockBreakListener) listeners);
     }
 
     @Override

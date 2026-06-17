@@ -7,8 +7,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        var listeners = new TraitBadgeListeners(context);
-        onItemClick(listeners);
+        context.eventBus().subscribe(new TraitBadgeListeners(context));
     }
 
 }

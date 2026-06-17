@@ -9,8 +9,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        var listeners = new TunnelingListeners(context);
-        onBlockTrigger(listeners);
+        context.eventBus().subscribe(new TunnelingListeners(context));
     }
 
     @Override

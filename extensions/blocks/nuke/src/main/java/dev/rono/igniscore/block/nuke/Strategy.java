@@ -1,5 +1,9 @@
 package dev.rono.igniscore.block.nuke;
 
+import dev.rono.igniscore.api.event.OnBlockActivateListener;
+import dev.rono.igniscore.api.event.OnBlockPlaceListener;
+import dev.rono.igniscore.api.event.OnBlockTickListener;
+import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -9,11 +13,11 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        var listeners = new NukeListeners(context);
-        onBlockPlace(listeners);
-        onBlockActivate(listeners);
-        onBlockTick(listeners);
-        onBlockTrigger(listeners);
+        NukeListeners listeners = new NukeListeners(context);
+        context.eventBus().subscribe((OnBlockPlaceListener) listeners);
+        context.eventBus().subscribe((OnBlockActivateListener) listeners);
+        context.eventBus().subscribe((OnBlockTickListener) listeners);
+        context.eventBus().subscribe((OnBlockTriggerListener) listeners);
     }
 
     @Override

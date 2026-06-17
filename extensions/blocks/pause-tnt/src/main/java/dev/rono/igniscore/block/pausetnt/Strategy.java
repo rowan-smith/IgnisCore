@@ -1,5 +1,7 @@
 package dev.rono.igniscore.block.pausetnt;
 
+import dev.rono.igniscore.api.event.OnBlockTickListener;
+import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -9,9 +11,9 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        var listeners = new PauseTntListeners(context);
-        onBlockTick(listeners);
-        onBlockTrigger(listeners);
+        PauseTntListeners listeners = new PauseTntListeners(context);
+        context.eventBus().subscribe((OnBlockTickListener) listeners);
+        context.eventBus().subscribe((OnBlockTriggerListener) listeners);
     }
 
     @Override

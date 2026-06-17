@@ -7,8 +7,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        var listeners = new SignalChargeListeners(context);
-        onBlockTrigger(listeners);
+        context.eventBus().subscribe(new SignalChargeListeners(context));
     }
 
 }

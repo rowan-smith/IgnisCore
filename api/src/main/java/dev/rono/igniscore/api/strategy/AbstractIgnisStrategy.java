@@ -1,14 +1,6 @@
 package dev.rono.igniscore.api.strategy;
 
 import dev.rono.igniscore.api.config.ExtensionConfig;
-import dev.rono.igniscore.api.event.OnBlockActivateListener;
-import dev.rono.igniscore.api.event.OnBlockBreakListener;
-import dev.rono.igniscore.api.event.OnBlockClickListener;
-import dev.rono.igniscore.api.event.OnBlockInteractListener;
-import dev.rono.igniscore.api.event.OnBlockPlaceListener;
-import dev.rono.igniscore.api.event.OnBlockTickListener;
-import dev.rono.igniscore.api.event.OnBlockTriggerListener;
-import dev.rono.igniscore.api.event.OnItemClickListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
 
@@ -17,10 +9,10 @@ import java.util.Objects;
 /**
  * Base class for extension strategies with descriptor binding and custom-config helpers.
  *
- * <p>Subscribe to lifecycle events in the strategy constructor via
- * {@link IgnisStrategyContext#eventBus()}. During extension loading, unqualified
- * {@code eventBus().subscribe(listener)} calls are automatically scoped to the loading
- * extension id.</p>
+ * <p>Subscribe to lifecycle events in the strategy constructor, for example
+ * {@code context.eventBus().subscribe(new MyListeners(context))}. During extension loading,
+ * unqualified {@code eventBus().subscribe(listener)} calls are automatically scoped to the
+ * loading extension id.</p>
  */
 public abstract class AbstractIgnisStrategy implements IgnisStrategy {
     private IgnisStrategyDescriptor descriptor;
@@ -47,42 +39,6 @@ public abstract class AbstractIgnisStrategy implements IgnisStrategy {
     @Override
     public IgnisStrategyDescriptor descriptor() {
         return Objects.requireNonNull(descriptor, "Strategy descriptor has not been bound");
-    }
-
-    protected final void onBlockPlace(OnBlockPlaceListener listener) {
-        requireContext().eventBus().subscribe(listener);
-    }
-
-    protected final void onBlockClick(OnBlockClickListener listener) {
-        requireContext().eventBus().subscribe(listener);
-    }
-
-    protected final void onBlockInteract(OnBlockInteractListener listener) {
-        requireContext().eventBus().subscribe(listener);
-    }
-
-    protected final void onBlockBreak(OnBlockBreakListener listener) {
-        requireContext().eventBus().subscribe(listener);
-    }
-
-    protected final void onBlockActivate(OnBlockActivateListener listener) {
-        requireContext().eventBus().subscribe(listener);
-    }
-
-    protected final void onBlockTick(OnBlockTickListener listener) {
-        requireContext().eventBus().subscribe(listener);
-    }
-
-    protected final void onBlockTrigger(OnBlockTriggerListener listener) {
-        requireContext().eventBus().subscribe(listener);
-    }
-
-    protected final void onItemClick(OnItemClickListener listener) {
-        requireContext().eventBus().subscribe(listener);
-    }
-
-    private IgnisStrategyContext requireContext() {
-        return Objects.requireNonNull(context, "IgnisStrategyContext is required for event subscriptions");
     }
 
     protected ExtensionConfig customConfig(BlockDefinition definition) {

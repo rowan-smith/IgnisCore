@@ -8,9 +8,8 @@ import dev.rono.igniscore.api.strategy.StrategyProfile;
 public class Strategy extends AbstractIgnisBlockStrategy {
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        var listeners = new AutoSieveListeners(context);
-        onBlockPlace(listeners);
-        onBlockBreak(listeners);
+        context.eventBus().subscribe(new AutoSieveOnBlockPlaceListener(context));
+        context.eventBus().subscribe(new AutoSieveOnBlockBreakListener());
     }
 
     @Override

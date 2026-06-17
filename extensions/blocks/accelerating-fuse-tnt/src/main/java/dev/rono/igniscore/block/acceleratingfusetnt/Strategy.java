@@ -1,5 +1,7 @@
 package dev.rono.igniscore.block.acceleratingfusetnt;
 
+import dev.rono.igniscore.api.event.OnBlockTickListener;
+import dev.rono.igniscore.api.event.OnBlockTriggerListener;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.strategy.AbstractIgnisBlockStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
@@ -9,9 +11,9 @@ public class Strategy extends AbstractIgnisBlockStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        var listeners = new AcceleratingFuseTntListeners(context);
-        onBlockTick(listeners);
-        onBlockTrigger(listeners);
+        AcceleratingFuseTntListeners listeners = new AcceleratingFuseTntListeners(context);
+        context.eventBus().subscribe((OnBlockTickListener) listeners);
+        context.eventBus().subscribe((OnBlockTriggerListener) listeners);
     }
 
     @Override

@@ -7,8 +7,7 @@ public class Strategy extends AbstractIgnisItemStrategy {
 
     public Strategy(IgnisStrategyContext context) {
         super(context);
-        var listeners = new SprinklerTimerListeners(context);
-        onItemClick(listeners);
+        context.eventBus().subscribe(new SprinklerTimerListeners(context));
     }
 
 }
