@@ -35,6 +35,7 @@ behavior:
     ignite: ITEM_FLINTANDSTEEL_USE
 custom_data:
   fuse: 80
+  power: 4.5
   riftPull: 0.12
   riftRadius: 7.0
-  power: 4.5
+  tickInterval: 5

@@ -14,7 +14,7 @@ textures:
 behavior:
   right_click_air: use
   right_click_block: use
-
 custom_data:
-  throwSpeed: 1.1
+  scatterDelayTicks: 15
   scatterRadius: 3
+  throwSpeed: 1.1

@@ -30,3 +30,4 @@ behavior:
     place: BLOCK_AMETHYST_BLOCK_CHIME
 custom_data:
   hydroRadius: 2
+  tickPeriod: 20

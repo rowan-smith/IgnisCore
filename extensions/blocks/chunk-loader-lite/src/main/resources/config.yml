@@ -29,4 +29,5 @@ behavior:
   sounds:
     place: BLOCK_METAL_PLACE
 custom_data:
+  consumeFuel: true
   tickPeriod: 40

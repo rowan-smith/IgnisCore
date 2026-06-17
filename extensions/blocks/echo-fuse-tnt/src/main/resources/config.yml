@@ -34,7 +34,8 @@ behavior:
     place: BLOCK_TNT_PLACE
     ignite: ITEM_FLINTANDSTEEL_USE
 custom_data:
-  fuse: 80
   echoBursts: 3
   echoDelay: 10
+  fuse: 80
   power: 4.0
+  tickInterval: 5

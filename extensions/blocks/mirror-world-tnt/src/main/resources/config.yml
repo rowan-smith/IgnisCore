@@ -35,4 +35,6 @@ behavior:
     ignite: ITEM_FLINTANDSTEEL_USE
 custom_data:
   fuse: 70
+  mirrorY: "loc.y("
   power: 4.0
+  tickInterval: 5

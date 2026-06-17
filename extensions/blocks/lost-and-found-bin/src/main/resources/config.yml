@@ -30,3 +30,5 @@ behavior:
     place: BLOCK_METAL_PLACE
 custom_data:
   collectRadius: 8.0
+  sweepIntervalTicks: 72000
+  tickPeriod: 100

@@ -30,3 +30,4 @@ behavior:
     place: BLOCK_AMETHYST_BLOCK_CHIME
 custom_data:
   cropRadius: 4
+  tickPeriod: 20

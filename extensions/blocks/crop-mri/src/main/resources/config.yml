@@ -30,3 +30,4 @@ behavior:
     place: BLOCK_AMETHYST_BLOCK_CHIME
 custom_data:
   mriRadius: 6
+  tickPeriod: 20

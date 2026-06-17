@@ -28,3 +28,6 @@ behavior:
   right_click_block: open
   sounds:
     place: BLOCK_METAL_PLACE
+custom_data:
+  usePlayerName: true
+  waypointId: 1

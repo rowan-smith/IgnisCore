@@ -31,6 +31,7 @@ behavior:
     place: BLOCK_TNT_PLACE
 custom_data:
   fuse: 0
-  stasisRadius: 5.0
-  lastStandTicks: 30
   lastStandPower: 6.0
+  lastStandTicks: 30
+  stasisRadius: 5.0
+  tickInterval: 5

@@ -37,3 +37,4 @@ custom_data:
   fuse: 100
   pauseDuration: 20
   power: 4.5
+  tickInterval: 5

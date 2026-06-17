@@ -29,5 +29,6 @@ behavior:
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
 custom_data:
+  tickPeriod: 20
   vacuumRadius: 6.0
   vacuumStrength: 0.35

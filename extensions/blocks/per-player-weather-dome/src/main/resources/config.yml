@@ -30,3 +30,4 @@ behavior:
     place: BLOCK_AMETHYST_BLOCK_CHIME
 custom_data:
   domeRadius: 5.0
+  tickPeriod: 20

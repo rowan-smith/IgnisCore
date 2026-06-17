@@ -34,7 +34,8 @@ behavior:
     place: BLOCK_TNT_PLACE
     ignite: ITEM_FLINTANDSTEEL_USE
 custom_data:
-  fuse: 0
-  trailStep: 0.6
-  power: 4.0
   fire: false
+  fuse: 0
+  power: 4.0
+  tickInterval: 5
+  trailStep: 0.6

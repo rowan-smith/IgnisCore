@@ -36,3 +36,4 @@ behavior:
 custom_data:
   fuse: 80
   power: 5.0
+  tickInterval: 5

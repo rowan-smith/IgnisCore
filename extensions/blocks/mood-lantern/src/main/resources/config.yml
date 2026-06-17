@@ -29,4 +29,6 @@ behavior:
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
 custom_data:
+  moodParticles: 3
   moodRadius: 10.0
+  tickPeriod: 25

@@ -35,5 +35,6 @@ behavior:
     ignite: ITEM_FLINTANDSTEEL_USE
 custom_data:
   fuse: 60
-  splitOffset: 2.5
   power: 4.0
+  splitOffset: 2.5
+  tickInterval: 5

@@ -37,3 +37,4 @@ custom_data:
   fuse: 60
   phaseRadius: 6.0
   power: 4.0
+  tickInterval: 5

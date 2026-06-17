@@ -29,4 +29,5 @@ behavior:
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
 custom_data:
+  tickPeriod: 60
   waterRadius: 4

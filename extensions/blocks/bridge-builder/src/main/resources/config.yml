@@ -34,7 +34,8 @@ behavior:
     place: BLOCK_TNT_PLACE
     ignite: ITEM_FLINTANDSTEEL_USE
 custom_data:
-  fuse: 40
   bridgeLength: 6
+  fuse: 40
   oakBridge: true
   power: 2.5
+  tickInterval: 5

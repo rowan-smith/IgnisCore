@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Write per-module extension config.yml files from the explicit catalog below.
+"""Write per-module extension config.yml display/behavior sections from the catalog.
 
-config.yml is owned by each extension module — generate-utility-extensions.py does NOT
-write configs. Edit this catalog (or the module file directly), then run:
+custom_data keys are validated separately — after editing behaviors or configs run:
 
-    python3 tools/write-extension-configs.py
+    python3 tools/audit-extension-configs.py
 
 To change a single extension, prefer editing its config.yml in place.
 """

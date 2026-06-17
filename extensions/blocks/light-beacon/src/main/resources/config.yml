@@ -30,3 +30,5 @@ behavior:
     place: BLOCK_AMETHYST_BLOCK_CHIME
 custom_data:
   beaconRadius: 3.0
+  lightCount: 8
+  tickPeriod: 20

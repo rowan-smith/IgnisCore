@@ -28,3 +28,6 @@ behavior:
   right_click_block: none
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
+custom_data:
+  recycleParticles: 5
+  tickPeriod: 20

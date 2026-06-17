@@ -119,14 +119,22 @@ See the [Extension Cookbook](/developers/cookbook) for raw Java patterns that re
 
 ## Maintaining utility extension configs
 
-Bundled utility extensions (`extensions/blocks/*`, `extensions/items/*` from the generator) keep `config.yml` **in each module**. Do not regenerate configs from `generate-utility-extensions.py`.
+Bundled utility extensions keep `config.yml` **in each module**. `generate-utility-extensions.py` does not write configs.
 
 | Tool | Purpose |
 |------|---------|
-| `tools/write-extension-configs.py` | Explicit per-module catalog; run after bulk catalog edits |
+| `tools/audit-extension-configs.py` | **Verify every key** each Behavior template reads is present in `custom_data` |
+| `tools/audit-extension-configs.py --check` | CI check — fails if any key is missing |
+| `tools/write-extension-configs.py` | Edit display/behavior sections in the catalog, then sync |
 | `extensions/*/src/main/resources/config.yml` | Preferred place to edit a single extension |
 
-Hand-authored reference extensions (`nuke`, `grenade`, `quarry-cache`) are edited in place only.
+After changing a behavior template, run the audit script to catch missing keys (e.g. `sieveParticles` on auto-sieve):
+
+```bash
+python3 tools/audit-extension-configs.py
+```
+
+Hand-authored reference extensions (`nuke`, `grenade`, `quarry-cache`, tactical TNT) are edited in place only.
 
 ## Related
 

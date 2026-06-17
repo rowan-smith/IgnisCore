@@ -14,3 +14,5 @@ textures:
 behavior:
   right_click_air: use
   right_click_block: use
+custom_data:
+  cooldownTicks: 0

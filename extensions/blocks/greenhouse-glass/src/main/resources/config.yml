@@ -30,3 +30,5 @@ behavior:
     place: BLOCK_AMETHYST_BLOCK_CHIME
 custom_data:
   greenhouseRadius: 2
+  growthParticles: 4
+  tickPeriod: 60
