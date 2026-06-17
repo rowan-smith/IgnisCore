@@ -3,7 +3,7 @@ id: rift-generator
 display:
   title: "&bRift Generator"
   description:
-    - "&7Utility extension"
+    - "&7Pulls entities inward while fusing."
 
 block:
   placeable: true
@@ -22,6 +22,7 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   combustible: true
   left_click_block: break
@@ -32,8 +33,9 @@ behavior:
   sounds:
     place: BLOCK_TNT_PLACE
     ignite: ITEM_FLINTANDSTEEL_USE
-
 custom_data:
   fuse: 80
-  power: 3.5
-  radius: 8.0
+  power: 4.5
+  riftPull: 0.12
+  riftRadius: 7.0
+  tickInterval: 5

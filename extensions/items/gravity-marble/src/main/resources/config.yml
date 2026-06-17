@@ -3,7 +3,7 @@ id: gravity-marble
 display:
   title: "&bGravity Marble"
   description:
-    - "&7Utility item"
+    - "&7Fast throwable marble with sparkle trail."
 
 item:
   base_material: paper
@@ -16,4 +16,4 @@ behavior:
   right_click_block: use
 
 custom_data:
-  radius: 8.0
+  marbleSpeed: 1.2

@@ -1,0 +1,6 @@
+id: heavy-coat-tonic
+name: Heavy Coat Tonic
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.heavycoattonic.Strategy

@@ -1,0 +1,18 @@
+id: ghost-peppermint
+
+display:
+  title: "&bGhost Peppermint"
+  description:
+    - "&7Phantoms ignore you until next sleep."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  cooldownTicks: 0

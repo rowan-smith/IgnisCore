@@ -3,7 +3,7 @@ id: blink-tnt
 display:
   title: "&bBlink TNT"
   description:
-    - "&7Utility extension"
+    - "&7Random teleports during fuse, then explodes."
 
 block:
   placeable: true
@@ -22,6 +22,7 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   combustible: true
   left_click_block: break
@@ -32,8 +33,10 @@ behavior:
   sounds:
     place: BLOCK_TNT_PLACE
     ignite: ITEM_FLINTANDSTEEL_USE
-
 custom_data:
+  blinkInterval: 14
+  blinkRadius: 5.0
+  blinkRange: 1.5
   fuse: 60
   power: 3.5
-  radius: 8.0
+  tickInterval: 5

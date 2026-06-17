@@ -3,7 +3,7 @@ id: ore-xray-goggles
 display:
   title: "&bOre X-Ray Goggles"
   description:
-    - "&7Utility item"
+    - "&7Pings nearest ore in range."
 
 item:
   base_material: paper
@@ -16,4 +16,4 @@ behavior:
   right_click_block: use
 
 custom_data:
-  radius: 8.0
+  xrayRadius: 14

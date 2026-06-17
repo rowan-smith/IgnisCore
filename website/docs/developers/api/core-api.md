@@ -37,6 +37,7 @@ The core API is the stable contract between IgnisCore and extension JARs.
 | [AbstractIgnisBlockStrategy](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/AbstractIgnisBlockStrategy.html) | Base class for block extensions |
 | [AbstractIgnisItemStrategy](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/AbstractIgnisItemStrategy.html) | Base class for item extensions |
 | [IgnisStrategyContext](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/IgnisStrategyContext.html) | Services injected into strategies |
+| [StrategySupport](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/StrategySupport.html) | Read typed values from `custom_data` maps |
 
 ## Rules
 
@@ -46,6 +47,6 @@ The core API is the stable contract between IgnisCore and extension JARs.
 
 ## Related
 
-- [Extension Cookbook](/developers/cookbook) — usage recipes
+- [Extension config](/developers/extension-config) — `config.yml` reference
 - [Strategies](/concepts/strategies) — lifecycle overview
 - [Javadoc hub](/developers/reference) — browse all classes

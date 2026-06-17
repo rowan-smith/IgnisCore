@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Scaffold utility extension modules for IgnisCore."""
+"""Scaffold utility extension Java modules for IgnisCore.
+
+Generates pom.xml, manifest YAML, Strategy.java, Behavior.java, and tests.
+config.yml is maintained per module — see tools/write-extension-configs.py.
+"""
 
 from __future__ import annotations
 
@@ -81,6 +85,13 @@ BLOCKS = [
     {"id": "fortune-cookie-maker", "name": "Fortune Cookie Maker", "kind": "fortune_cookie", "type": "interact", "placed_hooks": True},
     {"id": "mood-lantern", "name": "Mood Lantern", "kind": "mood_lantern", "type": "placed"},
     {"id": "lost-and-found-bin", "name": "Lost & Found Bin", "kind": "lost_and_found", "type": "interact", "placed_hooks": True},
+    {"id": "socket-lamp", "name": "Socket Lamp", "kind": "socket_lamp", "type": "placed", "profiles": ["placed"]},
+    {"id": "keyed-hatch", "name": "Keyed Hatch", "kind": "keyed_hatch", "type": "placed", "profiles": ["placed"]},
+    {"id": "sprinkler-head", "name": "Sprinkler Head", "kind": "sprinkler_head", "type": "placed", "profiles": ["placed"]},
+    {"id": "barn-bell", "name": "Barn Bell", "kind": "barn_bell", "type": "placed", "profiles": ["placed"]},
+    {"id": "pipe-valve", "name": "Pipe Valve", "kind": "pipe_valve", "type": "placed", "profiles": ["placed"]},
+    {"id": "picnic-basket", "name": "Picnic Basket", "kind": "picnic_basket", "type": "interact", "placed_hooks": True, "profiles": ["interact", "processing-gui"]},
+    {"id": "keg-tap", "name": "Keg Tap", "kind": "keg_tap", "type": "interact", "placed_hooks": True, "profiles": ["interact", "processing-gui"]},
 ]
 
 ITEMS = [
@@ -101,6 +112,35 @@ ITEMS = [
     {"id": "mulch-spreader", "name": "Mulch Spreader", "kind": "mulch_spreader"},
     {"id": "gravity-marble", "name": "Gravity Marble", "kind": "gravity_marble"},
     {"id": "quantum-coin", "name": "Quantum Coin", "kind": "quantum_coin", "integrations": ["nbt-entity"]},
+    {"id": "lamp-dimmer", "name": "Lamp Dimmer", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "socket-lamp", "remoteAction": "cycle", "linkRange": 64}},
+    {"id": "gate-clicker", "name": "Gate Clicker", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "keyed-hatch", "remoteAction": "toggle", "linkRange": 64}},
+    {"id": "sprinkler-timer", "name": "Sprinkler Timer", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "sprinkler-head", "remoteAction": "arm", "linkRange": 48}},
+    {"id": "farm-call", "name": "Farm Call", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "barn-bell", "remoteAction": "call", "linkRange": 64}},
+    {"id": "valve-wrench", "name": "Valve Wrench", "kind": "remote_link_item", "integrations": ["nbt-entity"],
+     "custom_data": {"linkBlockType": "pipe-valve", "remoteAction": "toggle", "linkRange": 48}},
+    {"id": "glow-orb", "name": "Glow Orb", "kind": "glow_orb"},
+    {"id": "seed-bomb", "name": "Seed Bomb", "kind": "seed_bomb"},
+    {"id": "smoke-can", "name": "Smoke Can", "kind": "smoke_can"},
+    {"id": "vine-shears", "name": "Vine Shears", "kind": "vine_shears"},
+    {"id": "cable-ties", "name": "Cable Ties", "kind": "cable_ties", "integrations": ["nbt-entity"]},
+    {"id": "miners-lunch", "name": "Miner's Lunch", "kind": "consumable_item", "integrations": ["nbt-entity"],
+     "custom_data": {"cooldownTicks": 12000}},
+    {"id": "farmers-tea", "name": "Farmer's Tea", "kind": "consumable_item"},
+    {"id": "divers-salt", "name": "Diver's Salt", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "cartographers-espresso", "name": "Cartographer's Espresso", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "ghost-peppermint", "name": "Ghost Peppermint", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "heavy-coat-tonic", "name": "Heavy Coat Tonic", "kind": "consumable_item"},
+    {"id": "honey-throat-coat", "name": "Honey Throat Coat", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "chorus-bite", "name": "Chorus Bite", "kind": "consumable_item"},
+    {"id": "glow-berry-shot", "name": "Glow Berry Shot", "kind": "consumable_item"},
+    {"id": "bricklayers-broth", "name": "Bricklayer's Broth", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "luck-dust", "name": "Luck Dust", "kind": "consumable_item", "integrations": ["nbt-entity"]},
+    {"id": "antidote-swab", "name": "Antidote Swab", "kind": "consumable_item"},
+    {"id": "unlabeled-potion", "name": "Unlabeled Potion", "kind": "consumable_item", "integrations": ["nbt-entity"]},
 ]
 
 
@@ -124,6 +164,15 @@ def integration_yaml(integrations: list[str] | None) -> str:
     lines = ["requires-integrations:"]
     for i in integrations:
         lines.append(f"  - {i}")
+    return "\n".join(lines) + "\n"
+
+
+def profiles_yaml(profiles: list[str] | None) -> str:
+    if not profiles:
+        return ""
+    lines = ["profiles:"]
+    for profile in profiles:
+        lines.append(f"  - {profile}")
     return "\n".join(lines) + "\n"
 
 
@@ -153,98 +202,6 @@ def block_pom(artifact: str) -> str:
 
 def item_pom(artifact: str) -> str:
     return block_pom(artifact).replace("dev.rono.blocks", "dev.rono.items", 1).replace("<artifactId>blocks</artifactId>", "<artifactId>items</artifactId>", 1)
-
-
-def block_config(ext: dict) -> str:
-    ext_type = ext["type"]
-    combustible = ext.get("combustible", ext_type == "fuse")
-    if ext_type == "interact":
-        behavior = """behavior:
-  combustible: false
-  left_click_block: break
-  right_click_block: open
-  sounds:
-    place: BLOCK_METAL_PLACE"""
-    elif ext_type == "placed":
-        behavior = """behavior:
-  combustible: false
-  left_click_block: break
-  right_click_block: none
-  sounds:
-    place: BLOCK_AMETHYST_BLOCK_CHIME"""
-    elif combustible:
-        behavior = """behavior:
-  combustible: true
-  left_click_block: break
-  right_click_block: ignite
-  ignition_materials:
-    - FLINT_AND_STEEL
-    - FIRE_CHARGE
-  sounds:
-    place: BLOCK_TNT_PLACE
-    ignite: ITEM_FLINTANDSTEEL_USE"""
-    else:
-        behavior = """behavior:
-  combustible: false
-  left_click_block: break
-  right_click_block: none
-  sounds:
-    place: BLOCK_TNT_PLACE"""
-    fuse = ext.get("fuse", 80)
-    return f"""id: {ext['id']}
-
-display:
-  title: "&b{ext['name']}"
-  description:
-    - "&7Utility extension"
-
-block:
-  placeable: true
-  breakable: true
-  breaking:
-    ticks: 0
-    break_sound: BLOCK_GRAVEL_BREAK
-    hit_sound: BLOCK_GRAVEL_HIT
-
-textures:
-  top: top.png
-  side: side.png
-  bottom: bottom.png
-
-model:
-  type: "block_display"
-  mode: "auto"
-
-{behavior}
-
-custom_data:
-  fuse: {fuse}
-  power: 3.5
-  radius: 8.0
-"""
-
-
-def item_config(ext: dict) -> str:
-    return f"""id: {ext['id']}
-
-display:
-  title: "&b{ext['name']}"
-  description:
-    - "&7Utility item"
-
-item:
-  base_material: paper
-
-textures:
-  icon: icon.png
-
-behavior:
-  right_click_air: use
-  right_click_block: use
-
-custom_data:
-  radius: 8.0
-"""
 
 
 def load_behavior(kind: str, class_name: str, package: str, is_item: bool) -> str:
@@ -291,9 +248,24 @@ def block_strategy(package: str, class_name: str, ext: dict) -> str:
             methods.append("    @Override\n    public void onPlaced(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlaced(definition, location);\n    }")
             methods.append("    @Override\n    public void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {\n        behavior.onPlacedBreak(definition, location);\n    }")
 
-    profile_parts = [f".defaultFuse({fuse})"]
-    if not combustible:
-        profile_parts.append(".combustible(false)")
+    profile_parts = []
+    if ext_type == "fuse":
+        profile_parts.append(f".defaultFuse({fuse})")
+        if not combustible:
+            profile_parts.append(".combustible(false)")
+
+    if profile_parts:
+        profile_method = f"""    @Override
+    public StrategyProfile profile(BlockDefinition definition) {{
+        return StrategyProfile.builder()
+                {''.join(profile_parts)}
+                .build();
+    }}"""
+    else:
+        profile_method = """    @Override
+    public StrategyProfile profile(BlockDefinition definition) {
+        return StrategyProfile.defaults();
+    }"""
 
     return f"""package dev.rono.igniscore.block.{package};
 
@@ -311,12 +283,7 @@ public class Strategy extends AbstractIgnisBlockStrategy {{
         this.behavior = new {class_name}Behavior(context);
     }}
 
-    @Override
-    public StrategyProfile profile(BlockDefinition definition) {{
-        return StrategyProfile.builder()
-                {''.join(profile_parts)}
-                .build();
-    }}
+{profile_method}
 
 {chr(10).join(methods)}
 {trigger_method}
@@ -417,8 +384,7 @@ version: @project.version@
 api-version: @ignis.api.version@
 author: IgnisCore
 strategy: dev.rono.igniscore.block.{package}.Strategy
-{integration_yaml(ext.get('integrations'))}""")
-    write(base / "src/main/resources/config.yml", block_config(ext))
+{integration_yaml(ext.get('integrations'))}{profiles_yaml(ext.get('profiles'))}""")
     write(base / f"src/main/java/dev/rono/igniscore/block/{package}/Strategy.java", block_strategy(package, class_name, ext))
     write(base / f"src/main/java/dev/rono/igniscore/block/{package}/{class_name}Behavior.java", load_behavior(ext["kind"], class_name, package, False))
     write(base / f"src/test/java/dev/rono/igniscore/block/{package}/StrategyTest.java", strategy_test_block(package, ext["id"]))
@@ -435,8 +401,7 @@ version: @project.version@
 api-version: @ignis.api.version@
 author: IgnisCore
 strategy: dev.rono.igniscore.item.{package}.Strategy
-{integration_yaml(ext.get('integrations'))}""")
-    write(base / "src/main/resources/config.yml", item_config(ext))
+{integration_yaml(ext.get('integrations'))}{profiles_yaml(ext.get('profiles'))}""")
     write(base / f"src/main/java/dev/rono/igniscore/item/{package}/Strategy.java", item_strategy(package, class_name))
     write(base / f"src/main/java/dev/rono/igniscore/item/{package}/{class_name}Behavior.java", load_behavior(ext["kind"], class_name, package, True))
     write(base / f"src/test/java/dev/rono/igniscore/item/{package}/StrategyTest.java", strategy_test_item(package, ext["id"]))

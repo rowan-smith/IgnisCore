@@ -3,7 +3,7 @@ id: cascade-mine
 display:
   title: "&bCascade Mine"
   description:
-    - "&7Utility extension"
+    - "&7Main blast plus delayed ring waves."
 
 block:
   placeable: true
@@ -22,6 +22,7 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
   combustible: true
   left_click_block: break
@@ -32,8 +33,9 @@ behavior:
   sounds:
     place: BLOCK_TNT_PLACE
     ignite: ITEM_FLINTANDSTEEL_USE
-
 custom_data:
+  cascadeDelay: 6
+  cascadeWaves: 4
   fuse: 50
   power: 3.5
-  radius: 8.0
+  tickInterval: 5

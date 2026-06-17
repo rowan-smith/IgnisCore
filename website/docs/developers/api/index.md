@@ -9,20 +9,19 @@ slug: /developers/api
 | Surface | Maven artifact | Package | Status |
 |---------|----------------|---------|--------|
 | **Core API** | `dev.rono:api` | `dev.rono.igniscore.api.*` | Stable |
-| **Extension shared** | `dev.rono.extensions:shared` | `dev.rono.extensions.shared.*` | Stable helpers |
 
 ## Which API should I use?
 
 | Task | Use |
 |------|-----|
-| Build a block or item extension | **Core API** — strategies, models, ports |
-| Parse explosion / throwable config | **Extension shared** — `ExtensionConfigs` helpers |
+| Build a block or item extension | **Core API** — strategies, models, ports, `StrategySupport` |
+| Read extension tuning from YAML | **Core API** — `definition.getCustomData()` + `StrategySupport` |
 | Access runtime from another plugin | **Core API** — `IgnisCoreAPI` facade |
 
 ## Sub-references
 
 - [Core API](/developers/api/core-api) — strategies, ports, models, config
-- [Extension shared](/developers/api/extension-shared) — typed config helpers
+- [Extension config](/developers/extension-config) — `config.yml` sections and keys
 
 ## Sample extensions
 
@@ -31,6 +30,7 @@ slug: /developers/api
 | nuke (block) | [extensions/blocks/nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke) |
 | grenade (item) | [extensions/items/grenade](https://github.com/%%site.repo%%/tree/main/extensions/items/grenade) |
 | quarry-cache (block) | [extensions/blocks/quarry-cache](https://github.com/%%site.repo%%/tree/main/extensions/blocks/quarry-cache) |
+| lamp-dimmer (item) | [extensions/items/lamp-dimmer](https://github.com/%%site.repo%%/tree/main/extensions/items/lamp-dimmer) |
 
 ## Related docs
 

@@ -22,7 +22,7 @@ igniscore-parent/
 ├── extensions/
 │   ├── blocks/             Bundled block extension JARs
 │   ├── items/              Bundled item extension JARs
-│   └── shared/             Optional typed config helpers
+│   └── shared/             Internal helpers for bundled extensions only
 └── bootstrap/              Single deployable JAR
 ```
 
@@ -49,7 +49,8 @@ All platforms use `PlatformBootloaderLoader` (`common`) to identify server softw
 
 ## Dependency rules
 
-- Extensions depend on `api` (and optionally `extensions/shared`) with `provided` scope
+- Extensions depend on `api` with `provided` scope
+- Third-party extensions should not depend on `extensions/shared` — use the [cookbook](/developers/cookbook) patterns instead
 - Extensions must **not** shade IgnisCore or platform APIs into their JARs
 - Platform adapters live in `bukkit/` and `sponge/` — extensions never import them
 

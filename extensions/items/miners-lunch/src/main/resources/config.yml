@@ -1,0 +1,19 @@
+id: miners-lunch
+
+display:
+  title: "&bMiner's Lunch"
+  description:
+    - "&7Haste + saturation; 10-minute cooldown."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  cooldownTicks: 12000

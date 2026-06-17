@@ -1,0 +1,18 @@
+id: bricklayers-broth
+
+display:
+  title: "&bBricklayer's Broth"
+  description:
+    - "&7Haste II; faster block placement 90s."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  cooldownTicks: 0

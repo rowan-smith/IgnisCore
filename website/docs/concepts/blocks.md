@@ -23,9 +23,11 @@ Surface click routing is declared in YAML `behavior`. Override `onPlacedClick` o
 | `block` | Placeable/breakable flags, base material, breaking tuning |
 | `textures` | Asset paths (top, side, bottom) |
 | `behavior` | Surface clicks — left/right block and air actions |
-| `custom_data` | Extension-specific tuning (fuse, power, radius, etc.) |
+| `custom_data` | Optional — only keys your strategy reads (see [Extension config](/developers/extension-config)) |
 
 ## Block behavior
+
+`combustible` defaults to **false**. Only include it (set to `true`) for ignitable fuse blocks.
 
 ```yaml
 behavior:
@@ -58,4 +60,5 @@ Placed blocks are indexed in `placed-blocks.json` — see [Storage](/storage).
 
 - [Extensions](/concepts/extensions) — manifest and deploy
 - [Strategies](/concepts/strategies) — `AbstractIgnisBlockStrategy`
-- [Extension Cookbook](/developers/cookbook) — explosion config recipes
+- [Extension config](/developers/extension-config) — which keys belong in `config.yml`
+- [Extension Cookbook](/developers/cookbook) — strategy recipes

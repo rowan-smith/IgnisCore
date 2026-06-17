@@ -1,0 +1,20 @@
+id: glow-orb
+
+display:
+  title: "&bGlow Orb"
+  description:
+    - "&7Throwable; emits light particles ~60s."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+
+custom_data:
+  throwSpeed: 1.0
+  glowDurationTicks: 1200

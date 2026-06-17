@@ -1,0 +1,18 @@
+id: unlabeled-potion
+
+display:
+  title: "&bUnlabeled Potion"
+  description:
+    - "&7Random harmless effect; identifies after first drink."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  cooldownTicks: 0

@@ -3,7 +3,7 @@ id: scarecrow-anchor
 display:
   title: "&bScarecrow Anchor"
   description:
-    - "&7Utility extension"
+    - "&7Pushes hostile mobs away from the anchor."
 
 block:
   placeable: true
@@ -22,14 +22,12 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
-  combustible: false
   left_click_block: break
   right_click_block: none
   sounds:
     place: BLOCK_AMETHYST_BLOCK_CHIME
-
 custom_data:
-  fuse: 80
-  power: 3.5
-  radius: 8.0
+  scareRadius: 8.0
+  tickPeriod: 20

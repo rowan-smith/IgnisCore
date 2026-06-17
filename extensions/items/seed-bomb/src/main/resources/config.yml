@@ -1,0 +1,20 @@
+id: seed-bomb
+
+display:
+  title: "&bSeed Bomb"
+  description:
+    - "&7Throwable; scatters grass and flowers."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  scatterDelayTicks: 15
+  scatterRadius: 3
+  throwSpeed: 1.1

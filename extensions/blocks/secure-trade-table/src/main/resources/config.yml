@@ -3,7 +3,7 @@ id: secure-trade-table
 display:
   title: "&bSecure Trade Table"
   description:
-    - "&7Utility extension"
+    - "&7Two-player trade window; confirm with lime dye."
 
 block:
   placeable: true
@@ -22,14 +22,9 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
-  combustible: false
   left_click_block: break
   right_click_block: open
   sounds:
     place: BLOCK_METAL_PLACE
-
-custom_data:
-  fuse: 80
-  power: 3.5
-  radius: 8.0

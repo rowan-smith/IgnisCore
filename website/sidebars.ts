@@ -47,6 +47,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'developers/index',
         'developers/cookbook',
+        'developers/extension-config',
         'developers/reference',
         {
           type: 'category',

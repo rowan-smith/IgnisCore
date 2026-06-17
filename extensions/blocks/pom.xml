@@ -98,6 +98,13 @@
     <module>fortune-cookie-maker</module>
     <module>mood-lantern</module>
     <module>lost-and-found-bin</module>
+    <module>socket-lamp</module>
+    <module>keyed-hatch</module>
+    <module>sprinkler-head</module>
+    <module>barn-bell</module>
+    <module>pipe-valve</module>
+    <module>picnic-basket</module>
+    <module>keg-tap</module>
   </modules>
 
   <dependencyManagement>

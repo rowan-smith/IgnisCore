@@ -3,7 +3,7 @@ id: cookie-cutter-stamp
 display:
   title: "&bCookie Cutter Stamp"
   description:
-    - "&7Utility item"
+    - "&7Cycles cookie stamp shapes."
 
 item:
   base_material: paper
@@ -14,6 +14,3 @@ textures:
 behavior:
   right_click_air: use
   right_click_block: use
-
-custom_data:
-  radius: 8.0

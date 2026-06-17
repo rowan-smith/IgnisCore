@@ -1,0 +1,18 @@
+id: glow-berry-shot
+
+display:
+  title: "&bGlow Berry Shot"
+  description:
+    - "&7Night vision + player glow 120s."
+
+item:
+  base_material: paper
+
+textures:
+  icon: icon.png
+
+behavior:
+  right_click_air: use
+  right_click_block: use
+custom_data:
+  cooldownTicks: 0

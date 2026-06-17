@@ -3,7 +3,7 @@ id: compost-tea-brewer
 display:
   title: "&bCompost Tea Brewer"
   description:
-    - "&7Utility extension"
+    - "&7Splash compost tea bonemeals nearby crops."
 
 block:
   placeable: true
@@ -22,14 +22,12 @@ model:
   type: "block_display"
   mode: "auto"
 
+
 behavior:
-  combustible: false
   left_click_block: break
   right_click_block: open
   sounds:
     place: BLOCK_METAL_PLACE
-
 custom_data:
-  fuse: 80
-  power: 3.5
-  radius: 8.0
+  tickPeriod: 45
+  cropRadius: 4
