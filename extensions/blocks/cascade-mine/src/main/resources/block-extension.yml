@@ -1,0 +1,6 @@
+id: cascade-mine
+name: Cascade Mine
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.cascademine.Strategy

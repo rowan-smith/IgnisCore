@@ -1,0 +1,8 @@
+id: player-chronicle-book
+name: Player Chronicle Book
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.playerchroniclebook.Strategy
+requires-integrations:
+  - nbt-entity

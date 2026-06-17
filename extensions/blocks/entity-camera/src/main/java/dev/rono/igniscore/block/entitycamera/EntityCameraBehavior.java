@@ -1,0 +1,48 @@
+package dev.rono.igniscore.block.entitycamera;
+
+import dev.rono.igniscore.api.CustomBlockAction;
+import dev.rono.igniscore.api.model.BlockDefinition;
+import dev.rono.igniscore.api.port.IgnisItem;
+import dev.rono.igniscore.api.port.IgnisLocation;
+import dev.rono.igniscore.api.port.IgnisPlayer;
+import dev.rono.igniscore.api.port.IgnisWorld;
+import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
+import dev.rono.igniscore.api.strategy.StrategySupport;
+import dev.rono.extensions.shared.strategy.EntityUtilSupport;
+import dev.rono.extensions.shared.strategy.TheatricsSupport;
+import dev.rono.igniscore.api.util.Locations;
+import dev.rono.igniscore.api.util.PlacedMetaSupport;
+
+final class EntityCameraBehavior {
+    private final IgnisStrategyContext context;
+
+    EntityCameraBehavior(IgnisStrategyContext context) {
+        this.context = context;
+    }
+
+    void onPlacedInteract(BlockDefinition definition,
+                          IgnisLocation location,
+                          IgnisPlayer player,
+                          dev.rono.igniscore.api.port.IgnisInteraction interaction,
+                          IgnisItem heldItem,
+                          CustomBlockAction action) {
+        if (action != CustomBlockAction.OPEN) {
+            return;
+        }
+        IgnisWorld world = worldAt(location);
+        IgnisLocation center = Locations.toCenter(location);
+        player.sendMessage("<light_purple>Entity camera linked to nearby mobs.</light_purple>");
+         double radius = StrategySupport.customDouble(definition, "cameraRadius", 12.0);
+         for (Object entity : world.getNearbyEntities(center, radius)) {
+             IgnisLocation entityLoc = world.getEntityLocation(entity);
+             if (entityLoc != null) {
+                 TheatricsSupport.scanBeam(world, center, entityLoc, "END_ROD");
+             }
+         }
+         world.playSound(center, "BLOCK_BEACON_POWER_SELECT", 0.7f, 1.4f);
+    }
+
+    private IgnisWorld worldAt(IgnisLocation location) {
+        return context.getExtensionSupport().resolveWorld(location);
+    }
+}

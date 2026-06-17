@@ -1,0 +1,35 @@
+id: fish-smoker-rack
+
+display:
+  title: "&bFish Smoker Rack"
+  description:
+    - "&7Utility extension"
+
+block:
+  placeable: true
+  breakable: true
+  breaking:
+    ticks: 0
+    break_sound: BLOCK_GRAVEL_BREAK
+    hit_sound: BLOCK_GRAVEL_HIT
+
+textures:
+  top: top.png
+  side: side.png
+  bottom: bottom.png
+
+model:
+  type: "block_display"
+  mode: "auto"
+
+behavior:
+  combustible: false
+  left_click_block: break
+  right_click_block: none
+  sounds:
+    place: BLOCK_AMETHYST_BLOCK_CHIME
+
+custom_data:
+  fuse: 80
+  power: 3.5
+  radius: 8.0

@@ -1,0 +1,6 @@
+id: waypoint-marker
+name: Waypoint Marker
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.waypointmarker.Strategy

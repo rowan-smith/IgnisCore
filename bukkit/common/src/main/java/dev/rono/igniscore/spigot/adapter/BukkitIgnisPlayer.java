@@ -4,6 +4,8 @@ import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisPlayer;
 import dev.rono.igniscore.api.port.IgnisWorld;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public final class BukkitIgnisPlayer implements IgnisPlayer {
     private final Player handle;
@@ -47,9 +49,33 @@ public final class BukkitIgnisPlayer implements IgnisPlayer {
     }
 
     @Override
+    public void sendActionBar(String miniMessage) {
+        try {
+            handle.spigot().sendMessage(
+                    net.md_5.bungee.api.ChatMessageType.ACTION_BAR,
+                    new net.md_5.bungee.api.chat.TextComponent(stripTags(miniMessage)));
+        } catch (Throwable ignored) {
+            sendMessage(miniMessage);
+        }
+    }
+
+    @Override
+    public void applyPotionEffect(String effectKey, int durationTicks, int amplifier) {
+        PotionEffectType type = PotionEffectType.getByName(effectKey.toUpperCase());
+        if (type == null) {
+            return;
+        }
+        handle.addPotionEffect(new PotionEffect(type, durationTicks, amplifier, false, true, true));
+    }
+
+    @Override
     public void openInventory(Object nativeInventory) {
         if (nativeInventory instanceof org.bukkit.inventory.Inventory inventory) {
             handle.openInventory(inventory);
         }
+    }
+
+    private static String stripTags(String miniMessage) {
+        return miniMessage == null ? "" : miniMessage.replaceAll("<[^>]+>", "");
     }
 }

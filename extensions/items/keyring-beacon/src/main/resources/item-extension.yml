@@ -1,0 +1,8 @@
+id: keyring-beacon
+name: Keyring Beacon
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.item.keyringbeacon.Strategy
+requires-integrations:
+  - nbt-entity

@@ -20,6 +20,15 @@
   <modules>
     <module>grenade</module>
     <module>detonator</module>
+    <module>block-stethoscope</module>
+    <module>lock</module>
+    <module>keyring-beacon</module>
+    <module>trait-badge</module>
+    <module>player-chronicle-book</module>
+    <module>ore-xray-goggles</module>
+    <module>structure-compass</module>
+    <module>chunk-grid-overlay</module>
+    <module>atlas-imprinter</module>
   </modules>
 
   <dependencyManagement>

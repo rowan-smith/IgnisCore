@@ -1,0 +1,6 @@
+id: shepherd-bell
+name: Shepherd Bell
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.shepherdbell.Strategy

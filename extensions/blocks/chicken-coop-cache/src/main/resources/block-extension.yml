@@ -1,0 +1,6 @@
+id: chicken-coop-cache
+name: Chicken Coop Cache
+version: @project.version@
+api-version: @ignis.api.version@
+author: IgnisCore
+strategy: dev.rono.igniscore.block.chickencoopcache.Strategy
