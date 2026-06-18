@@ -26,6 +26,7 @@ class CompiledBlockAssetTest {
                 "paper",
                 "carrot_on_a_stick",
                 10001,
+                "minecraft:tnt",
                 textures,
                 blockModel,
                 itemModel
@@ -35,6 +36,7 @@ class CompiledBlockAssetTest {
         assertEquals("paper", asset.getBaseMaterial());
         assertEquals("carrot_on_a_stick", asset.getRenderMaterial());
         assertEquals(10001, asset.getCustomModelData());
+        assertEquals("minecraft:tnt", asset.getTextureFallback());
         assertEquals("side.png", asset.getTextures().get("side"));
         assertSame(blockModel, asset.getBlockModel());
         assertSame(itemModel, asset.getItemModel());

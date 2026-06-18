@@ -28,14 +28,16 @@ public final class ResourcePackFingerprint {
                         + ":" + definition.getExtensionId()
                         + ":" + definition.getTopTexture()
                         + ":" + definition.getSideTexture()
-                        + ":" + definition.getBottomTexture()));
+                        + ":" + definition.getBottomTexture()
+                        + ":" + definition.getTextureFallback()));
         items.values().stream()
                 .sorted(Comparator.comparing(ItemDefinition::getId))
                 .forEach(definition -> parts.add("item:" + definition.getId()
                         + ":" + definition.getCustomModelData()
                         + ":" + definition.getBaseMaterial()
                         + ":" + definition.getExtensionId()
-                        + ":" + definition.getIconTexture()));
+                        + ":" + definition.getIconTexture()
+                        + ":" + definition.getTextureFallback()));
         extensionJarParts(blockExtensions, "block-jar").forEach(parts::add);
         extensionJarParts(itemExtensions, "item-jar").forEach(parts::add);
         return String.join("|", parts);

@@ -214,6 +214,32 @@ class DefinitionParserTest {
         assertNull(definition.getSide1Texture());
     }
 
+    @Test
+    void parsesTextureFallbackForBlocksAndItems() {
+        BlockDefinition block = DefinitionParser.parseBlock(yaml("""
+                id: cavity
+                textures:
+                  top: top.png
+                  side: side.png
+                  bottom: bottom.png
+                  fallback: minecraft:tnt
+                """), "fallback", 10001, "cavity-tnt");
+
+        assertEquals("minecraft:tnt", block.getTextureFallback());
+        assertEquals("minecraft:tnt", block.getTextureFallbackReference().canonical());
+
+        ItemDefinition item = DefinitionParser.parseItem(yaml("""
+                id: remote
+                textures:
+                  icon: icon.png
+                  fallback: grenade
+                """), "fallback", 20001, "remote");
+
+        assertEquals("grenade", item.getTextureFallback());
+        assertEquals("igniscore", item.getTextureFallbackReference().namespace());
+        assertEquals("grenade", item.getTextureFallbackReference().id());
+    }
+
     private static Map<String, Object> yaml(String content) {
         return YamlDefinitions.loadMap(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
     }
