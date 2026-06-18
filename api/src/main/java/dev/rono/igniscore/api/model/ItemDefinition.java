@@ -26,6 +26,7 @@ public final class ItemDefinition implements ExtensionDefinition {
     private final int customModelData;
     private final String extensionId;
     private final String iconTexture;
+    private final String textureFallback;
 
     /**
      * Creates a fully specified item definition.
@@ -40,12 +41,13 @@ public final class ItemDefinition implements ExtensionDefinition {
      * @param customModelData resource-pack custom model data id
      * @param extensionId manifest strategy registry id
      * @param iconTexture icon texture path relative to the extension JAR
+     * @param textureFallback optional {@code textures.fallback} reference string
      */
     public ItemDefinition(String id, String baseMaterial, Component title, List<Component> description,
                           Map<String, Object> customData,
                           Map<String, Object> behaviorSettings,
                           Map<String, Object> interactionSettings, int customModelData, String extensionId,
-                          String iconTexture) {
+                          String iconTexture, String textureFallback) {
         this.id = id;
         this.baseMaterial = baseMaterial;
         this.title = title;
@@ -56,6 +58,19 @@ public final class ItemDefinition implements ExtensionDefinition {
         this.customModelData = customModelData;
         this.extensionId = extensionId;
         this.iconTexture = iconTexture;
+        this.textureFallback = textureFallback;
+    }
+
+    /**
+     * Creates an item definition with a {@code behavior} section and no texture fallback.
+     */
+    public ItemDefinition(String id, String baseMaterial, Component title, List<Component> description,
+                          Map<String, Object> customData,
+                          Map<String, Object> behaviorSettings,
+                          Map<String, Object> interactionSettings, int customModelData, String extensionId,
+                          String iconTexture) {
+        this(id, baseMaterial, title, description, customData, behaviorSettings, interactionSettings,
+                customModelData, extensionId, iconTexture, null);
     }
 
     /**
@@ -76,13 +91,13 @@ public final class ItemDefinition implements ExtensionDefinition {
                           Map<String, Object> interactionSettings, int customModelData, String extensionId,
                           String iconTexture) {
         this(id, baseMaterial, title, description, customData, Map.of(), interactionSettings,
-                customModelData, extensionId, iconTexture);
+                customModelData, extensionId, iconTexture, null);
     }
 
     private ItemDefinition(Builder builder) {
         this(builder.id, builder.baseMaterial, builder.title, builder.description, builder.customData,
                 builder.behaviorSettings, builder.interactionSettings, builder.customModelData, builder.extensionId,
-                builder.iconTexture);
+                builder.iconTexture, builder.textureFallback);
     }
 
     /**
@@ -183,6 +198,20 @@ public final class ItemDefinition implements ExtensionDefinition {
     }
 
     /**
+     * @return raw {@code textures.fallback} value, or {@code null} when unset
+     */
+    public String getTextureFallback() {
+        return textureFallback;
+    }
+
+    /**
+     * @return parsed {@code textures.fallback} reference, or {@code null} when unset
+     */
+    public TextureFallbackReference getTextureFallbackReference() {
+        return TextureFallbackReference.parse(textureFallback);
+    }
+
+    /**
      * Fluent builder for {@link ItemDefinition}, primarily used in tests and samples.
      */
     public static final class Builder {
@@ -196,6 +225,7 @@ public final class ItemDefinition implements ExtensionDefinition {
         private int customModelData = 20001;
         private String extensionId;
         private String iconTexture = "icon.png";
+        private String textureFallback;
 
         private Builder(String id) {
             this.id = id;
@@ -281,6 +311,15 @@ public final class ItemDefinition implements ExtensionDefinition {
          */
         public Builder iconTexture(String iconTexture) {
             this.iconTexture = iconTexture;
+            return this;
+        }
+
+        /**
+         * @param textureFallback raw {@code textures.fallback} value
+         * @return this builder
+         */
+        public Builder textureFallback(String textureFallback) {
+            this.textureFallback = textureFallback;
             return this;
         }
 

@@ -10,6 +10,7 @@ import dev.rono.igniscore.loader.ExtensionResourceProvider;
 import dev.rono.igniscore.manager.ItemManager;
 import dev.rono.igniscore.api.model.BlockDefinition;
 import dev.rono.igniscore.api.model.ItemDefinition;
+import dev.rono.igniscore.api.model.TextureFallbackReference;
 
 import java.io.*;
 import java.nio.file.*;
@@ -92,6 +93,7 @@ public class ResourcePackBuilder {
                 def.getBaseMaterial(),
                 def.getCustomModelData(),
                 def.getIconTexture(),
+                def.getTextureFallback(),
                 itemModel
         );
     }
@@ -164,6 +166,7 @@ public class ResourcePackBuilder {
                 def.getBaseMaterial(),
                 def.getRenderMaterial(),
                 def.getCustomModelData(),
+                def.getTextureFallback(),
                 textures,
                 blockModel,
                 itemModel
@@ -181,13 +184,16 @@ public class ResourcePackBuilder {
         private final String baseMaterial;
         private final int customModelData;
         private final String iconTexture;
+        private final String textureFallback;
         private final JsonObject itemModel;
 
-        private CompiledItemAsset(String id, String baseMaterial, int customModelData, String iconTexture, JsonObject itemModel) {
+        private CompiledItemAsset(String id, String baseMaterial, int customModelData, String iconTexture,
+                                  String textureFallback, JsonObject itemModel) {
             this.id = id;
             this.baseMaterial = baseMaterial;
             this.customModelData = customModelData;
             this.iconTexture = iconTexture;
+            this.textureFallback = textureFallback;
             this.itemModel = itemModel;
         }
 
@@ -207,6 +213,10 @@ public class ResourcePackBuilder {
             return iconTexture;
         }
 
+        public String getTextureFallback() {
+            return textureFallback;
+        }
+
         public JsonObject getItemModel() {
             return itemModel;
         }
@@ -222,28 +232,25 @@ public class ResourcePackBuilder {
             Map<String, List<OverrideEntry>> materialOverrides = new HashMap<>();
             
             for (CompiledBlockAsset asset : assets) {
-                // Write block model: assets/igniscore/models/block/<id>.json
                 Path blockModelPath = tempDir.resolve("assets/igniscore/models/block/" + asset.getId() + ".json");
                 Files.createDirectories(blockModelPath.getParent());
+
+                Path textureDir = tempDir.resolve("assets/igniscore/textures/block/" + asset.getId());
+                Files.createDirectories(textureDir);
+                copyTextures(asset, textureDir);
+
                 Files.writeString(blockModelPath, gson.toJson(asset.getBlockModel()));
                 debug("Generated block model: " + normalizePath(blockModelPath));
 
-                // Write item model: assets/igniscore/models/item/<id>.json
                 Path itemModelPath = tempDir.resolve("assets/igniscore/models/item/" + asset.getId() + ".json");
                 Files.createDirectories(itemModelPath.getParent());
                 Files.writeString(itemModelPath, gson.toJson(asset.getItemModel()));
                 debug("Generated item model: " + normalizePath(itemModelPath));
 
-                // Modern item definition: assets/igniscore/items/<id>.json
                 Path itemDefinitionPath = tempDir.resolve("assets/igniscore/items/" + asset.getId() + ".json");
                 Files.createDirectories(itemDefinitionPath.getParent());
                 Files.writeString(itemDefinitionPath, gson.toJson(createModelItemDefinition("igniscore:item/" + asset.getId())));
                 debug("Generated item definition: " + normalizePath(itemDefinitionPath));
-
-                // Write textures: assets/igniscore/textures/block/<id>/
-                Path textureDir = tempDir.resolve("assets/igniscore/textures/block/" + asset.getId());
-                Files.createDirectories(textureDir);
-                copyTextures(asset, textureDir);
 
                 // Inventory entry (baseMaterial)
                 OverrideEntry invEntry = new OverrideEntry();
@@ -268,15 +275,16 @@ public class ResourcePackBuilder {
             for (CompiledItemAsset itemAsset : itemAssets) {
                 Path itemModelPath = tempDir.resolve("assets/igniscore/models/item/" + itemAsset.getId() + ".json");
                 Files.createDirectories(itemModelPath.getParent());
+
+                Path texturePath = tempDir.resolve("assets/igniscore/textures/item/" + itemAsset.getId() + ".png");
+                Files.createDirectories(texturePath.getParent());
+                copyItemTexture(itemAsset, texturePath);
+
                 Files.writeString(itemModelPath, gson.toJson(itemAsset.getItemModel()));
 
                 Path itemDefinitionPath = tempDir.resolve("assets/igniscore/items/" + itemAsset.getId() + ".json");
                 Files.createDirectories(itemDefinitionPath.getParent());
                 Files.writeString(itemDefinitionPath, gson.toJson(createModelItemDefinition("igniscore:item/" + itemAsset.getId())));
-
-                Path texturePath = tempDir.resolve("assets/igniscore/textures/item/" + itemAsset.getId() + ".png");
-                Files.createDirectories(texturePath.getParent());
-                copyItemTexture(itemAsset, texturePath);
 
                 OverrideEntry entry = new OverrideEntry();
                 entry.cmd = itemAsset.getCustomModelData();
@@ -421,20 +429,52 @@ public class ResourcePackBuilder {
     }
 
     private void copyTextures(CompiledBlockAsset asset, Path destDir) throws IOException {
+        TextureFallbackResolver fallbackResolver = new TextureFallbackResolver(
+                resourceProvider, activeBlockDefinitions, activeItemDefinitions);
+        TextureFallbackReference fallback = TextureFallbackReference.parse(asset.getTextureFallback());
+
         for (Map.Entry<String, String> entry : asset.getTextures().entrySet()) {
             String key = entry.getKey();
             String fileName = entry.getValue();
-            
-            try (InputStream is = getTextureStream(asset.getId(), fileName)) {
+
+            try (InputStream is = resolveBlockFaceStream(asset.getId(), fileName, fallback, fallbackResolver, key)) {
                 if (is != null) {
                     Path texturePath = destDir.resolve(key + ".png");
                     TextureFileWriter.writePackTexture(is, fileName, texturePath);
                     debug("Generated texture: " + normalizePath(texturePath));
-                } else {
-                    host.getLogger().warning(
-                            "Texture missing for block " + asset.getId() + ": " + fileName + " (skipped)");
+                    continue;
                 }
             }
+
+            Optional<String> vanillaPath = fallbackResolver.minecraftBlockTexturePath(fallback, key);
+            if (vanillaPath.isPresent()) {
+                applyVanillaBlockTextureReference(asset, key, vanillaPath.get());
+                debug("Applied vanilla fallback texture for block " + asset.getId() + " face " + key + ": " + vanillaPath.get());
+                continue;
+            }
+
+            host.getLogger().warning(
+                    "Texture missing for block " + asset.getId() + ": " + fileName + " (skipped)");
+        }
+    }
+
+    private InputStream resolveBlockFaceStream(String blockId, String fileName, TextureFallbackReference fallback,
+                                               TextureFallbackResolver fallbackResolver, String faceKey) throws IOException {
+        InputStream primary = getTextureStream(blockId, fileName);
+        if (primary != null) {
+            return primary;
+        }
+        return fallbackResolver.resolveBlockFaceTexture(fallback, faceKey).orElse(null);
+    }
+
+    private void applyVanillaBlockTextureReference(CompiledBlockAsset asset, String faceKey, String vanillaPath) {
+        JsonObject texturesJson = asset.getBlockModel().getAsJsonObject("textures");
+        String modelKey = VanillaTexturePaths.blockModelTextureKey(faceKey);
+        if (modelKey != null) {
+            texturesJson.addProperty(modelKey, vanillaPath);
+        }
+        if ("side".equals(faceKey) || faceKey.startsWith("side-")) {
+            texturesJson.addProperty("particle", vanillaPath);
         }
     }
 
@@ -455,14 +495,36 @@ public class ResourcePackBuilder {
             throw new IOException("Unknown item definition for texture copy: " + asset.getId());
         }
 
-        try (InputStream inputStream = resourceProvider.getItemTextureStream(definition, asset.getIconTexture())) {
-            if (inputStream == null) {
-                host.getLogger().warning(
-                        "Texture missing for item " + asset.getId() + ": " + asset.getIconTexture() + " (skipped)");
+        TextureFallbackResolver fallbackResolver = new TextureFallbackResolver(
+                resourceProvider, activeBlockDefinitions, activeItemDefinitions);
+        TextureFallbackReference fallback = TextureFallbackReference.parse(asset.getTextureFallback());
+
+        try (InputStream inputStream = resolveItemIconStream(definition, asset.getIconTexture(), fallback, fallbackResolver)) {
+            if (inputStream != null) {
+                TextureFileWriter.writePackTexture(inputStream, asset.getIconTexture(), texturePath);
                 return;
             }
-            TextureFileWriter.writePackTexture(inputStream, asset.getIconTexture(), texturePath);
         }
+
+        Optional<String> vanillaPath = fallbackResolver.minecraftItemTexturePath(fallback);
+        if (vanillaPath.isPresent()) {
+            asset.getItemModel().getAsJsonObject("textures").addProperty("layer0", vanillaPath.get());
+            debug("Applied vanilla fallback texture for item " + asset.getId() + ": " + vanillaPath.get());
+            return;
+        }
+
+        host.getLogger().warning(
+                "Texture missing for item " + asset.getId() + ": " + asset.getIconTexture() + " (skipped)");
+    }
+
+    private InputStream resolveItemIconStream(ItemDefinition definition, String iconTexture,
+                                              TextureFallbackReference fallback,
+                                              TextureFallbackResolver fallbackResolver) throws IOException {
+        InputStream primary = resourceProvider.getItemTextureStream(definition, iconTexture);
+        if (primary != null) {
+            return primary;
+        }
+        return fallbackResolver.resolveItemIconTexture(fallback).orElse(null);
     }
 
     private void zip(Path sourceDirPath, Path zipFilePath) throws IOException {

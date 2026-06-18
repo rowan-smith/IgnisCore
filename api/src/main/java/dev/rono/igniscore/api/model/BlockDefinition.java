@@ -33,6 +33,7 @@ public final class BlockDefinition implements ExtensionDefinition {
     private final String side2Texture;
     private final String side3Texture;
     private final String side4Texture;
+    private final String textureFallback;
 
     private final Map<String, Object> customData;
     private final Map<String, Object> breakSettings;
@@ -112,7 +113,7 @@ public final class BlockDefinition implements ExtensionDefinition {
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse) {
         this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
                 bottomTexture, customData, breakSettings, behaviorSettings, interactionSettings, displaySettings,
-                customModelData, rotate, floatBob, pulse, "builtin", null, null, null, null);
+                customModelData, rotate, floatBob, pulse, "builtin", null, null, null, null, null);
     }
 
     /**
@@ -184,7 +185,49 @@ public final class BlockDefinition implements ExtensionDefinition {
                            String extensionId) {
         this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
                 bottomTexture, customData, breakSettings, behaviorSettings, interactionSettings, displaySettings,
-                customModelData, rotate, floatBob, pulse, extensionId, null, null, null, null);
+                customModelData, rotate, floatBob, pulse, extensionId, null, null, null, null, null);
+    }
+
+    /**
+     * Creates a block definition with per-side texture overrides and default extension id {@code builtin}.
+     *
+     * @param id in-game type id
+     * @param baseMaterial vanilla material used for the placed block item
+     * @param renderMaterial vanilla material used for the in-world display entity
+     * @param title display name
+     * @param description lore lines
+     * @param placeable whether players may place this block
+     * @param breakable whether players may break this block
+     * @param topTexture top face texture path
+     * @param sideTexture default side face texture path
+     * @param bottomTexture bottom face texture path
+     * @param customData {@code custom_data} YAML section
+     * @param breakSettings {@code block.breaking} YAML section
+     * @param interactionSettings flattened {@code interactions} section
+     * @param displaySettings flattened {@code block_display} section
+     * @param customModelData resource-pack custom model data id
+     * @param rotate enable display rotation animation
+     * @param floatBob enable display bob animation
+     * @param pulse enable display pulse animation
+     * @param extensionId manifest strategy registry id
+     * @param side1Texture optional texture for horizontal side face 1
+     * @param side2Texture optional texture for horizontal side face 2
+     * @param side3Texture optional texture for horizontal side face 3
+     * @param side4Texture optional texture for horizontal side face 4
+     * @param textureFallback optional {@code textures.fallback} reference string
+     */
+    public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description,
+                           boolean placeable, boolean breakable,
+                           String topTexture, String sideTexture, String bottomTexture,
+                           Map<String, Object> customData,
+                           Map<String, Object> breakSettings, Map<String, Object> interactionSettings,
+                           Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
+                           String extensionId, String side1Texture, String side2Texture, String side3Texture, String side4Texture,
+                           String textureFallback) {
+        this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
+                bottomTexture, customData, breakSettings, Map.of(), interactionSettings, displaySettings,
+                customModelData, rotate, floatBob, pulse, extensionId, side1Texture, side2Texture, side3Texture, side4Texture,
+                textureFallback);
     }
 
     /**
@@ -222,8 +265,9 @@ public final class BlockDefinition implements ExtensionDefinition {
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
                            String extensionId, String side1Texture, String side2Texture, String side3Texture, String side4Texture) {
         this(id, baseMaterial, renderMaterial, title, description, placeable, breakable, topTexture, sideTexture,
-                bottomTexture, customData, breakSettings, Map.of(), interactionSettings, displaySettings,
-                customModelData, rotate, floatBob, pulse, extensionId, side1Texture, side2Texture, side3Texture, side4Texture);
+                bottomTexture, customData, breakSettings, interactionSettings, displaySettings,
+                customModelData, rotate, floatBob, pulse, extensionId, side1Texture, side2Texture, side3Texture, side4Texture,
+                null);
     }
 
     /**
@@ -253,6 +297,7 @@ public final class BlockDefinition implements ExtensionDefinition {
      * @param side2Texture optional texture for horizontal side face 2
      * @param side3Texture optional texture for horizontal side face 3
      * @param side4Texture optional texture for horizontal side face 4
+     * @param textureFallback optional {@code textures.fallback} reference string
      */
     public BlockDefinition(String id, String baseMaterial, String renderMaterial, Component title, List<Component> description,
                            boolean placeable, boolean breakable,
@@ -261,7 +306,8 @@ public final class BlockDefinition implements ExtensionDefinition {
                            Map<String, Object> breakSettings, Map<String, Object> behaviorSettings,
                            Map<String, Object> interactionSettings,
                            Map<String, Object> displaySettings, int customModelData, boolean rotate, boolean floatBob, boolean pulse,
-                           String extensionId, String side1Texture, String side2Texture, String side3Texture, String side4Texture) {
+                           String extensionId, String side1Texture, String side2Texture, String side3Texture, String side4Texture,
+                           String textureFallback) {
         this.id = id;
         this.baseMaterial = baseMaterial;
         this.renderMaterial = renderMaterial;
@@ -276,6 +322,7 @@ public final class BlockDefinition implements ExtensionDefinition {
         this.side2Texture = side2Texture;
         this.side3Texture = side3Texture;
         this.side4Texture = side4Texture;
+        this.textureFallback = textureFallback;
         this.customData = customData == null ? Map.of() : Map.copyOf(customData);
         this.breakSettings = breakSettings == null ? Map.of() : Map.copyOf(breakSettings);
         this.behaviorSettings = behaviorSettings == null ? Map.of() : Map.copyOf(behaviorSettings);
@@ -294,7 +341,8 @@ public final class BlockDefinition implements ExtensionDefinition {
                 builder.customData, builder.breakSettings, builder.behaviorSettings, builder.interactionSettings,
                 builder.displaySettings,
                 builder.customModelData, builder.rotate, builder.floatBob, builder.pulse, builder.extensionId,
-                builder.side1Texture, builder.side2Texture, builder.side3Texture, builder.side4Texture);
+                builder.side1Texture, builder.side2Texture, builder.side3Texture, builder.side4Texture,
+                builder.textureFallback);
     }
 
     /**
@@ -373,6 +421,18 @@ public final class BlockDefinition implements ExtensionDefinition {
      * @return per-side texture for horizontal face 4, or {@code null} to use {@link #getSideTexture()}
      */
     public String getSide4Texture() { return side4Texture; }
+
+    /**
+     * @return raw {@code textures.fallback} value, or {@code null} when unset
+     */
+    public String getTextureFallback() { return textureFallback; }
+
+    /**
+     * @return parsed {@code textures.fallback} reference, or {@code null} when unset
+     */
+    public TextureFallbackReference getTextureFallbackReference() {
+        return TextureFallbackReference.parse(textureFallback);
+    }
 
     /**
      * @return {@code true} when any per-side texture override is set
@@ -494,6 +554,7 @@ public final class BlockDefinition implements ExtensionDefinition {
         private String side2Texture;
         private String side3Texture;
         private String side4Texture;
+        private String textureFallback;
         private Map<String, Object> customData = Map.of();
         private Map<String, Object> breakSettings = Map.of();
         private Map<String, Object> behaviorSettings = Map.of();
@@ -592,6 +653,15 @@ public final class BlockDefinition implements ExtensionDefinition {
             this.side2Texture = side2;
             this.side3Texture = side3;
             this.side4Texture = side4;
+            return this;
+        }
+
+        /**
+         * @param textureFallback raw {@code textures.fallback} value
+         * @return this builder
+         */
+        public Builder textureFallback(String textureFallback) {
+            this.textureFallback = textureFallback;
             return this;
         }
 
