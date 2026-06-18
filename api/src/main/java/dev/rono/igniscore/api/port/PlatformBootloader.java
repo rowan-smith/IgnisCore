@@ -1,10 +1,10 @@
 package dev.rono.igniscore.api.port;
 
 /**
- * Version-specific entry point discovered by the bootstrap module at runtime.
+ * Version-specific entry point discovered by the platform plugin at runtime.
  *
  * <p>Implementations are registered via {@link java.util.ServiceLoader}. The
- * bootstrap selects the highest-priority bootloader whose
+ * plugin selects the highest-priority bootloader whose
  * {@link #canBoot(Object)} accepts the host and whose Minecraft version range
  * matches the running server.</p>
  */

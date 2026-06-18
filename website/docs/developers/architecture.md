@@ -12,16 +12,14 @@ IgnisCore uses a platform-neutral core with server-software-specific adapters di
 igniscore-parent/
 ├── api/                    Platform-neutral public contract
 ├── common/                 Shared runtime: loaders, registry, BlockManager
-├── bukkit/
-│   ├── common/             Shared Bukkit runtime (listeners, commands, services)
-│   ├── spigot/             Spigot bootloaders per MC version line
-│   └── paper/              Paper adapter + bootloaders
-├── sponge/
-│   ├── common/             Shared Sponge runtime
-│   └── v8.5.0 / v12.0.0 / v19.0.0   Version-specific entrypoints
-└── bootstrap/
-    ├── spigot/             Native Spigot plugin JAR (+ Sponge)
-    └── paper/              Native Paper plugin JAR
+├── bukkit-common/          Shared Bukkit runtime (listeners, commands, services)
+├── spigot/                 Spigot plugin JAR
+├── paper/                  Paper plugin JAR
+├── sponge-common/          Shared Sponge runtime
+├── sponge-v8.5.0/          SpongeAPI 8.5 plugin (Minecraft 1.20.x)
+├── sponge-v12.0.0/         SpongeAPI 12 plugin (Minecraft 1.21.x)
+├── sponge-v19.0.0/         SpongeAPI 19 plugin (Minecraft 26.1.x)
+└── universal/              Universal plugin JAR (all platforms)
 
 [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) (separate repository, consumes API via JitPack)
 ├── blocks/                 Block extension modules
@@ -31,19 +29,22 @@ igniscore-parent/
 
 Deploy built extension JARs to `plugins/IgnisCore/blocks/` and `plugins/IgnisCore/items/` on your server.
 
-| Module | Purpose |
-|--------|---------|
-| `api` | Stable extension-facing contract: `IgnisCoreAPI`, ports, strategies |
-| `common` | Extension loaders, strategy registry, `BlockManager`, lifecycle |
-| `bootstrap/spigot` | Produces the Spigot/Sponge deployable JAR |
-| `bootstrap/paper` | Produces the Paper-native deployable JAR |
+| Module | Output JAR |
+|--------|------------|
+| `spigot` | `IgnisCore-Spigot-<version>.jar` |
+| `paper` | `IgnisCore-Paper-<version>.jar` |
+| `sponge-v8.5.0` | `IgnisCore-Sponge-v8-<version>.jar` |
+| `sponge-v12.0.0` | `IgnisCore-Sponge-v12-<version>.jar` |
+| `sponge-v19.0.0` | `IgnisCore-Sponge-v19-<version>.jar` |
+| `universal` | `IgnisCore-<version>.jar` |
 
 ## Boot flow
 
 All platforms use `PlatformBootloaderLoader` (`common`) to identify server software and select a `PlatformBootloader`:
 
-- **Spigot/Sponge:** `IgnisBootstrapPlugin` from `plugin.yml` → Guice + `IgnisCoreApplication`
+- **Spigot:** `IgnisCorePlugin` from `plugin.yml` → Guice + `IgnisCoreApplication`
 - **Paper:** `IgnisPaperPlugin` from `paper-plugin.yml` → same loader
+- **Sponge:** version-specific `IgnisSpongePlugin` from `sponge_plugins.json`
 
 ### Bootloader priority (Bukkit family)
 
@@ -63,7 +64,7 @@ All platforms use `PlatformBootloaderLoader` (`common`) to identify server softw
 - Extensions depend on `api` with `provided` scope (via JitPack for external projects)
 - Optional: depend on `shared` from [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) with `provided` scope and use `ExtensionShared.*()` — see [Extension shared](/developers/api/extension-shared)
 - Extensions must **not** shade IgnisCore or platform APIs into their JARs
-- Platform adapters live in `bukkit/` and `sponge/` — extensions never import them
+- Platform adapters live in `bukkit-common`, `spigot`, `paper`, and `sponge-*` — extensions never import them
 - Extension authors use **L2–L3** (`IgnisStrategyContext`); integrators use **L4** (`IgnisCoreAPI`) — see [API layers](/developers/api/layers)
 
 ## Related

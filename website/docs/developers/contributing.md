@@ -18,8 +18,12 @@ mvn clean package
 
 Output:
 
-- `bootstrap/spigot/target/%%site.jarName%%` — Spigot and Sponge
-- `bootstrap/paper/target/IgnisCore-Paper-%%site.version%%.jar` — Paper
+- `universal/target/%%site.jarName%%` — all platforms
+- `spigot/target/IgnisCore-Spigot-%%site.version%%.jar` — Spigot only
+- `paper/target/IgnisCore-Paper-%%site.version%%.jar` — Paper only
+- `sponge-v8.5.0/target/IgnisCore-Sponge-v8-%%site.version%%.jar` — Sponge 8.5
+- `sponge-v12.0.0/target/IgnisCore-Sponge-v12-%%site.version%%.jar` — Sponge 12
+- `sponge-v19.0.0/target/IgnisCore-Sponge-v19-%%site.version%%.jar` — Sponge 19
 
 ## Run tests
 
