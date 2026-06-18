@@ -14,7 +14,7 @@ import java.util.Optional;
  * Grouped entry point for block and item strategy helpers in the core API.
  *
  * <p>Prefer {@link #blocks()}, {@link #items()}, and {@link #data()} over importing individual
- * support classes when authoring extensions. Optional bundled helpers live in
+ * support classes when authoring extensions. Optional shared helpers live in
  * {@link dev.rono.extensions.shared.ExtensionShared}.</p>
  */
 public final class IgnisStrategies {

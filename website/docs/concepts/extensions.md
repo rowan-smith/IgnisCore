@@ -4,7 +4,7 @@ description: How IgnisCore loads block and item extension JARs at runtime.
 slug: /concepts/extensions
 ---
 
-Extensions are platform-agnostic JARs loaded at runtime from the plugin data folder. Each extension registers a **strategy** class and ships YAML config plus texture assets. The bootstrap plugin bundles **120+ reference extensions**; you can add your own JARs alongside them.
+Extensions are platform-agnostic JARs loaded at runtime from the plugin data folder. Each extension registers a **strategy** class and ships YAML config plus texture assets. Deploy your own JARs under `blocks/` and `items/`; reference implementations live in [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%).
 
 ## Deploy paths
 
@@ -13,7 +13,7 @@ Extensions are platform-agnostic JARs loaded at runtime from the plugin data fol
 | Block | `blocks/` | `blocks/my-tnt-1.0.0.jar` |
 | Item | `items/` | `items/my-grenade-1.0.0.jar` |
 
-Bundled extensions ship inside the bootstrap JAR and extract on first boot.
+On first boot IgnisCore creates these folders under the plugin data directory. Copy built extension JARs there, then run `/ignis reload blocks` or `/ignis reload items`.
 
 ## Two identifiers
 

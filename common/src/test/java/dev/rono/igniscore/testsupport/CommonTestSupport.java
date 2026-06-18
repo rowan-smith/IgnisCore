@@ -42,16 +42,6 @@ public final class CommonTestSupport {
             }
 
             @Override
-            public java.io.InputStream openBundledResource(String resourcePath) {
-                return null;
-            }
-
-            @Override
-            public java.net.URI getDeploymentLocation() {
-                return dataDirectory.toUri();
-            }
-
-            @Override
             public ClassLoader getExtensionParentClassLoader() {
                 return CommonTestSupport.class.getClassLoader();
             }

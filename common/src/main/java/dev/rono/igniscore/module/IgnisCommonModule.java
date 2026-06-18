@@ -20,7 +20,6 @@ import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.integration.IgnisIntegrationRegistryProvider;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
 import dev.rono.igniscore.loader.ExtensionLoadEngine;
-import dev.rono.igniscore.loader.BundledExtensionExtractor;
 import dev.rono.igniscore.loader.ExtensionResourceProvider;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.manager.BlockDefinitionLookup;
@@ -63,7 +62,6 @@ public class IgnisCommonModule extends AbstractModule {
         bind(IgnisRuntimeLifecycle.class).in(Scopes.SINGLETON);
 
         bind(ExtensionResourceProvider.class).in(Scopes.SINGLETON);
-        bind(BundledExtensionExtractor.class).in(Scopes.SINGLETON);
         bind(ExtensionLoadEngine.class).in(Scopes.SINGLETON);
         bind(BlockExtensionLoader.class).in(Scopes.SINGLETON);
         bind(ItemExtensionLoader.class).in(Scopes.SINGLETON);

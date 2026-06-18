@@ -41,16 +41,6 @@ class BlockExtensionLoaderTest {
             }
 
             @Override
-            public java.io.InputStream openBundledResource(String resourcePath) {
-                return null;
-            }
-
-            @Override
-            public java.net.URI getDeploymentLocation() {
-                return tempDir.toUri();
-            }
-
-            @Override
             public ClassLoader getExtensionParentClassLoader() {
                 return getClass().getClassLoader();
             }

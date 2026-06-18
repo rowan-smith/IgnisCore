@@ -96,7 +96,10 @@ public final class PlacedMetaSupport {
         String encoded = key(location);
         PLACEMENT_YAW.remove(encoded);
         STRING_META.remove(encoded);
-        TRIPWIRE_PARTNERS.remove(encoded);
+        String partnerKey = TRIPWIRE_PARTNERS.remove(encoded);
+        if (partnerKey != null) {
+            TRIPWIRE_PARTNERS.remove(partnerKey);
+        }
     }
 
     private static String key(IgnisLocation location) {

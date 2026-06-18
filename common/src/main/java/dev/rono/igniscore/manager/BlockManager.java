@@ -12,6 +12,7 @@ import dev.rono.igniscore.api.service.IgnisEffectService;
 import dev.rono.igniscore.api.config.BlockBehaviorConfig;
 import dev.rono.igniscore.api.strategy.StrategySupport;
 import dev.rono.igniscore.api.util.Locations;
+import dev.rono.igniscore.api.util.PlacedMetaSupport;
 import dev.rono.igniscore.config.PerformanceSettings;
 import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.loader.LoadedExtension;
@@ -21,7 +22,6 @@ import dev.rono.igniscore.service.RuntimeBlockService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +35,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
     private final BlockVisualRenderer visualRenderer;
     private final StrategyEventPublisher events;
     private final int visualRefreshBatchSize;
-    private final Map<String, BlockDefinition> blockTypes = new HashMap<>();
+    private final Map<String, BlockDefinition> blockTypes = new ConcurrentHashMap<>();
     private final Map<IgnisLocation, String> placedBlocks = new ConcurrentHashMap<>();
     private final Map<IgnisLocation, Object> blockVisuals = new ConcurrentHashMap<>();
 
@@ -112,6 +112,7 @@ public class BlockManager implements BlockTypeRegistry, PlacedBlockRegistry {
 
     public void unregisterPlacedBlock(IgnisLocation location) {
         IgnisLocation blockLocation = blockKey(location);
+        PlacedMetaSupport.clear(blockLocation);
         placedBlocks.remove(blockLocation);
         placedBlockPersistence.removePlacement(blockLocation);
         Object display = blockVisuals.remove(blockLocation);

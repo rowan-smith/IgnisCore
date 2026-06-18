@@ -110,36 +110,6 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>bundle-extensions</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <mkdir dir="${project.build.outputDirectory}/bundled/blocks"/>
-                <copy todir="${project.build.outputDirectory}/bundled/blocks" flatten="true" failonerror="false">
-                  <fileset dir="${project.basedir}/bundled/blocks">
-                    <include name="*.jar"/>
-                  </fileset>
-                </copy>
-                <mkdir dir="${project.build.outputDirectory}/bundled/items"/>
-                <copy todir="${project.build.outputDirectory}/bundled/items" flatten="true" failonerror="false">
-                  <fileset dir="${project.basedir}/bundled/items">
-                    <include name="*.jar"/>
-                  </fileset>
-                </copy>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.6.1</version>
         <executions>
@@ -192,24 +162,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>bundled-shared</id>
-      <activation>
-        <file>
-          <exists>${project.basedir}/bundled/lib/shared.jar</exists>
-        </file>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>dev.rono.extensions</groupId>
-          <artifactId>shared</artifactId>
-          <version>${project.version}</version>
-          <scope>system</scope>
-          <systemPath>${project.basedir}/bundled/lib/shared.jar</systemPath>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
 </project>

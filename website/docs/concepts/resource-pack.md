@@ -39,11 +39,11 @@ Shows latest pack hash, registered block model mappings, and the configured publ
 
 | Key | Purpose |
 |-----|---------|
-| `resource-pack.host` | Bind address for pack server |
+| `resource-pack.host` | Bind address for pack server (default `0.0.0.0` — all interfaces) |
 | `resource-pack.port` | TCP port |
 | `resource-pack.public-url` | URL sent to clients |
 
-Ensure `public-url` is reachable from player machines — often a public IP or reverse proxy, not `localhost`.
+Ensure `public-url` is reachable from player machines — use your public IP or reverse proxy. The default `public-url` uses `0.0.0.0` as a placeholder; replace it with an address clients can reach.
 
 ## Related
 

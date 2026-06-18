@@ -4,7 +4,7 @@ description: IgnisCore server config.yml — resource pack hosting and performan
 slug: /configuration
 ---
 
-IgnisCore reads `config.yml` from the plugin data folder. Reload server config without reloading extensions:
+IgnisCore reads `config.yml` from the plugin data folder on Bukkit-family servers and Sponge. Reload server config without reloading extensions:
 
 ```text
 /ignis reload server
@@ -14,9 +14,9 @@ IgnisCore reads `config.yml` from the plugin data folder. Reload server config w
 
 ```yaml
 resource-pack:
-  host: "localhost"
+  host: "0.0.0.0"
   port: 8080
-  public-url: "http://localhost:8080/resourcepack.zip"
+  public-url: "http://0.0.0.0:8080/resourcepack.zip"
 
 performance:
   chunk-restore-blocks-per-tick: 16
@@ -28,11 +28,11 @@ performance:
 
 | Key | Purpose |
 |-----|---------|
-| `host` | Bind address for the embedded HTTP server that serves the pack |
+| `host` | Bind address for the embedded HTTP server that serves the pack (`0.0.0.0` listens on all interfaces) |
 | `port` | TCP port for the pack server |
 | `public-url` | URL sent to clients — must be reachable from player machines |
 
-Set `public-url` to your server's public address (or a reverse proxy) so clients can download the pack. Use `/ignis pack` in-game to rebuild and apply after extension changes.
+Set `public-url` to your server's public address (or a reverse proxy) so clients can download the pack. The embedded server binds to `host`; `public-url` is what players receive and may point at a reverse proxy or public IP. Use `/ignis pack` in-game to rebuild and apply after extension changes.
 
 ## `performance`
 

@@ -9,7 +9,7 @@ export default function HomepageHero(): JSX.Element {
       <div className={styles.grid} aria-hidden="true" />
       <div className={styles.inner}>
         <span className={styles.badge}>
-          v{siteVars.version} · 120+ bundled extensions
+          v{siteVars.version} · Spigot · Paper · Sponge
         </span>
         <h1 className={styles.title}>
           Custom blocks and items, <em>one framework</em>

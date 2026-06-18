@@ -18,6 +18,8 @@ import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Keys;
+import net.kyori.adventure.resource.ResourcePackInfo;
+import net.kyori.adventure.resource.ResourcePackRequest;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -163,7 +165,29 @@ public class SpongePlatformAdapter implements PlatformAdapter {
 
     @Override
     public void sendResourcePack(Object nativePlayer, String url, byte[] hash, boolean force) {
-        // Resource pack delivery is optional on Sponge; left as a no-op in the minimal runtime.
+        if (!(nativePlayer instanceof ServerPlayer player)) {
+            return;
+        }
+        try {
+            java.util.UUID packId = java.util.UUID.randomUUID();
+            java.net.URI uri = java.net.URI.create(url);
+            String hashHex = hash != null && hash.length > 0 ? bytesToHex(hash) : "";
+            ResourcePackInfo pack = ResourcePackInfo.resourcePackInfo(packId, uri, hashHex);
+            player.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
+                    .packs(pack)
+                    .required(force)
+                    .build());
+        } catch (IllegalArgumentException error) {
+            logger.warning("Invalid resource pack URL: " + url);
+        }
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder(bytes.length * 2);
+        for (byte value : bytes) {
+            builder.append(String.format("%02x", value));
+        }
+        return builder.toString();
     }
 
     @Override

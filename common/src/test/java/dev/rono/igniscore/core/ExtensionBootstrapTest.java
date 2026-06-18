@@ -33,7 +33,6 @@ class ExtensionBootstrapTest {
     private RecordingItemManager itemManager;
     private RecordingBlockManager blockManager;
     private RecordingExtensionSupport extensionSupport;
-    private RecordingBundledExtractor bundledExtractor;
     private ExtensionBootstrap bootstrap;
 
     @BeforeEach
@@ -44,10 +43,8 @@ class ExtensionBootstrapTest {
         itemManager = new RecordingItemManager();
         blockManager = new RecordingBlockManager();
         extensionSupport = new RecordingExtensionSupport();
-        bundledExtractor = new RecordingBundledExtractor();
         bootstrap = new ExtensionBootstrap(
                 CommonTestSupport.runtimeHost(tempDir),
-                bundledExtractor,
                 blockLoader,
                 itemLoader,
                 blockTypeRegistry,
@@ -88,13 +85,12 @@ class ExtensionBootstrapTest {
     }
 
     @Test
-    void loadFreshExtractsAndLoadsRequestedKinds() throws Exception {
+    void loadFreshLoadsRequestedKinds() throws Exception {
         blockLoader.freshResult = List.of(sampleBlockExtension("block-a"));
         itemLoader.freshResult = List.of(sampleItemExtension("item-a"));
 
         ExtensionLoadResult result = bootstrap.loadFresh(ExtensionReloadScope.ALL);
 
-        assertEquals(1, bundledExtractor.extractCount.get());
         assertEquals(1, blockLoader.loadFreshCount);
         assertEquals(1, itemLoader.loadFreshCount);
         assertEquals(1, result.blocks().size());
@@ -116,13 +112,12 @@ class ExtensionBootstrapTest {
     }
 
     @Test
-    void loadAllDoesNotExtractTwice() throws Exception {
+    void loadAllLoadsExtensionsOnce() throws Exception {
         blockLoader.freshResult = List.of(sampleBlockExtension("block-a"));
         itemLoader.freshResult = List.of(sampleItemExtension("item-a"));
 
         bootstrap.loadAll();
 
-        assertEquals(1, bundledExtractor.extractCount.get());
         assertEquals(1, blockLoader.loadFreshCount);
         assertEquals(1, itemLoader.loadFreshCount);
     }
@@ -269,19 +264,6 @@ class ExtensionBootstrapTest {
         @Override
         public void clear() {
             cleared = true;
-        }
-    }
-
-    private static final class RecordingBundledExtractor extends dev.rono.igniscore.loader.BundledExtensionExtractor {
-        final AtomicInteger extractCount = new AtomicInteger();
-
-        RecordingBundledExtractor() {
-            super(null);
-        }
-
-        @Override
-        public void extractAll() {
-            extractCount.incrementAndGet();
         }
     }
 }
