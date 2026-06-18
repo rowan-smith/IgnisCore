@@ -14,6 +14,7 @@ const POM_PATH = path.join(REPO_ROOT, 'pom.xml');
 
 const DEFAULTS = {
   repo: 'rowan-smith/IgnisCore',
+  extensionsRepo: 'rowan-smith/IgnisCore-Extensions',
   siteUrl: 'https://igniscore.rono.dev',
   baseUrl: '/',
 };
@@ -59,6 +60,7 @@ const version = pomVersion || readPackageVersion();
 const vars = {
   version,
   repo: existing.repo || DEFAULTS.repo,
+  extensionsRepo: existing.extensionsRepo || DEFAULTS.extensionsRepo,
   siteUrl: existing.siteUrl || DEFAULTS.siteUrl,
   baseUrl: existing.baseUrl || DEFAULTS.baseUrl,
   jarName: `IgnisCore-${version}.jar`,

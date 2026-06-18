@@ -19,9 +19,21 @@ mvn clean package
 
 Deploy `bootstrap/target/IgnisCore-<version>.jar` (version matches `pom.xml`).
 
+### Bundling extension JARs
+
+Extension modules are built separately in [IgnisCore-Extensions](https://github.com/rowan-smith/IgnisCore-Extensions). Copy built JARs into this repo before packaging:
+
+```
+bootstrap/bundled/blocks/*.jar
+bootstrap/bundled/items/*.jar
+bootstrap/bundled/lib/shared.jar   # optional — shades ExtensionShared into the plugin
+```
+
+Then run `mvn package` as usual.
+
 ## Extension authoring
 
-See the [Extension Cookbook](https://igniscore.rono.dev/developers/cookbook) on the documentation site.
+See the [Extension Cookbook](https://igniscore.rono.dev/developers/cookbook) on the documentation site. Extension projects consume the IgnisCore API via [JitPack](https://jitpack.io/#rowan-smith/IgnisCore).
 
 ## Documentation site (local)
 

@@ -2,7 +2,6 @@ package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.config.DefinitionParser;
 import dev.rono.igniscore.api.strategy.StrategySupport;
-import dev.rono.igniscore.event.IgnisEventBusImpl;
 import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -11,13 +10,12 @@ import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.loader.support.BundledExtensionJarFactory;
-import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.net.URLClassLoader;
-import java.nio.file.Path;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,9 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BlockStrategyProfileIntegrationTest {
-    @TempDir
-    Path tempDir;
-
     @ParameterizedTest
     @ValueSource(strings = {
             "auto-sieve",
@@ -35,6 +30,7 @@ class BlockStrategyProfileIntegrationTest {
             "socket-lamp"
     })
     void placedUtilityStrategiesLoadWithoutFuseConfig(String moduleName) throws Exception {
+        assumeBundledBlock(moduleName);
         BlockDefinition definition = loadDefinition(moduleName);
         loadStrategy(moduleName);
 
@@ -52,6 +48,7 @@ class BlockStrategyProfileIntegrationTest {
             "spider-storm-tnt"
     })
     void bundledExplosiveStrategiesDeclareFuseInConfig(String moduleName) throws Exception {
+        assumeBundledBlock(moduleName);
         BlockDefinition definition = loadDefinition(moduleName);
         IgnisStrategy strategy = loadStrategy(moduleName);
 
@@ -62,8 +59,13 @@ class BlockStrategyProfileIntegrationTest {
         assertTrue(StrategySupport.customDouble(definition, "radius", -1.0) >= 0.0);
     }
 
+    private static void assumeBundledBlock(String moduleName) {
+        Assumptions.assumeTrue(BundledExtensionJarFactory.bundledJarExists("blocks", moduleName),
+                () -> "Missing bootstrap/bundled/blocks/" + moduleName + ".jar");
+    }
+
     private BlockDefinition loadDefinition(String moduleName) throws Exception {
-        File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
+        File jarFile = BundledExtensionJarFactory.resolveBundledJar("blocks", moduleName);
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
@@ -71,7 +73,7 @@ class BlockStrategyProfileIntegrationTest {
     }
 
     private IgnisStrategy loadStrategy(String moduleName) throws Exception {
-        File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
+        File jarFile = BundledExtensionJarFactory.resolveBundledJar("blocks", moduleName);
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
         IgnisStrategyDescriptor descriptor = DefinitionParser.parseStrategyDescriptor(manifest);

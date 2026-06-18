@@ -1,5 +1,0 @@
-id: ring-tnt
-name: Ring TNT
-version: @project.version@
-api-version: @ignis.api.version@
-strategy: dev.rono.igniscore.block.ringtnt.Strategy

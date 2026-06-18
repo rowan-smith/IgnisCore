@@ -28,11 +28,18 @@ See [Strategies](/concepts/strategies) and [Core API — Event bus](/developers/
 api-version: 1.0.0
 ```
 
-## Maven dependency
+## Maven dependency (JitPack)
 
 ```xml
+<repositories>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+
 <dependency>
-  <groupId>dev.rono</groupId>
+  <groupId>com.github.rowan-smith.IgnisCore</groupId>
   <artifactId>api</artifactId>
   <version>%%site.version%%</version>
   <scope>provided</scope>

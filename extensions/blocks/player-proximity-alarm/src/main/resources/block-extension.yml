@@ -1,6 +1,0 @@
-id: player-proximity-alarm
-name: Player Proximity Alarm
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.playerproximityalarm.Strategy

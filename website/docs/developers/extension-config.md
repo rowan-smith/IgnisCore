@@ -102,14 +102,14 @@ Alternatively, use `definition.getCustomConfig()` for chained reads via `Extensi
 
 Bundled reference configs with inline comments:
 
-- [nuke](https://github.com/%%site.repo%%/blob/main/extensions/blocks/nuke/src/main/resources/config.yml) — full explosive tuning
-- [grenade](https://github.com/%%site.repo%%/blob/main/extensions/items/grenade/src/main/resources/config.yml) — throwable tuning
-- [auto-sieve](https://github.com/%%site.repo%%/blob/main/extensions/blocks/auto-sieve/src/main/resources/config.yml) — placed tick block (`tickPeriod`, `sieveParticles`)
-- [lamp-dimmer](https://github.com/%%site.repo%%/blob/main/extensions/items/lamp-dimmer/src/main/resources/config.yml) — link item keys only
+- [nuke](https://github.com/%%site.extensionsRepo%%/blob/main/blocks/nuke/src/main/resources/config.yml) — full explosive tuning
+- [grenade](https://github.com/%%site.extensionsRepo%%/blob/main/items/grenade/src/main/resources/config.yml) — throwable tuning
+- [auto-sieve](https://github.com/%%site.extensionsRepo%%/blob/main/blocks/auto-sieve/src/main/resources/config.yml) — placed tick block (`tickPeriod`, `sieveParticles`)
+- [lamp-dimmer](https://github.com/%%site.extensionsRepo%%/blob/main/items/lamp-dimmer/src/main/resources/config.yml) — link item keys only
 
 ## Bundled extension catalog
 
-The utility suite under `extensions/blocks/` and `extensions/items/` includes:
+The utility suite under `blocks/` and `items/` in [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) includes:
 
 | Category | Examples |
 |----------|----------|
@@ -121,7 +121,7 @@ The utility suite under `extensions/blocks/` and `extensions/items/` includes:
 | Throwables | `glow-orb`, `seed-bomb`, `smoke-can` |
 | Consumables | `miners-lunch`, `unlabeled-potion`, `farmers-tea` |
 
-The full module list lives in `extensions/blocks/pom.xml` and `extensions/items/pom.xml`.
+The full module list lives in `blocks/pom.xml` and `items/pom.xml` in [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%).
 
 See the [Extension Cookbook](/developers/cookbook) for raw Java patterns that read these keys.
 

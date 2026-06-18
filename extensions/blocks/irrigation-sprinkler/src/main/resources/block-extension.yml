@@ -1,6 +1,0 @@
-id: irrigation-sprinkler
-name: Irrigation Sprinkler
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.irrigationsprinkler.Strategy

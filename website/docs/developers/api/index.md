@@ -9,7 +9,7 @@ slug: /developers/api
 | Surface | Maven artifact | Package | Status |
 |---------|----------------|---------|--------|
 | **Core API** | `dev.rono:api` | `dev.rono.igniscore.api.*` | Stable, fully Javadoc'd |
-| **Extension shared** | `dev.rono.extensions:shared` | `dev.rono.extensions.shared.*` | Optional — `ExtensionShared` facade |
+| **Extension shared** | `dev.rono.extensions:shared` (IgnisCore-Extensions) | `dev.rono.extensions.shared.*` | Optional — `ExtensionShared` facade |
 
 ## Start here
 
@@ -36,10 +36,10 @@ slug: /developers/api
 
 | Module | GitHub |
 |--------|--------|
-| nuke (block) | [extensions/blocks/nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke) |
-| grenade (item) | [extensions/items/grenade](https://github.com/%%site.repo%%/tree/main/extensions/items/grenade) |
-| quarry-cache (block) | [extensions/blocks/quarry-cache](https://github.com/%%site.repo%%/tree/main/extensions/blocks/quarry-cache) |
-| lamp-dimmer (item) | [extensions/items/lamp-dimmer](https://github.com/%%site.repo%%/tree/main/extensions/items/lamp-dimmer) |
+| nuke (block) | [extensions/blocks/nuke](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/nuke) |
+| grenade (item) | [extensions/items/grenade](https://github.com/%%site.extensionsRepo%%/tree/main/items/grenade) |
+| quarry-cache (block) | [extensions/blocks/quarry-cache](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/quarry-cache) |
+| lamp-dimmer (item) | [extensions/items/lamp-dimmer](https://github.com/%%site.extensionsRepo%%/tree/main/items/lamp-dimmer) |
 
 ## Related docs
 

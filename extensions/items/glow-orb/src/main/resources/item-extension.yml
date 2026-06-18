@@ -1,6 +1,0 @@
-id: glow-orb
-name: Glow Orb
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.item.gloworb.Strategy

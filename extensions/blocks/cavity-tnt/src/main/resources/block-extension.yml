@@ -1,5 +1,0 @@
-id: cavity-tnt
-name: Cavity TNT
-version: @project.version@
-api-version: @ignis.api.version@
-strategy: dev.rono.igniscore.block.cavitytnt.Strategy

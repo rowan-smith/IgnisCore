@@ -1,6 +1,0 @@
-id: seed-bomb
-name: Seed Bomb
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.item.seedbomb.Strategy

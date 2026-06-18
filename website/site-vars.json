@@ -1,6 +1,7 @@
 {
   "version": "1.0.0",
   "repo": "rowan-smith/IgnisCore",
+  "extensionsRepo": "rowan-smith/IgnisCore-Extensions",
   "siteUrl": "https://igniscore.rono.dev",
   "baseUrl": "/",
   "jarName": "IgnisCore-1.0.0.jar"

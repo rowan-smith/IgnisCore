@@ -8,15 +8,22 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 
 ## Quick start
 
-1. Copy an existing extension under `extensions/blocks/` or `extensions/items/`
-2. Add Maven dependency on `api` (`provided` scope)
+1. Work in [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) or copy an existing module under `blocks/` or `items/`
+2. Add a Maven dependency on the IgnisCore API (`provided` scope) — use [JitPack](https://jitpack.io/#rowan-smith/IgnisCore) for released versions
 3. Implement a strategy class extending `AbstractIgnisBlockStrategy` or `AbstractIgnisItemStrategy`, subscribe to lifecycle events in the constructor via `context.eventBus().subscribe(...)`, and declare behavior in `config.yml`
 4. Ship `block-extension.yml` / `item-extension.yml`, `config.yml`, and textures
 5. Build with `mvn package` and deploy to the plugin data folder
 
 ```xml
+<repositories>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+
 <dependency>
-  <groupId>dev.rono</groupId>
+  <groupId>com.github.rowan-smith.IgnisCore</groupId>
   <artifactId>api</artifactId>
   <version>%%site.version%%</version>
   <scope>provided</scope>
@@ -39,8 +46,8 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 
 | Library | Maven artifact | When |
 |---------|----------------|------|
-| **Core API** | `dev.rono:api` | Always — strategies, ports, models, `IgnisStrategies` |
-| **Extension shared** | `dev.rono.extensions:shared` | Optional — explosions, throwables, link items via `ExtensionShared` |
+| **Core API** | `com.github.rowan-smith.IgnisCore:api` | Always — strategies, ports, models, `IgnisStrategies` |
+| **Extension shared** | Built from [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) | Optional — explosions, throwables, link items via `ExtensionShared` |
 
 The bootstrap plugin supplies the API at runtime (`provided` scope). See [Extension shared](/developers/api/extension-shared) for optional helpers.
 

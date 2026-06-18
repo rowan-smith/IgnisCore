@@ -1,8 +1,0 @@
-id: cookie-cutter-stamp
-name: Cookie Cutter Stamp
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.item.cookiecutterstamp.Strategy
-requires-integrations:
-  - nbt-entity
