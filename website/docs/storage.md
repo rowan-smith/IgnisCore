@@ -14,7 +14,8 @@ After first boot, IgnisCore creates a data folder (typically `plugins/IgnisCore/
 | `items/` | Drop-in item extension JARs |
 | `placed-blocks.json` | Index of placed custom blocks in the world |
 | `resourcepack/` | Generated resource pack builds |
-| `config.yml` | Server configuration — see [Configuration](/configuration) |
+| `config.yml` | Server configuration on Spigot/Sponge — see [Configuration](/configuration) |
+| `paper-config.yml` | Server configuration on Paper — see [Configuration](/configuration) |
 
 ## Extension JARs
 

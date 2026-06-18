@@ -28,6 +28,10 @@ class IgnisPaperBootstrapJarIT {
 
             assertNotNull(jarFile.getEntry("dev/rono/igniscore/paper/IgnisPaperPlugin.class"),
                     "Paper plugin entrypoint should be shaded into the JAR");
+            assertNotNull(jarFile.getEntry("paper-config.yml"),
+                    "paper-config.yml should be bundled in the Paper plugin");
+            assertNull(jarFile.getEntry("config.yml"),
+                    "Spigot config.yml should not be bundled in the Paper plugin");
             assertNull(jarFile.getEntry("META-INF/sponge_plugins.json"),
                     "Sponge manifest should not be bundled in the Paper plugin");
         }

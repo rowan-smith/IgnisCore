@@ -4,7 +4,12 @@ description: IgnisCore server config.yml — resource pack hosting and performan
 slug: /configuration
 ---
 
-IgnisCore reads `config.yml` from the plugin data folder on Bukkit-family servers and Sponge. Reload server config without reloading extensions:
+IgnisCore reads server configuration from the plugin data folder:
+
+- **Spigot / Sponge:** `config.yml`
+- **Paper:** `paper-config.yml`
+
+Reload server config without reloading extensions:
 
 ```text
 /ignis reload server
@@ -44,7 +49,7 @@ Set `public-url` to your server's public address (or a reverse proxy) so clients
 
 ## Extension config
 
-Block and item extensions ship their own `config.yml` inside each extension JAR. These are separate from the server `config.yml`.
+Block and item extensions ship their own `config.yml` inside each extension JAR. These are separate from the server configuration files above.
 
 See [Extension config](/developers/extension-config) for which sections and keys belong in extension configs, and the [Extension Cookbook](/developers/cookbook) for how strategies read them.
 
