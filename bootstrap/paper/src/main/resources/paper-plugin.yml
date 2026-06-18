@@ -5,9 +5,22 @@ description: Paper-native custom block and item system for Minecraft
 
 main: dev.rono.igniscore.paper.IgnisPaperPlugin
 api-version: '1.21'
-depend: []
-softdepend: [NBTAPI, ProtocolLib, WorldEdit, FastAsyncWorldEdit, DecentHolograms, Citizens]
 prefix: IgnisCore
+
+dependencies:
+  server:
+    NBTAPI:
+      required: false
+    ProtocolLib:
+      required: false
+    WorldEdit:
+      required: false
+    FastAsyncWorldEdit:
+      required: false
+    DecentHolograms:
+      required: false
+    Citizens:
+      required: false
 
 permissions:
   igniscore.admin:

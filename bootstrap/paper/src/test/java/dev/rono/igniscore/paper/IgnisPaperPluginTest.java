@@ -12,27 +12,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class IgnisPaperPluginTest {
 
     @Test
-    void pluginYamlPointsAtPaperEntrypoint() throws Exception {
-        try (InputStream input = getClass().getResourceAsStream("/plugin.yml")) {
-            assertNotNull(input, "plugin.yml should be on the test classpath");
+    void paperPluginYamlPointsAtPaperEntrypoint() throws Exception {
+        try (InputStream input = getClass().getResourceAsStream("/paper-plugin.yml")) {
+            assertNotNull(input, "paper-plugin.yml should be on the test classpath");
             String yaml = new String(input.readAllBytes(), StandardCharsets.UTF_8);
             assertTrue(yaml.contains("dev.rono.igniscore.paper.IgnisPaperPlugin"));
         }
     }
 
     @Test
-    void defaultConfigResourceIsPaperConfigYaml() throws Exception {
-        try (InputStream input = getClass().getResourceAsStream("/paper-config.yml")) {
-            assertNotNull(input, "paper-config.yml should be on the test classpath");
+    void defaultConfigResourceIsConfigYaml() throws Exception {
+        try (InputStream input = getClass().getResourceAsStream("/config.yml")) {
+            assertNotNull(input, "config.yml should be on the test classpath");
             String yaml = new String(input.readAllBytes(), StandardCharsets.UTF_8);
             assertTrue(yaml.contains("resource-pack:"));
         }
     }
 
     @Test
-    void pluginYamlDoesNotDeclareLegacyCommands() throws Exception {
-        try (InputStream input = getClass().getResourceAsStream("/plugin.yml")) {
-            assertNotNull(input, "plugin.yml should be on the test classpath");
+    void paperPluginYamlDoesNotDeclareLegacyCommands() throws Exception {
+        try (InputStream input = getClass().getResourceAsStream("/paper-plugin.yml")) {
+            assertNotNull(input, "paper-plugin.yml should be on the test classpath");
             String yaml = new String(input.readAllBytes(), StandardCharsets.UTF_8);
             assertFalse(yaml.contains("\ncommands:"), "Paper command registration is programmatic");
         }

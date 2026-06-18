@@ -48,7 +48,7 @@ Reloads extensions or server configuration.
 | `all` | Reload block + item extensions, then rebuild resource pack |
 | `blocks` | Reload block extensions only |
 | `items` | Reload item extensions only |
-| `server` | Reload server config only (`config.yml` on Spigot/Sponge, `paper-config.yml` on Paper) |
+| `server` | Reload `config.yml` only (no extension reload) |
 
 ---
 

@@ -43,7 +43,7 @@ Deploy built extension JARs to `plugins/IgnisCore/blocks/` and `plugins/IgnisCor
 All platforms use `PlatformBootloaderLoader` (`common`) to identify server software and select a `PlatformBootloader`:
 
 - **Spigot/Sponge:** `IgnisBootstrapPlugin` from `plugin.yml` → Guice + `IgnisCoreApplication`
-- **Paper:** `IgnisPaperPlugin` from `plugin.yml` → same loader
+- **Paper:** `IgnisPaperPlugin` from `paper-plugin.yml` → same loader
 
 ### Bootloader priority (Bukkit family)
 
