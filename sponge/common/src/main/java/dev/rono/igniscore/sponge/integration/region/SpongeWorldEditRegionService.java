@@ -1,10 +1,6 @@
 package dev.rono.igniscore.sponge.integration.region;
 
 import com.google.inject.Inject;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.world.block.BlockTypes;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.port.IgnisWorld;
@@ -30,32 +26,62 @@ public final class SpongeWorldEditRegionService implements IgnisRegionService {
     private final IgnisWorldRegionService fallback;
     private final Logger logger;
     private final Method adaptWorld;
+    private final Method worldEditGetInstance;
+    private final Method newEditSession;
+    private final Method blockVector3At;
+    private final Object airBlockState;
+    private final Method sessionSetBlock;
+    private final Method sessionClose;
 
     @Inject
     public SpongeWorldEditRegionService(SpongePluginHost plugin, IgnisWorldRegionService fallback) {
         this.fallback = fallback;
         this.logger = plugin.getLogger();
         Game game = plugin.game();
-        boolean active = false;
         Method adapt = null;
+        Method getInstance = null;
+        Method createSession = null;
+        Method vectorAt = null;
+        Object airState = null;
+        Method setBlock = null;
+        Method close = null;
+        boolean active = false;
 
         if (game.pluginManager().plugin("worldedit").isPresent()) {
             try {
-                Class.forName("com.sk89q.worldedit.WorldEdit");
+                Class<?> worldEditClass = Class.forName("com.sk89q.worldedit.WorldEdit");
                 Class<?> adapter = Class.forName("com.sk89q.worldedit.sponge.SpongeAdapter");
+                Class<?> blockVector3Class = Class.forName("com.sk89q.worldedit.math.BlockVector3");
+                Class<?> blockTypesClass = Class.forName("com.sk89q.worldedit.world.block.BlockTypes");
+                Class<?> blockStateHolderClass = Class.forName("com.sk89q.worldedit.world.block.BlockStateHolder");
+                Class<?> weWorldClass = Class.forName("com.sk89q.worldedit.world.World");
+                Class<?> editSessionClass = Class.forName("com.sk89q.worldedit.EditSession");
+
                 adapt = adapter.getMethod("adapt", ServerWorld.class);
+                getInstance = worldEditClass.getMethod("getInstance");
+                createSession = worldEditClass.getMethod("newEditSession", weWorldClass);
+                vectorAt = blockVector3Class.getMethod("at", int.class, int.class, int.class);
+                Object airBlockType = blockTypesClass.getField("AIR").get(null);
+                airState = airBlockType.getClass().getMethod("getDefaultState").invoke(airBlockType);
+                setBlock = editSessionClass.getMethod("setBlock", blockVector3Class, blockStateHolderClass);
+                close = editSessionClass.getMethod("close");
                 active = true;
                 logger.info("WorldEdit region integration enabled on Sponge.");
             } catch (Throwable error) {
                 logger.warn("WorldEdit present but Sponge API unavailable: {}", error.getMessage());
             }
+        } else {
+            logger.info("WorldEdit not found. Region edits use ignis-world fallback.");
         }
 
         this.enabled = active;
         this.adaptWorld = adapt;
-        if (!enabled) {
-            logger.info("WorldEdit not found. Region edits use ignis-world fallback.");
-        }
+        this.worldEditGetInstance = getInstance;
+        this.newEditSession = createSession;
+        this.blockVector3At = vectorAt;
+        this.airBlockState = airState;
+        this.sessionSetBlock = setBlock;
+        this.sessionClose = close;
     }
 
     @Override
@@ -170,17 +196,20 @@ public final class SpongeWorldEditRegionService implements IgnisRegionService {
         }
         try {
             Object weWorld = adaptWorld.invoke(null, spongeWorld);
-            try (EditSession session = WorldEdit.getInstance().newEditSession(
-                    (com.sk89q.worldedit.world.World) weWorld)) {
+            Object worldEdit = worldEditGetInstance.invoke(null);
+            Object session = newEditSession.invoke(worldEdit, weWorld);
+            try {
                 for (IgnisLocation target : targets) {
-                    session.setBlock(
-                            BlockVector3.at((int) Math.floor(target.x()),
-                                    (int) Math.floor(target.y()),
-                                    (int) Math.floor(target.z())),
-                            BlockTypes.AIR.getDefaultState());
+                    Object vector = blockVector3At.invoke(null,
+                            (int) Math.floor(target.x()),
+                            (int) Math.floor(target.y()),
+                            (int) Math.floor(target.z()));
+                    sessionSetBlock.invoke(session, vector, airBlockState);
                 }
+            } finally {
+                sessionClose.invoke(session);
             }
-        } catch (Exception error) {
+        } catch (ReflectiveOperationException error) {
             logger.warn("WorldEdit region edit failed, falling back to ignis-world: {}", error.getMessage());
             for (IgnisLocation target : targets) {
                 world.setBlockMaterialKey(target, "air");
