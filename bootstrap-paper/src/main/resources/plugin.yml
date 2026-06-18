@@ -1,0 +1,15 @@
+name: IgnisCore
+version: '${project.version}'
+author: Rono
+description: Paper-native custom block and item system for Minecraft
+
+main: dev.rono.igniscore.paper.IgnisPaperPlugin
+api-version: '1.21'
+depend: []
+softdepend: [NBTAPI, ProtocolLib, WorldEdit, FastAsyncWorldEdit, DecentHolograms, Citizens]
+prefix: IgnisCore
+
+permissions:
+  igniscore.admin:
+    description: Allows access to all IgnisCore commands
+    default: op
