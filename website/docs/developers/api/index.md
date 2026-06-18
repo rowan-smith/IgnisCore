@@ -9,7 +9,7 @@ slug: /developers/api
 | Surface | Maven artifact | Package | Status |
 |---------|----------------|---------|--------|
 | **Core API** | `dev.rono:api` | `dev.rono.igniscore.api.*` | Stable, fully Javadoc'd |
-| **Extension shared** | `dev.rono.extensions:shared` | `dev.rono.extensions.shared.*` | Optional — `ExtensionShared` facade |
+| **Extension shared** | `dev.rono.extensions:shared` (IgnisCore-Extensions) | `dev.rono.extensions.shared.*` | Optional — `ExtensionShared` facade |
 
 ## Start here
 

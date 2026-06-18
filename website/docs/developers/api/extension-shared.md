@@ -4,9 +4,11 @@ description: Optional helpers for extension authors — use ExtensionShared grou
 slug: /developers/api/extension-shared
 ---
 
-The `extensions/shared` Maven module ships optional helpers used by bundled extensions. Use the **`ExtensionShared`** facade for grouped, API-style access — do not import `*Support` classes directly.
+The `shared` module in [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) ships optional helpers used by bundled extensions. Use the **`ExtensionShared`** facade for grouped, API-style access — do not import `*Support` classes directly.
 
 ## Maven
+
+Build `shared` from [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) and depend on it with `provided` scope in your extension project. When bundling the plugin, copy `shared.jar` to `bootstrap/bundled/lib/shared.jar` so IgnisCore can shade it into the runtime.
 
 ```xml
 <dependency>
@@ -17,7 +19,7 @@ The `extensions/shared` Maven module ships optional helpers used by bundled exte
 </dependency>
 ```
 
-The bootstrap plugin supplies this module at runtime. Do **not** shade it into extension JARs.
+The bootstrap plugin supplies this module at runtime when bundled. Do **not** shade it into extension JARs.
 
 ## Entry point
 

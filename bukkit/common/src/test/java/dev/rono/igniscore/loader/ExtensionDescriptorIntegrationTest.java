@@ -3,21 +3,16 @@ package dev.rono.igniscore.loader;
 import dev.rono.igniscore.api.config.DefinitionParser;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.loader.support.BundledExtensionJarFactory;
-import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class ExtensionDescriptorIntegrationTest {
-    @TempDir
-    Path tempDir;
-
     @ParameterizedTest
     @ValueSource(strings = {
             "nuke",
@@ -32,11 +27,14 @@ class ExtensionDescriptorIntegrationTest {
             "detonator"
     })
     void strategyDescriptorMatchesExtensionManifest(String moduleName) throws Exception {
-        String category = Files.exists(BundledExtensionJarFactory.moduleDirectory("items", moduleName))
+        String category = BundledExtensionJarFactory.bundledJarExists("items", moduleName)
                 ? "items"
                 : "blocks";
+        Assumptions.assumeTrue(BundledExtensionJarFactory.bundledJarExists(category, moduleName),
+                () -> "Missing bootstrap/bundled/" + category + "/" + moduleName + ".jar");
+
         String manifestName = category.equals("blocks") ? "block-extension.yml" : "item-extension.yml";
-        File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, category, moduleName);
+        File jarFile = BundledExtensionJarFactory.resolveBundledJar(category, moduleName);
 
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, manifestName,
                 input -> ExtensionManifest.fromStream(input, manifestName));

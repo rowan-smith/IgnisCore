@@ -1,7 +1,6 @@
 package dev.rono.igniscore.loader;
 
 import dev.rono.igniscore.api.config.DefinitionParser;
-import dev.rono.igniscore.event.IgnisEventBusImpl;
 import dev.rono.igniscore.support.TestIgnisCore;
 import dev.rono.igniscore.api.extension.ExtensionManifest;
 import dev.rono.igniscore.api.model.BlockDefinition;
@@ -9,19 +8,15 @@ import dev.rono.igniscore.api.model.ItemDefinition;
 import dev.rono.igniscore.api.strategy.IgnisStrategy;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
-import dev.rono.igniscore.api.config.YamlDefinitions;
 import dev.rono.igniscore.loader.support.BundledExtensionJarFactory;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,9 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BundledExtensionIntegrationTest {
-    @TempDir
-    Path tempDir;
-
     @ParameterizedTest
     @ValueSource(strings = {
             "nuke",
@@ -46,7 +38,9 @@ class BundledExtensionIntegrationTest {
             "quarry-cache"
     })
     void loadsBundledBlockExtensionJar(String moduleName) throws Exception {
-        File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "blocks", moduleName);
+        Assumptions.assumeTrue(BundledExtensionJarFactory.bundledJarExists("blocks", moduleName),
+                () -> "Missing bootstrap/bundled/blocks/" + moduleName + ".jar");
+        File jarFile = BundledExtensionJarFactory.resolveBundledJar("blocks", moduleName);
 
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "block-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "block-extension.yml"));
@@ -75,7 +69,9 @@ class BundledExtensionIntegrationTest {
     @ParameterizedTest
     @ValueSource(strings = {"grenade", "detonator"})
     void loadsBundledItemExtensionJar(String moduleName) throws Exception {
-        File jarFile = BundledExtensionJarFactory.buildFromModule(tempDir, "items", moduleName);
+        Assumptions.assumeTrue(BundledExtensionJarFactory.bundledJarExists("items", moduleName),
+                () -> "Missing bootstrap/bundled/items/" + moduleName + ".jar");
+        File jarFile = BundledExtensionJarFactory.resolveBundledJar("items", moduleName);
 
         ExtensionManifest manifest = ExtensionJarSupport.readManifest(jarFile, "item-extension.yml",
                 input -> ExtensionManifest.fromStream(input, "item-extension.yml"));
@@ -103,10 +99,8 @@ class BundledExtensionIntegrationTest {
     @Test
     @EnabledIf("nuclearConfigFixtureExists")
     void parsesRepositoryNuclearConfigFixture() throws Exception {
-        Path configPath = BundledExtensionJarFactory.moduleDirectory("blocks", "nuke")
-                .resolve("src/main/resources/config.yml");
-        Map<String, Object> config = YamlDefinitions.loadMap(Files.newInputStream(configPath));
-
+        File jarFile = BundledExtensionJarFactory.resolveBundledJar("blocks", "nuke");
+        Map<String, Object> config = ExtensionJarSupport.readConfig(jarFile);
         BlockDefinition definition = DefinitionParser.parseBlock(config, "nuke", 10001, "nuke");
 
         assertEquals("nuke", definition.getId());
@@ -116,11 +110,6 @@ class BundledExtensionIntegrationTest {
     }
 
     static boolean nuclearConfigFixtureExists() {
-        try {
-            return Files.exists(BundledExtensionJarFactory.moduleDirectory("blocks", "nuke")
-                    .resolve("src/main/resources/config.yml"));
-        } catch (IOException ignored) {
-            return false;
-        }
+        return BundledExtensionJarFactory.bundledJarExists("blocks", "nuke");
     }
 }

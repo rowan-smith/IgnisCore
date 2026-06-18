@@ -92,11 +92,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>dev.rono.extensions</groupId>
-      <artifactId>shared</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>dev.rono</groupId>
       <artifactId>api</artifactId>
       <version>${project.version}</version>
