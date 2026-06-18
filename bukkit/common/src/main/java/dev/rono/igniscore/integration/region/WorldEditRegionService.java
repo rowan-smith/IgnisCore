@@ -1,11 +1,6 @@
 package dev.rono.igniscore.integration.region;
 
 import com.google.inject.Inject;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.world.block.BlockTypes;
 import dev.rono.igniscore.api.port.IgnisLocation;
 import dev.rono.igniscore.api.port.IgnisScheduler;
 import dev.rono.igniscore.api.port.IgnisWorld;
@@ -18,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -29,26 +25,63 @@ public final class WorldEditRegionService implements IgnisRegionService {
     private final boolean enabled;
     private final IgnisWorldRegionService fallback;
     private final Logger logger;
+    private final Method adaptBukkitWorld;
+    private final Method worldEditGetInstance;
+    private final Method newEditSession;
+    private final Method blockVector3At;
+    private final Object airBlockState;
+    private final Method sessionSetBlock;
+    private final Method sessionClose;
 
     @Inject
     public WorldEditRegionService(Plugin plugin, IgnisWorldRegionService fallback) {
         this.fallback = fallback;
         this.logger = plugin.getLogger();
+        Method adapt = null;
+        Method getInstance = null;
+        Method createSession = null;
+        Method vectorAt = null;
+        Object airState = null;
+        Method setBlock = null;
+        Method close = null;
         boolean active = false;
+
         if (Bukkit.getPluginManager().isPluginEnabled("WorldEdit")
                 || Bukkit.getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
             try {
-                Class.forName("com.sk89q.worldedit.WorldEdit");
+                Class<?> worldEditClass = Class.forName("com.sk89q.worldedit.WorldEdit");
+                Class<?> bukkitAdapterClass = Class.forName("com.sk89q.worldedit.bukkit.BukkitAdapter");
+                Class<?> blockVector3Class = Class.forName("com.sk89q.worldedit.math.BlockVector3");
+                Class<?> blockTypesClass = Class.forName("com.sk89q.worldedit.world.block.BlockTypes");
+                Class<?> blockStateHolderClass = Class.forName("com.sk89q.worldedit.world.block.BlockStateHolder");
+                Class<?> weWorldClass = Class.forName("com.sk89q.worldedit.world.World");
+                Class<?> editSessionClass = Class.forName("com.sk89q.worldedit.EditSession");
+
+                adapt = bukkitAdapterClass.getMethod("adapt", World.class);
+                getInstance = worldEditClass.getMethod("getInstance");
+                createSession = worldEditClass.getMethod("newEditSession", weWorldClass);
+                vectorAt = blockVector3Class.getMethod("at", int.class, int.class, int.class);
+                Object airBlockType = blockTypesClass.getField("AIR").get(null);
+                airState = airBlockType.getClass().getMethod("getDefaultState").invoke(airBlockType);
+                setBlock = editSessionClass.getMethod("setBlock", blockVector3Class, blockStateHolderClass);
+                close = editSessionClass.getMethod("close");
                 active = true;
                 logger.info("WorldEdit region integration enabled.");
             } catch (Throwable error) {
                 logger.warning("WorldEdit present but API unavailable: " + error.getMessage());
             }
-        }
-        this.enabled = active;
-        if (!enabled) {
+        } else {
             logger.info("WorldEdit not found. Region edits use ignis-world fallback.");
         }
+
+        this.enabled = active;
+        this.adaptBukkitWorld = adapt;
+        this.worldEditGetInstance = getInstance;
+        this.newEditSession = createSession;
+        this.blockVector3At = vectorAt;
+        this.airBlockState = airState;
+        this.sessionSetBlock = setBlock;
+        this.sessionClose = close;
     }
 
     @Override
@@ -161,15 +194,22 @@ public final class WorldEditRegionService implements IgnisRegionService {
             }
             return;
         }
-        try (EditSession session = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(bukkitWorld))) {
-            for (IgnisLocation target : targets) {
-                session.setBlock(
-                        BlockVector3.at((int) Math.floor(target.x()),
-                                (int) Math.floor(target.y()),
-                                (int) Math.floor(target.z())),
-                        BlockTypes.AIR.getDefaultState());
+        try {
+            Object weWorld = adaptBukkitWorld.invoke(null, bukkitWorld);
+            Object worldEdit = worldEditGetInstance.invoke(null);
+            Object session = newEditSession.invoke(worldEdit, weWorld);
+            try {
+                for (IgnisLocation target : targets) {
+                    Object vector = blockVector3At.invoke(null,
+                            (int) Math.floor(target.x()),
+                            (int) Math.floor(target.y()),
+                            (int) Math.floor(target.z()));
+                    sessionSetBlock.invoke(session, vector, airBlockState);
+                }
+            } finally {
+                sessionClose.invoke(session);
             }
-        } catch (Exception error) {
+        } catch (ReflectiveOperationException error) {
             logger.warning("WorldEdit region edit failed, falling back to ignis-world: " + error.getMessage());
             for (IgnisLocation target : targets) {
                 world.setBlockMaterialKey(target, "air");
