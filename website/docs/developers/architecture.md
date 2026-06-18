@@ -27,7 +27,7 @@ igniscore-parent/
 └── shared/                 Optional helpers — ExtensionShared facade
 ```
 
-Cloned into `extensions/` when building IgnisCore from source (`./scripts/bootstrap-extensions.sh`).
+Cloned as the `extensions/` git submodule from [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%).
 
 | Module | Purpose |
 |--------|---------|

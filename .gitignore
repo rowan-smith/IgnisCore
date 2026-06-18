@@ -72,9 +72,6 @@ fabric.properties
 
 .junie/
 
-# Bootstrapped from IgnisCore-Extensions at build time
-/extensions/
-
 # Docusaurus
 website/node_modules/
 website/build/

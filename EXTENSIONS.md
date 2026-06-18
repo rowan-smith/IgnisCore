@@ -8,22 +8,11 @@ Extension authoring documentation has moved to the documentation site:
 - **[API Reference](https://igniscore.rono.dev/developers/api)** — core API
 - **[Concepts: Extensions](https://igniscore.rono.dev/concepts/extensions)** — manifest, deploy paths, identifiers
 
-Bundled sample extensions live in the separate [IgnisCore-Extensions](https://github.com/rowan-smith/IgnisCore-Extensions) repository under `blocks/` and `items/`.
+Bundled sample extensions live in the [IgnisCore-Extensions](https://github.com/rowan-smith/IgnisCore-Extensions) repository (`blocks/` and `items/`), included here as the `extensions/` git submodule.
 
-When building IgnisCore from source, run `./scripts/bootstrap-extensions.sh` to clone that repository into `extensions/` before packaging.
-
-To populate IgnisCore-Extensions from the `extensions-export` branch (one-time mirror):
+When building IgnisCore from source, initialize submodules first:
 
 ```bash
-./scripts/mirror-extensions-repository.sh --batch
-```
-
-Windows:
-
-```bat
-scripts\mirror-extensions-repository.bat batch
-```
-
-```powershell
-pwsh ./scripts/mirror-extensions-repository.ps1 -Batch
+git submodule update --init --recursive
+./scripts/build-all.sh
 ```

@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -29,8 +31,5 @@ jobs:
           java-version: '25'
           cache: maven
 
-      - name: Bootstrap extensions
-        run: chmod +x scripts/*.sh && ./scripts/bootstrap-extensions.sh
-
       - name: Build
-        run: ./scripts/build-all.sh -DskipTests
+        run: chmod +x scripts/*.sh && ./scripts/build-all.sh -DskipTests
