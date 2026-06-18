@@ -14,9 +14,13 @@
   <modules>
     <module>api</module>
     <module>common</module>
+    <module>bukkit-common</module>
     <module>bukkit</module>
-    <module>sponge</module>
-    <module>bootstrap</module>
+    <module>paper</module>
+    <module>sponge-common</module>
+    <module>sponge-v8.5.0</module>
+    <module>sponge-v12.0.0</module>
+    <module>sponge-v19.0.0</module>
   </modules>
 
   <properties>
@@ -127,38 +131,28 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.rono.bukkit</groupId>
-        <artifactId>common</artifactId>
+        <groupId>dev.rono</groupId>
+        <artifactId>bukkit-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.rono.bukkit</groupId>
-        <artifactId>spigot</artifactId>
+        <groupId>dev.rono</groupId>
+        <artifactId>sponge-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.rono.bukkit</groupId>
-        <artifactId>paper</artifactId>
+        <groupId>dev.rono</groupId>
+        <artifactId>sponge-v8.5.0</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.rono.sponge</groupId>
-        <artifactId>common</artifactId>
+        <groupId>dev.rono</groupId>
+        <artifactId>sponge-v12.0.0</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.rono.sponge</groupId>
-        <artifactId>v8.5.0</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>dev.rono.sponge</groupId>
-        <artifactId>v12.0.0</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>dev.rono.sponge</groupId>
-        <artifactId>v19.0.0</artifactId>
+        <groupId>dev.rono</groupId>
+        <artifactId>sponge-v19.0.0</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

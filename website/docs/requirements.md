@@ -10,7 +10,7 @@ IgnisCore requires **Java 25**.
 
 ## Server software
 
-One bootstrap JAR per server family. Spigot and Sponge share the Spigot plugin; Paper uses a dedicated Paper-native plugin. Each server loads only its own entry point via `ServiceLoader`.
+One plugin JAR per server family. Spigot and Sponge share the Spigot plugin; Paper uses a dedicated Paper-native plugin. Each server loads only its own entry point via `ServiceLoader`.
 
 | Platform | Supported versions | Notes |
 |----------|-------------------|-------|
@@ -37,10 +37,10 @@ One bootstrap JAR per server family. Spigot and Sponge share the Spigot plugin; 
 mvn clean package
 ```
 
-Deploy the bootstrap JAR for your server software:
+Deploy the plugin JAR for your server software:
 
-- **Spigot / Sponge:** `bootstrap/spigot/target/%%site.jarName%%`
-- **Paper:** `bootstrap/paper/target/IgnisCore-Paper-%%site.version%%.jar`
+- **Spigot / Sponge:** `bukkit/target/%%site.jarName%%`
+- **Paper:** `paper/target/IgnisCore-Paper-%%site.version%%.jar`
 
 ## Related
 

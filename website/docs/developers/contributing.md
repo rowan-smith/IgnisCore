@@ -18,8 +18,8 @@ mvn clean package
 
 Output:
 
-- `bootstrap/spigot/target/%%site.jarName%%` — Spigot and Sponge
-- `bootstrap/paper/target/IgnisCore-Paper-%%site.version%%.jar` — Paper
+- `bukkit/target/%%site.jarName%%` — Spigot and Sponge
+- `paper/target/IgnisCore-Paper-%%site.version%%.jar` — Paper
 
 ## Run tests
 

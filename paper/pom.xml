@@ -10,11 +10,11 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>bukkit</artifactId>
+  <artifactId>paper</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore-bukkit</name>
-  <description>Spigot plugin for IgnisCore with Sponge support</description>
+  <name>igniscore-paper</name>
+  <description>Paper plugin for IgnisCore</description>
 
   <dependencies>
     <dependency>
@@ -30,37 +30,12 @@
       <artifactId>bukkit-common</artifactId>
     </dependency>
     <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>sponge-common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>sponge-v12.0.0</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>sponge-v19.0.0</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>sponge-v8.5.0</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
     </dependency>
     <dependency>
-      <groupId>net.kyori</groupId>
-      <artifactId>adventure-platform-bukkit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.spongepowered</groupId>
-      <artifactId>spongeapi</artifactId>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -71,7 +46,7 @@
   </dependencies>
 
   <build>
-    <finalName>IgnisCore-${project.version}</finalName>
+    <finalName>IgnisCore-Paper-${project.version}</finalName>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -122,7 +97,7 @@
                   <excludes>
                     <exclude>module-info.class</exclude>
                     <exclude>META-INF/versions/**/module-info.class</exclude>
-                    <exclude>META-INF/sponge_plugins.json</exclude>
+                    <exclude>plugin.yml</exclude>
                   </excludes>
                 </filter>
               </filters>

@@ -49,7 +49,7 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 | **Core API** | `com.github.rowan-smith.IgnisCore:api` | Always — strategies, ports, models, `IgnisStrategies` |
 | **Extension shared** | Built from [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) | Optional — explosions, throwables, link items via `ExtensionShared` |
 
-The bootstrap plugin supplies the API at runtime (`provided` scope). See [Extension shared](/developers/api/extension-shared) for optional helpers.
+The plugin supplies the API at runtime (`provided` scope). See [Extension shared](/developers/api/extension-shared) for optional helpers.
 
 ## Next steps
 
