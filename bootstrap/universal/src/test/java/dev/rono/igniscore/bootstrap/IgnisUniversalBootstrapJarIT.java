@@ -1,4 +1,4 @@
-package dev.rono.igniscore.bukkit;
+package dev.rono.igniscore.bootstrap;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,10 +9,10 @@ import java.util.jar.JarFile;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class IgnisCoreJarIT {
+class IgnisUniversalBootstrapJarIT {
 
     @Test
-    void shadedJarRegistersBootloadersAndAdventurePlatform() throws Exception {
+    void shadedJarContainsAllPlatformEntrypoints() throws Exception {
         Path jar = Path.of("target/IgnisCore-1.0.0.jar");
 
         try (JarFile jarFile = new JarFile(jar.toFile())) {
@@ -22,13 +22,14 @@ class IgnisCoreJarIT {
 
             String services = new String(jarFile.getInputStream(serviceEntry).readAllBytes(), StandardCharsets.UTF_8);
             assertTrue(services.contains("dev.rono.igniscore.spigot.boot.SpigotV121Bootloader"));
-            assertFalseContains(services, "dev.rono.igniscore.paper.boot.PaperV121Bootloader");
-            assertNotNull(jarFile.getEntry("net/kyori/adventure/platform/bukkit/BukkitAudiences.class"),
-                    "BukkitAudiences should be bundled for Spigot runtimes");
-        }
-    }
+            assertTrue(services.contains("dev.rono.igniscore.paper.boot.PaperV121Bootloader"));
+            assertTrue(services.contains("dev.rono.igniscore.sponge.boot.SpongeV1200Bootloader"));
 
-    private static void assertFalseContains(String haystack, String needle) {
-        assertTrue(!haystack.contains(needle), "Unexpected entry in bootloader services: " + needle);
+            assertNotNull(jarFile.getEntry("dev/rono/igniscore/spigot/IgnisCorePlugin.class"));
+            assertNotNull(jarFile.getEntry("dev/rono/igniscore/paper/IgnisPaperPlugin.class"));
+            assertNotNull(jarFile.getEntry("plugin.yml"));
+            assertNotNull(jarFile.getEntry("paper-plugin.yml"));
+            assertNotNull(jarFile.getEntry("META-INF/sponge_plugins.json"));
+        }
     }
 }

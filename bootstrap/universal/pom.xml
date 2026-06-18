@@ -6,62 +6,41 @@
 
   <parent>
     <groupId>dev.rono</groupId>
-    <artifactId>igniscore-parent</artifactId>
+    <artifactId>bootstrap</artifactId>
     <version>${revision}</version>
   </parent>
 
-  <artifactId>bukkit</artifactId>
+  <artifactId>universal</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore-bukkit</name>
-  <description>Spigot plugin for IgnisCore with Sponge support</description>
+  <name>igniscore-bootstrap-universal</name>
+  <description>Universal IgnisCore plugin JAR for Spigot, Paper, and Sponge</description>
 
   <dependencies>
     <dependency>
       <groupId>dev.rono</groupId>
-      <artifactId>api</artifactId>
+      <artifactId>spigot</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>dev.rono</groupId>
-      <artifactId>common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>bukkit-common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>sponge-common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>sponge-v12.0.0</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.rono</groupId>
-      <artifactId>sponge-v19.0.0</artifactId>
+      <artifactId>paper</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>dev.rono</groupId>
       <artifactId>sponge-v8.5.0</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
+      <groupId>dev.rono</groupId>
+      <artifactId>sponge-v12.0.0</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.kyori</groupId>
-      <artifactId>adventure-platform-bukkit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.spongepowered</groupId>
-      <artifactId>spongeapi</artifactId>
-      <scope>provided</scope>
+      <groupId>dev.rono</groupId>
+      <artifactId>sponge-v19.0.0</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -112,34 +91,50 @@
             </goals>
             <configuration>
               <createDependencyReducedPom>false</createDependencyReducedPom>
-              <includeSystemScope>true</includeSystemScope>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
               </transformers>
               <filters>
                 <filter>
+                  <artifact>dev.rono:spigot</artifact>
+                  <excludes>
+                    <exclude>plugin.yml</exclude>
+                    <exclude>META-INF/sponge_plugins.json</exclude>
+                  </excludes>
+                </filter>
+                <filter>
+                  <artifact>dev.rono:paper</artifact>
+                  <excludes>
+                    <exclude>paper-plugin.yml</exclude>
+                    <exclude>META-INF/sponge_plugins.json</exclude>
+                  </excludes>
+                </filter>
+                <filter>
+                  <artifact>dev.rono:sponge-v8.5.0</artifact>
+                  <excludes>
+                    <exclude>META-INF/sponge_plugins.json</exclude>
+                  </excludes>
+                </filter>
+                <filter>
+                  <artifact>dev.rono:sponge-v12.0.0</artifact>
+                  <excludes>
+                    <exclude>META-INF/sponge_plugins.json</exclude>
+                  </excludes>
+                </filter>
+                <filter>
+                  <artifact>dev.rono:sponge-v19.0.0</artifact>
+                  <excludes>
+                    <exclude>META-INF/sponge_plugins.json</exclude>
+                  </excludes>
+                </filter>
+                <filter>
                   <artifact>*:*</artifact>
                   <excludes>
                     <exclude>module-info.class</exclude>
                     <exclude>META-INF/versions/**/module-info.class</exclude>
-                    <exclude>META-INF/sponge_plugins.json</exclude>
                   </excludes>
                 </filter>
               </filters>
-              <relocations>
-                <relocation>
-                  <pattern>com.google.inject</pattern>
-                  <shadedPattern>dev.rono.igniscore.libs.com.google.inject</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>com.google.common</pattern>
-                  <shadedPattern>dev.rono.igniscore.libs.com.google.common</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>jakarta.inject</pattern>
-                  <shadedPattern>dev.rono.igniscore.libs.jakarta.inject</shadedPattern>
-                </relocation>
-              </relocations>
             </configuration>
           </execution>
         </executions>

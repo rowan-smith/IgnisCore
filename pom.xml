@@ -15,12 +15,13 @@
     <module>api</module>
     <module>common</module>
     <module>bukkit-common</module>
-    <module>bukkit</module>
+    <module>spigot</module>
     <module>paper</module>
     <module>sponge-common</module>
     <module>sponge-v8.5.0</module>
     <module>sponge-v12.0.0</module>
     <module>sponge-v19.0.0</module>
+    <module>bootstrap</module>
   </modules>
 
   <properties>
@@ -128,6 +129,16 @@
       <dependency>
         <groupId>dev.rono</groupId>
         <artifactId>common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>spigot</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.rono</groupId>
+        <artifactId>paper</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

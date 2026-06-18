@@ -18,7 +18,11 @@ Multi-platform framework for custom Minecraft blocks, items, and runtime extensi
 mvn clean package
 ```
 
-Deploy `bukkit/target/IgnisCore-<version>.jar` on Spigot/Sponge, or `paper/target/IgnisCore-Paper-<version>.jar` on Paper (version matches `pom.xml`).
+Deploy `bootstrap/universal/target/IgnisCore-<version>.jar` for all platforms, or use a platform-specific build:
+
+- Spigot: `spigot/target/IgnisCore-Spigot-<version>.jar`
+- Paper: `paper/target/IgnisCore-Paper-<version>.jar`
+- Sponge 8.5: `sponge-v8.5.0/target/IgnisCore-Sponge-v8-<version>.jar`
 
 ## Extension authoring
 

@@ -1,4 +1,4 @@
-package dev.rono.igniscore.bukkit;
+package dev.rono.igniscore.spigot;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

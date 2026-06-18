@@ -3,7 +3,7 @@ version: '${project.version}'
 author: Rono
 description: Spigot-native custom block and item system for Minecraft
 
-main: dev.rono.igniscore.bukkit.IgnisCorePlugin
+main: dev.rono.igniscore.spigot.IgnisCorePlugin
 api-version: '1.21'
 depend: []
 softdepend: [NBTAPI, ProtocolLib, WorldEdit, FastAsyncWorldEdit, DecentHolograms, Citizens]

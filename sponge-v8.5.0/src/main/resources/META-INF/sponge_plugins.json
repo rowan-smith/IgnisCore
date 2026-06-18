@@ -1,0 +1,16 @@
+{
+  "loader": {
+    "name": "java_plain",
+    "version": "1.0"
+  },
+  "license": "MIT",
+  "plugins": [
+    {
+      "id": "igniscore-v850",
+      "name": "IgnisCore",
+      "version": "${revision}",
+      "entrypoint": "dev.rono.igniscore.sponge.v850.IgnisSpongePlugin",
+      "description": "Multi-platform custom blocks and items runtime (SpongeAPI 8.5.x / Minecraft 1.20.x)"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-package dev.rono.igniscore.bukkit;
+package dev.rono.igniscore.spigot;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class IgnisCorePluginTest {
 
     @Test
-    void pluginYamlPointsAtBukkitEntrypoint() throws Exception {
+    void pluginYamlPointsAtSpigotEntrypoint() throws Exception {
         try (InputStream input = getClass().getResourceAsStream("/plugin.yml")) {
             assertNotNull(input, "plugin.yml should be on the test classpath");
             String yaml = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-            assertTrue(yaml.contains("dev.rono.igniscore.bukkit.IgnisCorePlugin"));
+            assertTrue(yaml.contains("dev.rono.igniscore.spigot.IgnisCorePlugin"));
         }
     }
 
@@ -30,17 +30,14 @@ class IgnisCorePluginTest {
     }
 
     @Test
-    void spongeManifestListsBothSpongeRuntimes() throws Exception {
+    void spigotJarDoesNotBundleSpongeManifest() throws Exception {
         try (InputStream input = getClass().getResourceAsStream("/META-INF/sponge_plugins.json")) {
-            assertNotNull(input, "sponge_plugins.json should be bundled");
-            String json = new String(input.readAllBytes(), StandardCharsets.UTF_8);
-            assertTrue(json.contains("igniscore"));
-            assertTrue(json.contains("igniscore-v850"));
+            assertTrue(input == null, "Sponge manifest belongs in sponge and universal bootstrap JARs");
         }
     }
 
     @Test
-    void bukkitJarIncludesAdventurePlatformDependency() throws Exception {
+    void spigotJarIncludesAdventurePlatformDependency() throws Exception {
         assertNotNull(Class.forName("net.kyori.adventure.platform.bukkit.BukkitAudiences"));
     }
 }
