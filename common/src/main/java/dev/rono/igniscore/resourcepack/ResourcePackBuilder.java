@@ -431,9 +431,8 @@ public class ResourcePackBuilder {
                     TextureFileWriter.writePackTexture(is, fileName, texturePath);
                     debug("Generated texture: " + normalizePath(texturePath));
                 } else {
-                    String error = "CRITICAL: Texture missing for block " + asset.getId() + ": " + fileName;
-                    host.getLogger().severe(error);
-                    throw new IOException(error);
+                    host.getLogger().warning(
+                            "Texture missing for block " + asset.getId() + ": " + fileName + " (skipped)");
                 }
             }
         }
@@ -458,7 +457,9 @@ public class ResourcePackBuilder {
 
         try (InputStream inputStream = resourceProvider.getItemTextureStream(definition, asset.getIconTexture())) {
             if (inputStream == null) {
-                throw new IOException("Missing texture " + asset.getIconTexture() + " for item " + asset.getId());
+                host.getLogger().warning(
+                        "Texture missing for item " + asset.getId() + ": " + asset.getIconTexture() + " (skipped)");
+                return;
             }
             TextureFileWriter.writePackTexture(inputStream, asset.getIconTexture(), texturePath);
         }
