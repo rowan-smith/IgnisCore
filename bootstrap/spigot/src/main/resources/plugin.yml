@@ -1,7 +1,7 @@
 name: IgnisCore
 version: '${project.version}'
 author: Rono
-description: Multi-platform custom block and item system for Minecraft
+description: Spigot-native custom block and item system for Minecraft
 
 main: dev.rono.igniscore.bootstrap.IgnisBootstrapPlugin
 api-version: '1.21'

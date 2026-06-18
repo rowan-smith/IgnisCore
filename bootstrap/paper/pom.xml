@@ -6,15 +6,16 @@
 
   <parent>
     <groupId>dev.rono</groupId>
-    <artifactId>igniscore-parent</artifactId>
+    <artifactId>bootstrap</artifactId>
     <version>${revision}</version>
   </parent>
 
-  <artifactId>bootstrap-paper</artifactId>
+  <groupId>dev.rono.bootstrap</groupId>
+  <artifactId>paper</artifactId>
   <packaging>jar</packaging>
 
   <name>igniscore-bootstrap-paper</name>
-  <description>Deployable Paper plugin JAR with Paper-native bootloaders and adapters</description>
+  <description>Native Paper plugin JAR with Paper bootloaders and adapters</description>
 
   <dependencies>
     <dependency>

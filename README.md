@@ -18,7 +18,7 @@ Multi-platform framework for custom Minecraft blocks, items, and runtime extensi
 mvn clean package
 ```
 
-Deploy `bootstrap/target/IgnisCore-<version>.jar` (version matches `pom.xml`).
+Deploy `bootstrap/spigot/target/IgnisCore-<version>.jar` on Spigot/Sponge, or `bootstrap/paper/target/IgnisCore-Paper-<version>.jar` on Paper (version matches `pom.xml`).
 
 ## Extension authoring
 

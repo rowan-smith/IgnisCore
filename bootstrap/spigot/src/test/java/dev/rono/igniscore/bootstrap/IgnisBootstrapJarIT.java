@@ -21,9 +21,14 @@ class IgnisBootstrapJarIT {
             assertNotNull(serviceEntry, "PlatformBootloader service file should be shaded into the JAR");
 
             String services = new String(jarFile.getInputStream(serviceEntry).readAllBytes(), StandardCharsets.UTF_8);
-            assertTrue(services.contains("dev.rono.igniscore.paper.boot.PaperV121Bootloader"));
+            assertTrue(services.contains("dev.rono.igniscore.spigot.boot.SpigotV121Bootloader"));
+            assertFalseContains(services, "dev.rono.igniscore.paper.boot.PaperV121Bootloader");
             assertNotNull(jarFile.getEntry("net/kyori/adventure/platform/bukkit/BukkitAudiences.class"),
                     "BukkitAudiences should be bundled for Spigot runtimes");
         }
+    }
+
+    private static void assertFalseContains(String haystack, String needle) {
+        assertTrue(!haystack.contains(needle), "Unexpected entry in bootloader services: " + needle);
     }
 }
