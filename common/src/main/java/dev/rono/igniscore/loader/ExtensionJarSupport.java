@@ -8,7 +8,9 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.api.strategy.IgnisStrategyRegistry;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -37,20 +39,15 @@ final class ExtensionJarSupport {
                 throw new IllegalStateException("Missing " + manifestEntryName + " in " + jarFile.getName());
             }
 
-            T manifest;
-            try (InputStream manifestStream = jar.getInputStream(manifestEntry)) {
-                manifest = manifestParser.apply(manifestStream);
-            }
+            T manifest = manifestParser.apply(new ByteArrayInputStream(readEntryBytes(jar, manifestEntry)));
 
             JarEntry configEntry = jar.getJarEntry("config.yml");
             if (configEntry == null) {
                 throw new IllegalStateException("Missing config.yml in " + jarFile.getName());
             }
 
-            Map<String, Object> config;
-            try (InputStream configStream = jar.getInputStream(configEntry)) {
-                config = YamlDefinitions.loadMap(configStream);
-            }
+            Map<String, Object> config = YamlDefinitions.loadMap(
+                    new ByteArrayInputStream(readEntryBytes(jar, configEntry)));
 
             return new JarMetadata<>(manifest, config);
         }
@@ -64,20 +61,16 @@ final class ExtensionJarSupport {
                 throw new IllegalStateException("Missing " + manifestEntryName + " in " + jarFile.getName());
             }
 
-            Map<String, Object> manifestConfig;
-            try (InputStream manifestStream = jar.getInputStream(manifestEntry)) {
-                manifestConfig = YamlDefinitions.loadMap(manifestStream);
-            }
+            Map<String, Object> manifestConfig = YamlDefinitions.loadMap(
+                    new ByteArrayInputStream(readEntryBytes(jar, manifestEntry)));
 
             JarEntry configEntry = jar.getJarEntry("config.yml");
             if (configEntry == null) {
                 throw new IllegalStateException("Missing config.yml in " + jarFile.getName());
             }
 
-            Map<String, Object> config;
-            try (InputStream configStream = jar.getInputStream(configEntry)) {
-                config = YamlDefinitions.loadMap(configStream);
-            }
+            Map<String, Object> config = YamlDefinitions.loadMap(
+                    new ByteArrayInputStream(readEntryBytes(jar, configEntry)));
 
             ExtensionManifest manifest = ExtensionManifest.fromJarContents(
                     manifestConfig, config, manifestEntryName, jarFallbackId);
@@ -99,9 +92,7 @@ final class ExtensionJarSupport {
                 throw new IllegalStateException("Missing " + entryName + " in " + jarFile.getName());
             }
 
-            try (InputStream inputStream = jar.getInputStream(entry)) {
-                return parser.apply(inputStream);
-            }
+            return parser.apply(new ByteArrayInputStream(readEntryBytes(jar, entry)));
         }
     }
 
@@ -112,9 +103,13 @@ final class ExtensionJarSupport {
                 throw new IllegalStateException("Missing config.yml in " + jarFile.getName());
             }
 
-            try (InputStream inputStream = jar.getInputStream(entry)) {
-                return YamlDefinitions.loadMap(inputStream);
-            }
+            return YamlDefinitions.loadMap(new ByteArrayInputStream(readEntryBytes(jar, entry)));
+        }
+    }
+
+    private static byte[] readEntryBytes(JarFile jar, JarEntry entry) throws IOException {
+        try (InputStream inputStream = jar.getInputStream(entry)) {
+            return inputStream.readAllBytes();
         }
     }
 
