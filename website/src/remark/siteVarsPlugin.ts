@@ -7,6 +7,7 @@ function substitute(value: string): string {
   return value
     .replace(/%%site\.version%%/g, siteVars.version)
     .replace(/%%site\.repo%%/g, siteVars.repo)
+    .replace(/%%site\.extensionsRepo%%/g, siteVars.extensionsRepo ?? siteVars.repo)
     .replace(/%%site\.jarName%%/g, siteVars.jarName)
     .replace(/%%site\.baseurl%%/g, siteVars.baseUrl);
 }

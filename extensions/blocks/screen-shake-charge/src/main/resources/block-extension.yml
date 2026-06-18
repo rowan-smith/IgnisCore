@@ -1,8 +1,0 @@
-id: screen-shake-charge
-name: Screen Shake Charge
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.screenshakecharge.Strategy
-requires-integrations:
-  - protocol

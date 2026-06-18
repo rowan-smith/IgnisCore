@@ -8,4 +8,6 @@ Extension authoring documentation has moved to the documentation site:
 - **[API Reference](https://igniscore.rono.dev/developers/api)** — core API
 - **[Concepts: Extensions](https://igniscore.rono.dev/concepts/extensions)** — manifest, deploy paths, identifiers
 
-Sample extensions live under `extensions/blocks/` and `extensions/items/` in this repository.
+Bundled sample extensions live in the separate [IgnisCore-Extensions](https://github.com/rowan-smith/IgnisCore-Extensions) repository under `blocks/` and `items/`.
+
+When building IgnisCore from source, run `./scripts/bootstrap-extensions.sh` to clone that repository into `extensions/` before packaging.

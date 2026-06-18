@@ -14,8 +14,10 @@ Multi-platform framework for custom Minecraft blocks, items, and runtime extensi
 ## Build
 
 ```bash
-mvn clean package
+./scripts/build-all.sh
 ```
+
+This bootstraps bundled extensions from [IgnisCore-Extensions](https://github.com/rowan-smith/IgnisCore-Extensions), installs the API, builds extensions, and packages the plugin.
 
 Deploy `bootstrap/target/IgnisCore-<version>.jar` (version matches `pom.xml`).
 

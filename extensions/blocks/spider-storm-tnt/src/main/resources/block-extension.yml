@@ -1,8 +1,0 @@
-id: spider-storm-tnt
-name: Spider Storm Tnt
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.spiderstormtnt.Strategy
-requires-integrations:
-  - nbt-entity

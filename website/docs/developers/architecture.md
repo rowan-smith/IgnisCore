@@ -19,12 +19,15 @@ igniscore-parent/
 ├── sponge/
 │   ├── common/             Shared Sponge runtime
 │   └── v8.5.0 / v12.0.0 / v19.0.0   Version-specific entrypoints
-├── extensions/
-│   ├── blocks/             Bundled block extension JARs
-│   ├── items/              Bundled item extension JARs
-│   └── shared/             Optional helpers — ExtensionShared facade
 └── bootstrap/              Single deployable JAR
+
+[IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) (separate repository)
+├── blocks/                 Bundled block extension JARs
+├── items/                  Bundled item extension JARs
+└── shared/                 Optional helpers — ExtensionShared facade
 ```
+
+Cloned into `extensions/` when building IgnisCore from source (`./scripts/bootstrap-extensions.sh`).
 
 | Module | Purpose |
 |--------|---------|

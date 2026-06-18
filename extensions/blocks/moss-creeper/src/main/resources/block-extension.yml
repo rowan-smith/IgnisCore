@@ -1,6 +1,0 @@
-id: moss-creeper
-name: Moss Creeper
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.mosscreeper.Strategy

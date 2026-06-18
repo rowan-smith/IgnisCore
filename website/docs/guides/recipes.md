@@ -43,7 +43,7 @@ See [examples/server-config.yml](https://github.com/%%site.repo%%/blob/main/exam
 
 ## Extension development workflow
 
-1. Copy an existing extension under `extensions/blocks/` or `extensions/items/`
+1. Copy an existing module from [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) under `blocks/` or `items/`
 2. Rename packages and IDs
 3. Run `mvn package` from the repo root
 4. Test with MockBukkit unit tests, then deploy to a dev server

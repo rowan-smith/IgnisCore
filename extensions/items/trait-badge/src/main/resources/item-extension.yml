@@ -1,8 +1,0 @@
-id: trait-badge
-name: Trait Badge
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.item.traitbadge.Strategy
-requires-integrations:
-  - nbt-entity

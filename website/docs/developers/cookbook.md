@@ -50,7 +50,7 @@ Only declare keys your strategy reads — see [Extension config](/developers/ext
 
 **Javadoc:** [IgnisStrategies](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/strategy/IgnisStrategies.html)
 
-**Sample:** [extensions/blocks/nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke)
+**Sample:** [extensions/blocks/nuke](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/nuke)
 
 ---
 
@@ -100,7 +100,7 @@ void onTrigger(RuntimeBlockInstance instance, Object triggerContext) {
 }
 ```
 
-**Sample:** [extensions/blocks/splitter-charge](https://github.com/%%site.repo%%/tree/main/extensions/blocks/splitter-charge)
+**Sample:** [extensions/blocks/splitter-charge](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/splitter-charge)
 
 ---
 
@@ -124,7 +124,7 @@ var throwable = ExtensionShared.config().throwable(definition);
 ExtensionShared.explosion().create(world, impact, definition, throwable.power(), throwable.fire());
 ```
 
-**Sample:** [extensions/items/grenade](https://github.com/%%site.repo%%/tree/main/extensions/items/grenade)
+**Sample:** [extensions/items/grenade](https://github.com/%%site.extensionsRepo%%/tree/main/items/grenade)
 
 ---
 
@@ -176,7 +176,7 @@ custom_data:
   linkRange: 64
 ```
 
-**Samples:** [lamp-dimmer](https://github.com/%%site.repo%%/tree/main/extensions/items/lamp-dimmer), [socket-lamp](https://github.com/%%site.repo%%/tree/main/extensions/blocks/socket-lamp)
+**Samples:** [lamp-dimmer](https://github.com/%%site.extensionsRepo%%/tree/main/items/lamp-dimmer), [socket-lamp](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/socket-lamp)
 
 ---
 
@@ -207,7 +207,7 @@ void consume(IgnisPlayer player, IgnisItem item, ItemDefinition definition) {
 }
 ```
 
-**Sample:** [miners-lunch](https://github.com/%%site.repo%%/tree/main/extensions/items/miners-lunch)
+**Sample:** [miners-lunch](https://github.com/%%site.extensionsRepo%%/tree/main/items/miners-lunch)
 
 ---
 
@@ -232,7 +232,7 @@ void onPlacedBreak(BlockDefinition definition, IgnisLocation location) {
 
 Placed utility blocks (`auto-sieve`, `socket-lamp`, `sprinkler-head`, …) use this pattern. Declare only the `custom_data` keys your strategy reads (for example `tickPeriod`, `sieveParticles`).
 
-**Sample:** [auto-sieve](https://github.com/%%site.repo%%/tree/main/extensions/blocks/auto-sieve)
+**Sample:** [auto-sieve](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/auto-sieve)
 
 ---
 

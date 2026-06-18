@@ -64,19 +64,19 @@ my-extension/
 
 | Block | Pattern |
 |-------|---------|
-| [nuke](https://github.com/%%site.repo%%/tree/main/extensions/blocks/nuke) | Explosive fuse + documented `custom_data` |
-| [quarry-cache](https://github.com/%%site.repo%%/tree/main/extensions/blocks/quarry-cache) | Non-combustible GUI block |
-| [auto-sieve](https://github.com/%%site.repo%%/tree/main/extensions/blocks/auto-sieve) | Placed tick block (`tickPeriod`, `sieveParticles`) |
-| [signal-charge](https://github.com/%%site.repo%%/tree/main/extensions/blocks/signal-charge) | Remote-detonatable fuse block |
-| [socket-lamp](https://github.com/%%site.repo%%/tree/main/extensions/blocks/socket-lamp) | Linked remote-activation block |
-| [picnic-basket](https://github.com/%%site.repo%%/tree/main/extensions/blocks/picnic-basket) | Interact / storage GUI |
+| [nuke](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/nuke) | Explosive fuse + documented `custom_data` |
+| [quarry-cache](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/quarry-cache) | Non-combustible GUI block |
+| [auto-sieve](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/auto-sieve) | Placed tick block (`tickPeriod`, `sieveParticles`) |
+| [signal-charge](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/signal-charge) | Remote-detonatable fuse block |
+| [socket-lamp](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/socket-lamp) | Linked remote-activation block |
+| [picnic-basket](https://github.com/%%site.extensionsRepo%%/tree/main/blocks/picnic-basket) | Interact / storage GUI |
 
 | Item | Pattern |
 |------|---------|
-| [grenade](https://github.com/%%site.repo%%/tree/main/extensions/items/grenade) | Throwable explosive |
-| [lamp-dimmer](https://github.com/%%site.repo%%/tree/main/extensions/items/lamp-dimmer) | Link item with NBT |
-| [miners-lunch](https://github.com/%%site.repo%%/tree/main/extensions/items/miners-lunch) | Consumable + cooldown NBT |
-| [detonator](https://github.com/%%site.repo%%/tree/main/extensions/items/detonator) | Multi-click item |
+| [grenade](https://github.com/%%site.extensionsRepo%%/tree/main/items/grenade) | Throwable explosive |
+| [lamp-dimmer](https://github.com/%%site.extensionsRepo%%/tree/main/items/lamp-dimmer) | Link item with NBT |
+| [miners-lunch](https://github.com/%%site.extensionsRepo%%/tree/main/items/miners-lunch) | Consumable + cooldown NBT |
+| [detonator](https://github.com/%%site.extensionsRepo%%/tree/main/items/detonator) | Multi-click item |
 
 ## Related
 

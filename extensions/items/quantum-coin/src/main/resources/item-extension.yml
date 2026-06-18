@@ -1,8 +1,0 @@
-id: quantum-coin
-name: Quantum Coin
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.item.quantumcoin.Strategy
-requires-integrations:
-  - nbt-entity

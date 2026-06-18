@@ -8,7 +8,7 @@ IgnisCore extensions are platform-agnostic JARs loaded at runtime. This section 
 
 ## Quick start
 
-1. Copy an existing extension under `extensions/blocks/` or `extensions/items/`
+1. Clone [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) or copy an existing module under `blocks/` or `items/`
 2. Add Maven dependency on `api` (`provided` scope)
 3. Implement a strategy class extending `AbstractIgnisBlockStrategy` or `AbstractIgnisItemStrategy`, subscribe to lifecycle events in the constructor via `context.eventBus().subscribe(...)`, and declare behavior in `config.yml`
 4. Ship `block-extension.yml` / `item-extension.yml`, `config.yml`, and textures

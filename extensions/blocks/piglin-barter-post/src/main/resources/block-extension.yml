@@ -1,6 +1,0 @@
-id: piglin-barter-post
-name: Piglin Barter Post
-version: @project.version@
-api-version: @ignis.api.version@
-author: IgnisCore
-strategy: dev.rono.igniscore.block.piglinbarterpost.Strategy

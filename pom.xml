@@ -14,7 +14,6 @@
   <modules>
     <module>api</module>
     <module>common</module>
-    <module>extensions</module>
     <module>bukkit</module>
     <module>sponge</module>
     <module>bootstrap</module>
@@ -171,11 +170,6 @@
         <groupId>org.spongepowered</groupId>
         <artifactId>spongeapi</artifactId>
         <version>12.0.0</version>
-      </dependency>
-      <dependency>
-        <groupId>dev.rono.blocks</groupId>
-        <artifactId>quarry-cache</artifactId>
-        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.inject</groupId>
