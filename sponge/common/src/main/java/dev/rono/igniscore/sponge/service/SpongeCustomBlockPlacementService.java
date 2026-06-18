@@ -48,7 +48,7 @@ public class SpongeCustomBlockPlacementService {
 
         pluginContext.debug("Attempting to place custom block: " + typeId);
         BlockSnapshot clickedBlock = event.block();
-        if (clickedBlock == null || clickedBlock.state().type().isAir()) {
+        if (clickedBlock == null || clickedBlock.state().type().isAnyOf(BlockTypes.AIR.get())) {
             return;
         }
 
@@ -62,7 +62,7 @@ public class SpongeCustomBlockPlacementService {
         }
 
         BlockSnapshot targetBlock = targetLocation.createSnapshot();
-        if (!targetBlock.state().type().isAir() && !platformAdapter.isBlockReplaceable(targetBlock)) {
+        if (!targetBlock.state().type().isAnyOf(BlockTypes.AIR.get()) && !platformAdapter.isBlockReplaceable(targetBlock)) {
             pluginContext.debug("Target block is not air or replaceable: " + SpongeBridge.materialKey(targetBlock.state().type()));
             return;
         }
@@ -70,7 +70,7 @@ public class SpongeCustomBlockPlacementService {
         event.setCancelled(true);
         placeBackingBlock(targetLocation);
         var ignisLocation = SpongeBridge.toIgnis(targetLocation);
-        PlacedMetaSupport.recordPlacementYaw(ignisLocation, player.rotation().y());
+        PlacedMetaSupport.recordPlacementYaw(ignisLocation, (float) player.rotation().y());
         blockRegistry.registerPlacedBlock(ignisLocation, typeId, SpongeBridge.wrap(item));
         pluginContext.debug("Successfully placed " + typeId + " at " + targetPosition);
 
@@ -79,7 +79,7 @@ public class SpongeCustomBlockPlacementService {
             if (amount <= 1) {
                 player.inventory().equipment().set(EquipmentTypes.MAINHAND.get(), ItemStack.empty());
             } else {
-                player.inventory().equipment().set(EquipmentTypes.MAINHAND.get(), item.withQuantity(amount - 1));
+                player.inventory().equipment().set(EquipmentTypes.MAINHAND.get(), withQuantity(item, amount - 1));
             }
         }
     }
@@ -91,7 +91,7 @@ public class SpongeCustomBlockPlacementService {
         }
         placedBlock.location().ifPresent(location -> {
             var ignisLocation = SpongeBridge.toIgnis(location);
-            PlacedMetaSupport.recordPlacementYaw(ignisLocation, player.rotation().y());
+            PlacedMetaSupport.recordPlacementYaw(ignisLocation, (float) player.rotation().y());
             blockRegistry.registerPlacedBlock(ignisLocation, typeId, SpongeBridge.wrap(item));
         });
     }
@@ -106,5 +106,12 @@ public class SpongeCustomBlockPlacementService {
 
     private boolean isKnownType(String typeId) {
         return typeId != null && blockRegistry.getBlockTypes().containsKey(typeId);
+    }
+
+    private static ItemStack withQuantity(ItemStack item, int quantity) {
+        if (quantity <= 0) {
+            return ItemStack.empty();
+        }
+        return ItemStack.builder().from(item).quantity(quantity).build();
     }
 }

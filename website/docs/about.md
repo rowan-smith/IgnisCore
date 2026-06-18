@@ -1,18 +1,19 @@
 ---
-title: About
-description: About the IgnisCore project.
+title: About IgnisCore
+description: What IgnisCore is and who maintains it.
 slug: /about
 ---
 
-IgnisCore is a multi-platform framework for custom blocks, items, and runtime extensions, maintained by [rowan-smith](https://github.com/rowan-smith). The bootstrap plugin ships **120+ bundled extensions** (87 blocks, 42 items) alongside a layered plugin API for integrators.
+IgnisCore is a multi-platform framework for custom blocks, items, and runtime extensions, maintained by [rowan-smith](https://github.com/rowan-smith). The bootstrap plugin provides extension loading, block and item registries, resource-pack generation, and a layered plugin API for integrators.
 
-## Links
+Reference extension modules (blocks, items, shared helpers) live in the separate [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) repository. Build JARs from that project and deploy them to your server's `plugins/IgnisCore/blocks/` and `plugins/IgnisCore/items/` folders.
 
-- [Documentation](https://igniscore.rono.dev)
-- [GitHub](https://github.com/%%site.repo%%)
-- [Releases](https://github.com/%%site.repo%%/releases)
-- [Issues](https://github.com/%%site.repo%%/issues)
+## Platforms
 
-## License
+IgnisCore supports **Spigot**, **Paper**, and **SpongeVanilla** from a single bootstrap JAR. Bukkit-family servers require [NBTAPI](https://www.spigotmc.org/resources/nbt-api.7939/); Sponge uses native data containers.
 
-See the [LICENSE](https://github.com/%%site.repo%%/blob/main/LICENSE) file in the repository.
+## Documentation
+
+- [Getting started](/)
+- [Extension Cookbook](/developers/cookbook)
+- [GitHub repository](https://github.com/%%site.repo%%)

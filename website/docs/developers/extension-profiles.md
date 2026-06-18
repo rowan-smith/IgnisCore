@@ -6,7 +6,7 @@ slug: /developers/extension-profiles
 
 Extension manifests (`block-extension.yml` / `item-extension.yml`) can declare **profiles** (behavior hints) and **required integrations** (platform capabilities). Both are parsed at load time and documented in Javadoc on [`ExtensionManifest`](pathname:///apidocs/%%site.version%%/dev/rono/igniscore/api/extension/ExtensionManifest.html).
 
-`profiles` are optional but recommended for new extensions — many bundled modules omit them and rely on strategy code alone.
+`profiles` are optional but recommended for new extensions — reference modules in [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) show both profile-driven and code-only patterns.
 
 ## Profiles
 

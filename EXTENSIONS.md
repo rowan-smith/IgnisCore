@@ -8,6 +8,4 @@ Extension authoring documentation has moved to the documentation site:
 - **[API Reference](https://igniscore.rono.dev/developers/api)** — core API
 - **[Concepts: Extensions](https://igniscore.rono.dev/concepts/extensions)** — manifest, deploy paths, identifiers
 
-Bundled sample extensions are maintained in the separate [IgnisCore-Extensions](https://github.com/rowan-smith/IgnisCore-Extensions) repository. That project consumes this API via [JitPack](https://jitpack.io/#rowan-smith/IgnisCore).
-
-To ship bundled extensions inside the plugin JAR, copy built extension JARs into `bootstrap/bundled/blocks/` and `bootstrap/bundled/items/` before running `mvn package`.
+Reference extensions are maintained in the separate [IgnisCore-Extensions](https://github.com/rowan-smith/IgnisCore-Extensions) repository. Build extension JARs from that project and copy them into your server's `plugins/IgnisCore/blocks/` and `plugins/IgnisCore/items/` folders.

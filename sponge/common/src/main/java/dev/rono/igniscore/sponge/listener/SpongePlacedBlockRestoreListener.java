@@ -53,7 +53,8 @@ public class SpongePlacedBlockRestoreListener {
                 try {
                     int chunkX = Integer.parseInt(parts[0]);
                     int chunkZ = Integer.parseInt(parts[1]);
-                    world.chunk(Vector3i.from(chunkX, 0, chunkZ)).ifPresent(this::enqueueChunk);
+                    WorldChunk chunk = world.chunk(Vector3i.from(chunkX, 0, chunkZ));
+                    enqueueChunk(chunk);
                 } catch (NumberFormatException ignored) {
                 }
             }
@@ -62,8 +63,9 @@ public class SpongePlacedBlockRestoreListener {
     }
 
     private void enqueueChunk(WorldChunk chunk) {
+        ServerWorld world = (ServerWorld) chunk.world();
         Map<String, String> entries = persistenceService.entriesInChunk(
-                chunk.world().key().asString(),
+                world.key().asString(),
                 chunk.chunkPosition().x(),
                 chunk.chunkPosition().z());
         if (entries.isEmpty()) {
@@ -123,7 +125,8 @@ public class SpongePlacedBlockRestoreListener {
             return null;
         }
         try {
-            return chunk.world().location(
+            ServerWorld world = (ServerWorld) chunk.world();
+            return world.location(
                     Integer.parseInt(parts[0]),
                     Integer.parseInt(parts[1]),
                     Integer.parseInt(parts[2]));

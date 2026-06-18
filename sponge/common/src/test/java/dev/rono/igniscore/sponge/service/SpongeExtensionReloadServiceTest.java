@@ -77,14 +77,14 @@ class SpongeExtensionReloadServiceTest {
                 @Override
                 public IgnisTask runLater(dev.rono.igniscore.api.port.IgnisLocation location, Runnable task, long delayTicks) {
                     syncTasks.add(task);
-                    return () -> {};
+                    return cancelledTask();
                 }
 
                 @Override
                 public IgnisTask runRepeating(dev.rono.igniscore.api.port.IgnisLocation location, Runnable task,
                                               long delayTicks, long periodTicks) {
                     syncTasks.add(task);
-                    return () -> {};
+                    return cancelledTask();
                 }
 
                 @Override
@@ -109,6 +109,22 @@ class SpongeExtensionReloadServiceTest {
             List<Runnable> pending = List.copyOf(syncTasks);
             syncTasks.clear();
             pending.forEach(Runnable::run);
+        }
+
+        private static IgnisTask cancelledTask() {
+            return new IgnisTask() {
+                private boolean cancelled;
+
+                @Override
+                public void cancel() {
+                    cancelled = true;
+                }
+
+                @Override
+                public boolean isCancelled() {
+                    return cancelled;
+                }
+            };
         }
 
         @Override public dev.rono.igniscore.api.port.PlatformType getPlatformType() { return dev.rono.igniscore.api.port.PlatformType.SPONGE; }
@@ -142,7 +158,7 @@ class SpongeExtensionReloadServiceTest {
         int commitCount;
 
         RecordingExtensionBootstrap() {
-            super(null, null, null, null, null, null, null, null);
+            super(null, null, null, null, null, null, null);
         }
 
         @Override

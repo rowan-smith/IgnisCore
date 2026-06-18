@@ -59,7 +59,7 @@ public class SpongeIgnisModule extends AbstractModule {
             throw new IllegalArgumentException("Sponge hosts require SpongePlatformAdapter");
         }
         this.platformAdapter = spongeAdapter;
-        this.config = new SpongeIgnisConfig(platformAdapter);
+        this.config = new SpongeIgnisConfig(spongeAdapter);
         this.pluginContext = new SpongePluginContext(plugin);
     }
 

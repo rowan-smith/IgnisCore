@@ -75,7 +75,7 @@ const config: Config = {
       {
         name: 'description',
         content:
-          'IgnisCore — custom blocks, items, and extensions for Spigot, Paper, and Sponge. 120+ bundled extensions, layered plugin API, and auto-built resource packs.',
+          'IgnisCore — custom blocks, items, and extensions for Spigot, Paper, and Sponge. Runtime extension loading, layered plugin API, and auto-built resource packs.',
       },
     ],
     navbar: {

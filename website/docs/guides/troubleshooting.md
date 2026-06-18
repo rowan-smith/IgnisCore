@@ -17,7 +17,7 @@ Run `/ignis reload all` after adding JARs.
 ## Resource pack not updating
 
 1. Run `/ignis pack` or `/ignis reload all`
-2. Check `public-url` in config — must be reachable from clients, not `localhost`
+2. Check `public-url` in config — must be reachable from clients (use your public IP or reverse proxy, not a loopback-only address)
 3. Run `/ignis debug pack` to verify hash and block mappings
 4. Players may need to reconnect or re-accept the pack
 

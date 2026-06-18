@@ -100,15 +100,6 @@ public class SpongeConfiguredEffectService {
             return resolved.get();
         }
 
-        String enumStyle = normalized.toUpperCase(Locale.ROOT);
-        for (SoundType sound : RegistryTypes.SOUND_TYPE.get()) {
-            ResourceKey key = sound.key(RegistryTypes.SOUND_TYPE);
-            String candidate = key.value().toUpperCase(Locale.ROOT).replace('.', '_');
-            if (candidate.equals(enumStyle)) {
-                return sound;
-            }
-        }
-
         return RegistryTypes.SOUND_TYPE.get().findValue(
                 ResourceKey.resolve("minecraft:" + normalized.toLowerCase(Locale.ROOT).replace('_', '.')))
                 .orElse(null);

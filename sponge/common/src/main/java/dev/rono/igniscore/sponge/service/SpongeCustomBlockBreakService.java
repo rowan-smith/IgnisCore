@@ -10,6 +10,8 @@ import dev.rono.igniscore.api.util.Locations;
 import dev.rono.igniscore.event.StrategyEventPublisher;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;

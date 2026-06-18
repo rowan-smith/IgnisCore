@@ -169,19 +169,25 @@ public class SpongePlatformAdapter implements PlatformAdapter {
             return;
         }
         try {
-            ResourcePackInfo.Builder packBuilder = ResourcePackInfo.resourcePackInfo(
-                    java.util.UUID.randomUUID(),
-                    java.net.URI.create(url));
-            if (hash != null && hash.length > 0) {
-                packBuilder.hash(hash);
-            }
+            java.util.UUID packId = java.util.UUID.randomUUID();
+            java.net.URI uri = java.net.URI.create(url);
+            String hashHex = hash != null && hash.length > 0 ? bytesToHex(hash) : "";
+            ResourcePackInfo pack = ResourcePackInfo.resourcePackInfo(packId, uri, hashHex);
             player.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
-                    .packs(packBuilder.build())
+                    .packs(pack)
                     .required(force)
                     .build());
         } catch (IllegalArgumentException error) {
             logger.warning("Invalid resource pack URL: " + url);
         }
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder(bytes.length * 2);
+        for (byte value : bytes) {
+            builder.append(String.format("%02x", value));
+        }
+        return builder.toString();
     }
 
     @Override

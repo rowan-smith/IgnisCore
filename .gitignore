@@ -72,9 +72,6 @@ fabric.properties
 
 .junie/
 
-# Manually copied extension JARs (not committed)
-bootstrap/bundled/**/*.jar
-
 # Docusaurus
 website/node_modules/
 website/build/

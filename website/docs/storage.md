@@ -23,7 +23,7 @@ After first boot, IgnisCore creates a data folder (typically `plugins/IgnisCore/
 | Block | `blocks/` | `/ignis reload blocks` or `all` |
 | Item | `items/` | `/ignis reload items` or `all` |
 
-Bundled extensions ship inside the bootstrap JAR and extract on first boot. Drop-in JARs in these folders override or add types.
+Bundled extensions are not shipped with the bootstrap JAR. Copy built extension JARs from [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) into these folders, then reload.
 
 ## Placed blocks
 

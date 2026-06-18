@@ -262,7 +262,7 @@ Place in `src/main/resources/block-extension.yml`.
 </dependency>
 ```
 
-Minimum tests: **StrategyTest** (manifest + profile smoke) and behavior tests that fire events via `TestEventBus` (see bundled extension `BehaviorTest` classes).
+Minimum tests: **StrategyTest** (manifest + profile smoke) and behavior tests that fire events via `TestEventBus` (see `BehaviorTest` classes in [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%)).
 
 ---
 

@@ -10,7 +10,7 @@ slug: /guides/recipes
 2. On Bukkit-family servers, install **NBTAPI**
 3. Download `%%site.jarName%%` from [Releases](https://github.com/%%site.repo%%/releases)
 4. Place the jar in `plugins/` and start the server
-5. Verify with `/ignis` — bundled extensions extract automatically
+5. Verify with `/ignis reload all` after placing extension JARs in `plugins/IgnisCore/blocks/` and `items/`
 
 ## Deploy a custom extension
 

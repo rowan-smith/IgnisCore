@@ -15,20 +15,21 @@ import VersionCards from '@site/src/components/VersionCards';
 
 ## What's included
 
-IgnisCore ships **120+ bundled extensions** (87 blocks, 42 items) — fuse explosives, tactical TNT, placed utility blocks, link items, consumables, throwables, and more. They extract automatically on first boot. You can also deploy your own extension JARs at runtime.
+IgnisCore is the runtime framework: extension loading, block and item registries, resource-pack generation, and a layered plugin API. **Extension content** (blocks, items, textures) is built separately — see [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) for reference implementations.
 
-## Install in 4 steps
+## Install in 5 steps
 
 1. Download **`%%site.jarName%%`** from [GitHub Releases](https://github.com/%%site.repo%%/releases).
 2. Install **NBTAPI** on Bukkit-family servers (required dependency).
 3. Copy the jar into `plugins/` and restart the server.
-4. Run `/ignis` in-game — you should see the help menu.
+4. Deploy extension JARs to `plugins/IgnisCore/blocks/` and `plugins/IgnisCore/items/`.
+5. Run `/ignis reload all` — then `/ignis` for the help menu.
 
 See [Requirements](/requirements) for Java, platform, and dependency details.
 
 ## Your first extension
 
-Bundled block and item extensions extract on first boot. To give yourself a block or item:
+After deploying extensions and reloading:
 
 ```text
 /ignis give <player> block nuke

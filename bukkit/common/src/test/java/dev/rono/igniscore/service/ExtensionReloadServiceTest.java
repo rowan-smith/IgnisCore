@@ -94,7 +94,7 @@ class ExtensionReloadServiceTest extends MockBukkitTestBase {
         int commitCount;
 
         RecordingExtensionBootstrap() {
-            super(null, null, null, null, null, null, null, null);
+            super(null, null, null, null, null, null, null);
         }
 
         @Override

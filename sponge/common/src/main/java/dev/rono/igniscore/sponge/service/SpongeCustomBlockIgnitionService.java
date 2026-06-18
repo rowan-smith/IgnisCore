@@ -79,7 +79,7 @@ public class SpongeCustomBlockIgnitionService {
             if (amount <= 1) {
                 player.inventory().equipment().set(EquipmentTypes.MAINHAND.get(), ItemStack.empty());
             } else {
-                player.inventory().equipment().set(EquipmentTypes.MAINHAND.get(), item.withQuantity(amount - 1));
+                player.inventory().equipment().set(EquipmentTypes.MAINHAND.get(), withQuantity(item, amount - 1));
             }
             return;
         }
@@ -93,7 +93,7 @@ public class SpongeCustomBlockIgnitionService {
             if (amount <= 1) {
                 player.inventory().equipment().set(EquipmentTypes.MAINHAND.get(), ItemStack.empty());
             } else {
-                player.inventory().equipment().set(EquipmentTypes.MAINHAND.get(), item.withQuantity(amount - 1));
+                player.inventory().equipment().set(EquipmentTypes.MAINHAND.get(), withQuantity(item, amount - 1));
             }
             return;
         }
@@ -107,5 +107,12 @@ public class SpongeCustomBlockIgnitionService {
                 .blockState(BlockTypes.AIR.get().defaultState())
                 .build();
         location.restoreSnapshot(air, false, BlockChangeFlags.ALL);
+    }
+
+    private static ItemStack withQuantity(ItemStack item, int quantity) {
+        if (quantity <= 0) {
+            return ItemStack.empty();
+        }
+        return ItemStack.builder().from(item).quantity(quantity).build();
     }
 }

@@ -18,7 +18,6 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.util.Transform;
 import org.spongepowered.api.world.server.ServerLocation;
-import org.spongepowered.math.imaginary.Quaterniond;
 import org.spongepowered.math.vector.Vector3d;
 
 import java.util.Map;
@@ -83,19 +82,13 @@ public class SpongeBlockVisualRenderer implements BlockVisualRenderer {
         BlockDefinition definition = instance.getDefinition();
         long time = System.currentTimeMillis();
         float bob = definition.isFloatBob() ? (float) Math.sin(time / 200.0) * 0.1f : 0;
-        float rotation = definition.isRotate() ? (time % 3600L) / 3600.0f * (float) Math.PI * 2 : 0;
 
         float scale = 1.0f;
         if (definition.isPulse() && instance.getTicksLeft() < 20) {
             scale = 1.0f + (float) Math.sin(time / 50.0) * 0.2f;
         }
 
-        Transform base = createTransformation(definition, bob, scale);
-        Transform animated = Transform.of(
-                base.position(),
-                new Quaterniond().rotateY(rotation),
-                base.scale());
-        display.offer(Keys.TRANSFORM, animated);
+        display.offer(Keys.TRANSFORM, createTransformation(definition, bob, scale));
         display.offer(Keys.INTERPOLATION_DURATION, Ticks.of(1));
         display.offer(Keys.INTERPOLATION_DELAY, Ticks.of(0));
     }

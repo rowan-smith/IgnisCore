@@ -138,7 +138,7 @@ public class SpongeBlockListener {
     @Listener(order = Order.LATE)
     public void onProjectileImpact(CollideBlockEvent.Impact event) {
         Entity entity = event.cause().first(Entity.class).orElse(null);
-        if (entity == null || entity.get(Keys.FIRE_TICKS).orElse(0) <= 0) {
+        if (entity == null || entity.get(Keys.FIRE_TICKS).map(ticks -> ticks.ticks()).orElse(0L) <= 0) {
             return;
         }
 

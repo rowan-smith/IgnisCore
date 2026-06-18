@@ -96,6 +96,19 @@ class BlockManagerBehaviorTest {
     }
 
     @Test
+    void unregisterPlacedBlockClearsEphemeralMetadata() {
+        IgnisLocation location = new IgnisLocation("world", 4, 64, 8);
+        dev.rono.igniscore.api.util.PlacedMetaSupport.recordPlacementYaw(location, 45f);
+        dev.rono.igniscore.api.util.PlacedMetaSupport.setString(location, "waypoint");
+        blockManager.registerPlacedBlock(location, definition.getId());
+
+        blockManager.unregisterPlacedBlock(location);
+
+        assertEquals(0f, dev.rono.igniscore.api.util.PlacedMetaSupport.placementYaw(location, 0f));
+        assertNull(dev.rono.igniscore.api.util.PlacedMetaSupport.getString(location));
+    }
+
+    @Test
     void executeBehaviorTriggersDefaultExplosionStrategy() {
         RuntimeBlockInstance instance = new RuntimeBlockService().createInstance(
                 definition, new IgnisLocation("world", 1, 64, 1));

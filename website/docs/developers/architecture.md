@@ -27,7 +27,7 @@ igniscore-parent/
 └── shared/                 Optional helpers — ExtensionShared facade
 ```
 
-Built extension JARs are copied manually into `bootstrap/bundled/` before packaging.
+Deploy built extension JARs to `plugins/IgnisCore/blocks/` and `plugins/IgnisCore/items/` on your server.
 
 | Module | Purpose |
 |--------|---------|

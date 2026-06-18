@@ -94,7 +94,10 @@ public class SpongeExtensionSupportListener {
         }
 
         if (event instanceof ClickContainerEvent.Shift) {
-            ItemStack moving = event.slot().flatMap(slot -> slot.peek()).orElse(ItemStack.empty());
+            ItemStack moving = event.transactions().stream()
+                    .findFirst()
+                    .map(transaction -> transaction.slot().peek())
+                    .orElse(ItemStack.empty());
             if (!moving.isEmpty() && !customInventory.accepts(SpongeBridge.wrap(moving))) {
                 event.setCancelled(true);
             }
@@ -117,8 +120,8 @@ public class SpongeExtensionSupportListener {
             return;
         }
 
-        for (var slot : event.slots()) {
-            int rawSlot = top.slots().indexOf(slot);
+        for (var transaction : event.transactions()) {
+            int rawSlot = top.slots().indexOf(transaction.slot());
             if (rawSlot >= 0 && rawSlot < top.capacity() && customInventory.isSeparatorSlot(rawSlot)) {
                 event.setCancelled(true);
                 return;
