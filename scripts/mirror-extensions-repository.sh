@@ -4,9 +4,13 @@ set -euo pipefail
 # Mirror the extensions-export branch into IgnisCore-Extensions.
 # Requires push access to https://github.com/rowan-smith/IgnisCore-Extensions
 #
-# Usage:
+# Usage (Linux/macOS):
 #   ./scripts/mirror-extensions-repository.sh
 #   ./scripts/mirror-extensions-repository.sh --batch
+#
+# Usage (Windows):
+#   scripts\mirror-extensions-repository.bat batch
+#   pwsh ./scripts/mirror-extensions-repository.ps1 -Batch
 #
 # Environment:
 #   IGNIS_CORE_REPO

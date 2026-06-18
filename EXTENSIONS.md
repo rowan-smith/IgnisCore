@@ -11,3 +11,19 @@ Extension authoring documentation has moved to the documentation site:
 Bundled sample extensions live in the separate [IgnisCore-Extensions](https://github.com/rowan-smith/IgnisCore-Extensions) repository under `blocks/` and `items/`.
 
 When building IgnisCore from source, run `./scripts/bootstrap-extensions.sh` to clone that repository into `extensions/` before packaging.
+
+To populate IgnisCore-Extensions from the `extensions-export` branch (one-time mirror):
+
+```bash
+./scripts/mirror-extensions-repository.sh --batch
+```
+
+Windows:
+
+```bat
+scripts\mirror-extensions-repository.bat batch
+```
+
+```powershell
+pwsh ./scripts/mirror-extensions-repository.ps1 -Batch
+```
