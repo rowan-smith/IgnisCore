@@ -10,7 +10,7 @@ IgnisCore requires **Java 25**.
 
 ## Server software
 
-One plugin JAR per server family, or use the universal bootstrap JAR for all platforms. Spigot and Paper each have dedicated plugin manifests; Sponge uses `sponge_plugins.json`. Each server loads only its own entry point via `ServiceLoader`.
+One plugin JAR per server family, or use the universal JAR for all platforms. Spigot and Paper each have dedicated plugin manifests; Sponge uses `sponge_plugins.json`. Each server loads only its own entry point via `ServiceLoader`.
 
 | Platform | Supported versions | Notes |
 |----------|-------------------|-------|
@@ -39,7 +39,7 @@ mvn clean package
 
 Deploy the plugin JAR for your server software:
 
-- **Universal (all platforms):** `bootstrap/universal/target/%%site.jarName%%`
+- **Universal (all platforms):** `universal/target/%%site.jarName%%`
 - **Spigot:** `spigot/target/IgnisCore-Spigot-%%site.version%%.jar`
 - **Paper:** `paper/target/IgnisCore-Paper-%%site.version%%.jar`
 - **Sponge 8.5:** `sponge-v8.5.0/target/IgnisCore-Sponge-v8-%%site.version%%.jar`

@@ -18,7 +18,7 @@ Multi-platform framework for custom Minecraft blocks, items, and runtime extensi
 mvn clean package
 ```
 
-Deploy `bootstrap/universal/target/IgnisCore-<version>.jar` for all platforms, or use a platform-specific build:
+Deploy `universal/target/IgnisCore-<version>.jar` for all platforms, or use a platform-specific build:
 
 - Spigot: `spigot/target/IgnisCore-Spigot-<version>.jar`
 - Paper: `paper/target/IgnisCore-Paper-<version>.jar`

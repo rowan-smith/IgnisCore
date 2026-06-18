@@ -21,7 +21,7 @@
     <module>sponge-v8.5.0</module>
     <module>sponge-v12.0.0</module>
     <module>sponge-v19.0.0</module>
-    <module>bootstrap</module>
+    <module>universal</module>
   </modules>
 
   <properties>

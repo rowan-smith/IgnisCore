@@ -32,7 +32,7 @@ class IgnisCorePluginTest {
     @Test
     void spigotJarDoesNotBundleSpongeManifest() throws Exception {
         try (InputStream input = getClass().getResourceAsStream("/META-INF/sponge_plugins.json")) {
-            assertTrue(input == null, "Sponge manifest belongs in sponge and universal bootstrap JARs");
+            assertTrue(input == null, "Sponge manifest belongs in sponge and universal JARs");
         }
     }
 

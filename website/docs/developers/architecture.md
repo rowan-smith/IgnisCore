@@ -19,8 +19,7 @@ igniscore-parent/
 ├── sponge-v8.5.0/          SpongeAPI 8.5 plugin (Minecraft 1.20.x)
 ├── sponge-v12.0.0/         SpongeAPI 12 plugin (Minecraft 1.21.x)
 ├── sponge-v19.0.0/         SpongeAPI 19 plugin (Minecraft 26.1.x)
-└── bootstrap/
-    └── universal/          Universal plugin JAR (all platforms)
+└── universal/              Universal plugin JAR (all platforms)
 
 [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) (separate repository, consumes API via JitPack)
 ├── blocks/                 Block extension modules
@@ -37,7 +36,7 @@ Deploy built extension JARs to `plugins/IgnisCore/blocks/` and `plugins/IgnisCor
 | `sponge-v8.5.0` | `IgnisCore-Sponge-v8-<version>.jar` |
 | `sponge-v12.0.0` | `IgnisCore-Sponge-v12-<version>.jar` |
 | `sponge-v19.0.0` | `IgnisCore-Sponge-v19-<version>.jar` |
-| `bootstrap/universal` | `IgnisCore-<version>.jar` |
+| `universal` | `IgnisCore-<version>.jar` |
 
 ## Boot flow
 

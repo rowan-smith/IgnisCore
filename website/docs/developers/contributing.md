@@ -18,7 +18,7 @@ mvn clean package
 
 Output:
 
-- `bootstrap/universal/target/%%site.jarName%%` — all platforms
+- `universal/target/%%site.jarName%%` — all platforms
 - `spigot/target/IgnisCore-Spigot-%%site.version%%.jar` — Spigot only
 - `paper/target/IgnisCore-Paper-%%site.version%%.jar` — Paper only
 - `sponge-v8.5.0/target/IgnisCore-Sponge-v8-%%site.version%%.jar` — Sponge 8.5
