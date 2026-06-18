@@ -6,16 +6,18 @@ import dev.rono.igniscore.api.port.IgnisItem;
 import dev.rono.igniscore.sponge.adapter.SpongeBridge;
 
 public class SpongeCustomItemFactory implements IgnisCustomItemFactory {
+    private final SpongeBlockItemFactory blockItemFactory;
     private final SpongeItemFactory itemFactory;
 
     @Inject
-    public SpongeCustomItemFactory(SpongeItemFactory itemFactory) {
+    public SpongeCustomItemFactory(SpongeBlockItemFactory blockItemFactory, SpongeItemFactory itemFactory) {
+        this.blockItemFactory = blockItemFactory;
         this.itemFactory = itemFactory;
     }
 
     @Override
     public IgnisItem createBlockItem(String typeId) {
-        return SpongeBridge.wrap(itemFactory.createItem(typeId));
+        return SpongeBridge.wrap(blockItemFactory.createBlockItem(typeId));
     }
 
     @Override

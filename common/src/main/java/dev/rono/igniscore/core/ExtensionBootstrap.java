@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.rono.igniscore.common.runtime.IgnisRuntimeHost;
 import dev.rono.igniscore.loader.BlockExtensionLoader;
-import dev.rono.igniscore.loader.BundledExtensionExtractor;
 import dev.rono.igniscore.loader.ItemExtensionLoader;
 import dev.rono.igniscore.manager.BlockManager;
 import dev.rono.igniscore.manager.BlockTypeRegistry;
@@ -16,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
 @Singleton
 public class ExtensionBootstrap {
     private final IgnisRuntimeHost host;
-    private final BundledExtensionExtractor bundledExtractor;
     private final BlockExtensionLoader blockExtensionLoader;
     private final ItemExtensionLoader itemExtensionLoader;
     private final BlockTypeRegistry blockTypeRegistry;
@@ -26,7 +24,6 @@ public class ExtensionBootstrap {
 
     @Inject
     public ExtensionBootstrap(IgnisRuntimeHost host,
-                              BundledExtensionExtractor bundledExtractor,
                               BlockExtensionLoader blockExtensionLoader,
                               ItemExtensionLoader itemExtensionLoader,
                               BlockTypeRegistry blockTypeRegistry,
@@ -34,7 +31,6 @@ public class ExtensionBootstrap {
                               ExtensionSupportService extensionSupportService,
                               BlockManager blockManager) {
         this.host = host;
-        this.bundledExtractor = bundledExtractor;
         this.blockExtensionLoader = blockExtensionLoader;
         this.itemExtensionLoader = itemExtensionLoader;
         this.blockTypeRegistry = blockTypeRegistry;
@@ -76,7 +72,6 @@ public class ExtensionBootstrap {
     }
 
     public ExtensionLoadResult loadFresh(ExtensionReloadScope scope) {
-        bundledExtractor.extractAll();
         if (scope == ExtensionReloadScope.ALL) {
             var blocksFuture = CompletableFuture.supplyAsync(blockExtensionLoader::loadFresh);
             var itemsFuture = CompletableFuture.supplyAsync(itemExtensionLoader::loadFresh);

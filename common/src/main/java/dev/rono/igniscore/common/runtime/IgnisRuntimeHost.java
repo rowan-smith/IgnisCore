@@ -1,7 +1,5 @@
 package dev.rono.igniscore.common.runtime;
 
-import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
@@ -13,10 +11,6 @@ public interface IgnisRuntimeHost {
     Logger getLogger();
 
     Path getDataDirectory();
-
-    InputStream openBundledResource(String resourcePath);
-
-    URI getDeploymentLocation();
 
     ClassLoader getExtensionParentClassLoader();
 

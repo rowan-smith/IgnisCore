@@ -80,8 +80,8 @@ public final class ExtensionLoadEngine {
             try {
                 loaded.add((LoadedExtension<D>) loadJar(jar, modelData++, kind));
             } catch (Exception e) {
-                host.getLogger().severe("Failed to load " + kind.folderName() + " extension "
-                        + jar.getName() + ": " + e.getMessage());
+                host.getLogger().log(Level.SEVERE,
+                        "Failed to load " + kind.folderName() + " extension " + jar.getName(), e);
             }
         }
         return List.copyOf(loaded);
