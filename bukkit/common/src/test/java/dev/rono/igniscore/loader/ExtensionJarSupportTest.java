@@ -9,6 +9,7 @@ import dev.rono.igniscore.api.strategy.IgnisStrategyContext;
 import dev.rono.igniscore.api.strategy.IgnisStrategyDescriptor;
 import dev.rono.igniscore.core.IgnisStrategyRegistryImpl;
 import dev.rono.igniscore.loader.support.TestExtensionJarBuilder;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -164,6 +165,28 @@ class ExtensionJarSupportTest {
 
         IllegalStateException error = assertThrows(IllegalStateException.class, () -> ExtensionJarSupport.readConfig(jarFile));
         assertEquals("Missing config.yml in no-config.jar", error.getMessage());
+    }
+
+    @RepeatedTest(20)
+    void readsExtensionMetadataConcurrentlyWithoutZipErrors() throws Exception {
+        File jarFile = TestExtensionJarBuilder.writeItemJar(tempDir.toFile(), "concurrent-item.jar");
+
+        Runnable task = () -> {
+            try {
+                ExtensionJarSupport.JarMetadata<ExtensionManifest> metadata =
+                        ExtensionJarSupport.readExtensionMetadata(jarFile, "item-extension.yml");
+                assertEquals("test-item", metadata.manifest().getId());
+            } catch (Exception error) {
+                throw new RuntimeException(error);
+            }
+        };
+
+        Thread first = new Thread(task);
+        Thread second = new Thread(task);
+        first.start();
+        second.start();
+        first.join();
+        second.join();
     }
 
     private IgnisStrategyContext nullContext() {

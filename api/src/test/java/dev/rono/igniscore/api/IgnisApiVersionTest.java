@@ -40,4 +40,22 @@ class IgnisApiVersionTest {
 
         assertTrue(error.getMessage().contains("2.0.0"));
     }
+
+    @Test
+    void acceptsJitPackDevelopmentApiVersionLabels() {
+        assertDoesNotThrow(() -> IgnisApiVersion.requireCompatible("main", "jitpack-extension"));
+        assertDoesNotThrow(() -> IgnisApiVersion.requireCompatible("1.0.0-SNAPSHOT", "snapshot-extension"));
+    }
+
+    @Test
+    void acceptsMajorOnlyApiVersionShorthand() {
+        assertDoesNotThrow(() -> IgnisApiVersion.requireCompatible("1", "legacy-extension"));
+        assertEquals(SemVersion.parse("1.0.0"), IgnisApiVersion.parseExtensionRequirement("1"));
+    }
+
+    @Test
+    void rejectsUnknownApiVersionLabels() {
+        assertThrows(IllegalArgumentException.class,
+                () -> IgnisApiVersion.parseExtensionRequirement("not-a-version"));
+    }
 }
