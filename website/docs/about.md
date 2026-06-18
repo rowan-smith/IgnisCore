@@ -10,7 +10,7 @@ Reference extension modules (blocks, items, shared helpers) live in the separate
 
 ## Platforms
 
-IgnisCore supports **Spigot**, **Paper**, and **SpongeVanilla** from a single bootstrap JAR. Bukkit-family servers require [NBTAPI](https://www.spigotmc.org/resources/nbt-api.7939/); Sponge uses native data containers.
+IgnisCore supports **Spigot**, **Paper**, and **SpongeVanilla** via dedicated bootstrap plugin JARs. Bukkit-family servers require [NBTAPI](https://www.spigotmc.org/resources/nbt-api.7939/); Sponge uses native data containers.
 
 ## Documentation
 

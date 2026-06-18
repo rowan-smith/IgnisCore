@@ -17,7 +17,6 @@
     <module>bukkit</module>
     <module>sponge</module>
     <module>bootstrap</module>
-    <module>bootstrap-paper</module>
   </modules>
 
   <properties>

@@ -16,7 +16,10 @@ slug: /developers/contributing
 mvn clean package
 ```
 
-Output: `bootstrap/target/%%site.jarName%%`
+Output:
+
+- `bootstrap/spigot/target/%%site.jarName%%` — Spigot and Sponge
+- `bootstrap/paper/target/IgnisCore-Paper-%%site.version%%.jar` — Paper
 
 ## Run tests
 

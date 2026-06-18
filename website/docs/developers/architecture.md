@@ -19,7 +19,9 @@ igniscore-parent/
 ├── sponge/
 │   ├── common/             Shared Sponge runtime
 │   └── v8.5.0 / v12.0.0 / v19.0.0   Version-specific entrypoints
-└── bootstrap/              Single deployable JAR
+└── bootstrap/
+    ├── spigot/             Native Spigot plugin JAR (+ Sponge)
+    └── paper/              Native Paper plugin JAR
 
 [IgnisCore-Extensions](https://github.com/%%site.extensionsRepo%%) (separate repository, consumes API via JitPack)
 ├── blocks/                 Block extension modules
@@ -33,14 +35,15 @@ Deploy built extension JARs to `plugins/IgnisCore/blocks/` and `plugins/IgnisCor
 |--------|---------|
 | `api` | Stable extension-facing contract: `IgnisCoreAPI`, ports, strategies |
 | `common` | Extension loaders, strategy registry, `BlockManager`, lifecycle |
-| `bootstrap` | Produces one deployable JAR for every supported server |
+| `bootstrap/spigot` | Produces the Spigot/Sponge deployable JAR |
+| `bootstrap/paper` | Produces the Paper-native deployable JAR |
 
 ## Boot flow
 
 All platforms use `PlatformBootloaderLoader` (`common`) to identify server software and select a `PlatformBootloader`:
 
-- **Bukkit family:** `IgnisBootstrapPlugin` from `plugin.yml` → Guice + `IgnisCoreApplication`
-- **Sponge:** version-matched `IgnisSpongePlugin` from `sponge_plugins.json` → same loader
+- **Spigot/Sponge:** `IgnisBootstrapPlugin` from `plugin.yml` → Guice + `IgnisCoreApplication`
+- **Paper:** `IgnisPaperPlugin` from `paper-plugin.yml` → same loader
 
 ### Bootloader priority (Bukkit family)
 

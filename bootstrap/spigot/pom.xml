@@ -6,15 +6,16 @@
 
   <parent>
     <groupId>dev.rono</groupId>
-    <artifactId>igniscore-parent</artifactId>
+    <artifactId>bootstrap</artifactId>
     <version>${revision}</version>
   </parent>
 
-  <artifactId>bootstrap-paper</artifactId>
+  <groupId>dev.rono.bootstrap</groupId>
+  <artifactId>spigot</artifactId>
   <packaging>jar</packaging>
 
-  <name>igniscore-bootstrap-paper</name>
-  <description>Deployable Paper plugin JAR with Paper-native bootloaders and adapters</description>
+  <name>igniscore-bootstrap-spigot</name>
+  <description>Native Spigot plugin JAR with Spigot bootloaders and Sponge support</description>
 
   <dependencies>
     <dependency>
@@ -31,15 +32,40 @@
     </dependency>
     <dependency>
       <groupId>dev.rono.bukkit</groupId>
-      <artifactId>paper</artifactId>
+      <artifactId>spigot</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono.sponge</groupId>
+      <artifactId>common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono.sponge</groupId>
+      <artifactId>v12.0.0</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono.sponge</groupId>
+      <artifactId>v19.0.0</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.rono.sponge</groupId>
+      <artifactId>v8.5.0</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.papermc.paper</groupId>
-      <artifactId>paper-api</artifactId>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-platform-bukkit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spongepowered</groupId>
+      <artifactId>spongeapi</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -50,7 +76,7 @@
   </dependencies>
 
   <build>
-    <finalName>IgnisCore-Paper-${project.version}</finalName>
+    <finalName>IgnisCore-${project.version}</finalName>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -101,6 +127,7 @@
                   <excludes>
                     <exclude>module-info.class</exclude>
                     <exclude>META-INF/versions/**/module-info.class</exclude>
+                    <exclude>META-INF/sponge_plugins.json</exclude>
                   </excludes>
                 </filter>
               </filters>
